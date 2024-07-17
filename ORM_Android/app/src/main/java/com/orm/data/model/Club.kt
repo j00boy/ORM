@@ -1,7 +1,11 @@
 package com.orm.data.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "club")
 data class Club(
-    val id: Int,
+    @PrimaryKey val id: Int,
     val clubName: String,
     val description: String,
     val imageSrc: String,

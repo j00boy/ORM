@@ -20,7 +20,8 @@ class ClubViewModel @Inject constructor(
 
     fun getClubs() {
         viewModelScope.launch {
-            _clubs.value = clubRepository.getClubs()
+            val clubs = clubRepository.getClubs()
+            _clubs.postValue(clubs)
         }
     }
 }
