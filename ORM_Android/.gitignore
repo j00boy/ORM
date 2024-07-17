@@ -38,7 +38,7 @@ output.json
 # IntelliJ
 *.iml
 .idea/
-misc.xml
+**/misc.xml
 deploymentTargetDropDown.xml
 render.experimental.xml
 
