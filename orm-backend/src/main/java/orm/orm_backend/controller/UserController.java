@@ -1,5 +1,6 @@
 package orm.orm_backend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -12,11 +13,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import orm.orm_backend.util.KakaoUtil;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
+
+    private final String ACCESS_TOKEN = "access_token";
+    private final String REFRESH_TOKEN = "refresh_token";
 
     @Value("kakao.redirect-uri")
     private String redirectUri;
@@ -24,15 +32,22 @@ public class UserController {
     @Value("kakao.app-key")
     private String appKey;
 
-    @GetMapping("/login/kakao")
-    public String kakaoLogin(String code) {
-        String kakaoTokens = getKakaoTokens(code);
+    private final KakaoUtil kakaoUtil;
 
-        return "ok";
+    @GetMapping("/login/kakao")
+    public ResponseEntity<Map<String, String>> kakaoLogin(String code) throws JsonProcessingException {
+        String kakaoTokens = getKakaoTokens(code);
+        String accessToken = kakaoUtil.extractToken(kakaoTokens, ACCESS_TOKEN);
+        String refreshToken = kakaoUtil.extractToken(kakaoTokens, REFRESH_TOKEN);
+        Map<String, String> result = new HashMap<>();
+        result.put(ACCESS_TOKEN, accessToken);
+        result.put(REFRESH_TOKEN, refreshToken);
+        return ResponseEntity.ok()
+                .body(result);
     }
 
     private String getKakaoTokens(String code) {
-// HTTP header 생성
+        // HTTP header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
