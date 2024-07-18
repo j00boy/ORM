@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -15,28 +15,29 @@ import java.time.LocalDate;
 public class User {
 
     @Id
-    @Column(name = "user_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @CreatedDate
-    private LocalDate created_at;
+    private LocalDateTime createdAt;
 
-    private Boolean isActive = Boolean.TRUE;
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(1)")
+    private UserStatus isActive = UserStatus.Y;
 
     @Column(nullable = false)
-    private String accessToken;
+    private String kakaoAccessToken;
 
     @Column(nullable = false)
-    private String refreshToken;
+    private String kakaoRefreshToken;
 
     public void delete() {
-        this.isActive = Boolean.FALSE;
+        this.isActive = UserStatus.N;
     }
 
     @Builder
-    public User(String accessToken, String refreshToken) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
+    public User(String kakaoAccessToken, String kakaoRefreshToken) {
+        this.kakaoAccessToken = kakaoAccessToken;
+        this.kakaoRefreshToken = kakaoRefreshToken;
     }
 }
