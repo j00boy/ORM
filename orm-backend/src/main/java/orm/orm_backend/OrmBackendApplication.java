@@ -9,5 +9,4 @@ public class OrmBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(OrmBackendApplication.class, args);
 	}
-
 }
