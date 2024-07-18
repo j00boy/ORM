@@ -9,11 +9,13 @@ android {
     namespace = "com.orm"
     compileSdk = 34
 
-    buildFeatures {
-        viewBinding = true
-        dataBinding = true
+    viewBinding {
+        enable = true
     }
 
+    dataBinding {
+        enable = true
+    }
     defaultConfig {
         applicationId = "com.orm"
         minSdk = 26
@@ -63,13 +65,13 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
-//    // viewmodel
-//    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-
     // coroutines
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     annotationProcessor(libs.androidx.room.compiler)
+
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 }

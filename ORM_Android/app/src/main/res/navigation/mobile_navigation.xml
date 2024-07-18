@@ -7,25 +7,25 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.orm.HomeFragment"
+        android:name="com.orm.ui.fragment.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_chat_list"
-        android:name="com.orm.ChatListFragment"
+        android:name="com.orm.ui.fragment.ChatListFragment"
         android:label="@string/title_chat_list"
         tools:layout="@layout/fragment_chat_list" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.orm.NotificationsFragment"
+        android:name="com.orm.ui.fragment.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.orm.SettingsFragment"
+        android:name="com.orm.ui.fragment.SettingsFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
 </navigation>
