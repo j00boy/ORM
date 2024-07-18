@@ -9,13 +9,11 @@ android {
     namespace = "com.orm"
     compileSdk = 34
 
-    viewBinding {
-        enable = true
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true
     }
 
-    dataBinding {
-        enable = true
-    }
     defaultConfig {
         applicationId = "com.orm"
         minSdk = 26
