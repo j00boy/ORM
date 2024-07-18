@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">orm</string>
+
+    <string name="title_home">홈</string>
+    <string name="title_chat_list">채팅</string>
+    <string name="title_notifications">알림</string>
+    <string name="title_settings">설정</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
