@@ -5,17 +5,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,9 +20,6 @@ public class User {
     private String nickname;
 
     private String imageSrc;
-
-    @CreatedDate
-    private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "char(1)")

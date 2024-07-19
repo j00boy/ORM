@@ -5,15 +5,13 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Club {
+public class Club extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -31,9 +29,6 @@ public class Club {
 
     private String description;
     private String imageSrc;
-
-    @CreatedDate
-    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
     private List<Member> members;
