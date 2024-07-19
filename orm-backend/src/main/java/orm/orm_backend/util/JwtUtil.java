@@ -22,7 +22,7 @@ public class JwtUtil {
     @Value("${jwt.refresh-token.expiretime}")
     private long refreshTokenExpireTime;
 
-    public String createAccessToken(String userId) {
+    public String createAccessToken(Integer userId) {
         return create(userId, "access-token", accessTokenExpireTime);
     }
 
@@ -32,7 +32,7 @@ public class JwtUtil {
 //		subject : payload에 sub의 value로 들어갈 subject값
 //		expire : 토큰 유효기간 설정을 위한 값
 //		jwt 토큰의 구성 : header + payload + signature
-    private String create(String userId, String subject, long expireTime) {
+    private String create(Integer userId, String subject, long expireTime) {
 //		Payload 설정 : 생성일 (IssuedAt), 유효기간 (Expiration),
 //		토큰 제목 (Subject), 데이터 (Claim) 등 정보 세팅.
         Claims claims = Jwts.claims()
