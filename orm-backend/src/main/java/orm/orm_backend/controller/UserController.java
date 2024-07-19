@@ -24,17 +24,17 @@ public class UserController {
     private final String ACCESS_TOKEN = "access_token";
     private final String REFRESH_TOKEN = "refresh_token";
 
-    @Value("kakao.redirect-uri")
+    @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
-    @Value("kakao.app-key")
+    @Value("${kakao.app-key}")
     private String appKey;
 
     private final KakaoUtil kakaoUtil;
 
     @GetMapping("/login/kakao")
     public ResponseEntity<?> tryKakaoLogin() {
-        String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + appKey + "redirect_uri=" + redirectUri;
+        String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + appKey + "&redirect_uri=" + redirectUri;
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(url));
         return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
