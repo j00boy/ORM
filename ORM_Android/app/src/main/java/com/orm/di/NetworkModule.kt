@@ -1,6 +1,8 @@
 package com.orm.di
 
 import com.orm.data.api.ClubService
+import com.orm.data.api.MountainService
+import com.orm.data.api.TraceService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,7 +26,20 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideClubService(retrofit: Retrofit) : ClubService {
+    fun provideClubService(retrofit: Retrofit): ClubService {
         return retrofit.create(ClubService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMountainService(retrofit: Retrofit): MountainService {
+        return retrofit.create(MountainService::class.java)
+
+    }
+
+    @Provides
+    @Singleton
+    fun provideTraceService(retrofit: Retrofit): TraceService {
+        return retrofit.create(TraceService::class.java)
     }
 }

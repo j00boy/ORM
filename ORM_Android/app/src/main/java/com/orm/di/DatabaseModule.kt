@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.orm.data.local.AppDatabase
 import com.orm.data.local.ClubDao
+import com.orm.data.local.MemberDao
+import com.orm.data.local.TraceDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +19,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext appContext : Context) : AppDatabase {
+    fun provideDatabase(@ApplicationContext appContext: Context): AppDatabase {
         return Room.databaseBuilder(
             appContext,
             AppDatabase::class.java,
@@ -26,8 +28,18 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideClubDao(database: AppDatabase) : ClubDao {
+    fun provideClubDao(database: AppDatabase): ClubDao {
         return database.clubDao()
+    }
+
+    @Provides
+    fun provideMemberDao(database: AppDatabase): MemberDao {
+        return database.memberDao()
+    }
+
+    @Provides
+    fun provideTraceDao(database: AppDatabase): TraceDao {
+        return database.traceDao()
     }
 
 }

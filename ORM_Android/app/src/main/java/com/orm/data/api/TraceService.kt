@@ -23,7 +23,7 @@ interface TraceService {
         @Field("title") title: String,
         @Field("mountainId") mountainId: Int,
         @Field("createDate") createDate: String,
-        @Field("routeId") routeId: Int
+        @Field("routeId") routeId: Int,
     ): Call<Void>
 
     // 발자국 수정 (측정 전)
@@ -34,7 +34,7 @@ interface TraceService {
         @Field("title") title: String,
         @Field("mountainId") mountainId: Int,
         @Field("routeId") routeId: Int,
-        @Field("createDate") createDate: String
+        @Field("createDate") createDate: String,
     ): Call<Void>
 
     // 발자국 수정 (측정 후 - 제목만)
@@ -42,7 +42,7 @@ interface TraceService {
     @PATCH("trace/update/after-measure")
     fun updateAfterMeasure(
         @Header("Authorization") accessToken: String,
-        @Field("title") title: String
+        @Field("title") title: String,
     ): Call<Void>
 
     // 발자국 수정 (측정 후 - 이미지)
@@ -50,20 +50,20 @@ interface TraceService {
     @PATCH("trace/update/images")
     fun updateImages(
         @Header("Authorization") accessToken: String,
-        @Part images: List<MultipartBody.Part>
+        @Part images: List<MultipartBody.Part>,
     ): Call<Void>
 
     // 발자국 측정 완료
     @PATCH("trace/measure-complete")
     fun measureComplete(
         @Header("Authorization") accessToken: String,
-        @Body trace: Trace
+        @Body trace: Trace,
     ): Call<Void>
 
     // 발자국 삭제
     @DELETE("trace/{traceId}")
     fun deleteTrace(
         @Header("Authorization") accessToken: String,
-        @Path("traceId") traceId: Int
+        @Path("traceId") traceId: Int,
     ): Call<Void>
 }
