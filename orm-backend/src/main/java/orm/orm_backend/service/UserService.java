@@ -10,8 +10,6 @@ import orm.orm_backend.repository.UserRepository;
 import orm.orm_backend.util.KakaoUtil;
 import orm.orm_backend.vo.KakaoInfoVo;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Service

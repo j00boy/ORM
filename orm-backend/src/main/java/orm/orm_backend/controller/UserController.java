@@ -3,22 +3,18 @@ package orm.orm_backend.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 import orm.orm_backend.dto.response.LoginResponseDto;
-import orm.orm_backend.entity.User;
 import orm.orm_backend.service.UserService;
 import orm.orm_backend.util.JwtUtil;
 import orm.orm_backend.util.KakaoUtil;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor

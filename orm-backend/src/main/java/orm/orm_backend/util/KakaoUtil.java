@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import orm.orm_backend.dto.response.LoginResponseDto;
 import orm.orm_backend.vo.KakaoInfoVo;
 
 @Component
