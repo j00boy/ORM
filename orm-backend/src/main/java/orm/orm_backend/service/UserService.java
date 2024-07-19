@@ -32,7 +32,7 @@ public class UserService {
 
         LoginResponseDto userInfo = kakaoUtil.getKakaoUserInfo(accessToken);
         if (!isJoined(userInfo.getKakaoId())) {
-
+            User joineUser = join(userInfo, accessToken, refreshToken);
         }
         return result;
     }
@@ -44,5 +44,17 @@ public class UserService {
             return false;
         }
         return user.get().getIsActive() == UserStatus.Y;
+    }
+
+    private User join(LoginResponseDto userInfo, String kakaoAccessToken, String kakaoRefreshToken) {
+        User user = User
+                .builder()
+                .kakaoId(userInfo.getKakaoId())
+                .nickname(userInfo.getNickname())
+                .imageSrc(userInfo.getImgSrc())
+                .kakaoAccessToken(kakaoAccessToken)
+                .kakaoRefreshToken(kakaoRefreshToken)
+                .build();
+        return userRepository.save(user);
     }
 }
