@@ -22,19 +22,15 @@ public class UserService {
     private final String ACCESS_TOKEN = "access_token";
     private final String REFRESH_TOKEN = "refresh_token";
 
-    public Map<String, String> kakaoLogin(String kakaoTokens) throws JsonProcessingException {
-        Map<String, String> result = new HashMap<>();
+    public User kakaoLogin(String kakaoTokens) throws JsonProcessingException {
         String accessToken = kakaoUtil.extractToken(kakaoTokens, ACCESS_TOKEN);
         String refreshToken = kakaoUtil.extractToken(kakaoTokens, REFRESH_TOKEN);
 
-        result.put(ACCESS_TOKEN, accessToken);
-        result.put(REFRESH_TOKEN, refreshToken);
-
         LoginResponseDto userInfo = kakaoUtil.getKakaoUserInfo(accessToken);
         if (!isJoined(userInfo.getKakaoId())) {
-            User joinUser = join(userInfo, accessToken, refreshToken);
+            join(userInfo, accessToken, refreshToken);
         }
-        return result;
+        return userRepository.findByKakaoId(userInfo.getKakaoId()).get(); // 가입 절차를 밟았기 때문에 nullPointerException이 발생하지 않음이 보장됨
     }
 
     private boolean isJoined(Long kakaoId) {
