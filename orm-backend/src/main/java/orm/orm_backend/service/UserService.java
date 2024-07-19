@@ -51,7 +51,7 @@ public class UserService {
                 .builder()
                 .kakaoId(userInfo.getKakaoId())
                 .nickname(userInfo.getNickname())
-                .imageSrc(userInfo.getImgSrc())
+                .imageSrc(userInfo.getImageSrc())
                 .kakaoAccessToken(kakaoAccessToken)
                 .kakaoRefreshToken(kakaoRefreshToken)
                 .build();

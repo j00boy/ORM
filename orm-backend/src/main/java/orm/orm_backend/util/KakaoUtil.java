@@ -88,7 +88,7 @@ public class KakaoUtil {
         return LoginResponseDto.builder()
                 .kakaoId(jsonNode.get("id").asLong())
                 .nickname(properties.get("nickname").asText())
-                .imgSrc(properties.get("thumbnail_image").asText())
+                .imageSrc(properties.get("thumbnail_image").asText())
                 .build();
     }
 }
