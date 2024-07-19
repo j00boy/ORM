@@ -32,7 +32,7 @@ public class UserService {
 
         LoginResponseDto userInfo = kakaoUtil.getKakaoUserInfo(accessToken);
         if (!isJoined(userInfo.getKakaoId())) {
-            User joineUser = join(userInfo, accessToken, refreshToken);
+            User joinUser = join(userInfo, accessToken, refreshToken);
         }
         return result;
     }
