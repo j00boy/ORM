@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 public class LoginResponseDto {
 
     private final Integer userId;
-    private final Long kakaoId;
     private final String accessToken;
     private final String imageSrc;
     private final String nickname;
