@@ -1,13 +1,16 @@
 package orm.orm_backend.dto.response;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Builder
 @RequiredArgsConstructor
+@Getter
 public class LoginResponseDto {
 
-    private final Long userId;
+    private final Integer userId;
+    private final Long kakaoId;
     private final String accessToken;
     private final String imgSrc;
     private final String nickname;
