@@ -3,6 +3,7 @@ package orm.orm_backend.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -12,8 +13,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import orm.orm_backend.dto.response.LoginResponseDto;
 
 @Component
+@Slf4j
 public class KakaoUtil {
 
     @Value("${kakao.redirect-uri}")
@@ -33,6 +36,7 @@ public class KakaoUtil {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
+        log.info("redirectURI={}", redirectUri);
         // HTTP body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
@@ -51,5 +55,40 @@ public class KakaoUtil {
         );
 
         return response.getBody();
+    }
+
+    public LoginResponseDto getKakaoUserInfo(String kakaoAccessToken) throws JsonProcessingException {
+        // Http Header 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + kakaoAccessToken);
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        // HTTP 요청 보내기
+        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(
+                "https://kapi.kakao.com/v2/user/me",
+                HttpMethod.POST,
+                kakaoUserInfoRequest,
+                String.class
+        );
+
+        // responseBody에 있는 정보 꺼내기
+        String responseBody = response.getBody();
+        return parseKakaoUserInfo(responseBody);
+    }
+
+    private LoginResponseDto parseKakaoUserInfo(String kakaoResponse) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(kakaoResponse);
+        JsonNode properties = jsonNode.get("properties");
+        log.info("kakaoResponse={}", kakaoResponse);
+        log.info("asText={}", properties.get("nickname").asText());
+        log.info("toString={}", properties.get("nickname").toString());
+        return LoginResponseDto.builder()
+                .userId(jsonNode.get("id").asLong())
+                .nickname(properties.get("nickname").asText())
+                .imgSrc(properties.get("thumbnail_image").asText())
+                .build();
     }
 }
