@@ -1,4 +1,4 @@
-package com.orm.data.local
+package com.orm.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -9,14 +9,16 @@ import com.orm.data.model.Trace
 
 @Dao
 interface TraceDao {
-    @Query("SELECT * FROM Trace")
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun getAllTraces(): List<Trace>
-
-    @Query("SELECT * FROM Trace WHERE id = :id")
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun getTrace(id: Int): Trace
+    suspend fun insertTrace(trace: Trace): Long
 
     @Delete
-    suspend fun removeTrace(trace: Trace): Int
+    suspend fun deleteTrace(trace: Trace): Int
+
+    @Query("SELECT * FROM trace")
+    suspend fun getAllTraces(): List<Trace>
+
+    @Query("SELECT * FROM trace WHERE id = :id")
+    suspend fun getTrace(id: Int): Trace
+
 }

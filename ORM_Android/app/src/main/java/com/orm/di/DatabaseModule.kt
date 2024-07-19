@@ -3,9 +3,9 @@ package com.orm.di
 import android.content.Context
 import androidx.room.Room
 import com.orm.data.local.AppDatabase
-import com.orm.data.local.ClubDao
-import com.orm.data.local.MemberDao
-import com.orm.data.local.TraceDao
+import com.orm.data.local.dao.ClubDao
+import com.orm.data.local.dao.MemberDao
+import com.orm.data.local.dao.TraceDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
