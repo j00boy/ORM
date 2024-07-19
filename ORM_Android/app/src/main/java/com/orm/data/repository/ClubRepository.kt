@@ -9,8 +9,7 @@ import retrofit2.Call
 import javax.inject.Inject
 
 class ClubRepository @Inject constructor(
-    private val clubService: ClubService,
-    private val clubDao: ClubDao,
+    private val clubService: ClubService
 ) {
     suspend fun getClubs(): List<Club> {
         return withContext(Dispatchers.IO) {
@@ -26,7 +25,7 @@ class ClubRepository @Inject constructor(
                     emptyList()
                 }
             } else {
-                clubDao.getAllClubs()
+                emptyList()
             })
         }
     }
