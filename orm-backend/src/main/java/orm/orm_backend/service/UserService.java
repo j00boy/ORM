@@ -8,6 +8,7 @@ import orm.orm_backend.entity.User;
 import orm.orm_backend.entity.UserStatus;
 import orm.orm_backend.repository.UserRepository;
 import orm.orm_backend.util.KakaoUtil;
+import orm.orm_backend.vo.KakaoInfoVo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,18 +20,17 @@ public class UserService {
 
     private final KakaoUtil kakaoUtil;
     private final UserRepository userRepository;
-    private final String ACCESS_TOKEN = "access_token";
-    private final String REFRESH_TOKEN = "refresh_token";
+
 
     public User kakaoLogin(String kakaoTokens) throws JsonProcessingException {
-        String accessToken = kakaoUtil.extractToken(kakaoTokens, ACCESS_TOKEN);
-        String refreshToken = kakaoUtil.extractToken(kakaoTokens, REFRESH_TOKEN);
-
-        LoginResponseDto userInfo = kakaoUtil.getKakaoUserInfo(accessToken);
-        if (!isJoined(userInfo.getKakaoId())) {
-            join(userInfo, accessToken, refreshToken);
+        KakaoInfoVo kakaoInfo = kakaoUtil.getKakaoUserInfo(kakaoTokens);
+        
+        if (!isJoined(kakaoInfo.getKakaoId())) {
+            join(kakaoInfo);
         }
-        return userRepository.findByKakaoId(userInfo.getKakaoId()).get(); // 가입 절차를 밟았기 때문에 nullPointerException이 발생하지 않음이 보장됨
+
+        // 가입 절차를 밟았기 때문에 nullPointerException이 발생하지 않음이 보장됨
+        return userRepository.findByKakaoId(kakaoInfo.getKakaoId()).get();
     }
 
     private boolean isJoined(Long kakaoId) {
@@ -42,14 +42,14 @@ public class UserService {
         return user.get().getIsActive() == UserStatus.Y;
     }
 
-    private User join(LoginResponseDto userInfo, String kakaoAccessToken, String kakaoRefreshToken) {
+    private User join(KakaoInfoVo kakaoInfo) {
         User user = User
                 .builder()
-                .kakaoId(userInfo.getKakaoId())
-                .nickname(userInfo.getNickname())
-                .imageSrc(userInfo.getImageSrc())
-                .kakaoAccessToken(kakaoAccessToken)
-                .kakaoRefreshToken(kakaoRefreshToken)
+                .kakaoId(kakaoInfo.getKakaoId())
+                .nickname(kakaoInfo.getNickname())
+                .imageSrc(kakaoInfo.getImageSrc())
+                .kakaoAccessToken(kakaoInfo.getAccessToken())
+                .kakaoRefreshToken(kakaoInfo.getRefreshToken())
                 .build();
         return userRepository.save(user);
     }
