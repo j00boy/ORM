@@ -1,11 +1,14 @@
 package com.orm.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import com.orm.databinding.FragmentHomeBinding
+import com.orm.ui.MountainSearchActivity
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -18,6 +21,12 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        val buttonMountainSearch : ImageButton = binding.imgSearch
+        buttonMountainSearch.setOnClickListener {
+            val targetActivityClass = MountainSearchActivity::class.java
+            val intent = Intent(requireActivity(), targetActivityClass)
+            startActivity(intent)
+        }
         return root
     }
 
