@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -17,6 +18,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    private String nickname;
+
+    private String imageSrc;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -31,12 +36,17 @@ public class User {
     @Column(nullable = false)
     private String kakaoRefreshToken;
 
+    private Long kakaoId;
+
     public void delete() {
         this.isActive = UserStatus.N;
     }
 
     @Builder
-    public User(String kakaoAccessToken, String kakaoRefreshToken) {
+    public User(Long kakaoId, String nickname, String imageSrc, String kakaoAccessToken, String kakaoRefreshToken) {
+        this.kakaoId = kakaoId;
+        this.nickname = nickname;
+        this.imageSrc = imageSrc;
         this.kakaoAccessToken = kakaoAccessToken;
         this.kakaoRefreshToken = kakaoRefreshToken;
     }

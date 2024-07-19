@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -34,8 +35,12 @@ public class Club {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
+    private List<Member> members;
+
     @Builder
-    public Club(User manager, String clubName, String description, String imageSrc) {
+    public Club(User manager, Mountain mountain, String clubName, String description, String imageSrc) {
+        this.mountain = mountain;
         this.manager = manager;
         this.clubName = clubName;
         this.description = description;
