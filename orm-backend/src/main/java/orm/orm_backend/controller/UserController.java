@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import orm.orm_backend.dto.response.LoginResponseDto;
 import orm.orm_backend.entity.User;
 import orm.orm_backend.service.UserService;
 import orm.orm_backend.util.JwtUtil;
@@ -43,14 +44,14 @@ public class UserController {
     }
 
     @GetMapping("/login/kakao/auth")
-    public ResponseEntity<User> kakaoLogin(String code) throws JsonProcessingException {
+    public ResponseEntity<LoginResponseDto> kakaoLogin(String code) throws JsonProcessingException {
         String kakaoTokens = kakaoUtil.getKakaoTokens(code);
-        User user = userService.kakaoLogin(kakaoTokens);
+        LoginResponseDto loginResponseDto = userService.kakaoLogin(kakaoTokens);
         HttpHeaders headers = new HttpHeaders();
-        headers.add("accessToken", jwtUtil.createAccessToken(user.getId()));
+        headers.add("accessToken", jwtUtil.createAccessToken(loginResponseDto.getUserId()));
 
         return ResponseEntity.ok()
                 .headers(headers)
-                .body(user);
+                .body(loginResponseDto);
     }
 }
