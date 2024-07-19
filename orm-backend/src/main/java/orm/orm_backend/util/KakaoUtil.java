@@ -39,7 +39,6 @@ public class KakaoUtil {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        log.info("redirectURI={}", redirectUri);
         // HTTP body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
@@ -88,9 +87,6 @@ public class KakaoUtil {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(kakaoResponse);
         JsonNode properties = jsonNode.get("properties");
-        log.info("kakaoResponse={}", kakaoResponse);
-        log.info("asText={}", properties.get("nickname").asText());
-        log.info("toString={}", properties.get("nickname").toString());
         return KakaoInfoVo.builder()
                 .kakaoId(jsonNode.get("id").asLong())
                 .nickname(properties.get("nickname").asText())
