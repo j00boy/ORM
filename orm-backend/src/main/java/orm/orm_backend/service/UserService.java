@@ -3,6 +3,7 @@ package orm.orm_backend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import orm.orm_backend.dto.response.LoginResponseDto;
 import orm.orm_backend.util.KakaoUtil;
 
 import java.util.HashMap;
@@ -23,6 +24,8 @@ public class UserService {
 
         result.put(ACCESS_TOKEN, accessToken);
         result.put(REFRESH_TOKEN, refreshToken);
+
+        LoginResponseDto userInfo = kakaoUtil.getKakaoUserInfo(accessToken);
 
         return result;
     }
