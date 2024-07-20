@@ -20,7 +20,11 @@ class ClubViewModel @Inject constructor(
     private val _clubs = MutableLiveData<List<Club>>()
     val clubs: LiveData<List<Club>> get() = _clubs
 
-    fun getClubs() {
+    init {
+        getClubs()
+    }
+
+    private fun getClubs() {
         viewModelScope.launch {
             val clubs = clubRepository.getClubs()
             _clubs.postValue(clubs)

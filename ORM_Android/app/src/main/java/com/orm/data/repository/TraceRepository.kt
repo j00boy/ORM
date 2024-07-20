@@ -9,7 +9,7 @@ import javax.inject.Inject
 class TraceRepository @Inject constructor(
     private val traceDao: TraceDao,
 ) {
-    suspend fun getTraces(): List<Trace> {
+    suspend fun getAllTraces(): List<Trace> {
         return withContext(Dispatchers.IO) {
             traceDao.getAllTraces()
         }
@@ -18,6 +18,18 @@ class TraceRepository @Inject constructor(
     suspend fun insertTrace(trace: Trace) {
         withContext(Dispatchers.IO) {
             traceDao.insertTrace(trace)
+        }
+    }
+
+    suspend fun deleteTrace(trace: Trace) {
+        withContext(Dispatchers.IO) {
+            traceDao.deleteTrace(trace)
+        }
+    }
+
+    suspend fun getTrace(id: Int): Trace {
+        return withContext(Dispatchers.IO) {
+            traceDao.getTrace(id)
         }
     }
 }

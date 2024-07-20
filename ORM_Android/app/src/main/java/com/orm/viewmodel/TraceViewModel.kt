@@ -20,16 +20,45 @@ class TraceViewModel @Inject constructor(
     private val _traces = MutableLiveData<List<Trace>>()
     val traces: LiveData<List<Trace>> get() = _traces
 
-    fun getTraces() {
+    private val _trace = MutableLiveData<Trace>()
+    val trace: LiveData<Trace> get() = _trace
+
+    init {
+        getTraces()
+    }
+
+    private fun getTraces() {
         viewModelScope.launch {
             val traces = traceDao.getAllTraces()
             _traces.postValue(traces)
         }
     }
 
+    fun getTrace(id: Int) {
+        viewModelScope.launch {
+            val trace = traceDao.getTrace(id)
+            _trace.postValue(trace)
+        }
+    }
+
     fun insertTrace(trace: Trace) {
         viewModelScope.launch {
             traceDao.insertTrace(trace)
+
+            val updateTraces = _traces.value?.toMutableList() ?: mutableListOf()
+            updateTraces.add(trace)
+            _traces.postValue(updateTraces)
+        }
+    }
+
+    fun deleteTrace(trace: Trace) {
+        viewModelScope.launch {
+            traceDao.deleteTrace(trace)
+
+            val updateTraces = _traces.value?.toMutableList()?.filter {
+                it.id != trace.id
+            } ?: mutableListOf()
+            _traces.postValue(updateTraces)
         }
     }
 }
