@@ -1,5 +1,6 @@
 package com.orm.di
 
+import com.orm.BuildConfig
 import com.orm.data.api.ClubService
 import com.orm.data.api.MountainService
 import com.orm.data.api.TraceService
@@ -17,9 +18,9 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideApiService(): Retrofit {
+    fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://70.12.247.148:8080/")
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
