@@ -70,4 +70,11 @@ public class User {
                 .nickname(nickname)
                 .build();
     }
+
+    public void refreshKakaoTokens(String kakaoAccessToken, String kakaoRefreshToken) {
+        this.kakaoAccessToken = kakaoAccessToken;
+        if (kakaoRefreshToken != null) { // kakaoToken은 refresh되지 않을 수 있음
+            this.kakaoRefreshToken = kakaoRefreshToken;
+        }
+    }
 }
