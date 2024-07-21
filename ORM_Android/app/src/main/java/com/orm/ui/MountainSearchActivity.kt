@@ -26,7 +26,6 @@ class MountainSearchActivity : AppCompatActivity() {
             insets
         }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_mountain_search)
-<<<<<<< Updated upstream
 
 
         val rvBoard = binding.recyclerView
@@ -82,8 +81,6 @@ class MountainSearchActivity : AppCompatActivity() {
         rvBoard.adapter = adapter
         rvBoard.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-=======
         setSupportActionBar(binding.toolbar)
->>>>>>> Stashed changes
     }
 }

@@ -2,18 +2,9 @@ package com.orm.ui
 
 import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.NavHostFragment
@@ -23,7 +14,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.orm.R
 import com.orm.databinding.ActivityMainBinding
 import com.orm.util.PermissionManager
-import com.orm.viewmodel.TraceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -53,11 +43,7 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         NavigationUI.setupWithNavController(binding.navView, navController)
-<<<<<<< Updated upstream
-=======
 
-//        init()
->>>>>>> Stashed changes
     }
 
     private fun moveToLoginActivity() {
