@@ -83,6 +83,34 @@ public class KakaoUtil {
         return parseKakaoUserInfo(responseBody, kakaoAccessToken, kakaoRefreshToken);
     }
 
+    public KakaoInfoVo refreshAccessToken(String kakaoRefreshToken) throws JsonProcessingException {
+        // Http Header 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        // HTTP body 생성
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "refresh_token");
+        body.add("client_id", appKey);
+        body.add("refresh_token", kakaoRefreshToken);
+        log.info("body={}", body);
+        // HTTP 요청 보내기
+        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(body, headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(
+                "https://kauth.kakao.com/oauth/token",
+                HttpMethod.POST,
+                kakaoUserInfoRequest,
+                String.class
+        );
+
+        String responseBody = response.getBody();
+        String kakaoAccessToken = extractToken(responseBody, ACCESS_TOKEN);
+        kakaoRefreshToken = extractToken(responseBody, REFRESH_TOKEN);
+
+        return parseKakaoUserInfo(responseBody, kakaoAccessToken, kakaoRefreshToken);
+    }
+
     private KakaoInfoVo parseKakaoUserInfo(String kakaoResponse, String accessToken, String refreshToken) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(kakaoResponse);
