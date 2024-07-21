@@ -31,7 +31,10 @@ public class KakaoUtil {
     public String extractToken(String kakaoResponse, String tokenType) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(kakaoResponse);
-        return jsonNode.get(tokenType).asText();
+        if (jsonNode.has(tokenType)) {
+            return jsonNode.get(tokenType).asText();
+        }
+        return null; // refreshToken의 경우, 만료일이 1달 이내인 경우에만 갱신되기 때문에 널일 수 있다.
     }
 
     public String getKakaoTokens(String code) {
@@ -93,7 +96,6 @@ public class KakaoUtil {
         body.add("grant_type", "refresh_token");
         body.add("client_id", appKey);
         body.add("refresh_token", kakaoRefreshToken);
-        log.info("body={}", body);
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(body, headers);
         RestTemplate restTemplate = new RestTemplate();
