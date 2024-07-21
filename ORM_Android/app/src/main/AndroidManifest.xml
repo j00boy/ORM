@@ -24,7 +24,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Orm"
+        android:theme="@style/Base.Theme.Orm"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
