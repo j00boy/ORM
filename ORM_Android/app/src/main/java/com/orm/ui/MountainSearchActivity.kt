@@ -32,14 +32,42 @@ class MountainSearchActivity : AppCompatActivity() {
         val adapter = ItemMainAdapter(
             listOf(
                 RecyclerViewItem(
-                    imageSrc = "",
-                    title = "title",
-                    subTitle = "subTitle"
+                    imageSrc = "https://img.tenping.kr/Content/Upload/Images/2023021311020002_Dis_20230223085848.jpg?RS=180x120",
+                    title = "안녕하세요.",
+                    subTitle = "반갑습니다."
                 ),
                 RecyclerViewItem(
-                    imageSrc = "",
-                    title = "title",
-                    subTitle = "subTitle"
+                    imageSrc = "http://via.placeholder.com/300.png",
+                    title = "asdfghjkl",
+                    subTitle = "iuytre1243"
+                ),                RecyclerViewItem(
+                    imageSrc = "https://img.tenping.kr/Content/Upload/Images/2023021311020002_Dis_20230223085848.jpg?RS=180x120",
+                    title = "안녕하세요.",
+                    subTitle = "반갑습니다."
+                ),
+                RecyclerViewItem(
+                    imageSrc = "http://via.placeholder.com/300.png",
+                    title = "asdfghjkl",
+                    subTitle = "iuytre1243"
+                ),                RecyclerViewItem(
+                    imageSrc = "https://img.tenping.kr/Content/Upload/Images/2023021311020002_Dis_20230223085848.jpg?RS=180x120",
+                    title = "안녕하세요.",
+                    subTitle = "반갑습니다."
+                ),
+                RecyclerViewItem(
+                    imageSrc = "http://via.placeholder.com/300.png",
+                    title = "asdfghjkl",
+                    subTitle = "iuytre1243"
+                ),
+                RecyclerViewItem(
+                    imageSrc = "https://img.tenping.kr/Content/Upload/Images/2023021311020002_Dis_20230223085848.jpg?RS=180x120",
+                    title = "안녕하세요.",
+                    subTitle = "반갑습니다."
+                ),
+                RecyclerViewItem(
+                    imageSrc = "http://via.placeholder.com/300.png",
+                    title = "asdfghjkl",
+                    subTitle = "iuytre1243"
                 ),
             )
         )
