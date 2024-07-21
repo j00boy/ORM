@@ -27,4 +27,9 @@ class JwtUtilTest {
         String otherServiceToken = "askdjsflk32jlvksdml2k2l3";
         assertThat(jwtUtil.checkToken(otherServiceToken)).isFalse();
     }
+
+    @Test
+    void extractUserIdFromAccessTokenTest() {
+        assertThat(jwtUtil.getUserIdFromAccessToken(accessToken)).isEqualTo(userId);
+    }
 }
