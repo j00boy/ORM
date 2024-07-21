@@ -28,10 +28,11 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
 
-    <FrameLayout
+    <fragment
         android:id="@+id/info"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:name="com.orm.ui.fragment.HomeInfoFragment"
         app:layout_constraintBottom_toTopOf="@id/guideline_horizontal_center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,6 +70,7 @@
         app:layout_constraintTop_toBottomOf="@+id/guideline_horizontal_bottom" />
 
     <ImageButton
+        android:id="@+id/img_trace"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:src="@drawable/sample"
@@ -89,6 +91,7 @@
         app:layout_constraintTop_toBottomOf="@+id/guideline_horizontal_bottom" />
 
     <ImageButton
+        android:id="@+id/img_club"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:src="@drawable/sample"

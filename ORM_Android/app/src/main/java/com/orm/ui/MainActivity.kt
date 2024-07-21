@@ -53,6 +53,11 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         NavigationUI.setupWithNavController(binding.navView, navController)
+<<<<<<< Updated upstream
+=======
+
+//        init()
+>>>>>>> Stashed changes
     }
 
     private fun moveToLoginActivity() {

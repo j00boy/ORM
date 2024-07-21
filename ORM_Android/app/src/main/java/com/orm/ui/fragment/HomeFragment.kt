@@ -7,8 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.fragment.app.FragmentManager
+import com.orm.R
 import com.orm.databinding.FragmentHomeBinding
+import com.orm.ui.ClubActivity
 import com.orm.ui.MountainSearchActivity
+import com.orm.ui.TraceActivity
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -27,6 +31,22 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireActivity(), targetActivityClass)
             startActivity(intent)
         }
+
+        val buttonTrace : ImageButton = binding.imgTrace
+        buttonTrace.setOnClickListener {
+            val targetActivityClass = TraceActivity::class.java
+            val intent = Intent(requireActivity(), targetActivityClass)
+            startActivity(intent)
+        }
+
+        val buttonClub : ImageButton = binding.imgClub
+        buttonClub.setOnClickListener {
+            val targetActivityClass = ClubActivity::class.java
+            val intent = Intent(requireActivity(), targetActivityClass)
+            startActivity(intent)
+        }
+
+
         return root
     }
 
