@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import orm.orm_backend.entity.User;
 import orm.orm_backend.vo.KakaoInfoVo;
 
 @Component
@@ -86,7 +87,7 @@ public class KakaoUtil {
         return parseKakaoUserInfo(responseBody, kakaoAccessToken, kakaoRefreshToken);
     }
 
-    public KakaoInfoVo refreshAccessToken(String kakaoRefreshToken) throws JsonProcessingException {
+    public void refreshAccessToken(String kakaoRefreshToken, User user) throws JsonProcessingException {
         // Http Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -110,7 +111,7 @@ public class KakaoUtil {
         String kakaoAccessToken = extractToken(responseBody, ACCESS_TOKEN);
         kakaoRefreshToken = extractToken(responseBody, REFRESH_TOKEN);
 
-        return parseKakaoUserInfo(responseBody, kakaoAccessToken, kakaoRefreshToken);
+        user.refreshKakaoTokens(kakaoAccessToken, kakaoRefreshToken);
     }
 
     private KakaoInfoVo parseKakaoUserInfo(String kakaoResponse, String accessToken, String refreshToken) throws JsonProcessingException {
