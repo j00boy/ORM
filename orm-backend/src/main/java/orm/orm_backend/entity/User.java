@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import orm.orm_backend.dto.response.LoginResponseDto;
+import orm.orm_backend.vo.KakaoInfoVo;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,6 +41,14 @@ public class User {
     private String kakaoRefreshToken;
 
     private Long kakaoId;
+
+    public User(KakaoInfoVo kakaoInfo) {
+        this.kakaoId = kakaoInfo.getKakaoId();
+        this.nickname = kakaoInfo.getNickname();
+        this.imageSrc = kakaoInfo.getImageSrc();
+        this.kakaoAccessToken = kakaoInfo.getAccessToken();
+        this.kakaoRefreshToken = kakaoInfo.getRefreshToken();
+    }
 
     public void delete() {
         this.isActive = UserStatus.N;

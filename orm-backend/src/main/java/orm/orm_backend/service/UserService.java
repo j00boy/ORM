@@ -42,14 +42,7 @@ public class UserService {
     }
 
     private User join(KakaoInfoVo kakaoInfo) {
-        User user = User
-                .builder()
-                .kakaoId(kakaoInfo.getKakaoId())
-                .nickname(kakaoInfo.getNickname())
-                .imageSrc(kakaoInfo.getImageSrc())
-                .kakaoAccessToken(kakaoInfo.getAccessToken())
-                .kakaoRefreshToken(kakaoInfo.getRefreshToken())
-                .build();
+        User user = new User(kakaoInfo);
         return userRepository.save(user);
     }
 }
