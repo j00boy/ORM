@@ -1,35 +1,48 @@
 package com.orm.ui
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
-import android.widget.ImageButton
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.orm.R
-import com.orm.data.model.Trace
 import com.orm.databinding.ActivityMainBinding
+import com.orm.util.PermissionManager
 import com.orm.viewmodel.TraceViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val traceViewModel: TraceViewModel by viewModels()
+    private lateinit var permissionManager: PermissionManager
+
+    private val permissions = arrayOf(
+        Manifest.permission.CAMERA,
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_NETWORK_STATE,
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         installSplashScreen()
+        checkPermissions()
         moveToLoginActivity()
         getFirebaseToken()
 
@@ -40,45 +53,6 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         NavigationUI.setupWithNavController(binding.navView, navController)
-
-//        init()
-    }
-
-
-    private fun init() {
-        traceViewModel.insertTrace(
-            Trace(
-                1,
-                "test",
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                1.0,
-                1,
-                "test",
-                listOf(1, 2, 3),
-                1
-            )
-        )
-        Log.e("traceViewModel", "InsertTraces()")
-
-        traceViewModel.traces.observe(this) {
-            Log.e("traceViewModel", "traces: $it")
-        }
-
-        traceViewModel.getTrace(1)
-        traceViewModel.trace.observe(this) {
-            Log.e("traceViewModel", "getTrace(1): $it")
-        }
-
-        traceViewModel.trace.observe(this) {
-            traceViewModel.deleteTrace(it)
-        }
-        Log.e("traceViewModel", "deleteTraces()")
-
-        traceViewModel.traces.observe(this) {
-            Log.e("traceViewModel", "getTraces(): $it")
-        }
     }
 
     private fun moveToLoginActivity() {
@@ -105,6 +79,12 @@ class MainActivity : AppCompatActivity() {
     // TODO : 토큰 체크 기능 구현
     private fun checkAccessToken(): Boolean {
         return true
+    }
+
+    private fun checkPermissions() {
+        permissionManager = PermissionManager(this)
+        permissionManager.initializeLauncher()
+        permissionManager.checkAndRequestPermissions(permissions)
     }
 }
 
