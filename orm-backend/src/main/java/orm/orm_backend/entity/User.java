@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import orm.orm_backend.dto.response.LoginResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,5 +52,13 @@ public class User {
         this.imageSrc = imageSrc;
         this.kakaoAccessToken = kakaoAccessToken;
         this.kakaoRefreshToken = kakaoRefreshToken;
+    }
+
+    public LoginResponseDto toLoginResponseDto() {
+        return LoginResponseDto.builder()
+                .userId(id)
+                .imageSrc(imageSrc)
+                .nickname(nickname)
+                .build();
     }
 }

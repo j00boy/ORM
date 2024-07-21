@@ -29,11 +29,7 @@ public class UserService {
 
         // 가입 절차를 밟았기 때문에 nullPointerException이 발생하지 않음이 보장됨
         User user = userRepository.findByKakaoId(kakaoInfo.getKakaoId()).get();
-        return LoginResponseDto.builder()
-                .userId(user.getId())
-                .imageSrc(user.getImageSrc())
-                .nickname(user.getNickname())
-                .build();
+        return user.toLoginResponseDto();
     }
 
     private boolean isJoined(Long kakaoId) {
