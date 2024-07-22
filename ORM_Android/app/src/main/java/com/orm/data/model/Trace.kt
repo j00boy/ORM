@@ -9,12 +9,12 @@ import java.util.Date
 data class Trace(
     @PrimaryKey val id: Int,
     val title: String,
-    val date: LocalDateTime,
+    val hikingDate: LocalDateTime,
     val hikingEndedAt: LocalDateTime,
     val hikingStartedAt: LocalDateTime,
     val maxHeight: Double,
     val mountainId: Int,
     val mountainName: String,
-    val points: List<Int>,
-    val routeId: Int
+    val coordinates: List<Point>,
+    val trailId: Int
 )
