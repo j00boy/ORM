@@ -1,10 +1,11 @@
 package orm.orm_backend.dto.response;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import orm.orm_backend.entity.Club;
 
-@Data
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ClubResponseDto {
     private Integer id;
@@ -22,7 +23,7 @@ public class ClubResponseDto {
     private Boolean isMember;
     private Boolean isApplied;
 
-    public static ClubResponseDto toDto(Club club, Boolean isMember, Boolean isApplied) {
+    public ClubResponseDto toDto(Club club, Boolean isMember, Boolean isApplied) {
         return ClubResponseDto.builder()
                 .id(club.getId())
                 .managerId(club.getManager().getId())
