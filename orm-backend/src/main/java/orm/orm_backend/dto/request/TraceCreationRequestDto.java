@@ -10,5 +10,5 @@ public class TraceCreationRequestDto {
     String title;
     Integer mountainId;
     Date hikingDate;
-    int routeId;
+    int trailId;
 }
