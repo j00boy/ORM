@@ -8,6 +8,7 @@ import orm.orm_backend.dto.response.LoginResponseDto;
 import orm.orm_backend.entity.User;
 import orm.orm_backend.entity.UserStatus;
 import orm.orm_backend.exception.UnAuthorizedException;
+import orm.orm_backend.exception.UserWithdrawalException;
 import orm.orm_backend.repository.UserRepository;
 import orm.orm_backend.util.JwtUtil;
 import orm.orm_backend.util.KakaoUtil;
@@ -48,6 +49,14 @@ public class UserService {
         kakaoUtil.refreshAccessToken(user.getKakaoRefreshToken(), user); // 추후 리프레시 토큰 만료시 로그아웃 처리 로직 추가
 
         return user.toLoginResponseDto();
+    }
+
+    public User findUserById(Integer userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent() && user.get().isActiveMember()) {
+            return user.get();
+        }
+        throw new UserWithdrawalException();
     }
 
     private boolean isJoined(Long kakaoId) {
