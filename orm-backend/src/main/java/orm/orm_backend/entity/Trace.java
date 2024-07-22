@@ -71,4 +71,9 @@ public class Trace extends BaseEntity {
         this.title = traceRequestDto.getTitle();
         this.hikingDate = traceRequestDto.getHikingDate();
     }
+
+    public boolean isOwner(Integer userId) {
+        Integer ownerId = user.getId();
+        return ownerId != null && ownerId == userId;
+    }
 }

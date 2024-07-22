@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import orm.orm_backend.dto.request.TraceRequestDto;
 import orm.orm_backend.dto.response.TraceResponseDto;
 import orm.orm_backend.service.TraceService;
@@ -41,5 +38,13 @@ public class TraceController {
     @PatchMapping("/update")
     public ResponseEntity<TraceResponseDto> updateBeforeMeasure(TraceRequestDto traceRequestDto, Integer traceId) {
         return ResponseEntity.ok(traceService.updateTrace(traceId, traceRequestDto));
+    }
+
+    @DeleteMapping("/{traceId}")
+    public ResponseEntity<Void> deleteTrace(HttpServletRequest request, @PathVariable Integer traceId) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        traceService.deleteTrace(traceId, userId);
+        return ResponseEntity.noContent().build();
     }
 }

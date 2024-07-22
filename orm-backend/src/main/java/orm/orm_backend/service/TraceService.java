@@ -10,6 +10,7 @@ import orm.orm_backend.entity.Mountain;
 import orm.orm_backend.entity.Trace;
 import orm.orm_backend.entity.Trail;
 import orm.orm_backend.entity.User;
+import orm.orm_backend.exception.UnAuthorizedException;
 import orm.orm_backend.repository.TraceRepository;
 
 @Service
@@ -43,5 +44,13 @@ public class TraceService {
         Trace trace = traceRepository.findById(traceeId).orElseThrow(NoResultException::new);
         trace.update(traceRequestDto);
         return trace.toResponseDto();
+    }
+
+    public void deleteTrace(Integer traceId, Integer userId) {
+        Trace trace = traceRepository.findById(traceId).orElseThrow(NoResultException::new);
+        if (!trace.isOwner(userId)) {
+            throw new UnAuthorizedException();
+        }
+        traceRepository.delete(trace);
     }
 }
