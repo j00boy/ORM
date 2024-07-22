@@ -8,5 +8,5 @@ import orm.orm_backend.entity.Member;
 import java.util.Optional;
 
 public interface ApplicantRepository extends JpaRepository<Applicant, Integer> {
-    Optional<Applicant> findByClubIdAndUserId(Integer clubId, Integer userId);
+    Optional<Applicant> findByUserId(Integer userId);
 }
