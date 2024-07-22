@@ -27,15 +27,14 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 
 class UserRepository @Inject constructor(
     private val userService: UserService,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) {
     suspend fun loginKakao(code: String): User {
         return withContext(Dispatchers.IO) {
             val response = userService.loginKakao(code).execute()
 
-            Log.d("UserRepository", "Login response: ${response.headers().get("accessToken").toString()}")
             if (response.isSuccessful) {
-                saveAccessToken(response.headers()["accessToken"] ?: "")
+                saveAccessToken(response.headers().get("accessToken").toString())
                 response.body() ?: throw Exception("Login failed")
             } else {
                 throw Exception("Login failed")
@@ -48,6 +47,7 @@ class UserRepository @Inject constructor(
             val response = userService.loginAuto().execute()
 
             if (response.isSuccessful) {
+                saveAccessToken(response.headers().get("accessToken").toString())
                 response.body() ?: throw Exception("Login failed")
             } else {
                 throw Exception("Login failed")

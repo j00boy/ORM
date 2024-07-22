@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.firebase.messaging.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -79,8 +80,9 @@ dependencies {
     // room
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
-    kapt(libs.androidx.room.compiler)
+    annotationProcessor(libs.androidx.room.compiler)
 
+    // navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
@@ -92,20 +94,13 @@ dependencies {
     implementation(libs.firebase.analytics)
 
     // glide
-    implementation (libs.glide)
+    implementation(libs.glide)
     annotationProcessor("com.github.bumptech.glide:compiler:4.11.0")
-    
-
-    annotationProcessor(libs.androidx.room.compiler)
 
     // kakao login
     implementation(libs.v2.user)
 
-    //okHttpclient, json
-    implementation(libs.okhttp)
-    implementation(libs.gson)
-
     // datastore
-    implementation (libs.androidx.datastore.preferences)
-    implementation (libs.androidx.datastore.preferences.core)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.preferences.core)
 }

@@ -30,8 +30,22 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val user = userRepository.loginKakao(code)
-                Log.d("UserViewModel", "User: $user")
                 _user.postValue(user)
+                Log.d("UserViewModel", "User: $user")
+                getAccessToken()
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "Login failed: ${e.message}", e)
+            }
+        }
+    }
+
+    fun loginAuto() {
+        viewModelScope.launch {
+            try {
+                val user = userRepository.loginAuto()
+                _user.postValue(user)
+                Log.d("UserViewModel", "User: $user")
+                getAccessToken()
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Login failed: ${e.message}", e)
             }

@@ -33,6 +33,8 @@
         android:id="@+id/btn_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        android:paddingHorizontal="24dp"
         android:contentDescription="카카오 로그인 버튼"
         android:scaleType="fitCenter"
         android:src="@drawable/kakao_login_large_wide"

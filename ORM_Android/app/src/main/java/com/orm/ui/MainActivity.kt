@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
@@ -14,12 +15,14 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.orm.R
 import com.orm.databinding.ActivityMainBinding
 import com.orm.util.PermissionManager
+import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var permissionManager: PermissionManager
+    private val userViewModel: UserViewModel by viewModels()
 
     private val permissions = arrayOf(
         Manifest.permission.CAMERA,
@@ -32,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         installSplashScreen()
-        moveToLoginActivity()
         checkPermissions()
         getFirebaseToken()
 
@@ -44,18 +46,12 @@ class MainActivity : AppCompatActivity() {
 
         NavigationUI.setupWithNavController(binding.navView, navController)
 
-    }
+        userViewModel.user.observe(this) {
 
-    private fun moveToLoginActivity() {
-        if (checkAccessToken()) {
-            return
         }
-        val intent = Intent(this@MainActivity, LoginActivity::class.java)
-        startActivity(intent)
     }
 
-    // TODO : Firebase Token 서버에 전송 / Login Activity 이전
-    // Firebase 토큰 가져오기
+    // TODO : Firebase Token 서버에 전송
     private fun getFirebaseToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
@@ -66,11 +62,6 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-
-    // TODO : 토큰 체크 기능 구현
-    private fun checkAccessToken(): Boolean {
-        return false
-    }
 
     private fun checkPermissions() {
         permissionManager = PermissionManager(this)
