@@ -27,4 +27,5 @@ public class Member extends BaseEntity {
         this.user = user;
         this.club = club;
     }
+
 }
