@@ -20,7 +20,7 @@ public class Club extends BaseEntity {
     @JoinColumn
     private User manager;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Mountain mountain;
 
