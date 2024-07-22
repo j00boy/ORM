@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import orm.orm_backend.entity.User;
 import orm.orm_backend.vo.KakaoInfoVo;
 
 @Component
@@ -31,7 +32,10 @@ public class KakaoUtil {
     public String extractToken(String kakaoResponse, String tokenType) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(kakaoResponse);
-        return jsonNode.get(tokenType).asText();
+        if (jsonNode.has(tokenType)) {
+            return jsonNode.get(tokenType).asText();
+        }
+        return null; // refreshToken의 경우, 만료일이 1달 이내인 경우에만 갱신되기 때문에 널일 수 있다.
     }
 
     public String getKakaoTokens(String code) {
@@ -81,6 +85,33 @@ public class KakaoUtil {
         // responseBody에 있는 정보 꺼내기
         String responseBody = response.getBody();
         return parseKakaoUserInfo(responseBody, kakaoAccessToken, kakaoRefreshToken);
+    }
+
+    public void refreshAccessToken(String kakaoRefreshToken, User user) throws JsonProcessingException {
+        // Http Header 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        // HTTP body 생성
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "refresh_token");
+        body.add("client_id", appKey);
+        body.add("refresh_token", kakaoRefreshToken);
+        // HTTP 요청 보내기
+        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(body, headers);
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(
+                "https://kauth.kakao.com/oauth/token",
+                HttpMethod.POST,
+                kakaoUserInfoRequest,
+                String.class
+        );
+
+        String responseBody = response.getBody();
+        String kakaoAccessToken = extractToken(responseBody, ACCESS_TOKEN);
+        kakaoRefreshToken = extractToken(responseBody, REFRESH_TOKEN);
+
+        user.refreshKakaoTokens(kakaoAccessToken, kakaoRefreshToken);
     }
 
     private KakaoInfoVo parseKakaoUserInfo(String kakaoResponse, String accessToken, String refreshToken) throws JsonProcessingException {

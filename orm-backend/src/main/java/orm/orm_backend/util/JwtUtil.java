@@ -65,6 +65,11 @@ public class JwtUtil {
         }
     }
 
+    public Integer getUserIdFromAccessToken(String accessToken) {
+        Claims claims = Jwts.parser().setSigningKey(generateKey()).parseClaimsJws(accessToken).getBody();
+        return (Integer) claims.get("userId");
+    }
+
     private byte[] generateKey() {
         byte[] key = null;
         try {
