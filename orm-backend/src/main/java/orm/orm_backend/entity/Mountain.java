@@ -18,7 +18,7 @@ public class Mountain {
     private String mountainName;
 
     @Column(nullable = false)
-    private Integer mountainCode;
+    private String mountainCode;
 
     private String address;
 
@@ -29,7 +29,7 @@ public class Mountain {
     private String description;
 
     @Builder
-    public Mountain(String mountainName, Integer mountainCode, String address, String imageSrc, Double altitude, String description) {
+    public Mountain(String mountainName, String mountainCode, String address, String imageSrc, Double altitude, String description) {
         this.mountainName = mountainName;
         this.mountainCode = mountainCode;
         this.address = address;
