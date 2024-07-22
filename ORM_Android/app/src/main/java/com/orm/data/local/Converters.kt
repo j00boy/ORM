@@ -3,6 +3,8 @@ package com.orm.data.local
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.orm.data.model.Point
+import com.orm.data.model.Trace
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -52,6 +54,36 @@ class Converters {
     fun fromStringListToString(list: List<String>?): String? {
         return list?.let {
             gson.toJson(it)
+        }
+    }
+
+    @TypeConverter
+    fun fromTraceListToString(list: List<Trace>?): String? {
+        return list?.let {
+            gson.toJson(it)
+        }
+    }
+
+    @TypeConverter
+    fun fromStringToTraceList(value: String?): List<Trace>? {
+        val listType = object : TypeToken<List<Trace>>() {}.type
+        return value?.let {
+            gson.fromJson(it, listType)
+        }
+    }
+
+    @TypeConverter
+    fun fromPointListToString(list: List<Point>?): String? {
+        return list?.let {
+            gson.toJson(it)
+        }
+    }
+
+    @TypeConverter
+    fun fromStringToPointList(value: String?): List<Point>? {
+        val listType = object : TypeToken<List<Point>>() {}.type
+        return value?.let {
+            gson.fromJson(it, listType)
         }
     }
 }
