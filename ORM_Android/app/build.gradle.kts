@@ -30,6 +30,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "BASE_URL", getApiKey("BASE_URL"))
+        buildConfigField("String", "DATASTORE_NAME", getApiKey("DATASTORE_NAME"))
     }
 
 
@@ -104,4 +105,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.gson)
 
+    // datastore
+    implementation (libs.androidx.datastore.preferences)
+    implementation (libs.androidx.datastore.preferences.core)
 }

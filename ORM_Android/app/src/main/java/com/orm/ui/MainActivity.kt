@@ -32,8 +32,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         installSplashScreen()
-        checkPermissions()
         moveToLoginActivity()
+        checkPermissions()
         getFirebaseToken()
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
 
     // TODO : 토큰 체크 기능 구현
     private fun checkAccessToken(): Boolean {
-        return false
+        return true
     }
 
     private fun checkPermissions() {

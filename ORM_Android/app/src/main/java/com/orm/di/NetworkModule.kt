@@ -4,6 +4,7 @@ import com.orm.BuildConfig
 import com.orm.data.api.ClubService
 import com.orm.data.api.MountainService
 import com.orm.data.api.TraceService
+import com.orm.data.api.UserService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,5 +43,11 @@ object NetworkModule {
     @Singleton
     fun provideTraceService(retrofit: Retrofit): TraceService {
         return retrofit.create(TraceService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserService(retrofit: Retrofit): UserService {
+        return retrofit.create(UserService::class.java)
     }
 }
