@@ -94,4 +94,14 @@ dependencies {
     implementation (libs.glide)
     annotationProcessor("com.github.bumptech.glide:compiler:4.11.0")
     
+
+    annotationProcessor(libs.androidx.room.compiler)
+
+    // kakao login
+    implementation(libs.v2.user)
+
+    //okHttpclient, json
+    implementation(libs.okhttp)
+    implementation(libs.gson)
+
 }
