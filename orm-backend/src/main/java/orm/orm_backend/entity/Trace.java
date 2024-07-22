@@ -38,17 +38,11 @@ public class Trace extends BaseEntity {
     private String Course;
 
     @Builder
-    public Trace(Trail trail, User user, String title, Date hikingDate) {
-        this.trail = trail;
-        this.user = user;
-        this.title = title;
-        this.hikingDate = hikingDate;
-    }
-
-    public Trace(TraceCreationRequestDto traceCreationRequestDto, Mountain mountain, Trail trail) {
+    public Trace(TraceCreationRequestDto traceCreationRequestDto, Mountain mountain, Trail trail, User user) {
         this.title = traceCreationRequestDto.getTitle();
         this.hikingDate = traceCreationRequestDto.getHikingDate();
         this.mountain = mountain;
         this.trail = trail;
+        this.user = user;
     }
 }
