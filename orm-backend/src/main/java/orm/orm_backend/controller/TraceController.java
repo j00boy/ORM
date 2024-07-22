@@ -36,8 +36,11 @@ public class TraceController {
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<TraceResponseDto> updateBeforeMeasure(TraceRequestDto traceRequestDto, Integer traceId) {
-        return ResponseEntity.ok(traceService.updateTrace(traceId, traceRequestDto));
+    public ResponseEntity<TraceResponseDto> updateBeforeMeasure(HttpServletRequest request,
+                                                                TraceRequestDto traceRequestDto, Integer traceId) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        return ResponseEntity.ok(traceService.updateTrace(traceId, traceRequestDto, userId));
     }
 
     @DeleteMapping("/{traceId}")

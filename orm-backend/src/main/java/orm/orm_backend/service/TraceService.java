@@ -40,8 +40,11 @@ public class TraceService {
     }
 
     @Transactional
-    public TraceResponseDto updateTrace(Integer traceeId, TraceRequestDto traceRequestDto) {
+    public TraceResponseDto updateTrace(Integer traceeId, TraceRequestDto traceRequestDto, Integer userId) {
         Trace trace = traceRepository.findById(traceeId).orElseThrow(NoResultException::new);
+        if (!trace.isOwner(userId)) {
+            throw new UnAuthorizedException();
+        }
         trace.update(traceRequestDto);
         return trace.toResponseDto();
     }
