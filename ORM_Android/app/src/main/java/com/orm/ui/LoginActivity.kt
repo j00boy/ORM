@@ -52,15 +52,14 @@ class LoginActivity : AppCompatActivity() {
         Log.d("handleAuthorizationCode", "Authorization code3: $code")
         val client = OkHttpClient()
 
-        val formBody = FormBody.Builder()
-            .add("code", code)
-            .build()
+        val url = "http://70.12.247.148:8080/users/login/kakao/auth?code=$code"
 
         val request = Request.Builder()
-            .url("http://70.12.247.148:8080/users/login/kakao/token")
-            .post(formBody)
+            .url(url)
+            .get() // GET 메소드 사용
             .build()
-        Log.d("handleAuthorizationCode", "Authorization code3: $request")
+
+        Log.d("handleAuthorizationCode", "Request: $request")
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.e("TokenRequest", "Failed to request token", e)
