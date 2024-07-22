@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
 
     // TODO : 토큰 체크 기능 구현
     private fun checkAccessToken(): Boolean {
-        return true
+        return false
     }
 
     private fun checkPermissions() {
