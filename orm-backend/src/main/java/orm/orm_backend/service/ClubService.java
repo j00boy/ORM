@@ -18,21 +18,19 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class ClubService {
+    private final String UPLOADDIR = "src/main/resources/static/uploads/image";
+
     private final UserRepository userRepository;
     private final ClubRepository clubRepository;
     private final MountainRepository mountainRepository;
-    private final MemberRepository memberRepository;
-    private final ApplicantRepository applicantRepository;
-    private final String UPLOADDIR = "src/main/resources/static/uploads/image";
+    private final MemberService memberService;
+    private final ApplicantService applicantService;
 
     public Integer createClub(ClubRequestDto clubRequestDTO, Integer userId) {
         // user 찾기
@@ -44,11 +42,15 @@ public class ClubService {
         // 사진 업로드
         MultipartFile image = clubRequestDTO.getImgFile();
         String imageSrc = null;
-        try {
-            imageSrc = saveImage(image);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+        if (image != null) {
+            try {
+                imageSrc = saveImage(image);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+
 
         Club club = clubRequestDTO.toEntity(user, mountain, imageSrc);
         return clubRepository.save(club).getId();
@@ -56,16 +58,27 @@ public class ClubService {
 
     // Club 조회
     public List<ClubResponseDto> getAllClubs(ClubSearchRequestDto clubSearchRequestDto, Integer userId) {
+        Boolean isMyClub = clubSearchRequestDto.getIsMyClub();
         Pageable pageable = PageRequest.of(clubSearchRequestDto.getPgno(), clubSearchRequestDto.getRecordSize());
-        Page<Club> results = clubRepository.findAllByClubNameContaining(pageable, clubSearchRequestDto.getKeyword());
-
         List<ClubResponseDto> clubs = new ArrayList<>();
 
-        for (Club c : results) {
-            Boolean isMember = isMember(c.getId(), userId);
-            Boolean isApplied = isApplied(c.getId(), userId);
+        // 내 모임 검색이면
+        if (isMyClub) {
+            Page<Member> members = memberService.getPageableMembers(pageable, userId);
+            for (Member m : members) {
+                clubRepository.findById(m.getClub().getId())
+                        .ifPresent(club -> clubs.add(new ClubResponseDto().toDto(club, Boolean.TRUE, Boolean.FALSE)));
+            }
+        } else {
+            Page<Club> results = clubRepository.findAllByClubNameContaining(pageable, clubSearchRequestDto.getKeyword());
+            Set<Integer> clubMap = memberService.getClubs(userId);
+            Set<Integer> applicantMap = applicantService.getApplicants(userId);
 
-            clubs.add(ClubResponseDto.toDto(c, isMember, isApplied));
+            for (Club c : results) {
+                Boolean isMember = clubMap.contains(c.getId()) ? Boolean.TRUE : Boolean.FALSE;
+                Boolean isApplied = applicantMap.contains(c.getId()) ? Boolean.TRUE : Boolean.FALSE;
+                clubs.add(new ClubResponseDto().toDto(c, isMember, isApplied));
+            }
         }
         return clubs;
     }
@@ -89,22 +102,5 @@ public class ClubService {
         Files.write(path, image.getBytes()); // 디렉토리에 파일 저장
 
         return dbFilePath;
-    }
-
-    //
-    private Boolean isMember(Integer clubId, Integer userId) {
-        Optional<Member> member = memberRepository.findByClubIdAndUserId(clubId, userId);
-        if (member.isPresent()) {
-            return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
-    }
-
-    private Boolean isApplied(Integer clubId, Integer userId) {
-        Optional<Applicant> applicant = applicantRepository.findByClubIdAndUserId(clubId, userId);
-        if (applicant.isPresent()) {
-            return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
     }
 }
