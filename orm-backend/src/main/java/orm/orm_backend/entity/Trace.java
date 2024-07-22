@@ -2,6 +2,7 @@ package orm.orm_backend.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,4 +34,12 @@ public class Trace extends BaseEntity {
     private LocalDateTime endTime;
     private Float maxAltitude;
     private String Course;
+
+    @Builder
+    public Trace(Trail trail, User user, String title, Date hikingDate) {
+        this.trail = trail;
+        this.user = user;
+        this.title = title;
+        this.hikingDate = hikingDate;
+    }
 }
