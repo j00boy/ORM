@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,5 +36,10 @@ public class TraceController {
         HttpHeaders headers = jwtUtil.createTokenHeaders(userId);
         return ResponseEntity.created(URI.create("/trace/" + traceResponseDto.getId()))
                 .headers(headers).body(traceResponseDto);
+    }
+
+    @PatchMapping("/update")
+    public ResponseEntity<TraceResponseDto> updateBeforeMeasure(TraceRequestDto traceRequestDto, Integer traceId) {
+        return ResponseEntity.ok(traceService.updateTrace(traceId, traceRequestDto));
     }
 }

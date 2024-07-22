@@ -1,5 +1,7 @@
 package orm.orm_backend.service;
 
+import jakarta.persistence.NoResultException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import orm.orm_backend.dto.request.TraceRequestDto;
@@ -34,5 +36,12 @@ public class TraceService {
                 .build();
         Trace savedTrace = traceRepository.save(trace);
         return savedTrace.toResponseDto();
+    }
+
+    @Transactional
+    public TraceResponseDto updateTrace(Integer traceeId, TraceRequestDto traceRequestDto) {
+        Trace trace = traceRepository.findById(traceeId).orElseThrow(NoResultException::new);
+        trace.update(traceRequestDto);
+        return trace.toResponseDto();
     }
 }
