@@ -1,7 +1,10 @@
 package orm.orm_backend.dto.request;
 
+import lombok.Getter;
+
 import java.sql.Date;
 
+@Getter
 public class TraceCreationRequestDto {
 
     String title;
