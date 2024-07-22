@@ -8,6 +8,7 @@ import orm.orm_backend.dto.response.LoginResponseDto;
 import orm.orm_backend.entity.User;
 import orm.orm_backend.entity.UserStatus;
 import orm.orm_backend.exception.UnAuthorizedException;
+import orm.orm_backend.exception.UserWithdrawalException;
 import orm.orm_backend.repository.UserRepository;
 import orm.orm_backend.util.JwtUtil;
 import orm.orm_backend.util.KakaoUtil;
@@ -50,13 +51,21 @@ public class UserService {
         return user.toLoginResponseDto();
     }
 
+    public User findUserById(Integer userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent() && user.get().isActiveMember()) {
+            return user.get();
+        }
+        throw new UserWithdrawalException();
+    }
+
     private boolean isJoined(Long kakaoId) {
         // 데이터베이스에 없는 사용자 -> 가입한적 없는 사용자
         Optional<User> user = userRepository.findByKakaoId(kakaoId);
         if (user.isEmpty()) {
             return false;
         }
-        return user.get().getIsActive() == UserStatus.Y;
+        return user.get().isActiveMember();
     }
 
     private User join(KakaoInfoVo kakaoInfo) {

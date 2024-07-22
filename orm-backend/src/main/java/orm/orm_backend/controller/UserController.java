@@ -45,8 +45,7 @@ public class UserController {
     public ResponseEntity<LoginResponseDto> kakaoLogin(String code) throws JsonProcessingException {
         String kakaoTokens = kakaoUtil.getKakaoTokens(code);
         LoginResponseDto loginResponseDto = userService.kakaoLogin(kakaoTokens);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("accessToken", jwtUtil.createAccessToken(loginResponseDto.getUserId()));
+        HttpHeaders headers = jwtUtil.createTokenHeaders(loginResponseDto.getUserId());
 
         return ResponseEntity.ok()
                 .headers(headers)
@@ -57,8 +56,7 @@ public class UserController {
     public ResponseEntity<LoginResponseDto> autoLogin(HttpServletRequest request) throws JsonProcessingException {
         String accessToken = request.getHeader(HEADER_AUTH);
         LoginResponseDto loginResponseDto = userService.autoLogin(accessToken);
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("accessToken", jwtUtil.createAccessToken(loginResponseDto.getUserId()));
+        HttpHeaders headers = jwtUtil.createTokenHeaders(loginResponseDto.getUserId());
         return ResponseEntity.ok().headers(headers).body(loginResponseDto);
     }
 }
