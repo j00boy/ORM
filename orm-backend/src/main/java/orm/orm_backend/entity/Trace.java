@@ -19,11 +19,9 @@ public class Trace extends BaseEntity {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn
     private Trail trail;
 
     @ManyToOne
-    @JoinColumn
     private User user;
 
     @Column(length = 30)
