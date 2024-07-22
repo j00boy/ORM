@@ -8,7 +8,9 @@ data class Mountain(
     @PrimaryKey val id: Int,
     val name: String,
     val address: String,
+    val code: Int,
     val imageSrc: String,
-    val altitude: Double,
-    val description: String
+    val desc: String,
+    val height: Double,
+    val trails: List<Trail>
 )

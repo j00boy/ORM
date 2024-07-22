@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 
 data class Point(
     val id: Int,
+    val traceId: Int,
     val latitude: Double,
     val longitude: Double,
     val altitude: Double,
