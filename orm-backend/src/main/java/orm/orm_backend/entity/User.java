@@ -70,4 +70,8 @@ public class User extends BaseEntity {
             this.kakaoRefreshToken = kakaoRefreshToken;
         }
     }
+
+    public boolean isActiveMember() {
+        return isActive == UserStatus.Y;
+    }
 }

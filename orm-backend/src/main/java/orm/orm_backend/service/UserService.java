@@ -56,7 +56,7 @@ public class UserService {
         if (user.isEmpty()) {
             return false;
         }
-        return user.get().getIsActive() == UserStatus.Y;
+        return user.get().isActiveMember();
     }
 
     private User join(KakaoInfoVo kakaoInfo) {
