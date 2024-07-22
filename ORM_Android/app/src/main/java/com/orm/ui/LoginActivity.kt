@@ -7,21 +7,28 @@ import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageButton
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.orm.BuildConfig
 import com.orm.R
 import com.orm.data.model.User
+import com.orm.data.repository.UserRepository
 import com.orm.databinding.ActivityLoginBinding
 import com.orm.databinding.ActivityMainBinding
+import com.orm.viewmodel.UserViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.*
 import java.io.IOException
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
     companion object {
         const val ADDRESS = "users/login/kakao"
     }
 
+    private val userViewModel: UserViewModel by viewModels()
     private lateinit var binding: ActivityLoginBinding
     private lateinit var webView: WebView
     private lateinit var btnLogin: ImageButton
@@ -45,7 +52,17 @@ class LoginActivity : AppCompatActivity() {
                 override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                     url?.let {
                         if (it.startsWith(BuildConfig.BASE_URL + ADDRESS)) {
-                            handleAuthorizationCode(it.substringAfter("code="))
+                            userViewModel.loginKaKao(it.substringAfter("code="))
+
+                            userViewModel.token.observe(this@LoginActivity) { token ->
+                                if (!token.isNullOrEmpty()) {
+                                    Log.d("token", token)
+                                    val intent =
+                                        Intent(this@LoginActivity, MainActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                }
+                            }
                             return true
                         }
                     }
@@ -53,46 +70,5 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun handleAuthorizationCode(code: String) {
-        Log.d("handleAuthorizationCode", "Authorization code3: $code")
-        val client = OkHttpClient()
-
-        val url = "http://70.12.247.148:8080/users/login/kakao/auth?code=$code"
-
-        val request = Request.Builder()
-            .url(url)
-            .get() // GET 메소드 사용
-            .build()
-
-        Log.d("handleAuthorizationCode", "Request: $request")
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("TokenRequest", "Failed to request token", e)
-            }
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
-
-                    Log.d("TokenRequest", response.headers().get("accessToken").toString())
-                    response.body()?.string()?.let { responseBody ->
-                        Log.d("TokenResponse", "Token response: $responseBody")
-                        // Gson을 사용하여 JSON 파싱
-                        val gson = Gson()
-                        val user = gson.fromJson(responseBody, User::class.java)
-                        val userId = user.userId
-                        val imageSrc = user.imageSrc
-                        val nickname = user.nickname
-                        Log.d("body", "User: $userId, $imageSrc, $nickname")
-
-                    }
-                } else {
-                    Log.e("TokenRequest", "Failed to get token")
-                }
-            }
-        })
     }
 }
