@@ -4,22 +4,30 @@ import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import orm.orm_backend.dto.request.TraceRequestDto;
+import org.springframework.web.multipart.MultipartFile;
 import orm.orm_backend.dto.common.TraceDto;
-import orm.orm_backend.entity.Mountain;
-import orm.orm_backend.entity.Trace;
-import orm.orm_backend.entity.Trail;
-import orm.orm_backend.entity.User;
+import orm.orm_backend.dto.request.TraceRequestDto;
+import orm.orm_backend.entity.*;
 import orm.orm_backend.exception.UnAuthorizedException;
+import orm.orm_backend.repository.TraceImageRepository;
 import orm.orm_backend.repository.TraceRepository;
+import orm.orm_backend.util.ImageUtil;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class TraceService {
 
+    private final ImageUtil imageUtil;
+
     private final UserService userService;
 
     private final TraceRepository traceRepository;
+    private final TraceImageRepository traceImageRepository;
 
     public TraceDto createTrace(TraceRequestDto creationRequestDto, Integer userId) {
         // mountain, trail 객체 받는 로직 추후 추가
@@ -64,5 +72,20 @@ public class TraceService {
             throw new UnAuthorizedException();
         }
         trace.completeMeasure(traceDto);
+    }
+
+    @Transactional
+    public void updateTraceImages(Integer userId, Integer traceId, List<MultipartFile> images) {
+        Trace trace = traceRepository.findById(traceId).orElseThrow();
+        if (!trace.isOwner(userId)) {
+            throw new UnAuthorizedException();
+        }
+
+        traceImageRepository.deleteAll(trace.getImages());
+
+        String path = "/trace/" + traceId;
+        List<TraceImage> traceImages = images.stream()
+                .map(image -> imageUtil.saveImage(image, path)).map(TraceImage::new).toList();
+        trace.updateImages(traceImages);
     }
 }

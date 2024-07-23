@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import orm.orm_backend.dto.request.TraceRequestDto;
+import org.springframework.web.multipart.MultipartFile;
 import orm.orm_backend.dto.common.TraceDto;
+import orm.orm_backend.dto.request.TraceRequestDto;
 import orm.orm_backend.service.TraceService;
 import orm.orm_backend.util.JwtUtil;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -56,6 +58,14 @@ public class TraceController {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         traceService.completeMeasure(userId, traceDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/update/images/{traceId}")
+    public ResponseEntity<Void> updateTraceImages(HttpServletRequest request, List<MultipartFile> images, Integer traceId) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        traceService.updateTraceImages(userId, traceId, images);
         return ResponseEntity.ok().build();
     }
 }
