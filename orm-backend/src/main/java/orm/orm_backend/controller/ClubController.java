@@ -47,7 +47,7 @@ public class ClubController {
         return ResponseEntity.ok().body(result);
     }
 
-    @GetMapping("/members")
+    @GetMapping("/name/check-duplicate")
     public ResponseEntity<Map<String, Boolean>> isValid(@RequestParam("name") String name) {
         Map<String, Boolean> result = new HashMap<>();
         Boolean isValid = clubService.isValid(name);
