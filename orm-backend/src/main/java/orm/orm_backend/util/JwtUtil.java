@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
@@ -69,6 +70,14 @@ public class JwtUtil {
         Claims claims = Jwts.parser().setSigningKey(generateKey()).parseClaimsJws(accessToken).getBody();
         return (Integer) claims.get("userId");
     }
+
+    public HttpHeaders createTokenHeaders(Integer userId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("accessToken", createAccessToken(userId));
+        return headers;
+    }
+
+
 
     private byte[] generateKey() {
         byte[] key = null;
