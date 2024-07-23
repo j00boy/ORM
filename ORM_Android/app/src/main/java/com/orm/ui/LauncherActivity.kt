@@ -32,7 +32,9 @@ class LauncherActivity : AppCompatActivity() {
 
     private fun handleToken(token: String?) {
         Log.d("LauncherActivity", "token: $token")
-        if (!token.isNullOrEmpty()) {
+            navigateToActivity(MainActivity::class.java)
+        return
+        if (token.isNullOrEmpty()) {
             Log.d("LauncherActivity", "checkAccessToken: true, token: $token")
             userViewModel.loginAuto()
             navigateToActivity(MainActivity::class.java)

@@ -23,6 +23,8 @@ class UserViewModel @Inject constructor(
 
     init {
         _token.value = ""
+
+        _user.value = User("1", "22", "ssafy")
     }
 
     fun loginKakao(code: String) {

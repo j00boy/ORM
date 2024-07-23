@@ -58,5 +58,6 @@
         <item name="windowSplashScreenBackground">@color/white</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/sample</item>
         <item name="postSplashScreenTheme">@style/Base.Theme.Orm</item>
+        <item name="windowSplashScreenAnimationDuration">960</item>
     </style>
 </resources>

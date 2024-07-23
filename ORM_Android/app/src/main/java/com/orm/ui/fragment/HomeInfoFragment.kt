@@ -1,21 +1,20 @@
 package com.orm.ui.fragment
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import com.orm.databinding.FragmentHomeBinding
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.orm.databinding.FragmentHomeInfoBinding
-import com.orm.ui.ClubActivity
-import com.orm.ui.MountainSearchActivity
-import com.orm.ui.TraceActivity
+import com.orm.viewmodel.UserViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeInfoFragment : Fragment() {
     private var _binding: FragmentHomeInfoBinding? = null
     private val binding get() = _binding!!
+    private val userViewModel: UserViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,6 +22,13 @@ class HomeInfoFragment : Fragment() {
     ): View {
         _binding = FragmentHomeInfoBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        /** Data Binding Example**/
+        userViewModel.user.observe(viewLifecycleOwner) {
+            binding.user = it
+        }
+        binding.lifecycleOwner = viewLifecycleOwner
+        /*************************/
 
         return root
     }

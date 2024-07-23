@@ -25,21 +25,21 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val buttonMountainSearch : ImageButton = binding.imgSearch
+        val buttonMountainSearch = binding.imgSearch
         buttonMountainSearch.setOnClickListener {
             val targetActivityClass = MountainSearchActivity::class.java
             val intent = Intent(requireActivity(), targetActivityClass)
             startActivity(intent)
         }
 
-        val buttonTrace : ImageButton = binding.imgTrace
+        val buttonTrace = binding.imgTrace
         buttonTrace.setOnClickListener {
             val targetActivityClass = TraceActivity::class.java
             val intent = Intent(requireActivity(), targetActivityClass)
             startActivity(intent)
         }
 
-        val buttonClub : ImageButton = binding.imgClub
+        val buttonClub = binding.imgClub
         buttonClub.setOnClickListener {
             val targetActivityClass = ClubActivity::class.java
             val intent = Intent(requireActivity(), targetActivityClass)
