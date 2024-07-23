@@ -58,8 +58,8 @@ public class ClubService {
         clubRepository.save(club);
 
         // club 생성 이후 해당 user 를 member table에 추가 (관리자도 회원)
-        MemberRequestDto memberRequestDto = MemberRequestDto.builder().user(user).club(club).build();
-        memberService.saveMember(memberRequestDto);
+        Member member = MemberRequestDto.toEntity(user, club);
+        memberService.saveMember(member);
         return club.getId();
     }
 
@@ -123,6 +123,11 @@ public class ClubService {
         // applicant 저장
         Applicant applicant = applicantRequestDto.toEntity(user, club);
         return applicantService.saveApplicant(applicant);
+    }
+
+    // 추방 탈퇴
+    public Integer leaveClub() {
+        return 0;
     }
 
     // 이미지 파일을 저장하는 메서드

@@ -39,7 +39,7 @@ public class MemberService {
     }
 
     // Member 저장
-    public void saveMember(MemberRequestDto memberRequestDto) {
-        memberRepository.save(memberRequestDto.toEntity());
+    public void saveMember(Member member) {
+        memberRepository.save(member);
     }
 }

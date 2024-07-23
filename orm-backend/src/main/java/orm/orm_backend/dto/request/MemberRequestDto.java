@@ -9,10 +9,10 @@ import orm.orm_backend.entity.User;
 @Data
 @Builder
 public class MemberRequestDto {
-    private User user;
-    private Club club;
+    private Integer userId;
+    private Integer clubId;
 
-    public Member toEntity() {
+    public static Member toEntity(User user, Club club) {
         return Member.builder()
                 .user(user)
                 .club(club)
