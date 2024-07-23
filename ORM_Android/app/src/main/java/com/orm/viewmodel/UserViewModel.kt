@@ -25,7 +25,7 @@ class UserViewModel @Inject constructor(
         _token.value = ""
     }
 
-    fun loginKaKao(code: String) {
+    fun loginKakao(code: String) {
         viewModelScope.launch {
             try {
                 val user = userRepository.loginKakao(code)

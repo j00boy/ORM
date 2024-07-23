@@ -2,8 +2,10 @@ package com.orm.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.http.SslError
 import android.os.Bundle
 import android.util.Log
+import android.webkit.SslErrorHandler
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageButton
@@ -47,25 +49,36 @@ class LoginActivity : AppCompatActivity() {
     private fun setupWebView() {
         Log.d("LoginActivity", "setupWebView")
         webView = binding.webview
+        webView.settings.domStorageEnabled = true
+        webView.settings.javaScriptEnabled = true
+
         webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+            override fun shouldOverrideUrlLoading(view: WebView, url: String?): Boolean {
                 if (url != null && url.startsWith(BuildConfig.BASE_URL + ADDRESS)) {
-                    userViewModel.loginKaKao(url.substringAfter("code="))
+                    userViewModel.loginKakao(url.substringAfter("code="))
                     return true
                 }
                 return false
             }
+
+            @SuppressLint("WebViewClientOnReceivedSslError")
+            override fun onReceivedSslError(
+                view: WebView?,
+                handler: SslErrorHandler?,
+                error: SslError?,
+            ) {
+                handler?.proceed()
+            }
         }
-        webView.settings.javaScriptEnabled = true
-        webView.settings.domStorageEnabled = true
     }
 
     private fun setupLoginButton() {
         btnLogin = binding.btnLogin
         btnLogin.setOnClickListener {
             Log.d("LoginActivity", "clickLoginButton")
-            webView.visibility = WebView.VISIBLE
             webView.loadUrl(BuildConfig.BASE_URL + ADDRESS)
+            webView.settings.domStorageEnabled = true
+            webView.visibility = WebView.VISIBLE
         }
     }
 }
