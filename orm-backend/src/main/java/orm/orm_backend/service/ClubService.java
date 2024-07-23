@@ -130,6 +130,16 @@ public class ClubService {
         memberService.delete(memberRequestDto);
     }
 
+    // 가입 수락/거절
+    public void approveMember(MemberRequestDto memberRequestDto) {
+        if (memberRequestDto.getIsApproved()) {
+            User user = userService.findUserById(memberRequestDto.getUserId());
+            Club club = clubRepository.findById(memberRequestDto.getClubId()).orElseThrow();
+            memberService.saveMember(MemberRequestDto.toEntity(user, club));
+        }
+        applicantService.deleteApplicant(memberRequestDto);
+    }
+
     // 이미지 파일을 저장하는 메서드
     private String saveImage(MultipartFile image) throws IOException {
         // 파일 이름 생성

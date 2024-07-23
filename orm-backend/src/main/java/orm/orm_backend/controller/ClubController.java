@@ -3,6 +3,7 @@ package orm.orm_backend.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/clubs")
 public class ClubController {
-    private final ClubService clubService;
+    @Value("${orm.header.auth}")
+    private final String HEADER_AUTH;
+
     private final JwtUtil jwtUtil;
-    private final String HEADER_AUTH = "Authorization";
+
+    private final ClubService clubService;
 
     @PostMapping("/create")
     public ResponseEntity<Integer> createClub(ClubRequestDto clubRequestDto, HttpServletRequest request) {
@@ -72,6 +76,10 @@ public class ClubController {
         return ResponseEntity.noContent().build();
     }
 
-
+    @PostMapping("/members/approve")
+    public ResponseEntity<Void> approveMember(MemberRequestDto memberRequestDto) {
+         clubService.approveMember(memberRequestDto);
+         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
 }
 

@@ -11,6 +11,7 @@ import orm.orm_backend.entity.User;
 public class MemberRequestDto {
     private Integer userId;
     private Integer clubId;
+    private Boolean isApproved;
 
     public static Member toEntity(User user, Club club) {
         return Member.builder()

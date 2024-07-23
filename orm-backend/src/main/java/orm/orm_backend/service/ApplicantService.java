@@ -2,6 +2,7 @@ package orm.orm_backend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import orm.orm_backend.dto.request.MemberRequestDto;
 import orm.orm_backend.entity.Applicant;
 import orm.orm_backend.repository.ApplicantRepository;
 
@@ -36,5 +37,10 @@ public class ApplicantService {
     // Applicant 저장
     public Applicant saveApplicant(Applicant applicant) {
         return applicantRepository.save(applicant);
+    }
+
+    // Applicant 삭제
+    public void deleteApplicant(MemberRequestDto memberRequestDto) {
+        applicantRepository.deleteByUserIdAndClubId(memberRequestDto.getUserId(), memberRequestDto.getClubId());
     }
 }
