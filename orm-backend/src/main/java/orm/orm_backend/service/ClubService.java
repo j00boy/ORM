@@ -74,7 +74,7 @@ public class ClubService {
             Page<Member> members = memberService.getPageableMembers(pageable, userId);
             for (Member m : members) {
                 clubRepository.findById(m.getClub().getId())
-                        .ifPresent(club -> clubs.add(new ClubResponseDto().toDto(club, Boolean.TRUE, Boolean.FALSE)));
+                        .ifPresent(club -> clubs.add(ClubResponseDto.toMyDto(club)));
             }
         } else {
             Page<Club> results = clubRepository.findAllByClubNameContaining(pageable, clubSearchRequestDto.getKeyword());
@@ -84,7 +84,7 @@ public class ClubService {
             for (Club c : results) {
                 Boolean isMember = clubMap.contains(c.getId()) ? Boolean.TRUE : Boolean.FALSE;
                 Boolean isApplied = applicantMap.contains(c.getId()) ? Boolean.TRUE : Boolean.FALSE;
-                clubs.add(new ClubResponseDto().toDto(c, isMember, isApplied));
+                clubs.add(ClubResponseDto.toDto(c, isMember, isApplied));
             }
         }
         return clubs;
