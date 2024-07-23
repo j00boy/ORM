@@ -10,6 +10,7 @@ import orm.orm_backend.dto.common.TraceDto;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,7 +40,7 @@ public class Trace extends BaseEntity {
     private LocalDateTime endTime;
     private Float maxAltitude;
     private String Course;
-
+    private List<TraceImage> images;
 //    @Builder
 //    public Trace(TraceCreationRequestDto traceCreationRequestDto, Mountain mountain, Trail trail, User user) {
 //        this.title = traceCreationRequestDto.getTitle();
@@ -80,5 +81,9 @@ public class Trace extends BaseEntity {
     public void completeMeasure(TraceDto traceDto) {
         this.startTime = traceDto.getHikingStartedAt();
         this.endTime = traceDto.getHikingEndedAt();
+    }
+
+    public void updateImages(List<TraceImage> images) {
+        this.images = images;
     }
 }
