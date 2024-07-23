@@ -126,8 +126,8 @@ public class ClubService {
     }
 
     // 추방 탈퇴
-    public Integer leaveClub() {
-        return 0;
+    public void deleteMember(MemberRequestDto memberRequestDto) {
+        memberService.delete(memberRequestDto);
     }
 
     // 이미지 파일을 저장하는 메서드

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import orm.orm_backend.dto.request.ApplicantRequestDto;
 import orm.orm_backend.dto.request.ClubRequestDto;
 import orm.orm_backend.dto.request.ClubSearchRequestDto;
+import orm.orm_backend.dto.request.MemberRequestDto;
 import orm.orm_backend.dto.response.ClubResponseDto;
 import orm.orm_backend.service.ClubService;
 import orm.orm_backend.util.JwtUtil;
@@ -63,6 +64,12 @@ public class ClubController {
     public ResponseEntity<Integer> joinClub(ApplicantRequestDto applicantRequestDto){
         Integer result = clubService.joinClub(applicantRequestDto).getId();
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
+
+    @PatchMapping("/members/leave")
+    public ResponseEntity<Void> deleteMember(MemberRequestDto memberRequestDto) {
+        clubService.deleteMember(memberRequestDto);
+        return ResponseEntity.noContent().build();
     }
 
 
