@@ -100,7 +100,7 @@ public class ClubService {
         }
 
         List<Member> members = memberService.getMembersInClub(clubId);
-        List<Applicant> applicants = (!club.getManager().getId().equals(userId)) ? null : applicantService.getApplicantsInClub(clubId);
+        List<Applicant> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId);
 
         result.put("members", members);
         result.put("requestMembers", applicants);
