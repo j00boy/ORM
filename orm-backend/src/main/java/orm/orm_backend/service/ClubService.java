@@ -8,7 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import orm.orm_backend.dto.request.ClubJoinDto;
+import orm.orm_backend.dto.request.ApplicantRequestDto;
 import orm.orm_backend.dto.request.ClubRequestDto;
 import orm.orm_backend.dto.request.ClubSearchRequestDto;
 import orm.orm_backend.dto.request.MemberRequestDto;
@@ -28,15 +28,15 @@ import java.util.*;
 public class ClubService {
     private final String UPLOADDIR = "src/main/resources/static/uploads/image";
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final ClubRepository clubRepository;
     private final MountainRepository mountainRepository;
     private final MemberService memberService;
     private final ApplicantService applicantService;
 
     public Integer createClub(ClubRequestDto clubRequestDTO, Integer userId) {
-        // TODO : refactor user 찾기 (refactor 진행해야 함)
-        User user = userRepository.findById(userId).orElseThrow(NoResultException::new);
+        // user 찾기
+        User user = userService.findUserById(userId);
         // TODO : mountain 찾기 (refactor 진행해야 함)
         Mountain mountain = mountainRepository.findById(clubRequestDTO.getMountainId())
                 .orElseThrow(NoResultException::new);
@@ -115,13 +115,14 @@ public class ClubService {
 
 
     // 가입 신청
-    public Integer joinClub(ClubJoinDto clubJoinDto) {
-        // TODO : userService
-        // clubService - club id 활용하여 클럽찾기
-        Club clue = clubRepository.findById(clubJoinDto.getClubId()).orElseThrow(NoResultException::new);
-        // TODO : applicant 저장
-        // TODO : 값 반환
-        return 0;
+    public Applicant joinClub(ApplicantRequestDto applicantRequestDto) {
+        // user 찾기
+        User user = userService.findUserById(applicantRequestDto.getUserId());
+        // club 찾기
+        Club club = clubRepository.findById(applicantRequestDto.getClubId()).orElseThrow(NoResultException::new);
+        // applicant 저장
+        Applicant applicant = applicantRequestDto.toEntity(user, club);
+        return applicantService.saveApplicant(applicant);
     }
 
     // 이미지 파일을 저장하는 메서드

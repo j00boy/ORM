@@ -4,8 +4,10 @@ package orm.orm_backend.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import orm.orm_backend.dto.request.ApplicantRequestDto;
 import orm.orm_backend.dto.request.ClubRequestDto;
 import orm.orm_backend.dto.request.ClubSearchRequestDto;
 import orm.orm_backend.dto.response.ClubResponseDto;
@@ -13,7 +15,6 @@ import orm.orm_backend.service.ClubService;
 import orm.orm_backend.util.JwtUtil;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +59,11 @@ public class ClubController {
         return ResponseEntity.ok().body(isValid);
     }
 
+    @PostMapping("/members/apply")
+    public ResponseEntity<Integer> joinClub(ApplicantRequestDto applicantRequestDto){
+        Integer result = clubService.joinClub(applicantRequestDto).getId();
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    }
 
 
 }
