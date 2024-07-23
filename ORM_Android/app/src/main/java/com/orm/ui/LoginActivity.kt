@@ -39,8 +39,7 @@ class LoginActivity : AppCompatActivity() {
         userViewModel.token.observe(this) { token ->
             Log.d("LoginActivity", "token: $token")
             if (!token.isNullOrEmpty()) {
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
+                navigateToMainActivity()
             }
         }
     }
@@ -48,27 +47,25 @@ class LoginActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
         Log.d("LoginActivity", "setupWebView")
-        webView = binding.webview
-        webView.settings.domStorageEnabled = true
-        webView.settings.javaScriptEnabled = true
+        webView = binding.webview.apply {
+            settings.domStorageEnabled = true
+            settings.javaScriptEnabled = true
+            webViewClient = createWebViewClient()
+        }
+    }
 
-        webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, url: String?): Boolean {
-                if (url != null && url.startsWith(BuildConfig.BASE_URL + ADDRESS)) {
-                    userViewModel.loginKakao(url.substringAfter("code="))
-                    return true
-                }
-                return false
+    private fun createWebViewClient() = object : WebViewClient() {
+        override fun shouldOverrideUrlLoading(view: WebView, url: String?): Boolean {
+            if (url != null && url.startsWith(BuildConfig.BASE_URL + ADDRESS)) {
+                userViewModel.loginKakao(url.substringAfter("code="))
+                return true
             }
+            return false
+        }
 
-            @SuppressLint("WebViewClientOnReceivedSslError")
-            override fun onReceivedSslError(
-                view: WebView?,
-                handler: SslErrorHandler?,
-                error: SslError?,
-            ) {
-                handler?.proceed()
-            }
+        @SuppressLint("WebViewClientOnReceivedSslError")
+        override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
+            handler?.proceed()
         }
     }
 
@@ -76,9 +73,17 @@ class LoginActivity : AppCompatActivity() {
         btnLogin = binding.btnLogin
         btnLogin.setOnClickListener {
             Log.d("LoginActivity", "clickLoginButton")
-            webView.loadUrl(BuildConfig.BASE_URL + ADDRESS)
-            webView.settings.domStorageEnabled = true
-            webView.visibility = WebView.VISIBLE
+            webView.apply {
+                loadUrl(BuildConfig.BASE_URL + ADDRESS)
+                visibility = WebView.VISIBLE
+            }
         }
+    }
+
+    private fun navigateToMainActivity() {
+        startActivity(Intent(this, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        })
+        finish()
     }
 }
