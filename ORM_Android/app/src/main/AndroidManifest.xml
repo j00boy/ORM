@@ -51,7 +51,9 @@
             android:exported="false" />
         <activity
             android:name=".ui.MainActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTop"
+            />
 
         <service
             android:name=".util.MyFirebaseMessagingService"
