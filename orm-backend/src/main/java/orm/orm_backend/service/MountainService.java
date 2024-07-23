@@ -39,9 +39,7 @@ public class MountainService {
         List<Trail> trails = new ArrayList<>();
 
         List<MountainResponseDto> mountainResponseDtos = mountains.stream()
-                .map(mountain -> {
-                    return new MountainResponseDto(mountain, trails);
-                })
+                .map(mountain ->  new MountainResponseDto(mountain, trails))
                 .collect(Collectors.toList());
 
         return mountainResponseDtos;

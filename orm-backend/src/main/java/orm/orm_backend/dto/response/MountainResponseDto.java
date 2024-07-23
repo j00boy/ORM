@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Builder
 public class MountainResponseDto {
 
     private Integer id;
@@ -23,17 +22,7 @@ public class MountainResponseDto {
 
     private List<Trail> trails = new ArrayList<>();
 
-    public MountainResponseDto(Integer id, String name, String address, String code, String imageSrc, String desc, Float height, List<Trail> trails) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.code = code;
-        this.imageSrc = imageSrc;
-        this.desc = desc;
-        this.height = height;
-        this.trails = trails;
-    }
-
+    @Builder
     public MountainResponseDto(Mountain mountain, List<Trail> trails) {
         this.id = mountain.getId();
         this.name = mountain.getMountainName();
