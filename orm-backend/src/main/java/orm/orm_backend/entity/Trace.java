@@ -76,4 +76,9 @@ public class Trace extends BaseEntity {
         Integer ownerId = user.getId();
         return ownerId != null && ownerId == userId;
     }
+
+    public void completeMeasure(TraceResponseDto traceResponseDto) {
+        this.startTime = traceResponseDto.getHikingStartedAt();
+        this.endTime = traceResponseDto.getHikingEndedAt();
+    }
 }

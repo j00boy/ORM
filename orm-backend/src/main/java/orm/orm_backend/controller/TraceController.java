@@ -50,4 +50,12 @@ public class TraceController {
         traceService.deleteTrace(traceId, userId);
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/measure-complete")
+    public ResponseEntity<Void> completeMeasure(HttpServletRequest request, TraceResponseDto traceResponseDto) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        traceService.completeMeasure(userId, traceResponseDto);
+        return ResponseEntity.ok().build();
+    }
 }
