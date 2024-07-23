@@ -40,6 +40,7 @@ public class Trace extends BaseEntity {
     private LocalDateTime endTime;
     private Float maxAltitude;
     private String Course;
+    @OneToMany
     private List<TraceImage> images;
 //    @Builder
 //    public Trace(TraceCreationRequestDto traceCreationRequestDto, Mountain mountain, Trail trail, User user) {
