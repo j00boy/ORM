@@ -1,4 +1,4 @@
-package orm.orm_backend.dto.response;
+package orm.orm_backend.dto.common;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Builder
 @Getter
-public class TraceResponseDto {
+public class TraceDto {
     private final Integer id;
     private final String title;
     private final String mountainName;

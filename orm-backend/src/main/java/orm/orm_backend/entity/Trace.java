@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import orm.orm_backend.dto.request.TraceRequestDto;
-import orm.orm_backend.dto.response.TraceResponseDto;
+import orm.orm_backend.dto.common.TraceDto;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -57,8 +57,8 @@ public class Trace extends BaseEntity {
         this.user = user;
     }
 
-    public TraceResponseDto toResponseDto() {
-        return TraceResponseDto.builder()
+    public TraceDto toResponseDto() {
+        return TraceDto.builder()
                 .id(id)
                 .title(title)
                 .hikingDate(hikingDate)
@@ -77,8 +77,8 @@ public class Trace extends BaseEntity {
         return ownerId != null && ownerId == userId;
     }
 
-    public void completeMeasure(TraceResponseDto traceResponseDto) {
-        this.startTime = traceResponseDto.getHikingStartedAt();
-        this.endTime = traceResponseDto.getHikingEndedAt();
+    public void completeMeasure(TraceDto traceDto) {
+        this.startTime = traceDto.getHikingStartedAt();
+        this.endTime = traceDto.getHikingEndedAt();
     }
 }

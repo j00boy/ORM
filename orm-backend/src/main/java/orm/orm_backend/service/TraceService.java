@@ -5,7 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import orm.orm_backend.dto.request.TraceRequestDto;
-import orm.orm_backend.dto.response.TraceResponseDto;
+import orm.orm_backend.dto.common.TraceDto;
 import orm.orm_backend.entity.Mountain;
 import orm.orm_backend.entity.Trace;
 import orm.orm_backend.entity.Trail;
@@ -21,7 +21,7 @@ public class TraceService {
 
     private final TraceRepository traceRepository;
 
-    public TraceResponseDto createTrace(TraceRequestDto creationRequestDto, Integer userId) {
+    public TraceDto createTrace(TraceRequestDto creationRequestDto, Integer userId) {
         // mountain, trail 객체 받는 로직 추후 추가
 //        Mountain mountain = mountainService.get()
 //        Trail trail = trailService.get();
@@ -40,7 +40,7 @@ public class TraceService {
     }
 
     @Transactional
-    public TraceResponseDto updateTrace(Integer traceeId, TraceRequestDto traceRequestDto, Integer userId) {
+    public TraceDto updateTrace(Integer traceeId, TraceRequestDto traceRequestDto, Integer userId) {
         Trace trace = traceRepository.findById(traceeId).orElseThrow(NoResultException::new);
         if (!trace.isOwner(userId)) {
             throw new UnAuthorizedException();
@@ -58,11 +58,11 @@ public class TraceService {
     }
 
     @Transactional
-    public void completeMeasure(Integer userId, TraceResponseDto traceResponseDto) {
-        Trace trace = traceRepository.findById(traceResponseDto.getId()).orElseThrow();
+    public void completeMeasure(Integer userId, TraceDto traceDto) {
+        Trace trace = traceRepository.findById(traceDto.getId()).orElseThrow();
         if (!trace.isOwner(userId)) {
             throw new UnAuthorizedException();
         }
-        trace.completeMeasure(traceResponseDto);
+        trace.completeMeasure(traceDto);
     }
 }
