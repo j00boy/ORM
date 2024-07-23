@@ -37,7 +37,7 @@ class UserRepository @Inject constructor(
                 saveAccessToken(response.headers().get("accessToken").toString())
                 response.body() ?: throw Exception("Login failed")
             } else {
-                throw Exception("Login failed")
+                throw Exception("Login failed ${response.errorBody()?.string()}")
             }
         }
     }
@@ -45,8 +45,8 @@ class UserRepository @Inject constructor(
     suspend fun loginAuto(): User {
         return withContext(Dispatchers.IO) {
             val response = userService.loginAuto().execute()
-
             if (response.isSuccessful) {
+                Log.d("test", response.headers().get("accessToken").toString())
                 saveAccessToken(response.headers().get("accessToken").toString())
                 response.body() ?: throw Exception("Login failed")
             } else {
@@ -59,12 +59,14 @@ class UserRepository @Inject constructor(
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.tokenString] = accessToken
         }
+        Log.d("UserRepository", "saveAccessToken: $accessToken")
     }
 
     suspend fun getAccessToken(): String {
         val accessToken: Flow<String> = context.dataStore.data.map { preferences ->
             preferences[PreferencesKeys.tokenString] ?: ""
         }
+        Log.d("UserRepository", "getAccessToken: ${accessToken.first()}")
         return accessToken.first()
     }
 }

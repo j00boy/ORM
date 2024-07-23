@@ -19,7 +19,10 @@ class LauncherActivity : AppCompatActivity() {
         installSplashScreen()
 
         setContentView(ActivityLauncherBinding.inflate(layoutInflater).root)
+
+        userViewModel.getAccessToken()
         userViewModel.token.observe(this) { token ->
+            Log.d("LauncherActivity", "token: $token")
             if (!token.isNullOrEmpty()) {
                 Log.d("LauncherActivity", "checkAccessToken: true, token: $token")
                 userViewModel.loginAuto()
@@ -30,6 +33,5 @@ class LauncherActivity : AppCompatActivity() {
             }
             finish()
         }
-        userViewModel.getAccessToken()
     }
 }

@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import com.orm.data.model.User
 import com.orm.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +20,10 @@ class UserViewModel @Inject constructor(
 
     private val _token = MutableLiveData<String>()
     val token: LiveData<String> get() = _token
+
+    init {
+        _token.value = ""
+    }
 
     fun loginKaKao(code: String) {
         viewModelScope.launch {
@@ -49,6 +52,7 @@ class UserViewModel @Inject constructor(
     }
 
     fun getAccessToken() {
+        Log.d("UserViewModel", "getAccessToken")
         viewModelScope.launch {
             val token: String = userRepository.getAccessToken()
             if (token.isEmpty()) {
