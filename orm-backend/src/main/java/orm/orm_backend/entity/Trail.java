@@ -1,9 +1,6 @@
 package orm.orm_backend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,4 +13,13 @@ public class Trail extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @ManyToOne
+    @JoinColumn(name = "mountain_id")
+    private Mountain mountain;
+
+    private String start_latitude;
+    private String start_longitude;
+    private String peak_latitude;
+    private String peak_longitude;
 }

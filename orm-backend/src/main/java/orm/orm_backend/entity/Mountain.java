@@ -16,16 +16,10 @@ public class Mountain {
     private Integer id;
 
     private String mountainName;
-
-    @Column(nullable = false)
     private String mountainCode;
-
     private String address;
-
     private String imageSrc;
-
     private Double altitude;
-
     private String description;
 
     @Builder
@@ -37,4 +31,5 @@ public class Mountain {
         this.altitude = altitude;
         this.description = description;
     }
+
 }
