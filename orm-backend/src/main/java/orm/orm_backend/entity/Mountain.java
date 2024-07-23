@@ -19,11 +19,11 @@ public class Mountain {
     private String mountainCode;
     private String address;
     private String imageSrc;
-    private Double altitude;
+    private Float altitude;
     private String description;
 
     @Builder
-    public Mountain(String mountainName, String mountainCode, String address, String imageSrc, Double altitude, String description) {
+    public Mountain(String mountainName, String mountainCode, String address, String imageSrc, Float altitude, String description) {
         this.mountainName = mountainName;
         this.mountainCode = mountainCode;
         this.address = address;
