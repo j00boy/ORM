@@ -25,6 +25,7 @@ public class TraceService {
     private final ImageUtil imageUtil;
 
     private final UserService userService;
+    private final MountainService mountainService;
 
     private final TraceRepository traceRepository;
     private final TraceImageRepository traceImageRepository;
@@ -33,13 +34,14 @@ public class TraceService {
         // mountain, trail 객체 받는 로직 추후 추가
 //        Mountain mountain = mountainService.get()
 //        Trail trail = trailService.get();
-        Mountain mountain = null;
+        Mountain mountain = mountainService.getMountainById(creationRequestDto.getMountainId());
         Trail trail = null;
 
         User user = userService.findUserById(userId);
 
         Trace trace = Trace.builder()
                 .traceRequestDto(creationRequestDto)
+                .mountain(mountain)
                 .trail(trail)
                 .user(user)
                 .build();
@@ -53,7 +55,8 @@ public class TraceService {
         if (!trace.isOwner(userId)) {
             throw new UnAuthorizedException();
         }
-        trace.update(traceRequestDto);
+        Mountain mountain = mountainService.getMountainById(traceRequestDto.getMountainId());
+        trace.update(traceRequestDto, mountain);
         return trace.toResponseDto();
     }
 
