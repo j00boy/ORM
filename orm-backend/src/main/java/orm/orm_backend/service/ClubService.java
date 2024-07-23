@@ -110,11 +110,7 @@ public class ClubService {
 
     // 중복 체크
     public Boolean isValid(String clubName) {
-        Optional<Club> club = clubRepository.findByClubName(clubName);
-        if(club.isPresent()) {
-            return Boolean.FALSE;
-        }
-        return Boolean.TRUE;
+        return clubRepository.existsByClubName(clubName);
     }
 
 
