@@ -74,6 +74,7 @@ public class TraceService {
         trace.completeMeasure(traceDto);
     }
 
+    @Transactional
     public void updateTraceImages(Integer userId, Integer traceId, List<MultipartFile> images) {
         Trace trace = traceRepository.findById(traceId).orElseThrow();
         if (!trace.isOwner(userId)) {
