@@ -29,4 +29,9 @@ public class ApplicantService {
         }
         return result;
     }
+
+    // Club에 가입 신청한 인원
+    public List<Applicant> getApplicantsInClub(Integer clubId) {
+        return applicantRepository.findByClubId(clubId).stream().toList();
+    }
 }
