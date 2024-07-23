@@ -107,6 +107,15 @@ public class ClubService {
         return result;
     }
 
+    // 중복 체크
+    public Boolean isValid(String clubName) {
+        Optional<Club> club = clubRepository.findByClubName(clubName);
+        if(club.isPresent()) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
     // 이미지 파일을 저장하는 메서드
     private String saveImage(MultipartFile image) throws IOException {
         // 파일 이름 생성
