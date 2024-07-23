@@ -56,4 +56,13 @@ public class TraceService {
         }
         traceRepository.delete(trace);
     }
+
+    @Transactional
+    public void completeMeasure(Integer userId, TraceResponseDto traceResponseDto) {
+        Trace trace = traceRepository.findById(traceResponseDto.getId()).orElseThrow();
+        if (!trace.isOwner(userId)) {
+            throw new UnAuthorizedException();
+        }
+        trace.completeMeasure(traceResponseDto);
+    }
 }
