@@ -5,11 +5,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import orm.orm_backend.dto.common.TraceDto;
 import orm.orm_backend.dto.request.TraceRequestDto;
-import orm.orm_backend.dto.response.TraceResponseDto;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -39,7 +40,6 @@ public class Trace extends BaseEntity {
     private LocalDateTime endTime;
     private Float maxAltitude;
     private String Course;
-
 //    @Builder
 //    public Trace(TraceCreationRequestDto traceCreationRequestDto, Mountain mountain, Trail trail, User user) {
 //        this.title = traceCreationRequestDto.getTitle();
@@ -57,8 +57,8 @@ public class Trace extends BaseEntity {
         this.user = user;
     }
 
-    public TraceResponseDto toResponseDto() {
-        return TraceResponseDto.builder()
+    public TraceDto toResponseDto() {
+        return TraceDto.builder()
                 .id(id)
                 .title(title)
                 .hikingDate(hikingDate)
@@ -75,5 +75,10 @@ public class Trace extends BaseEntity {
     public boolean isOwner(Integer userId) {
         Integer ownerId = user.getId();
         return ownerId != null && ownerId == userId;
+    }
+
+    public void completeMeasure(TraceDto traceDto) {
+        this.startTime = traceDto.getHikingStartedAt();
+        this.endTime = traceDto.getHikingEndedAt();
     }
 }
