@@ -8,8 +8,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import orm.orm_backend.dto.request.ClubJoinDto;
 import orm.orm_backend.dto.request.ClubRequestDto;
 import orm.orm_backend.dto.request.ClubSearchRequestDto;
+import orm.orm_backend.dto.request.MemberRequestDto;
 import orm.orm_backend.dto.response.ClubResponseDto;
 import orm.orm_backend.entity.*;
 import orm.orm_backend.repository.*;
@@ -50,10 +52,14 @@ public class ClubService {
                 throw new RuntimeException(e);
             }
         }
-
-
+        // club 생성
         Club club = clubRequestDTO.toEntity(user, mountain, imageSrc);
-        return clubRepository.save(club).getId();
+        clubRepository.save(club);
+
+        // club 생성 이후 해당 user를 member table에 추가
+        MemberRequestDto memberRequestDto = MemberRequestDto.builder().user(user).club(club).build();
+        memberService.saveMember(memberRequestDto);
+        return club.getId();
     }
 
     // Club 조회
@@ -81,6 +87,24 @@ public class ClubService {
             }
         }
         return clubs;
+    }
+
+    // 회원 목록 조회
+    public Map<String, Object> getMembers(Integer clubId, Integer userId) {
+        Club club = clubRepository.findById(clubId).orElse(null);
+        Map<String, Object> result = new HashMap<>();
+
+        List<Member> members = memberService.getMembersInClub(clubId);
+        List<Applicant> applicants = null;
+
+        if (club != null && club.getManager().getId().equals(userId)) {
+            applicants = applicantService.getApplicantsInClub(clubId);
+        }
+
+        result.put("members", members);
+        result.put("requestMembers", applicants);
+
+        return result;
     }
 
     // 이미지 파일을 저장하는 메서드
