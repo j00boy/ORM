@@ -3,6 +3,7 @@ package orm.orm_backend.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import orm.orm_backend.dto.request.ClubRequestDto;
@@ -11,6 +12,7 @@ import orm.orm_backend.dto.response.ClubResponseDto;
 import orm.orm_backend.service.ClubService;
 import orm.orm_backend.util.JwtUtil;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +30,9 @@ public class ClubController {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         Integer clubId = clubService.createClub(clubRequestDto, userId);
-        return ResponseEntity.ok().body(clubId);
+        HttpHeaders headers = jwtUtil.createTokenHeaders(userId);
+        return ResponseEntity.created(URI.create("/clubs"))
+                .headers(headers).body(clubId);
     }
 
     @GetMapping
@@ -49,11 +53,9 @@ public class ClubController {
     }
 
     @GetMapping("/name/check-duplicate")
-    public ResponseEntity<Map<String, Boolean>> isValid(@RequestParam("name") String name) {
-        Map<String, Boolean> result = new HashMap<>();
+    public ResponseEntity<Boolean> isValid(@RequestParam("name") String name) {
         Boolean isValid = clubService.isValid(name);
-        result.put("isValid", isValid);
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok().body(isValid);
     }
 
 
