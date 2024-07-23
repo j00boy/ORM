@@ -25,7 +25,7 @@ import java.util.Map;
 @RequestMapping("/clubs")
 public class ClubController {
     @Value("${orm.header.auth}")
-    private final String HEADER_AUTH;
+    private String HEADER_AUTH;
 
     private final JwtUtil jwtUtil;
 
