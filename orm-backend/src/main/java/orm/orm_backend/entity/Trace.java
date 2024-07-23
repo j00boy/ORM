@@ -5,8 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import orm.orm_backend.dto.request.TraceRequestDto;
 import orm.orm_backend.dto.common.TraceDto;
+import orm.orm_backend.dto.request.TraceRequestDto;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -40,8 +40,6 @@ public class Trace extends BaseEntity {
     private LocalDateTime endTime;
     private Float maxAltitude;
     private String Course;
-    @OneToMany
-    private List<TraceImage> images;
 //    @Builder
 //    public Trace(TraceCreationRequestDto traceCreationRequestDto, Mountain mountain, Trail trail, User user) {
 //        this.title = traceCreationRequestDto.getTitle();
@@ -82,9 +80,5 @@ public class Trace extends BaseEntity {
     public void completeMeasure(TraceDto traceDto) {
         this.startTime = traceDto.getHikingStartedAt();
         this.endTime = traceDto.getHikingEndedAt();
-    }
-
-    public void updateImages(List<TraceImage> images) {
-        this.images = images;
     }
 }

@@ -74,18 +74,20 @@ public class TraceService {
         trace.completeMeasure(traceDto);
     }
 
-    @Transactional
     public void updateTraceImages(Integer userId, Integer traceId, List<MultipartFile> images) {
         Trace trace = traceRepository.findById(traceId).orElseThrow();
         if (!trace.isOwner(userId)) {
             throw new UnAuthorizedException();
         }
 
-        traceImageRepository.deleteAll(trace.getImages());
+        List<TraceImage> oldImages = traceImageRepository.findByTraceId(traceId);
+        traceImageRepository.deleteAll(oldImages);
+
+        // TODO: 실제 파일 삭제하는 로직 추가
 
         String path = "/trace/" + traceId;
         List<TraceImage> traceImages = images.stream()
                 .map(image -> imageUtil.saveImage(image, path)).map(TraceImage::new).toList();
-        trace.updateImages(traceImages);
+        traceImageRepository.saveAll(traceImages);
     }
 }

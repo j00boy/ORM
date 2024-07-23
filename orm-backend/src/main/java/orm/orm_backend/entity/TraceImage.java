@@ -1,10 +1,6 @@
 package orm.orm_backend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AccessLevel;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,4 +14,7 @@ public class TraceImage {
     private Integer id;
 
     private final String imageSrc;
+
+    @ManyToOne
+    private Trace trace;
 }
