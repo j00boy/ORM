@@ -9,5 +9,6 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Integer> {
     Optional<Member> findByUserId(Integer userId);
+    Optional<Member> findByClubId(Integer clubId);
     Page<Member> findByUserId(Pageable pageable, Integer userId);
 }
