@@ -2,6 +2,7 @@ package com.orm.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.orm.databinding.ActivityLauncherBinding
@@ -16,20 +17,17 @@ class LauncherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(ActivityLauncherBinding.inflate(layoutInflater).root)
 
-        if (!checkAccessToken()) {
-            userViewModel.loginAuto()
-            startActivity(Intent(this, MainActivity::class.java))
-        } else {
-            startActivity(Intent(this, LoginActivity::class.java))
+        userViewModel.token.observe(this) { token ->
+            if (!token.isNullOrEmpty()) {
+                Log.d("LauncherActivity", "checkAccessToken: true, token: $token")
+                userViewModel.loginAuto()
+                startActivity(Intent(this, MainActivity::class.java))
+            } else {
+                Log.d("LauncherActivity", "checkAccessToken: false")
+                startActivity(Intent(this, LoginActivity::class.java))
+            }
+            finish()
         }
-        finish()
-    }
-
-    private fun checkAccessToken(): Boolean {
-        var token = ""
-        userViewModel.token.observe(this) {
-            token = it.toString()
-        }
-        return token.isNotEmpty()
+        userViewModel.getAccessToken()
     }
 }

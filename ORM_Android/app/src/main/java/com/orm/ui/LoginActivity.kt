@@ -3,6 +3,7 @@ package com.orm.ui
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ImageButton
@@ -34,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
         setupLoginButton()
 
         userViewModel.token.observe(this) { token ->
+            Log.d("LoginActivity", "token: $token")
             if (!token.isNullOrEmpty()) {
                 startActivity(Intent(this, MainActivity::class.java))
                 finish()
@@ -43,6 +45,7 @@ class LoginActivity : AppCompatActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
+        Log.d("LoginActivity", "setupWebView")
         webView = binding.webview
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
@@ -60,6 +63,7 @@ class LoginActivity : AppCompatActivity() {
     private fun setupLoginButton() {
         btnLogin = binding.btnLogin
         btnLogin.setOnClickListener {
+            Log.d("LoginActivity", "clickLoginButton")
             webView.visibility = WebView.VISIBLE
             webView.loadUrl(BuildConfig.BASE_URL + ADDRESS)
         }

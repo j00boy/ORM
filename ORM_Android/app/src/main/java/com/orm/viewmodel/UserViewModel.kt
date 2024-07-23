@@ -22,10 +22,6 @@ class UserViewModel @Inject constructor(
     private val _token = MutableLiveData<String>()
     val token: LiveData<String> get() = _token
 
-    init {
-        getAccessToken()
-    }
-
     fun loginKaKao(code: String) {
         viewModelScope.launch {
             try {
@@ -40,11 +36,11 @@ class UserViewModel @Inject constructor(
     }
 
     fun loginAuto() {
+        Log.d("UserViewModel", "loginAuto")
         viewModelScope.launch {
             try {
                 val user = userRepository.loginAuto()
                 _user.postValue(user)
-                Log.d("UserViewModel", "User: $user")
                 getAccessToken()
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Login failed: ${e.message}", e)
@@ -52,9 +48,9 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    private fun getAccessToken() {
+    fun getAccessToken() {
         viewModelScope.launch {
-            val token = userRepository.getAccessToken()
+            val token: String = userRepository.getAccessToken()
             if (token.isEmpty()) {
                 Log.d("UserViewModel", "token is empty")
             } else {

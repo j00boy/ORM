@@ -50,12 +50,12 @@ class UserRepository @Inject constructor(
                 saveAccessToken(response.headers().get("accessToken").toString())
                 response.body() ?: throw Exception("Login failed")
             } else {
-                throw Exception("Login failed")
+                throw Exception(response.errorBody()?.string())
             }
         }
     }
 
-    suspend fun saveAccessToken(accessToken: String) {
+    private suspend fun saveAccessToken(accessToken: String) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.tokenString] = accessToken
         }
