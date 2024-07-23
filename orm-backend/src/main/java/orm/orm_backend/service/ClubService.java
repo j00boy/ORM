@@ -35,9 +35,9 @@ public class ClubService {
     private final ApplicantService applicantService;
 
     public Integer createClub(ClubRequestDto clubRequestDTO, Integer userId) {
-        // user 찾기
+        // TODO : refactor user 찾기 (refactor 진행해야 함)
         User user = userRepository.findById(userId).orElseThrow(NoResultException::new);
-        // mountain 찾기
+        // TODO : mountain 찾기 (refactor 진행해야 함)
         Mountain mountain = mountainRepository.findById(clubRequestDTO.getMountainId())
                 .orElseThrow(NoResultException::new);
 
@@ -52,11 +52,12 @@ public class ClubService {
                 throw new RuntimeException(e);
             }
         }
+
         // club 생성
         Club club = clubRequestDTO.toEntity(user, mountain, imageSrc);
         clubRepository.save(club);
 
-        // club 생성 이후 해당 user를 member table에 추가
+        // club 생성 이후 해당 user 를 member table에 추가 (관리자도 회원)
         MemberRequestDto memberRequestDto = MemberRequestDto.builder().user(user).club(club).build();
         memberService.saveMember(memberRequestDto);
         return club.getId();
@@ -91,15 +92,15 @@ public class ClubService {
 
     // 회원 목록 조회
     public Map<String, Object> getMembers(Integer clubId, Integer userId) {
-        Club club = clubRepository.findById(clubId).orElse(null);
         Map<String, Object> result = new HashMap<>();
 
-        List<Member> members = memberService.getMembersInClub(clubId);
-        List<Applicant> applicants = null;
-
-        if (club != null && club.getManager().getId().equals(userId)) {
-            applicants = applicantService.getApplicantsInClub(clubId);
+        Club club = clubRepository.findById(clubId).orElse(null);
+        if (club == null) {
+            throw new NoResultException("id에 해당하는 클럽이 없습니다.");
         }
+
+        List<Member> members = memberService.getMembersInClub(clubId);
+        List<Applicant> applicants = (!club.getManager().getId().equals(userId)) ? null : applicantService.getApplicantsInClub(clubId);
 
         result.put("members", members);
         result.put("requestMembers", applicants);
@@ -114,6 +115,16 @@ public class ClubService {
             return Boolean.FALSE;
         }
         return Boolean.TRUE;
+    }
+
+
+    // 가입 신청
+    public Integer joinClub(ClubJoinDto clubJoinDto) {
+        // TODO : userService
+        // clubService - club id 활용하여 클럽찾기
+        Club clue = clubRepository.findById(clubJoinDto.getClubId()).orElseThrow(NoResultException::new);
+        // TODO : applicant 저장
+        // TODO : 값 반환
     }
 
     // 이미지 파일을 저장하는 메서드
