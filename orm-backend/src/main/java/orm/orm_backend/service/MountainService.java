@@ -13,6 +13,7 @@ import orm.orm_backend.repository.MountainRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,15 +22,23 @@ public class MountainService {
 
     private final MountainRepository mountainRepository;
 
-    // id로 산 조회
-    public MountainResponseDto getMountainById(Integer id) {
+    // id로 산 조회 -> DTO 반환
+    public MountainResponseDto getMountainDtoById(Integer id) {
         Mountain findMountain = mountainRepository.findById(id).orElseThrow();
         List<Trail> trails = new ArrayList<>();
         MountainResponseDto dto = new MountainResponseDto(findMountain, trails);
         return dto;
     }
 
-    // name으로 산 조회 (
+    // id로 산 조회 -> Entity 반환
+    public Mountain getMountainById(Integer id) {
+        Mountain mountainEntity = mountainRepository.findById(id).orElseThrow();
+        return mountainEntity;
+    }
+
+
+
+    // name으로 산 조회
     public List<MountainResponseDto> getAllMountains(MountainSearchRequestDto mountainSearchRequestDto) {
         Pageable pageable = PageRequest.of(mountainSearchRequestDto.getPgno(), mountainSearchRequestDto.getRecordSize());
         Page<Mountain> mountains = mountainRepository.findByMountainNameContaining(pageable, mountainSearchRequestDto.getKeyword());

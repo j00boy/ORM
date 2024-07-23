@@ -21,7 +21,7 @@ public class MountainController {
     @GetMapping("/{mountainId}")
     public ResponseEntity<MountainResponseDto> getMountainById(@PathVariable("mountainId") Integer id) {
         log.info("mountainId={}", id);
-        MountainResponseDto mountainDto = mountainService.getMountainById(id);
+        MountainResponseDto mountainDto = mountainService.getMountainDtoById(id);
         return ResponseEntity.ok().body(mountainDto);
     }
 
