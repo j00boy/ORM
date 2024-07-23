@@ -125,6 +125,7 @@ public class ClubService {
         Club clue = clubRepository.findById(clubJoinDto.getClubId()).orElseThrow(NoResultException::new);
         // TODO : applicant 저장
         // TODO : 값 반환
+        return 0;
     }
 
     // 이미지 파일을 저장하는 메서드
