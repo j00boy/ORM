@@ -12,9 +12,9 @@ class OrmApplication : Application() {
         super.onCreate()
 
         // kakao login
-        KakaoSdk.init(this, "14b29e03607d10644d7dcc49768a2bff")
+        KakaoSdk.init(this, BuildConfig.KAKAO_APP_KEY)
         // kakao map
-        KakaoMapSdk.init(this, "14b29e03607d10644d7dcc49768a2bff")
+        KakaoMapSdk.init(this, BuildConfig.KAKAO_APP_KEY)
     }
 
 }

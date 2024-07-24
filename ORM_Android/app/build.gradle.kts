@@ -28,11 +28,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") }
 
         buildConfigField("String", "BASE_URL", getApiKey("BASE_URL"))
         buildConfigField("String", "DATASTORE_NAME", getApiKey("DATASTORE_NAME"))
-
-        ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") }
+        buildConfigField("String", "KAKAO_APP_KEY", getApiKey("KAKAO_APP_KEY"))
     }
 
 
