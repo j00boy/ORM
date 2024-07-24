@@ -15,11 +15,10 @@ public class Trail extends BaseEntity {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "mountain_id")
     private Mountain mountain;
 
-    private String start_latitude;
-    private String start_longitude;
-    private String peak_latitude;
-    private String peak_longitude;
+    private String startLatitude;
+    private String startLongitude;
+    private String peakLatitude;
+    private String peakLongitude;
 }
