@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
 }
@@ -70,7 +71,7 @@ dependencies {
 
     // hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // retrofit2
     implementation(libs.retrofit)
@@ -97,7 +98,7 @@ dependencies {
 
     // glide
     implementation(libs.glide)
-    annotationProcessor(libs.compiler)
+    ksp(libs.compiler)
 
     // kakao login
     implementation(libs.v2.user)
