@@ -8,7 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import orm.orm_backend.dto.request.ClubJoinDto;
+import orm.orm_backend.dto.request.ApplicantRequestDto;
 import orm.orm_backend.dto.request.ClubRequestDto;
 import orm.orm_backend.dto.request.ClubSearchRequestDto;
 import orm.orm_backend.dto.request.MemberRequestDto;
@@ -28,15 +28,15 @@ import java.util.*;
 public class ClubService {
     private final String UPLOADDIR = "src/main/resources/static/uploads/image";
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final ClubRepository clubRepository;
     private final MountainRepository mountainRepository;
     private final MemberService memberService;
     private final ApplicantService applicantService;
 
     public Integer createClub(ClubRequestDto clubRequestDTO, Integer userId) {
-        // TODO : refactor user 찾기 (refactor 진행해야 함)
-        User user = userRepository.findById(userId).orElseThrow(NoResultException::new);
+        // user 찾기
+        User user = userService.findUserById(userId);
         // TODO : mountain 찾기 (refactor 진행해야 함)
         Mountain mountain = mountainRepository.findById(clubRequestDTO.getMountainId())
                 .orElseThrow(NoResultException::new);
@@ -58,8 +58,8 @@ public class ClubService {
         clubRepository.save(club);
 
         // club 생성 이후 해당 user 를 member table에 추가 (관리자도 회원)
-        MemberRequestDto memberRequestDto = MemberRequestDto.builder().user(user).club(club).build();
-        memberService.saveMember(memberRequestDto);
+        Member member = MemberRequestDto.toEntity(user, club);
+        memberService.saveMember(member);
         return club.getId();
     }
 
@@ -74,7 +74,7 @@ public class ClubService {
             Page<Member> members = memberService.getPageableMembers(pageable, userId);
             for (Member m : members) {
                 clubRepository.findById(m.getClub().getId())
-                        .ifPresent(club -> clubs.add(new ClubResponseDto().toDto(club, Boolean.TRUE, Boolean.FALSE)));
+                        .ifPresent(club -> clubs.add(ClubResponseDto.toMyDto(club)));
             }
         } else {
             Page<Club> results = clubRepository.findAllByClubNameContaining(pageable, clubSearchRequestDto.getKeyword());
@@ -84,7 +84,7 @@ public class ClubService {
             for (Club c : results) {
                 Boolean isMember = clubMap.contains(c.getId()) ? Boolean.TRUE : Boolean.FALSE;
                 Boolean isApplied = applicantMap.contains(c.getId()) ? Boolean.TRUE : Boolean.FALSE;
-                clubs.add(new ClubResponseDto().toDto(c, isMember, isApplied));
+                clubs.add(ClubResponseDto.toDto(c, isMember, isApplied));
             }
         }
         return clubs;
@@ -100,7 +100,7 @@ public class ClubService {
         }
 
         List<Member> members = memberService.getMembersInClub(clubId);
-        List<Applicant> applicants = (!club.getManager().getId().equals(userId)) ? null : applicantService.getApplicantsInClub(clubId);
+        List<Applicant> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId);
 
         result.put("members", members);
         result.put("requestMembers", applicants);
@@ -110,22 +110,34 @@ public class ClubService {
 
     // 중복 체크
     public Boolean isValid(String clubName) {
-        Optional<Club> club = clubRepository.findByClubName(clubName);
-        if(club.isPresent()) {
-            return Boolean.FALSE;
-        }
-        return Boolean.TRUE;
+        return clubRepository.existsByClubName(clubName);
     }
 
 
     // 가입 신청
-    public Integer joinClub(ClubJoinDto clubJoinDto) {
-        // TODO : userService
-        // clubService - club id 활용하여 클럽찾기
-        Club clue = clubRepository.findById(clubJoinDto.getClubId()).orElseThrow(NoResultException::new);
-        // TODO : applicant 저장
-        // TODO : 값 반환
-        return 0;
+    public Applicant joinClub(ApplicantRequestDto applicantRequestDto) {
+        // user 찾기
+        User user = userService.findUserById(applicantRequestDto.getUserId());
+        // club 찾기
+        Club club = clubRepository.findById(applicantRequestDto.getClubId()).orElseThrow(NoResultException::new);
+        // applicant 저장
+        Applicant applicant = applicantRequestDto.toEntity(user, club);
+        return applicantService.saveApplicant(applicant);
+    }
+
+    // 추방 탈퇴
+    public void deleteMember(MemberRequestDto memberRequestDto) {
+        memberService.delete(memberRequestDto);
+    }
+
+    // 가입 수락/거절
+    public void approveMember(MemberRequestDto memberRequestDto) {
+        if (memberRequestDto.getIsApproved()) {
+            User user = userService.findUserById(memberRequestDto.getUserId());
+            Club club = clubRepository.findById(memberRequestDto.getClubId()).orElseThrow();
+            memberService.saveMember(MemberRequestDto.toEntity(user, club));
+        }
+        applicantService.deleteApplicant(memberRequestDto);
     }
 
     // 이미지 파일을 저장하는 메서드

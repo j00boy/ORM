@@ -4,9 +4,6 @@ import lombok.*;
 import orm.orm_backend.entity.Club;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ClubResponseDto {
     private Integer id;
     private Integer managerId;
@@ -23,19 +20,35 @@ public class ClubResponseDto {
     private Boolean isMember;
     private Boolean isApplied;
 
-    public ClubResponseDto toDto(Club club, Boolean isMember, Boolean isApplied) {
-        return ClubResponseDto.builder()
-                .id(club.getId())
-                .managerId(club.getManager().getId())
-                .managerName(club.getManager().getNickname())
-                .memberCount(club.getMembers().size())
-                .clubName(club.getClubName())
-                .description(club.getDescription())
-                .imgSrc(club.getImageSrc())
-                .mountainId(club.getMountain().getId())
-                .mountainName(club.getMountain().getMountainName())
-                .isMember(isMember)
-                .isApplied(isApplied)
-                .build();
+    public static ClubResponseDto toMyDto(Club club) {
+        ClubResponseDto clubResponseDto = new ClubResponseDto();
+        clubResponseDto.id = club.getId();
+        clubResponseDto.managerId = club.getManager().getId();
+        clubResponseDto.managerName = club.getManager().getNickname();
+        clubResponseDto.memberCount = club.getMembers().size();
+        clubResponseDto.clubName = club.getClubName();
+        clubResponseDto.description = club.getDescription();
+        clubResponseDto.imgSrc = club.getImageSrc();
+        clubResponseDto.mountainId = club.getMountain().getId();
+        clubResponseDto.mountainName = club.getMountain().getMountainName();
+        clubResponseDto.isMember = Boolean.TRUE;
+        clubResponseDto.isApplied = Boolean.FALSE;
+        return clubResponseDto;
+    }
+
+    public static ClubResponseDto toDto(Club club, Boolean isMember, Boolean isApplied) {
+        ClubResponseDto clubResponseDto = new ClubResponseDto();
+        clubResponseDto.id = club.getId();
+        clubResponseDto.managerId = club.getManager().getId();
+        clubResponseDto.managerName = club.getManager().getNickname();
+        clubResponseDto.memberCount = club.getMembers().size();
+        clubResponseDto.clubName = club.getClubName();
+        clubResponseDto.description = club.getDescription();
+        clubResponseDto.imgSrc = club.getImageSrc();
+        clubResponseDto.mountainId = club.getMountain().getId();
+        clubResponseDto.mountainName = club.getMountain().getMountainName();
+        clubResponseDto.isMember = isMember;
+        clubResponseDto.isApplied = isApplied;
+        return clubResponseDto;
     }
 }

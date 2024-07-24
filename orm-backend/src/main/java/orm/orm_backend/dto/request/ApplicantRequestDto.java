@@ -2,21 +2,22 @@ package orm.orm_backend.dto.request;
 
 import lombok.Builder;
 import lombok.Data;
+import orm.orm_backend.entity.Applicant;
 import orm.orm_backend.entity.Club;
-import orm.orm_backend.entity.Member;
 import orm.orm_backend.entity.User;
 
 @Data
 @Builder
-public class MemberRequestDto {
-    private Integer userId;
+public class ApplicantRequestDto {
     private Integer clubId;
-    private Boolean isApproved;
+    private Integer userId;
+    private String introduction;
 
-    public static Member toEntity(User user, Club club) {
-        return Member.builder()
+    public Applicant toEntity(User user, Club club) {
+        return Applicant.builder()
                 .user(user)
                 .club(club)
+                .introduction(introduction)
                 .build();
     }
 }

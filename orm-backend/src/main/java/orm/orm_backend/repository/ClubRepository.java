@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface ClubRepository extends JpaRepository<Club, Integer> {
     Page<Club> findAllByClubNameContaining(Pageable pageable, String keyword);
 
-    Optional<Club> findByClubName(String ClubName);
+    Boolean existsByClubName(String clubName);
 }

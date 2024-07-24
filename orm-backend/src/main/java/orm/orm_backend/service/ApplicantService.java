@@ -2,10 +2,9 @@ package orm.orm_backend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import orm.orm_backend.dto.request.MemberRequestDto;
 import orm.orm_backend.entity.Applicant;
-import orm.orm_backend.entity.Member;
 import orm.orm_backend.repository.ApplicantRepository;
-import orm.orm_backend.repository.MemberRepository;
 
 import java.util.HashSet;
 import java.util.List;
@@ -33,5 +32,15 @@ public class ApplicantService {
     // Club에 가입 신청한 인원
     public List<Applicant> getApplicantsInClub(Integer clubId) {
         return applicantRepository.findByClubId(clubId).stream().toList();
+    }
+
+    // Applicant 저장
+    public Applicant saveApplicant(Applicant applicant) {
+        return applicantRepository.save(applicant);
+    }
+
+    // Applicant 삭제
+    public void deleteApplicant(MemberRequestDto memberRequestDto) {
+        applicantRepository.deleteByUserIdAndClubId(memberRequestDto.getUserId(), memberRequestDto.getClubId());
     }
 }
