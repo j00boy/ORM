@@ -3,6 +3,7 @@ package orm.orm_backend.util;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +14,7 @@ import java.util.UUID;
 public class ImageUtil {
 
     private final String UPLOAD_DIR = "src/main/resources/static/uploads/image";
+    private final String PREFIX_DIR = "src/main/resources/static";
 
     // 이미지 파일을 저장하는 메서드
     public String saveImage(MultipartFile image, String directoryPath) {
@@ -37,5 +39,12 @@ public class ImageUtil {
         }
 
         return dbFilePath;
+    }
+
+    public void deleteImage(String fileName) {
+        File file = new File(PREFIX_DIR + fileName);
+        if (file.delete()) {
+            throw new IllegalArgumentException(fileName + "의 이름으로 된 파일이 존재하지 않습니다.");
+        }
     }
 }
