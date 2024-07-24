@@ -19,10 +19,10 @@ public class ImageUtil {
         // 파일 이름 생성
         String fileName = UUID.randomUUID().toString().replace("-", "") + "_" + image.getOriginalFilename();
         // 실제 파일이 저장될 경로
-        String filePath = UPLOAD_DIR + fileName;
+        String filePath = UPLOAD_DIR + directoryPath + "/" + fileName;
 
         // DB에 저장할 경로 문자열
-        String dbFilePath = "/uploads/image" + directoryPath + fileName;
+        String dbFilePath = "/uploads/image" + directoryPath + "/" +fileName;
 
         Path path = Paths.get(filePath); // Path 객체 생성
 
