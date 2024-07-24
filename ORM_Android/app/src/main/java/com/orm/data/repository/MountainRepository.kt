@@ -36,7 +36,7 @@ class MountainRepository @Inject constructor(
 
     suspend fun getMountainByRouteId(routeId: Int): List<Point> {
         return withContext(Dispatchers.IO) {
-            val response = mountainService.getRoute(routeId).execute()
+            val response = mountainService.getTrail(routeId).execute()
 
             if (response.isSuccessful) {
                 response.body() ?: emptyList()

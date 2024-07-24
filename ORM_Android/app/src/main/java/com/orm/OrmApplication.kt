@@ -2,6 +2,7 @@ package com.orm
 
 import android.app.Application
 import com.kakao.sdk.common.KakaoSdk
+import com.kakao.vectormap.KakaoMapSdk
 import dagger.hilt.android.HiltAndroidApp
 
 
@@ -12,6 +13,8 @@ class OrmApplication : Application() {
 
         // kakao login
         KakaoSdk.init(this, "14b29e03607d10644d7dcc49768a2bff")
+        // kakao map
+        KakaoMapSdk.init(this, "14b29e03607d10644d7dcc49768a2bff")
     }
 
 }

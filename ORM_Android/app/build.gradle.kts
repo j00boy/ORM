@@ -103,4 +103,7 @@ dependencies {
     // datastore
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore.preferences.core)
+
+    //kakao map
+    implementation("com.kakao.maps.open:android:2.9.5")
 }

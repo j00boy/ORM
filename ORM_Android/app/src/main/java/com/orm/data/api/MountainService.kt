@@ -9,8 +9,8 @@ import retrofit2.http.Query
 
 interface MountainService {
     // 등산로 ID로 검색
-    @GET("mountains/route/{routesID}")
-    fun getRoute(@Path("routesID") routesID: Int): Call<List<Point>>
+    @GET("mountains/trail/{trailId}")
+    fun getTrail(@Path("trailId") trailId: Int): Call<List<Point>>
 
     // 산 ID로 불러오기
     @GET("mountains/{mountainID}")
