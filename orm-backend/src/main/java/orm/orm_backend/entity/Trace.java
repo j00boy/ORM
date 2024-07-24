@@ -29,8 +29,8 @@ public class Trace extends BaseEntity {
     @ManyToOne
     private User user;
 
-//    @ManyToOne
-//    private Mountain mountain;
+    @ManyToOne
+    private Mountain mountain;
 
     @Column(length = 30)
     private String title;
@@ -40,19 +40,12 @@ public class Trace extends BaseEntity {
     private LocalDateTime endTime;
     private Float maxAltitude;
     private String Course;
-//    @Builder
-//    public Trace(TraceCreationRequestDto traceCreationRequestDto, Mountain mountain, Trail trail, User user) {
-//        this.title = traceCreationRequestDto.getTitle();
-//        this.hikingDate = traceCreationRequestDto.getHikingDate();
-//        this.mountain = mountain;
-//        this.trail = trail;
-//        this.user = user;
-//    }
 
     @Builder
-    public Trace(TraceRequestDto traceRequestDto, Trail trail, User user) {
+    public Trace(TraceRequestDto traceRequestDto, Mountain mountain, Trail trail, User user) {
         this.title = traceRequestDto.getTitle();
         this.hikingDate = traceRequestDto.getHikingDate();
+        this.mountain = mountain;
         this.trail = trail;
         this.user = user;
     }
@@ -67,9 +60,10 @@ public class Trace extends BaseEntity {
                 .maxHeight(maxAltitude).build();
     }
 
-    public void update(TraceRequestDto traceRequestDto) {
+    public void update(TraceRequestDto traceRequestDto, Mountain mountain) {
         this.title = traceRequestDto.getTitle();
         this.hikingDate = traceRequestDto.getHikingDate();
+        this.mountain = mountain;
     }
 
     public boolean isOwner(Integer userId) {
