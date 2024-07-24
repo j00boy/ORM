@@ -7,26 +7,25 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import orm.orm_backend.dto.request.MountainSearchRequestDto;
 import orm.orm_backend.dto.response.MountainResponseDto;
+import orm.orm_backend.dto.response.TrailResponseDto;
 import orm.orm_backend.entity.Mountain;
-import orm.orm_backend.entity.Trail;
 import orm.orm_backend.repository.MountainRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class MountainService {
 
     private final MountainRepository mountainRepository;
+    private final TrailService trailService;
 
     // id로 산 조회 -> DTO 반환
-    public MountainResponseDto getMountainDtoById(Integer id) {
-        Mountain findMountain = mountainRepository.findById(id).orElseThrow();
-        List<Trail> trails = new ArrayList<>();
-        MountainResponseDto dto = new MountainResponseDto(findMountain, trails);
+    public MountainResponseDto getMountainDtoById(Integer mountainId) {
+        Mountain findMountain = mountainRepository.findById(mountainId).orElseThrow();
+        List<TrailResponseDto> trailsByMountainId = trailService.getTrailsByMountainId(findMountain.getId());
+        MountainResponseDto dto = new MountainResponseDto(findMountain, trailsByMountainId);
         return dto;
     }
 
@@ -36,21 +35,16 @@ public class MountainService {
         return mountainEntity;
     }
 
-
-
     // name으로 산 조회
     public List<MountainResponseDto> getAllMountains(MountainSearchRequestDto mountainSearchRequestDto) {
         Pageable pageable = PageRequest.of(mountainSearchRequestDto.getPgno(), mountainSearchRequestDto.getRecordSize());
         Page<Mountain> mountains = mountainRepository.findByMountainNameContaining(pageable, mountainSearchRequestDto.getKeyword());
-
-        // TODO: 마운틴 객체 + Trail를 DTO에 담아주기
-        // TODO: TrailService에서 m_id로 List<Trail> 가져오기
-        List<Trail> trails = new ArrayList<>();
-
-        List<MountainResponseDto> mountainResponseDtos = mountains.stream()
-                .map(mountain ->  new MountainResponseDto(mountain, trails))
-                .collect(Collectors.toList());
-
+        List<MountainResponseDto> mountainResponseDtos = new ArrayList<>();
+        for(Mountain mountain : mountains) {
+            List<TrailResponseDto> trailsByMountainId = trailService.getTrailsByMountainId(mountain.getId());
+            MountainResponseDto dto = new MountainResponseDto(mountain, trailsByMountainId);
+            mountainResponseDtos.add(dto);
+        }
         return mountainResponseDtos;
     }
 
