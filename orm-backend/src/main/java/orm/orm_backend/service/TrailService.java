@@ -21,7 +21,7 @@ public class TrailService {
 
     // 산ID로 모든 등산로 조회
     public List<TrailResponseDto> getTrailsByMountainId(int mountainId) {
-        List<Trail> findTrails = trailRepository.findByMountainId(mountainId).orElseThrow();
+        List<Trail> findTrails = trailRepository.findByMountainId(mountainId);
         List<TrailResponseDto> trailResponseDtos = new ArrayList<>();
         for (Trail trail : findTrails) {
             List<TrailDetailResponseDto> allTrailDetailsByTrailId = getAllTrailDetailsByTrailId(trail.getId());

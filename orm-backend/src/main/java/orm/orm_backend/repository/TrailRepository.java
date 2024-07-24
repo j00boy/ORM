@@ -10,7 +10,7 @@ import java.util.Optional;
 @Repository
 public interface TrailRepository extends JpaRepository<Trail, Integer> {
 
-    Optional<List<Trail>> findByMountainId(Integer mountainId);
+    List<Trail> findByMountainId(Integer mountainId);
 
     Optional<Trail> findById(Integer trailId);
 
