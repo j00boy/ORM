@@ -87,7 +87,8 @@ public class TraceService {
         List<TraceImage> oldImages = traceImageRepository.findByTraceId(traceId);
         traceImageRepository.deleteAll(oldImages);
 
-        // TODO: 실제 파일 삭제하는 로직 추가
+        List<String> imageFileNames = oldImages.stream().map(TraceImage::getImageSrc).toList();
+        imageUtil.deleteImages(imageFileNames);
 
         String path = "/trace/" + traceId;
         List<TraceImage> traceImages = images.stream()
