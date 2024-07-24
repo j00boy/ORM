@@ -41,4 +41,9 @@ public class Club extends BaseEntity {
         this.description = description;
         this.imageSrc = imageSrc;
     }
+
+    public Boolean isManager(Integer userId){
+        Integer managerId = manager.getId();
+        return managerId != null && managerId.equals(userId);
+    }
 }

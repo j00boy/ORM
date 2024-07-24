@@ -12,4 +12,6 @@ public interface ApplicantRepository extends JpaRepository<Applicant, Integer> {
     Optional<Applicant> findByUserId(Integer userId);
 
     Optional<Applicant> findByClubId(Integer clubId);
+
+    void deleteByUserIdAndClubId(Integer userId, Integer clubId);
 }
