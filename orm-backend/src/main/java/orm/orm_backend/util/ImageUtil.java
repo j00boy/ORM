@@ -43,8 +43,9 @@ public class ImageUtil {
     }
 
     public void deleteImage(String fileName) {
-        File file = new File(PREFIX_DIR + fileName);
-        if (file.delete()) {
+        fileName = PREFIX_DIR + fileName;
+        File file = new File(fileName);
+        if (!file.delete()) {
             throw new IllegalArgumentException(fileName + "의 이름으로 된 파일이 존재하지 않습니다.");
         }
     }
