@@ -6,9 +6,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import androidx.fragment.app.FragmentManager
-import com.orm.R
 import com.orm.databinding.FragmentHomeBinding
 import com.orm.ui.ClubActivity
 import com.orm.ui.MountainSearchActivity
@@ -23,36 +20,45 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        val buttonMountainSearch = binding.imgSearch
-        buttonMountainSearch.setOnClickListener {
-            val targetActivityClass = MountainSearchActivity::class.java
-            val intent = Intent(requireActivity(), targetActivityClass)
-            startActivity(intent)
+        setupCardClickListeners()
+        setupCardFragments()
+
+        return binding.root
+    }
+
+    private fun setupCardClickListeners() {
+        binding.cardSearch.setOnClickListener {
+            startActivity(MountainSearchActivity::class.java)
         }
-
-        val buttonTrace = binding.imgTrace
-        buttonTrace.setOnClickListener {
-            val targetActivityClass = TraceActivity::class.java
-            val intent = Intent(requireActivity(), targetActivityClass)
-            startActivity(intent)
+        binding.cardTrace.setOnClickListener {
+            startActivity(TraceActivity::class.java)
         }
-
-        val buttonClub = binding.imgClub
-        buttonClub.setOnClickListener {
-            val targetActivityClass = ClubActivity::class.java
-            val intent = Intent(requireActivity(), targetActivityClass)
-            startActivity(intent)
+        binding.cardClub.setOnClickListener {
+            startActivity(ClubActivity::class.java)
         }
+    }
 
+    private fun startActivity(targetActivityClass: Class<*>) {
+        val intent = Intent(requireActivity(), targetActivityClass)
+        startActivity(intent)
+    }
 
-        return root
+    private fun setupCardFragments() {
+        setupCardFragment(binding.cardSearch.id, "검색", "산을 찾으세요")
+        setupCardFragment(binding.cardTrace.id, "발자국", "발자국을\n추적하세요")
+        setupCardFragment(binding.cardClub.id, "모임", "모임을\n찾으세요")
+    }
+
+    private fun setupCardFragment(containerId: Int, title: String, subtitle: String) {
+        val fragment = HomeCardFragment.newInstance(title, subtitle)
+        childFragmentManager.beginTransaction()
+            .replace(containerId, fragment)
+            .commit()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
 }

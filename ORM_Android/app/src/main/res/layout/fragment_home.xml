@@ -3,9 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="12dp"
-    >
-
+    android:layout_margin="12dp">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_horizontal_center"
@@ -28,82 +26,49 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
 
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/info"
+        android:name="com.orm.ui.fragment.HomeInfoFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:name="com.orm.ui.fragment.HomeInfoFragment"
         app:layout_constraintBottom_toTopOf="@id/guideline_horizontal_center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="검색"
-        android:textSize="30sp"
-        android:textStyle="bold"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/card_search"
+        android:name="com.orm.ui.fragment.HomeCardFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_bottom"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guideline_horizontal_center" />
 
-    <ImageButton
-        android:id="@+id/img_search"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/card_trace"
+        android:name="com.orm.ui.fragment.HomeCardFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/sample"
-        android:background="@drawable/shape_box_border"
-        android:scaleType="fitCenter"
-        android:layout_margin="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/guideline_horizontal_bottom"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tv_search"
-        app:layout_constraintTop_toBottomOf="@id/tv_search" />
-
-    <TextView
-        android:id="@+id/tv_trace"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="발자국"
-        android:textSize="30sp"
-        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_center"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guideline_horizontal_bottom" />
+        app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_bottom" />
 
-    <ImageButton
-        android:id="@+id/img_trace"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/card_club"
+        android:name="com.orm.ui.fragment.HomeCardFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:src="@drawable/sample"
-        android:background="@drawable/shape_box_border"
-        android:scaleType="fitCenter"
-        android:layout_margin="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_center"
-        app:layout_constraintStart_toStartOf="@+id/tv_trace"
-        app:layout_constraintTop_toBottomOf="@+id/tv_trace" />
-
-    <TextView
-        android:id="@+id/tv_club"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="모임"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/guideline_vertical_center"
-        app:layout_constraintTop_toBottomOf="@+id/guideline_horizontal_bottom" />
-
-    <ImageButton
-        android:id="@+id/img_club"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/sample"
-        android:background="@drawable/shape_box_border"
-        android:scaleType="fitCenter"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tv_club"
-        app:layout_constraintTop_toBottomOf="@+id/tv_club" />
+        app:layout_constraintStart_toStartOf="@+id/guideline_vertical_center"
+        app:layout_constraintTop_toBottomOf="@+id/guideline_horizontal_bottom" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
