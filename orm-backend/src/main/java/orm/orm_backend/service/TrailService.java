@@ -51,6 +51,10 @@ public class TrailService {
         return trailDetailResponseDtos;
     }
     
-    
+    // Entity만 반환
+    public Trail getTrailEntityById(Integer trailId) {
+        Trail trail = trailRepository.findById(trailId).orElseThrow();
+        return trail;
+    }
 
 }
