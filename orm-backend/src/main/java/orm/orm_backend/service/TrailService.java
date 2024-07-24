@@ -25,7 +25,6 @@ public class TrailService {
         List<TrailResponseDto> trailResponseDtos = new ArrayList<>();
         for (Trail trail : findTrails) {
             List<TrailDetailResponseDto> allTrailDetailsByTrailId = getAllTrailDetailsByTrailId(trail.getId());
-            System.out.println("allTrailDetailsByTrailId.size() = " + allTrailDetailsByTrailId.size());
             trailResponseDtos.add(new TrailResponseDto(trail, allTrailDetailsByTrailId));
         }
         return trailResponseDtos;
@@ -33,7 +32,7 @@ public class TrailService {
 
     public TrailResponseDto getTrailById(Integer trailId) {
         Trail trail = trailRepository.findById(trailId).orElseThrow();
-        List<TrailDetail> findTrailDetails = trailDetailRepository.findTrailDetailsByTrailId(trailId).orElseThrow();
+        List<TrailDetail> findTrailDetails = trailDetailRepository.findTrailDetailsByTrailId(trailId);
         List<TrailDetailResponseDto> trailDetailResponseDtos = new ArrayList<>();
         for(TrailDetail trailDetail : findTrailDetails) {
             trailDetailResponseDtos.add(new TrailDetailResponseDto(trailDetail));
@@ -44,7 +43,7 @@ public class TrailService {
 
     // 등산로ID로 등산로 상세 조회
     public List<TrailDetailResponseDto> getAllTrailDetailsByTrailId(int trailId) {
-        List<TrailDetail> findTrailDetails = trailDetailRepository.findTrailDetailsByTrailId(trailId).orElseThrow();
+        List<TrailDetail> findTrailDetails = trailDetailRepository.findTrailDetailsByTrailId(trailId);
         List<TrailDetailResponseDto> trailDetailResponseDtos = new ArrayList<>();
         for(TrailDetail trailDetail : findTrailDetails) {
             trailDetailResponseDtos.add(new TrailDetailResponseDto(trailDetail));
