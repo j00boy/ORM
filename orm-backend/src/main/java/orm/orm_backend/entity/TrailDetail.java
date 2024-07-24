@@ -14,8 +14,10 @@ public class TrailDetail {
     private Integer id;
 
     @ManyToOne
+    @JoinColumn(name = "trail_id")
     private Trail trail;
 
     private String latitude;
     private String longitude;
+
 }

@@ -2,9 +2,7 @@ package orm.orm_backend.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import orm.orm_backend.entity.Mountain;
-import orm.orm_backend.entity.Trail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +18,10 @@ public class MountainResponseDto {
     private String desc;
     private Float height;
 
-    private List<Trail> trails = new ArrayList<>();
+    private List<TrailResponseDto> trails;
 
     @Builder
-    public MountainResponseDto(Mountain mountain, List<Trail> trails) {
+    public MountainResponseDto(Mountain mountain, List<TrailResponseDto> trails) {
         this.id = mountain.getId();
         this.name = mountain.getMountainName();
         this.address = mountain.getAddress();
@@ -31,6 +29,6 @@ public class MountainResponseDto {
         this.imageSrc = mountain.getImageSrc();
         this.desc = mountain.getDescription();
         this.height = mountain.getAltitude();
-        this.trails = trails;
+        this.trails = (trails != null ? trails : new ArrayList<>());
     }
 }
