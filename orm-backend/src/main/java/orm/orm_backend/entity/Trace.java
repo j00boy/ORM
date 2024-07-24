@@ -60,10 +60,11 @@ public class Trace extends BaseEntity {
                 .maxHeight(maxAltitude).build();
     }
 
-    public void update(TraceRequestDto traceRequestDto, Mountain mountain) {
+    public void update(TraceRequestDto traceRequestDto, Mountain mountain, Trail trail) {
         this.title = traceRequestDto.getTitle();
         this.hikingDate = traceRequestDto.getHikingDate();
         this.mountain = mountain;
+        this.trail = trail;
     }
 
     public boolean isOwner(Integer userId) {

@@ -26,6 +26,7 @@ public class TraceService {
 
     private final UserService userService;
     private final MountainService mountainService;
+    private final TrailService trailService;
 
     private final TraceRepository traceRepository;
     private final TraceImageRepository traceImageRepository;
@@ -35,7 +36,7 @@ public class TraceService {
 //        Mountain mountain = mountainService.get()
 //        Trail trail = trailService.get();
         Mountain mountain = mountainService.getMountainById(creationRequestDto.getMountainId());
-        Trail trail = null;
+        Trail trail = trailService.getTrailEntityById(creationRequestDto.getTrailId());
 
         User user = userService.findUserById(userId);
 
@@ -56,7 +57,8 @@ public class TraceService {
             throw new UnAuthorizedException();
         }
         Mountain mountain = mountainService.getMountainById(traceRequestDto.getMountainId());
-        trace.update(traceRequestDto, mountain);
+        Trail trail = trailService.getTrailEntityById(traceRequestDto.getTrailId());
+        trace.update(traceRequestDto, mountain, trail);
         return trace.toResponseDto();
     }
 
