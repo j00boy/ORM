@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
+import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.orm.databinding.FragmentMapBinding
 
@@ -35,6 +36,11 @@ class MapFragment : Fragment() {
         }, object : KakaoMapReadyCallback() {
             override fun onMapReady(kakaoMap: KakaoMap) {
                 // 인증 후 API가 정상적으로 실행될 때 호출됨
+            }
+
+            override fun getPosition(): LatLng {
+                // 지도 시작 시 위치 좌표를 설정
+                return LatLng.from(37.406960, 127.115587)
             }
         })
 

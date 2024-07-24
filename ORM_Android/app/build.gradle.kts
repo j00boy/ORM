@@ -31,6 +31,8 @@ android {
 
         buildConfigField("String", "BASE_URL", getApiKey("BASE_URL"))
         buildConfigField("String", "DATASTORE_NAME", getApiKey("DATASTORE_NAME"))
+
+        ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") }
     }
 
 
