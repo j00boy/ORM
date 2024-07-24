@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -46,5 +47,9 @@ public class ImageUtil {
         if (file.delete()) {
             throw new IllegalArgumentException(fileName + "의 이름으로 된 파일이 존재하지 않습니다.");
         }
+    }
+
+    public void deleteImages(List<String> fileNames) {
+        fileNames.forEach(this::deleteImage);
     }
 }
