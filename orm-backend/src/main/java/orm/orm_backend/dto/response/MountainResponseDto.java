@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 import orm.orm_backend.entity.Mountain;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -29,6 +28,6 @@ public class MountainResponseDto {
         this.imageSrc = mountain.getImageSrc();
         this.desc = mountain.getDescription();
         this.height = mountain.getAltitude();
-        this.trails = (trails != null ? trails : new ArrayList<>());
+        this.trails = trails;
     }
 }

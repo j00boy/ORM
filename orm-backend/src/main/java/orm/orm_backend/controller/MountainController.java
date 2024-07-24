@@ -6,12 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import orm.orm_backend.dto.request.MountainSearchRequestDto;
 import orm.orm_backend.dto.response.MountainResponseDto;
-import orm.orm_backend.dto.response.TrailDetailResponseDto;
 import orm.orm_backend.dto.response.TrailResponseDto;
 import orm.orm_backend.service.MountainService;
 import orm.orm_backend.service.TrailService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController

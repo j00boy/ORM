@@ -3,9 +3,7 @@ package orm.orm_backend.dto.response;
 import lombok.Builder;
 import lombok.Data;
 import orm.orm_backend.entity.Trail;
-import orm.orm_backend.entity.TrailDetail;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -27,6 +25,6 @@ public class TrailResponseDto {
         this.startLongitude = trail.getStartLongitude();
         this.peakLatitude = trail.getPeakLatitude();
         this.peakLongitude = trail.getPeakLongitude();
-        this.trailDetails = (trailDetails != null ? new ArrayList<>() : null);
+        this.trailDetails = trailDetails;
     }
 }
