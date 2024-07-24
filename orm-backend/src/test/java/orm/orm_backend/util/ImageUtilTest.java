@@ -9,6 +9,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -21,6 +22,7 @@ class ImageUtilTest {
 
     static MultipartFile image;
     ImageUtil imageUtil = new ImageUtil();
+    private String fileName;
 
     @BeforeAll
     static void beforeAll() throws IOException {
@@ -36,12 +38,16 @@ class ImageUtilTest {
         String fileName = imageUtil.saveImage(image, directory);
         String[] tmp = fileName.split("/");
         fileName = tmp[tmp.length - 1];
-        log.info("fileName={}", fileName);
+    }
+
+    // fileName은 저장 후 이름을 직접넣어줘야 한다.
+    @Test
+    void deleteTest() throws IOException {
+        String fileName = "/uploads/image/test/b50d02f475e143f38f04a89f9230cf77_test.png";
+        imageUtil.deleteImage(fileName);
     }
 
     private static MultipartFile readImage(String directory, String fileName, String type) throws IOException {
-//        Resource resource = new ClassPathResource("static/test.png");
-        log.info("full paht={}", directory + fileName);
         Resource resource = new ClassPathResource(directory + fileName);
 
         try (InputStream inputStream = resource.getInputStream()) {
