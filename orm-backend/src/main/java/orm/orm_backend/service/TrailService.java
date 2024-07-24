@@ -25,9 +25,21 @@ public class TrailService {
         List<TrailResponseDto> trailResponseDtos = new ArrayList<>();
         for (Trail trail : findTrails) {
             List<TrailDetailResponseDto> allTrailDetailsByTrailId = getAllTrailDetailsByTrailId(trail.getId());
+            System.out.println("allTrailDetailsByTrailId.size() = " + allTrailDetailsByTrailId.size());
             trailResponseDtos.add(new TrailResponseDto(trail, allTrailDetailsByTrailId));
         }
         return trailResponseDtos;
+    }
+
+    public TrailResponseDto getTrailById(Integer trailId) {
+        Trail trail = trailRepository.findById(trailId).orElseThrow();
+        List<TrailDetail> findTrailDetails = trailDetailRepository.findTrailDetailsByTrailId(trailId).orElseThrow();
+        List<TrailDetailResponseDto> trailDetailResponseDtos = new ArrayList<>();
+        for(TrailDetail trailDetail : findTrailDetails) {
+            trailDetailResponseDtos.add(new TrailDetailResponseDto(trailDetail));
+        }
+        TrailResponseDto dto = new TrailResponseDto(trail, trailDetailResponseDtos);
+        return dto;
     }
 
     // 등산로ID로 등산로 상세 조회
@@ -39,5 +51,7 @@ public class TrailService {
         }
         return trailDetailResponseDtos;
     }
+    
+    
 
 }

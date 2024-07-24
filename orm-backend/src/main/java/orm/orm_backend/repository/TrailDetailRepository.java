@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface TrailDetailRepository extends JpaRepository<TrailDetail, Integer> {
 
-    Optional<List<TrailDetail>> findTrailDetailsByTrailId(int trailId);
+    Optional<List<TrailDetail>> findTrailDetailsByTrailId(Integer trailId);
 
 }
