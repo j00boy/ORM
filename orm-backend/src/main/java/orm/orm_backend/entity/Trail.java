@@ -5,8 +5,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -20,8 +18,8 @@ public class Trail extends BaseEntity {
     @JoinColumn(name = "mountain_id")
     private Mountain mountain;
 
-    private Float dist;
-    private Float huri;
+    private Float distance;
+    private Float heuristic;
     private String startLatitude;
     private String startLongitude;
     private String peakLatitude;

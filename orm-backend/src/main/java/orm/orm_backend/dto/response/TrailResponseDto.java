@@ -10,8 +10,8 @@ import java.util.List;
 public class TrailResponseDto {
 
     private Integer id;
-    private Float dist;
-    private Float huri;
+    private Float distance;
+    private Float heuristic;
     private String startLatitude;
     private String startLongitude;
     private String peakLatitude;
@@ -21,8 +21,8 @@ public class TrailResponseDto {
     @Builder
     public TrailResponseDto(Trail trail, List<TrailDetailResponseDto> trailDetails) {
         this.id = trail.getId();
-        this.dist = trail.getDist();
-        this.huri = trail.getHuri();
+        this.distance = trail.getDistance();
+        this.heuristic = trail.getHeuristic();
         this.startLatitude = trail.getStartLatitude();
         this.startLongitude = trail.getStartLongitude();
         this.peakLatitude = trail.getPeakLatitude();
