@@ -17,7 +17,7 @@ public class Trail extends BaseEntity {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "m_id")
+    @JoinColumn(name = "mountain_id")
     private Mountain mountain;
 
     private Float dist;
