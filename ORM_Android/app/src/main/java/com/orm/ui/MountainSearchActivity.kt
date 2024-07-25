@@ -18,15 +18,17 @@ class MountainSearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMountainSearchBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+//        enableEdgeToEdge()
         setContentView(R.layout.activity_mountain_search)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+//            insets
+//        }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_mountain_search)
-
+        binding.topAppBar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
         val rvBoard = binding.recyclerView
         val adapter = ProfileBasicAdapter(
@@ -51,7 +53,5 @@ class MountainSearchActivity : AppCompatActivity() {
 
         rvBoard.adapter = adapter
         rvBoard.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-
-        setSupportActionBar(binding.toolbar)
     }
 }
