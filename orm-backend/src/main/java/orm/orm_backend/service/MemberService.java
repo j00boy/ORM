@@ -17,14 +17,10 @@ public class MemberService {
 
     // UserId에 해당하는 클럽 반환
     public Set<Integer> getClubs(Integer userId) {
-        Optional<Member> members = memberRepository.findByUserId(userId);
+        List<Member> members = memberRepository.findByUserId(userId);
         Set<Integer> result = new HashSet<>();
-        if (members.isPresent()) {
-            List<Member> memberList = members.stream().toList();
-            for (Member m : memberList) {
-                result.add(m.getClub().getId());
-            }
-        }
+        members.stream().map(member -> member.getClub().getId()).forEach(result::add);
+
         return result;
     }
 
@@ -35,7 +31,7 @@ public class MemberService {
 
     // club에 속한 member 반환
     public List<Member> getMembersInClub(Integer clubId) {
-        return memberRepository.findByClubId(clubId).stream().toList();
+        return memberRepository.findByClubId(clubId);
     }
 
     // Member 저장

@@ -5,11 +5,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import orm.orm_backend.entity.Member;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Integer> {
-    Optional<Member> findByUserId(Integer userId);
-    Optional<Member> findByClubId(Integer clubId);
+    List<Member> findByUserId(Integer userId);
+    List<Member> findByClubId(Integer clubId);
 
     Page<Member> findByUserId(Pageable pageable, Integer userId);
 
