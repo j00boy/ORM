@@ -7,6 +7,7 @@ plugins {
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 fun getApiKey(key: String): String = gradleLocalProperties(rootDir, providers).getProperty(key)
@@ -65,6 +66,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.firebase.messaging.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.android)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -107,6 +109,10 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore.preferences.core)
 
-    //kakao map
+    // kakao map
     implementation("com.kakao.maps.open:android:2.9.5")
+
+    // google map
+    implementation(libs.play.services.maps)
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
 }

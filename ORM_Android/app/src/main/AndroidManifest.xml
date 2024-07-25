@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
         android:name=".OrmApplication"
@@ -52,8 +53,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="false"
-            android:launchMode="singleTop"
-            />
+            android:launchMode="singleTop" />
 
         <service
             android:name=".util.MyFirebaseMessagingService"
@@ -79,6 +79,14 @@
                     android:scheme="kakao581f68fdb8d8d714da051c55db81cc0d" />
             </intent-filter>
         </activity>
+
+        <!-- google map api key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAiw76NqNBK2SxB-ezlV0CjfP-HkR1t60g" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

@@ -1,7 +1,6 @@
 package com.orm.ui.fragment.map
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,17 +9,17 @@ import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
-import com.orm.databinding.FragmentMapBinding
+import com.orm.databinding.FragmentKakaoMapBinding
 
-class MapFragment : Fragment() {
-    private var _binding: FragmentMapBinding? = null
+class KakaoMapFragment : Fragment() {
+    private var _binding: FragmentKakaoMapBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMapBinding.inflate(inflater, container, false)
+        _binding = FragmentKakaoMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         // MapView 초기화 및 설정
