@@ -61,6 +61,6 @@ public class FirebaseUtil {
                 .message(fcmMessageDto)
                 .build();
 
-        return new ObjectMapper().writeValueAsString(fcmMessageDto);
+        return new ObjectMapper().writeValueAsString(alertDto);
     }
 }
