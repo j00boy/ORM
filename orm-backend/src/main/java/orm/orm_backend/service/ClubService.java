@@ -30,7 +30,7 @@ public class ClubService {
 
     private final UserService userService;
     private final ClubRepository clubRepository;
-    private final MountainRepository mountainRepository;
+    private final MountainService mountainService;
     private final MemberService memberService;
     private final ApplicantService applicantService;
 
@@ -38,8 +38,7 @@ public class ClubService {
         // user 찾기
         User user = userService.findUserById(userId);
         // TODO : mountain 찾기 (refactor 진행해야 함)
-        Mountain mountain = mountainRepository.findById(clubRequestDTO.getMountainId())
-                .orElseThrow(NoResultException::new);
+        Mountain mountain = mountainService.getMountainById(clubRequestDTO.getMountainId());
 
         // 사진 업로드
         MultipartFile image = clubRequestDTO.getImgFile();
