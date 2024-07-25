@@ -55,8 +55,9 @@ class GoogleMapFragment : Fragment(R.layout.fragment_google_map), OnMapReadyCall
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     val currentLatLng = LatLng(it.latitude, it.longitude)
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
-                    googleMap.addMarker(MarkerOptions().position(currentLatLng).title("현재 위치"))
+                    val halla = LatLng(33.36191487,126.5333176)
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(halla, 17f))
+                    googleMap.addMarker(MarkerOptions().position(halla).title("한라산"))
                     Log.e("gmap", currentLatLng.toString())
                 } ?: run {
                     Log.e("gmap", "Location not available")
@@ -66,4 +67,5 @@ class GoogleMapFragment : Fragment(R.layout.fragment_google_map), OnMapReadyCall
                 Log.e("gmap", "Failed to get location", e)
             }
     }
+
 }

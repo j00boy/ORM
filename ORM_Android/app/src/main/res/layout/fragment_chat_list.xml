@@ -11,4 +11,9 @@
         android:layout_height="match_parent"
         android:text="CHAT LIST" />
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/map_view_2"
+        android:name="com.orm.ui.fragment.map.GoogleMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </FrameLayout>
