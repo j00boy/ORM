@@ -6,10 +6,10 @@ import lombok.Getter;
 @Builder
 @Getter
 public class FcmClubApplicationDto implements FcmAlertData {
-    private int applicationId;
-    private int clubId;
+    private Integer applicationId;
+    private Integer clubId;
     private String clubName;
-    private int userId;
+    private Integer userId;
     private String userName;
     private AlertType alertType;
 
