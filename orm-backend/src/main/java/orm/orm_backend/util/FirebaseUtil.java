@@ -54,6 +54,7 @@ public class FirebaseUtil {
         FcmMessageDto fcmMessageDto = FcmMessageDto.builder()
                 .token(receiverFcmToken)
                 .data(fcmAlertData)
+                .message(fcmAlertData.getMessage())
                 .build();
 
         FcmAlertDto alertDto = FcmAlertDto.builder()

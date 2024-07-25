@@ -8,4 +8,5 @@ import lombok.Getter;
 public class FcmMessageDto {
     private String token;
     private FcmAlertData data;
+    private String message;
 }
