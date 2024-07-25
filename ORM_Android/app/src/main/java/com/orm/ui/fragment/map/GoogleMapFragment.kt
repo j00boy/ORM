@@ -1,7 +1,10 @@
 package com.orm.ui.fragment.map
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -25,6 +28,26 @@ class GoogleMapFragment : Fragment(R.layout.fragment_google_map), OnMapReadyCall
     private lateinit var binding: FragmentGoogleMapBinding
     private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationManager: LocationManager
+
+    private val locationListener = object : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            val currentLatLng = LatLng(location.latitude, location.longitude)
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
+            googleMap.clear()  // Clear previous markers
+            googleMap.addMarker(MarkerOptions().position(currentLatLng).title("현재 위치"))
+            Log.e("gmap", currentLatLng.toString())
+        }
+
+        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+
+        override fun onProviderDisabled(provider: String) {		// Provider 이용 불가 시 자동 호출
+            super.onProviderDisabled(provider)
+        }
+        override fun onProviderEnabled(provider: String) {		// Provider 다시 이용 가능 시 자동 호출
+            super.onProviderEnabled(provider)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +56,7 @@ class GoogleMapFragment : Fragment(R.layout.fragment_google_map), OnMapReadyCall
         Log.e("gmap", "oncreateview")
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_google_map, container, false)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return binding.root
     }
 
@@ -46,7 +70,7 @@ class GoogleMapFragment : Fragment(R.layout.fragment_google_map), OnMapReadyCall
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
-        fetchLocation()
+        fetchLocationByDevice()
     }
 
     @SuppressLint("MissingPermission")
@@ -55,9 +79,8 @@ class GoogleMapFragment : Fragment(R.layout.fragment_google_map), OnMapReadyCall
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     val currentLatLng = LatLng(it.latitude, it.longitude)
-                    val halla = LatLng(33.36191487,126.5333176)
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(halla, 17f))
-                    googleMap.addMarker(MarkerOptions().position(halla).title("한라산"))
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
+                    googleMap.addMarker(MarkerOptions().position(currentLatLng).title("한라산"))
                     Log.e("gmap", currentLatLng.toString())
                 } ?: run {
                     Log.e("gmap", "Location not available")
@@ -68,4 +91,28 @@ class GoogleMapFragment : Fragment(R.layout.fragment_google_map), OnMapReadyCall
             }
     }
 
+    @SuppressLint("MissingPermission")
+    private fun fetchLocationByDevice() {
+        val location: Location? = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        location?.let {
+            val currentLatLng = LatLng(it.latitude, it.longitude)
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
+            googleMap.addMarker(MarkerOptions().position(currentLatLng).title("현재 위치"))
+            Log.e("gmap", currentLatLng.toString())
+        } ?: run {
+            Log.e("gmap", "Location not available")
+        }
+
+        locationManager.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            1000L,
+            1f,
+            locationListener
+        )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        locationManager.removeUpdates(locationListener)
+    }
 }
