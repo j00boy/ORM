@@ -6,6 +6,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class FcmAlertDto {
+    @Builder.Default
     private boolean validateOnly = false;
     private FcmMessageDto message;
 }
