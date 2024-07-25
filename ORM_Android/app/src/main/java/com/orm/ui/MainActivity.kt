@@ -2,9 +2,11 @@ package com.orm.ui
 
 import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
@@ -24,11 +26,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var permissionManager: PermissionManager
     private val userViewModel: UserViewModel by viewModels()
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val permissions = arrayOf(
         Manifest.permission.CAMERA,
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.ACCESS_NETWORK_STATE,
+        Manifest.permission.POST_NOTIFICATIONS,
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
