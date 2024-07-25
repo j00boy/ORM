@@ -20,7 +20,8 @@ public class Trail extends BaseEntity {
     @JoinColumn(name = "m_id")
     private Mountain mountain;
 
-//    private Float length;
+    private Float dist;
+    private Float huri;
     private String startLatitude;
     private String startLongitude;
     private String peakLatitude;
