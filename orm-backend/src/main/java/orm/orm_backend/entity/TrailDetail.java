@@ -17,6 +17,7 @@ public class TrailDetail {
     @JoinColumn(name = "trail_id")
     private Trail trail;
 
+    private Integer difficulty;
     private String latitude;
     private String longitude;
 
