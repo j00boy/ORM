@@ -1,3 +1,4 @@
+.gitignore
 HELP.md
 .gradle
 build/
@@ -36,3 +37,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Firebase Admin SDK JSON ###
+orm-ssafy-firebase-adminsdk-r5bcu-b5d1ad1ab6.json
