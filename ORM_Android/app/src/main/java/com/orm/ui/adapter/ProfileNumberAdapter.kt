@@ -9,25 +9,25 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.orm.R
-import com.orm.data.model.RecyclerViewItem
+import com.orm.data.model.recycler.RecyclerViewNotificationItem
 
-class ItemMainAdapter(private val items: List<RecyclerViewItem>) :
-    RecyclerView.Adapter<ItemMainAdapter.ItemMainViewHolder>() {
+class ProfileNumberAdapter(private val items: List<RecyclerViewNotificationItem>) :
+    RecyclerView.Adapter<ProfileNumberAdapter.ProfileNumberViewHolder>() {
     private lateinit var itemClickListener: OnItemClickListener
 
-    inner class ItemMainViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ProfileNumberViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val iv_thumbnail = itemView.findViewById<ImageView>(R.id.iv_thumbnail)
         val tv_main = itemView.findViewById<TextView>(R.id.tv_main)
         val tv_sub = itemView.findViewById<TextView>(R.id.tv_sub)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemMainViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileNumberViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_main_profile, parent, false)
-        return ItemMainViewHolder(view)
+            LayoutInflater.from(parent.context).inflate(R.layout.profile_basic, parent, false)
+        return ProfileNumberViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ItemMainViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ProfileNumberViewHolder, position: Int) {
         items[position].imageSrc.getNetworkImage(
             holder.itemView.context,
             holder.iv_thumbnail
