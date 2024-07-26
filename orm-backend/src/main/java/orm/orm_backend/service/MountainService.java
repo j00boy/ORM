@@ -1,11 +1,7 @@
 package orm.orm_backend.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import orm.orm_backend.dto.request.MountainSearchRequestDto;
 import orm.orm_backend.dto.response.MountainResponseDto;
 import orm.orm_backend.dto.response.TrailResponseDto;
 import orm.orm_backend.entity.Mountain;
