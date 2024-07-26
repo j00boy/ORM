@@ -3,8 +3,10 @@ package orm.orm_backend.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import orm.orm_backend.dto.request.MountainSearchRequestDto;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import orm.orm_backend.dto.response.MountainResponseDto;
 import orm.orm_backend.dto.response.TrailResponseDto;
 import orm.orm_backend.service.MountainService;
@@ -28,8 +30,8 @@ public class MountainController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<MountainResponseDto>> getAllMountains(@ModelAttribute MountainSearchRequestDto mountainSearchRequestDto) {
-        List<MountainResponseDto> mountainDtos = mountainService.getAllMountains(mountainSearchRequestDto);
+    public ResponseEntity<List<MountainResponseDto>> getAllMountains(String name) {
+        List<MountainResponseDto> mountainDtos = mountainService.getAllMountains(name);
         return ResponseEntity.ok().body(mountainDtos);
     }
 

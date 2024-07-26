@@ -28,7 +28,7 @@ public class TraceController {
     private final TraceService traceService;
 
     @PostMapping("/create")
-    public ResponseEntity<TraceDto> createTrace(HttpServletRequest request, TraceRequestDto traceRequestDto) {
+    public ResponseEntity<TraceDto> createTrace(HttpServletRequest request, @RequestBody TraceRequestDto traceRequestDto) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         TraceDto traceDto = traceService.createTrace(traceRequestDto, userId);
@@ -39,10 +39,10 @@ public class TraceController {
 
     @PatchMapping("/update")
     public ResponseEntity<TraceDto> updateBeforeMeasure(HttpServletRequest request,
-                                                        TraceRequestDto traceRequestDto, Integer traceId) {
+                                                        @RequestBody TraceRequestDto traceRequestDto) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
-        return ResponseEntity.ok(traceService.updateTrace(traceId, traceRequestDto, userId));
+        return ResponseEntity.ok(traceService.updateTrace(traceRequestDto.getId(), traceRequestDto, userId));
     }
 
     @DeleteMapping("/{traceId}")
@@ -54,7 +54,7 @@ public class TraceController {
     }
 
     @PatchMapping("/measure-complete")
-    public ResponseEntity<Void> completeMeasure(HttpServletRequest request, TraceDto traceDto) {
+    public ResponseEntity<Void> completeMeasure(HttpServletRequest request, @RequestBody TraceDto traceDto) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         traceService.completeMeasure(userId, traceDto);
@@ -62,7 +62,7 @@ public class TraceController {
     }
 
     @PatchMapping("/update/images/{traceId}")
-    public ResponseEntity<Void> updateTraceImages(HttpServletRequest request, List<MultipartFile> images, Integer traceId) {
+    public ResponseEntity<Void> updateTraceImages(HttpServletRequest request, @RequestBody List<MultipartFile> images, Integer traceId) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         traceService.updateTraceImages(userId, traceId, images);

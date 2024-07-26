@@ -39,12 +39,11 @@ public class Trace extends BaseEntity {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Float maxAltitude;
-    private String Course;
 
     @Builder
     public Trace(TraceRequestDto traceRequestDto, Mountain mountain, Trail trail, User user) {
         this.title = traceRequestDto.getTitle();
-        this.hikingDate = traceRequestDto.getHikingDate();
+        this.hikingDate = Date.valueOf(traceRequestDto.getHikingDate());
         this.mountain = mountain;
         this.trail = trail;
         this.user = user;
@@ -54,15 +53,15 @@ public class Trace extends BaseEntity {
         return TraceDto.builder()
                 .id(id)
                 .title(title)
-                .hikingDate(hikingDate)
-                .hikingStartedAt(startTime)
-                .hikingEndedAt(endTime)
+                .hikingDate(hikingDate.toString())
+                .hikingStartedAt(startTime.toString())
+                .hikingEndedAt(endTime.toString())
                 .maxHeight(maxAltitude).build();
     }
 
     public void update(TraceRequestDto traceRequestDto, Mountain mountain, Trail trail) {
         this.title = traceRequestDto.getTitle();
-        this.hikingDate = traceRequestDto.getHikingDate();
+        this.hikingDate = Date.valueOf(traceRequestDto.getHikingDate());
         this.mountain = mountain;
         this.trail = trail;
     }
@@ -73,7 +72,8 @@ public class Trace extends BaseEntity {
     }
 
     public void completeMeasure(TraceDto traceDto) {
-        this.startTime = traceDto.getHikingStartedAt();
-        this.endTime = traceDto.getHikingEndedAt();
+        this.startTime = LocalDateTime.parse(traceDto.getHikingStartedAt());
+        this.endTime = LocalDateTime.parse(traceDto.getHikingEndedAt());
+        this.maxAltitude = traceDto.getMaxHeight();
     }
 }
