@@ -54,7 +54,7 @@ public class TraceController {
     }
 
     @PatchMapping("/measure-complete")
-    public ResponseEntity<Void> completeMeasure(HttpServletRequest request, TraceDto traceDto) {
+    public ResponseEntity<Void> completeMeasure(HttpServletRequest request, @RequestBody TraceDto traceDto) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         traceService.completeMeasure(userId, traceDto);
@@ -62,7 +62,7 @@ public class TraceController {
     }
 
     @PatchMapping("/update/images/{traceId}")
-    public ResponseEntity<Void> updateTraceImages(HttpServletRequest request, List<MultipartFile> images, Integer traceId) {
+    public ResponseEntity<Void> updateTraceImages(HttpServletRequest request, @RequestBody List<MultipartFile> images, Integer traceId) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         traceService.updateTraceImages(userId, traceId, images);
