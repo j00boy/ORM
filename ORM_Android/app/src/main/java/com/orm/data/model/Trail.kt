@@ -10,5 +10,7 @@ data class Trail(
     val peekLongitude: Double,
     val startLatitude: Double,
     val startLongitude: Double,
-    val coordinates: List<Point>
+    val trailDetails: List<Point>,
+    val heuristic: Double,
+    val distance: Double
 )
