@@ -38,7 +38,7 @@ public class ClubService {
     public Integer createClub(ClubRequestDto clubRequestDTO, Integer userId) {
         // user 찾기
         User user = userService.findUserById(userId);
-        // TODO : mountain 찾기 (refactor 진행해야 함)
+        // mountain 찾기
         Mountain mountain = mountainService.getMountainById(clubRequestDTO.getMountainId());
 
         // 사진 업로드
