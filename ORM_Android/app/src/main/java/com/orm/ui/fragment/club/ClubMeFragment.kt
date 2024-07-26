@@ -1,5 +1,6 @@
 package com.orm.ui.fragment.club
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.orm.data.model.recycler.RecyclerViewBasicItem
-import com.orm.data.model.recycler.RecyclerViewNotificationItem
 import com.orm.databinding.FragmentClubMeBinding
+import com.orm.ui.ClubDetailActivity
 import com.orm.ui.adapter.ProfileBasicAdapter
 
 class ClubMeFragment : Fragment() {
@@ -69,7 +70,9 @@ class ClubMeFragment : Fragment() {
         )
 
         adapter.setItemClickListener(object : ProfileBasicAdapter.OnItemClickListener {
-            override fun onClick(v: View, position: Int) {}
+            override fun onClick(v: View, position: Int) {
+                startActivity(Intent(requireContext(), ClubDetailActivity::class.java))
+            }
         })
 
         rvBoard.adapter = adapter

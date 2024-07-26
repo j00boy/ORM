@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.orm.R
 import com.orm.data.model.recycler.RecyclerViewBasicItem
-import com.orm.data.model.recycler.RecyclerViewNotificationItem
 
 class ProfileBasicAdapter(private val items: List<RecyclerViewBasicItem>) :
     RecyclerView.Adapter<ProfileBasicAdapter.ProfileBasicViewHolder>() {
