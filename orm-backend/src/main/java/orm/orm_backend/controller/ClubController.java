@@ -70,7 +70,7 @@ public class ClubController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @PatchMapping("/members/leave")
+    @DeleteMapping("/members/leave")
     public ResponseEntity<Void> deleteMember(@RequestBody MemberRequestDto memberRequestDto) {
         clubService.deleteMember(memberRequestDto);
         return ResponseEntity.noContent().build();
