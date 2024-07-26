@@ -5,10 +5,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import orm.orm_backend.dto.common.TraceCoordinateDto;
 import orm.orm_backend.dto.common.TraceDto;
 import orm.orm_backend.dto.request.TraceRequestDto;
 import orm.orm_backend.entity.*;
 import orm.orm_backend.exception.UnAuthorizedException;
+import orm.orm_backend.repository.TraceCoordinateRepository;
 import orm.orm_backend.repository.TraceImageRepository;
 import orm.orm_backend.repository.TraceRepository;
 import orm.orm_backend.util.ImageUtil;
@@ -30,6 +32,7 @@ public class TraceService {
 
     private final TraceRepository traceRepository;
     private final TraceImageRepository traceImageRepository;
+    private final TraceCoordinateRepository traceCoordinateRepository;
 
     public TraceDto createTrace(TraceRequestDto creationRequestDto, Integer userId) {
         // mountain, trail 객체 받는 로직 추후 추가
@@ -77,6 +80,10 @@ public class TraceService {
             throw new UnAuthorizedException();
         }
         trace.completeMeasure(traceDto);
+        List<TraceCoordinateDto> coordinateDtos = traceDto.getCoordinates();
+        List<TraceCoordinate> traceCoordinates = coordinateDtos.stream()
+                .map(coordinateDto -> new TraceCoordinate(coordinateDto, trace)).toList();
+        traceCoordinateRepository.saveAll(traceCoordinates);
     }
 
     @Transactional

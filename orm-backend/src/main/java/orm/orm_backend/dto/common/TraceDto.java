@@ -3,8 +3,7 @@ package orm.orm_backend.dto.common;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.sql.Date;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
@@ -13,10 +12,10 @@ public class TraceDto {
     private final String title;
     private final String mountainName;
     private final Integer mountainId;
-    private final Date hikingDate;
+    private final String hikingDate;
     private final Integer trailId;
-    private final LocalDateTime hikingStartedAt;
-    private final LocalDateTime hikingEndedAt;
+    private final String hikingStartedAt;
+    private final String hikingEndedAt;
     private final Float maxHeight;
-//    private final List<Coordinates>;
+    private final List<TraceCoordinateDto> coordinates;
 }
