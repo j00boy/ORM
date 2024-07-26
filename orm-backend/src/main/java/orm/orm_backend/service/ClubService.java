@@ -13,6 +13,7 @@ import orm.orm_backend.dto.request.ClubRequestDto;
 import orm.orm_backend.dto.request.ClubSearchRequestDto;
 import orm.orm_backend.dto.request.MemberRequestDto;
 import orm.orm_backend.dto.response.ClubResponseDto;
+import orm.orm_backend.dto.response.MemberResponseDto;
 import orm.orm_backend.entity.*;
 import orm.orm_backend.repository.*;
 
@@ -98,8 +99,8 @@ public class ClubService {
             throw new NoResultException("id에 해당하는 클럽이 없습니다.");
         }
 
-        List<Member> members = memberService.getMembersInClub(clubId);
-        List<Applicant> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId);
+        List<MemberResponseDto> members = memberService.getMembersInClub(clubId).stream().map(MemberResponseDto::toDto).toList();
+        List<ApplicantRequestDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantRequestDto::toDto).toList();
 
         result.put("members", members);
         result.put("requestMembers", applicants);

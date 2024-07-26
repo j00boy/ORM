@@ -15,7 +15,7 @@ public class MemberResponseDto {
     private String imgSrc;
     private String nickname;
 
-    public MemberResponseDto toDto(Member member) {
+    public static MemberResponseDto toDto(Member member) {
         return MemberResponseDto.builder()
                 .userId(member.getUser().getId())
                 .clubId(member.getClub().getId())
