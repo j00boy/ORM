@@ -23,8 +23,20 @@
                 app:navigationIcon="@drawable/baseline_arrow_back_24"
                 android:background="@color/md_theme_primary"
                 app:title="산 검색" />
-
         </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/sv_mountain"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:focusable="true"
+            android:padding="20dp"
+            app:iconifiedByDefault="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+            app:layout_constraintVertical_weight="1"
+            app:queryHint="산이름을 입력하세요" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
@@ -33,8 +45,7 @@
             android:layout_marginHorizontal="12dp"
             android:layout_marginTop="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+            app:layout_constraintTop_toBottomOf="@+id/sv_mountain"
             tools:listitem="@layout/profile_basic" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
