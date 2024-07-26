@@ -28,13 +28,16 @@
         android:theme="@style/Base.Theme.Orm"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
+        <activity
+            android:name=".ui.MountainDetailActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.LauncherActivity"
             android:exported="true"
             android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -65,9 +68,7 @@
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
-
-        <!-- kakao login -->
+        </service> <!-- kakao login -->
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
@@ -81,9 +82,7 @@
                     android:host="oauth"
                     android:scheme="kakao581f68fdb8d8d714da051c55db81cc0d" />
             </intent-filter>
-        </activity>
-
-        <!-- google map api key -->
+        </activity> <!-- google map api key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAiw76NqNBK2SxB-ezlV0CjfP-HkR1t60g" />
