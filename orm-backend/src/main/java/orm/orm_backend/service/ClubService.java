@@ -92,8 +92,6 @@ public class ClubService {
 
     // 회원 목록 조회
     public Map<String, Object> getMembers(Integer clubId, Integer userId) {
-        Map<String, Object> result = new HashMap<>();
-
         Club club = clubRepository.findById(clubId).orElse(null);
         if (club == null) {
             throw new NoResultException("id에 해당하는 클럽이 없습니다.");
@@ -102,10 +100,10 @@ public class ClubService {
         List<MemberResponseDto> members = memberService.getMembersInClub(clubId).stream().map(MemberResponseDto::toDto).toList();
         List<ApplicantRequestDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantRequestDto::toDto).toList();
 
-        result.put("members", members);
-        result.put("requestMembers", applicants);
-
-        return result;
+        return Map.of(
+                "members", members,
+                "requestMembers", applicants
+        );
     }
 
     // 중복 체크
