@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.orm.data.model.Mountain
 import com.orm.data.model.Point
+import com.orm.data.model.Trail
 import com.orm.data.repository.MountainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -25,6 +26,9 @@ class MountainViewModel @Inject constructor(
     private val _points = MutableLiveData<List<Point>>()
     val points: LiveData<List<Point>> get() = _points
 
+    private val _trail = MutableLiveData<Trail>()
+    val trail: LiveData<Trail> get() = _trail
+
     fun fetchMountainByName(name: String) {
         viewModelScope.launch {
             val mountains = mountainRepository.getMountainByName(name)
@@ -38,10 +42,10 @@ class MountainViewModel @Inject constructor(
             _mountain.postValue(mountain)
         }
     }
-    fun fetchMountainByRouteId(routeId: Int) {
+    fun fetchMountainByRouteId(trailId: Int) {
         viewModelScope.launch {
-            val points = mountainRepository.getMountainByRouteId(routeId)
-            _points.postValue(points)
+            val trail = mountainRepository.getTrailById(trailId)
+            _trail.postValue(trail)
         }
     }
 }
