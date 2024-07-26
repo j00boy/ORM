@@ -16,14 +16,13 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class LauncherActivity : AppCompatActivity() {
     private val userViewModel: UserViewModel by viewModels()
-    private lateinit var binding: ActivityLauncherBinding
+    private val binding: ActivityLauncherBinding by lazy {
+        ActivityLauncherBinding.inflate(layoutInflater)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-        binding = ActivityLauncherBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
         CoroutineScope(Dispatchers.Main).launch {
             val token = userViewModel.getAccessToken()
             handleToken(token.toString())

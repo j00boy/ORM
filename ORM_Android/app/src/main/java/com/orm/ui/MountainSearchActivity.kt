@@ -18,19 +18,20 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MountainSearchActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMountainSearchBinding
+    private val binding: ActivityMountainSearchBinding by lazy {
+        ActivityMountainSearchBinding.inflate(layoutInflater)
+    }
+    private val rvBoard: RecyclerView by lazy { binding.recyclerView }
     private val mountainViewModel: MountainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMountainSearchBinding.inflate(layoutInflater)
+
         setContentView(binding.root)
         binding.topAppBar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-
-        val rvBoard = binding.recyclerView
         val adapter = ProfileBasicAdapter(
             listOf(
                 RecyclerViewBasicItem(

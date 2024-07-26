@@ -19,7 +19,12 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+    private val binding: ActivityMainBinding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
+    private val navHostFragment by lazy {
+        supportFragmentManager.findFragmentById(binding.navHostFragmentActivityMain.id) as NavHostFragment
+    }
     private lateinit var permissionManager: PermissionManager
     private val userViewModel: UserViewModel by viewModels()
 
@@ -34,22 +39,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(binding.root)
 
         checkPermissions()
         getFirebaseToken()
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
-        val navController = navHostFragment.navController
-
-        NavigationUI.setupWithNavController(binding.navView, navController)
-
-        userViewModel.user.observe(this) {
-
-        }
+        NavigationUI.setupWithNavController(binding.navView, navHostFragment.navController)
     }
 
     // TODO : Firebase Token 서버에 전송

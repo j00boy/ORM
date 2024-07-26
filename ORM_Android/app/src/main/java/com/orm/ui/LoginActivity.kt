@@ -23,16 +23,16 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private val userViewModel: UserViewModel by viewModels()
-    private lateinit var binding: ActivityLoginBinding
+    private val binding: ActivityLoginBinding by lazy {
+        ActivityLoginBinding.inflate(layoutInflater)
+    }
     private lateinit var webView: WebView
     private lateinit var btnLogin: ImageButton
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setupWebView()
         setupLoginButton()
 
