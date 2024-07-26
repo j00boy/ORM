@@ -18,20 +18,15 @@ public class ApplicantService {
 
     // UserId에 해당하는 클럽 반환
     public Set<Integer> getApplicants(Integer userId) {
-        Optional<Applicant> applicants = applicantRepository.findByUserId(userId);
+        List<Applicant> applicants = applicantRepository.findByUserId(userId);
         Set<Integer> result = new HashSet<>();
-        if (applicants.isPresent()) {
-            List<Applicant> applicantList = applicants.stream().toList();
-            for (Applicant a : applicantList) {
-                result.add(a.getClub().getId());
-            }
-        }
+        applicants.stream().map(applicant -> applicant.getClub().getId()).forEach(result::add);
         return result;
     }
 
     // Club에 가입 신청한 인원
     public List<Applicant> getApplicantsInClub(Integer clubId) {
-        return applicantRepository.findByClubId(clubId).stream().toList();
+        return applicantRepository.findByClubId(clubId);
     }
 
     // Applicant 저장

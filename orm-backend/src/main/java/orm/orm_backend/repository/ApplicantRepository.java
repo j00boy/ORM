@@ -9,9 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ApplicantRepository extends JpaRepository<Applicant, Integer> {
-    Optional<Applicant> findByUserId(Integer userId);
-
-    Optional<Applicant> findByClubId(Integer clubId);
+    List<Applicant> findByUserId(Integer userId);
+    List<Applicant> findByClubId(Integer clubId);
 
     void deleteByUserIdAndClubId(Integer userId, Integer clubId);
 }
