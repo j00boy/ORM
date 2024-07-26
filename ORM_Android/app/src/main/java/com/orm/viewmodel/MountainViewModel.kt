@@ -1,5 +1,6 @@
 package com.orm.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -32,6 +33,7 @@ class MountainViewModel @Inject constructor(
     fun fetchMountainByName(name: String) {
         viewModelScope.launch {
             val mountains = mountainRepository.getMountainByName(name)
+            Log.e("fetchMountainByName", mountains.toString())
             _mountains.postValue(mountains)
         }
     }

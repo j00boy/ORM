@@ -32,9 +32,9 @@ class ProfileBasicAdapter(private val items: List<RecyclerViewBasicItem>) :
             holder.itemView.context,
             holder.iv_thumbnail
         )
+
         holder.tv_main.text = items[position].title
         holder.tv_sub.text = items[position].subTitle
-
         holder.itemView.setOnClickListener {
             itemClickListener.onClick(it, position)
         }
