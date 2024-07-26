@@ -36,9 +36,8 @@ public class MountainService {
     }
 
     // name으로 산 조회
-    public List<MountainResponseDto> getAllMountains(MountainSearchRequestDto mountainSearchRequestDto) {
-        Pageable pageable = PageRequest.of(mountainSearchRequestDto.getPgno(), mountainSearchRequestDto.getRecordSize());
-        Page<Mountain> mountains = mountainRepository.findByMountainNameContaining(pageable, mountainSearchRequestDto.getKeyword());
+    public List<MountainResponseDto> getAllMountains(String name) {
+        List<Mountain> mountains = mountainRepository.findByMountainNameContaining(name);
         List<MountainResponseDto> mountainResponseDtos = new ArrayList<>();
         for(Mountain mountain : mountains) {
             List<TrailResponseDto> trailsByMountainId = trailService.getTrailsByMountainId(mountain.getId());

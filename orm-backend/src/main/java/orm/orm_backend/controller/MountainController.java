@@ -28,8 +28,8 @@ public class MountainController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<MountainResponseDto>> getAllMountains(@ModelAttribute MountainSearchRequestDto mountainSearchRequestDto) {
-        List<MountainResponseDto> mountainDtos = mountainService.getAllMountains(mountainSearchRequestDto);
+    public ResponseEntity<List<MountainResponseDto>> getAllMountains(String name) {
+        List<MountainResponseDto> mountainDtos = mountainService.getAllMountains(name);
         return ResponseEntity.ok().body(mountainDtos);
     }
 
