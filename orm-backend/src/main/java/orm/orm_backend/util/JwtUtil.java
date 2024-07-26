@@ -59,7 +59,7 @@ public class JwtUtil {
 //			Json Web Signature? 서버에서 인증을 근거로 인증 정보를 서버의 private key 서명 한것을 토큰화 한것
 //			setSigningKey : JWS 서명 검증을 위한  secret key 세팅
 //			parseClaimsJws : 파싱하여 원본 jws 만들기
-            Jws<Claims> claims = Jwts.parser().setSigningKey(this.generateKey()).parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parser().setSigningKey(this.generateKey()).parseClaimsJws(extractAccessToken(token));
             return true;
         } catch (Exception e) {
             return false;
@@ -67,17 +67,19 @@ public class JwtUtil {
     }
 
     public Integer getUserIdFromAccessToken(String accessToken) {
-        Claims claims = Jwts.parser().setSigningKey(generateKey()).parseClaimsJws(accessToken).getBody();
+        Claims claims = Jwts.parser().setSigningKey(generateKey()).parseClaimsJws(extractAccessToken(accessToken)).getBody();
         return (Integer) claims.get("userId");
     }
 
     public HttpHeaders createTokenHeaders(Integer userId) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("accessToken", createAccessToken(userId));
+        headers.add("accessToken", "Bearer " + createAccessToken(userId));
         return headers;
     }
 
-
+    private String extractAccessToken(String accessToken) {
+        return accessToken.replace("Bearer ", "");
+    }
 
     private byte[] generateKey() {
         byte[] key = null;
