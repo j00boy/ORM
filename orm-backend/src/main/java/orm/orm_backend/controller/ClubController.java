@@ -32,7 +32,7 @@ public class ClubController {
     private final ClubService clubService;
 
     @PostMapping("/create")
-    public ResponseEntity<Integer> createClub(ClubRequestDto clubRequestDto, HttpServletRequest request) {
+    public ResponseEntity<Integer> createClub(@RequestBody ClubRequestDto clubRequestDto, HttpServletRequest request) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         Integer clubId = clubService.createClub(clubRequestDto, userId);
@@ -42,7 +42,7 @@ public class ClubController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ClubResponseDto>> findClubs(ClubSearchRequestDto clubSearchRequestDto, HttpServletRequest request) {
+    public ResponseEntity<List<ClubResponseDto>> findClubs(@RequestBody ClubSearchRequestDto clubSearchRequestDto, HttpServletRequest request) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         List<ClubResponseDto> clubs = clubService.getAllClubs(clubSearchRequestDto, userId);
@@ -65,19 +65,19 @@ public class ClubController {
     }
 
     @PostMapping("/members/apply")
-    public ResponseEntity<Integer> joinClub(ApplicantRequestDto applicantRequestDto){
+    public ResponseEntity<Integer> joinClub(@RequestBody ApplicantRequestDto applicantRequestDto){
         Integer result = clubService.joinClub(applicantRequestDto).getId();
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PatchMapping("/members/leave")
-    public ResponseEntity<Void> deleteMember(MemberRequestDto memberRequestDto) {
+    public ResponseEntity<Void> deleteMember(@RequestBody MemberRequestDto memberRequestDto) {
         clubService.deleteMember(memberRequestDto);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/members/approve")
-    public ResponseEntity<Void> approveMember(MemberRequestDto memberRequestDto) {
+    public ResponseEntity<Void> approveMember(@RequestBody MemberRequestDto memberRequestDto) {
          clubService.approveMember(memberRequestDto);
          return ResponseEntity.status(HttpStatus.CREATED).build();
     }
