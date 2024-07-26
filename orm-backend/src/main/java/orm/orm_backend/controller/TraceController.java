@@ -28,7 +28,7 @@ public class TraceController {
     private final TraceService traceService;
 
     @PostMapping("/create")
-    public ResponseEntity<TraceDto> createTrace(HttpServletRequest request, TraceRequestDto traceRequestDto) {
+    public ResponseEntity<TraceDto> createTrace(HttpServletRequest request, @RequestBody TraceRequestDto traceRequestDto) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         TraceDto traceDto = traceService.createTrace(traceRequestDto, userId);
@@ -39,7 +39,7 @@ public class TraceController {
 
     @PatchMapping("/update")
     public ResponseEntity<TraceDto> updateBeforeMeasure(HttpServletRequest request,
-                                                        TraceRequestDto traceRequestDto, Integer traceId) {
+                                                        @RequestBody TraceRequestDto traceRequestDto, Integer traceId) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         return ResponseEntity.ok(traceService.updateTrace(traceId, traceRequestDto, userId));
