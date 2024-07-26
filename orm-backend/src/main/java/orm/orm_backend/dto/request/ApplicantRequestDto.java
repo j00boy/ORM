@@ -20,4 +20,12 @@ public class ApplicantRequestDto {
                 .introduction(introduction)
                 .build();
     }
+
+    public static ApplicantRequestDto toDto(Applicant applicant) {
+        return ApplicantRequestDto.builder()
+                .clubId(applicant.getClub().getId())
+                .userId(applicant.getUser().getId())
+                .introduction(applicant.getIntroduction())
+                .build();
+    }
 }

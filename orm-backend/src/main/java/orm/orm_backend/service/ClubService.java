@@ -13,6 +13,7 @@ import orm.orm_backend.dto.request.ClubRequestDto;
 import orm.orm_backend.dto.request.ClubSearchRequestDto;
 import orm.orm_backend.dto.request.MemberRequestDto;
 import orm.orm_backend.dto.response.ClubResponseDto;
+import orm.orm_backend.dto.response.MemberResponseDto;
 import orm.orm_backend.entity.*;
 import orm.orm_backend.repository.*;
 
@@ -37,7 +38,7 @@ public class ClubService {
     public Integer createClub(ClubRequestDto clubRequestDTO, Integer userId) {
         // user 찾기
         User user = userService.findUserById(userId);
-        // TODO : mountain 찾기 (refactor 진행해야 함)
+        // mountain 찾기
         Mountain mountain = mountainService.getMountainById(clubRequestDTO.getMountainId());
 
         // 사진 업로드
@@ -81,8 +82,8 @@ public class ClubService {
             Set<Integer> applicantMap = applicantService.getApplicants(userId);
 
             for (Club c : results) {
-                Boolean isMember = clubMap.contains(c.getId()) ? Boolean.TRUE : Boolean.FALSE;
-                Boolean isApplied = applicantMap.contains(c.getId()) ? Boolean.TRUE : Boolean.FALSE;
+                Boolean isMember = clubMap.contains(c.getId());
+                Boolean isApplied = applicantMap.contains(c.getId());
                 clubs.add(ClubResponseDto.toDto(c, isMember, isApplied));
             }
         }
@@ -91,20 +92,18 @@ public class ClubService {
 
     // 회원 목록 조회
     public Map<String, Object> getMembers(Integer clubId, Integer userId) {
-        Map<String, Object> result = new HashMap<>();
-
         Club club = clubRepository.findById(clubId).orElse(null);
         if (club == null) {
             throw new NoResultException("id에 해당하는 클럽이 없습니다.");
         }
 
-        List<Member> members = memberService.getMembersInClub(clubId);
-        List<Applicant> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId);
+        List<MemberResponseDto> members = memberService.getMembersInClub(clubId).stream().map(MemberResponseDto::toDto).toList();
+        List<ApplicantRequestDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantRequestDto::toDto).toList();
 
-        result.put("members", members);
-        result.put("requestMembers", applicants);
-
-        return result;
+        return Map.of(
+                "members", members,
+                "requestMembers", applicants
+        );
     }
 
     // 중복 체크
