@@ -1,5 +1,6 @@
 package com.orm.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -23,6 +24,7 @@ class MountainSearchActivity : AppCompatActivity() {
     }
     private val rvBoard: RecyclerView by lazy { binding.recyclerView }
     private val mountainViewModel: MountainViewModel by viewModels()
+    private lateinit var adapter: ProfileBasicAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,55 +34,23 @@ class MountainSearchActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        val adapter = ProfileBasicAdapter(
-            listOf(
-                RecyclerViewBasicItem(
-                    imageSrc = "https://img.tenping.kr/Content/Upload/Images/2023021311020002_Dis_20230223085848.jpg?RS=180x120",
-                    title = "안녕하세요.",
-                    subTitle = "반갑습니다.",
-                ),
-            )
-        )
-
-        adapter.setItemClickListener(object : ProfileBasicAdapter.OnItemClickListener {
-            override fun onClick(v: View, position: Int) {
-                Toast.makeText(
-                    this@MountainSearchActivity,
-                    position.toString() + "번 클릭",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
-
-        rvBoard.adapter = adapter
-        rvBoard.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        // TODO : delete init
+        init()
 
         binding.svMountain.isSubmitButtonEnabled = true
         binding.svMountain.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(name: String?): Boolean {
-                Log.e("search Text", name.toString())
-
                 mountainViewModel.fetchMountainByName(name.toString())
                 mountainViewModel.mountains.observe(this@MountainSearchActivity) { it ->
-                    Log.e("mountain", it.toString())
-
-
-                    val profiles = ProfileBasicAdapter(
-                        it.map {
-                            Log.e("m", it.toString())
-                            Mountain.toRecyclerViewBasicItem(it)
-                        }
-                    )
-                    Log.e("profile", profiles.toString())
+                    val profiles =
+                        ProfileBasicAdapter(it.map { Mountain.toRecyclerViewBasicItem(it) })
 
                     profiles.setItemClickListener(object : ProfileBasicAdapter.OnItemClickListener {
                         override fun onClick(v: View, position: Int) {
-                            Toast.makeText(
-                                this@MountainSearchActivity,
-                                position.toString() + "번 클릭",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            // TODO : put id in intent
+                            val intent = Intent(this@MountainSearchActivity, MountainDetailActivity::class.java)
+                            startActivity(intent)
                         }
                     })
                     rvBoard.adapter = profiles
@@ -93,5 +63,27 @@ class MountainSearchActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    private fun init() {
+        adapter = ProfileBasicAdapter(
+            listOf(
+                RecyclerViewBasicItem(
+                    imageSrc = "https://img.tenping.kr/Content/Upload/Images/2023021311020002_Dis_20230223085848.jpg?RS=180x120",
+                    title = "안녕하세요.",
+                    subTitle = "반갑습니다.",
+                ),
+            )
+        )
+
+        adapter.setItemClickListener(object : ProfileBasicAdapter.OnItemClickListener {
+            override fun onClick(v: View, position: Int) {
+                val intent = Intent(this@MountainSearchActivity, MountainDetailActivity::class.java)
+                startActivity(intent)
+            }
+        })
+
+        rvBoard.adapter = adapter
+        rvBoard.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
     }
 }

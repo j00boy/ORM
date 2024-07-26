@@ -17,13 +17,10 @@
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/md_theme_primary"
             android:minHeight="?attr/actionBarSize"
             app:navigationIcon="@drawable/baseline_arrow_back_24"
-            android:background="@color/md_theme_primary"
             app:title="mountain name" />
-
-
-
     </com.google.android.material.appbar.AppBarLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
