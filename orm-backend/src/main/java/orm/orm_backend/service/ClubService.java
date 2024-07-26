@@ -82,8 +82,8 @@ public class ClubService {
             Set<Integer> applicantMap = applicantService.getApplicants(userId);
 
             for (Club c : results) {
-                Boolean isMember = clubMap.contains(c.getId()) ? Boolean.TRUE : Boolean.FALSE;
-                Boolean isApplied = applicantMap.contains(c.getId()) ? Boolean.TRUE : Boolean.FALSE;
+                Boolean isMember = clubMap.contains(c.getId());
+                Boolean isApplied = applicantMap.contains(c.getId());
                 clubs.add(ClubResponseDto.toDto(c, isMember, isApplied));
             }
         }
