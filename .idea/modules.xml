@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/S11P12A709.iml" filepath="$PROJECT_DIR$/.idea/S11P12A709.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/orm-backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/orm-backend.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/orm-backend.test.iml" filepath="$PROJECT_DIR$/.idea/modules/orm-backend.test.iml" />
     </modules>
   </component>
 </project>
