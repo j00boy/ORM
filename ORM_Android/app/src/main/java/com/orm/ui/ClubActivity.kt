@@ -22,7 +22,7 @@ class ClubActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        binding.btnClubSearch.setOnClickListener {
+        binding.tvThumbnail.setOnClickListener {
             startActivity(Intent(this, ClubSearchActivity::class.java))
         }
     }

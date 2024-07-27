@@ -16,9 +16,9 @@ class ProfileBasicAdapter(private val items: List<RecyclerViewBasicItem>) :
     private lateinit var itemClickListener: OnItemClickListener
 
     inner class ProfileBasicViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val iv_thumbnail = itemView.findViewById<ImageView>(R.id.iv_thumbnail)
-        val tv_main = itemView.findViewById<TextView>(R.id.tv_main)
-        val tv_sub = itemView.findViewById<TextView>(R.id.tv_sub)
+        val ivThumbnail = itemView.findViewById<ImageView>(R.id.iv_thumbnail)
+        val tvMain = itemView.findViewById<TextView>(R.id.tv_main)
+        val tvSub = itemView.findViewById<TextView>(R.id.tv_sub)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileBasicViewHolder {
@@ -30,11 +30,11 @@ class ProfileBasicAdapter(private val items: List<RecyclerViewBasicItem>) :
     override fun onBindViewHolder(holder: ProfileBasicViewHolder, position: Int) {
         items[position].imageSrc.getNetworkImage(
             holder.itemView.context,
-            holder.iv_thumbnail
+            holder.ivThumbnail
         )
 
-        holder.tv_main.text = items[position].title
-        holder.tv_sub.text = items[position].subTitle
+        holder.tvMain.text = items[position].title
+        holder.tvSub.text = items[position].subTitle
         holder.itemView.setOnClickListener {
             itemClickListener.onClick(it, position)
         }
