@@ -55,6 +55,7 @@ class ProfileBasicAdapter(private val items: List<RecyclerViewBasicItem>) :
     private fun String.getNetworkImage(context: Context, view: ImageView) {
         Glide.with(context)
             .load(this)
+            .error(R.drawable.ic_launcher_background)
             .centerCrop()
             .into(view)
     }

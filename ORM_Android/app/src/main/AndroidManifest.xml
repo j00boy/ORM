@@ -7,14 +7,12 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission
-        android:name="android.permission.POST_NOTIFICATIONS"
-        android:minSdkVersion="33" />
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".OrmApplication"
@@ -28,6 +26,7 @@
         android:theme="@style/Base.Theme.Orm"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
             android:name=".ui.ClubSearchActivity"
             android:exported="false" />
@@ -64,14 +63,7 @@
             android:name=".ui.ClubDetailActivity"
             android:exported="false" />
 
-        <service
-            android:name=".util.MyFirebaseMessagingService"
-            android:exported="false"
-            android:stopWithTask="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service> <!-- kakao login -->
+        <!-- kakao login -->
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
@@ -85,13 +77,26 @@
                     android:host="oauth"
                     android:scheme="kakao581f68fdb8d8d714da051c55db81cc0d" />
             </intent-filter>
-        </activity> <!-- google map api key -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAiw76NqNBK2SxB-ezlV0CjfP-HkR1t60g" />
+        </activity>
+
+        <!-- firebase service -->
+        <service
+            android:name=".util.MyFirebaseMessagingService"
+            android:exported="false"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- google map api key -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAiw76NqNBK2SxB-ezlV0CjfP-HkR1t60g" />
+
     </application>
 
 </manifest>

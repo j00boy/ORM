@@ -34,14 +34,16 @@ class LauncherActivity : AppCompatActivity() {
     }
 
     private fun handleToken(token: String?) {
-        if (token.isNullOrEmpty() && NetworkUtils.isNetworkAvailable(this)) {
-            Log.e("LauncherActivity", "checkAccessToken: false")
-            navigateToActivity(LoginActivity::class.java)
-        } else {
-            Log.e("LauncherActivity", "checkAccessToken: true, token: $token")
-            if (NetworkUtils.isNetworkAvailable(this)) userViewModel.loginAuto()
-            navigateToActivity(MainActivity::class.java)
-        }
+        navigateToActivity(MainActivity::class.java)
+        return
+//        if (token.isNullOrEmpty() && NetworkUtils.isNetworkAvailable(this)) {
+//            Log.e("LauncherActivity", "checkAccessToken: false")
+//            navigateToActivity(LoginActivity::class.java)
+//        } else {
+//            Log.e("LauncherActivity", "checkAccessToken: true, token: $token")
+//            if (NetworkUtils.isNetworkAvailable(this)) userViewModel.loginAuto()
+//            navigateToActivity(MainActivity::class.java)
+//        }
     }
 
     private fun navigateToActivity(activityClass: Class<*>) {

@@ -14,7 +14,7 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_thumbnail"
             android:layout_width="wrap_content"
-            android:layout_height="270dp"
+            android:layout_height="240dp"
             android:scaleType="centerCrop"
             android:src="@drawable/sample" />
 
@@ -40,18 +40,25 @@
         app:layout_constraintEnd_toEndOf="@+id/cv_thumbnail"
         app:layout_constraintTop_toBottomOf="@+id/cv_thumbnail" />
 
-    <TextView
-        android:id="@+id/tv_description"
-        android:layout_width="0dp"
-        android:layout_height="216dp"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
         android:layout_marginTop="12dp"
-        android:background="@drawable/shape_box_border"
-        android:padding="24dp"
-        android:text="description"
-        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_member" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_member">
+
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:text="description"
+            android:textSize="16sp"/>
+
+    </androidx.cardview.widget.CardView>
 
     <Button
         android:id="@+id/btn_sign"
@@ -62,6 +69,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_description" />
+        app:layout_constraintTop_toBottomOf="@+id/cv_description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
