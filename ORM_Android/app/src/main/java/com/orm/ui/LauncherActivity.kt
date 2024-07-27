@@ -1,12 +1,16 @@
 package com.orm.ui
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.orm.databinding.ActivityLauncherBinding
+import com.orm.util.NetworkUtils
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -24,22 +28,19 @@ class LauncherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
         CoroutineScope(Dispatchers.Main).launch {
-            val token = userViewModel.getAccessToken()
-            handleToken(token.toString())
+            userViewModel.getAccessToken()
+            handleToken(userViewModel.token.value.toString())
         }
     }
 
     private fun handleToken(token: String?) {
-        Log.d("LauncherActivity", "token: $token")
-            navigateToActivity(MainActivity::class.java)
-        return
-        if (token.isNullOrEmpty()) {
-            Log.d("LauncherActivity", "checkAccessToken: true, token: $token")
-            userViewModel.loginAuto()
-            navigateToActivity(MainActivity::class.java)
-        } else {
-            Log.d("LauncherActivity", "checkAccessToken: false")
+        if (token.isNullOrEmpty() && NetworkUtils.isNetworkAvailable(this)) {
+            Log.e("LauncherActivity", "checkAccessToken: false")
             navigateToActivity(LoginActivity::class.java)
+        } else {
+            Log.e("LauncherActivity", "checkAccessToken: true, token: $token")
+            if (NetworkUtils.isNetworkAvailable(this)) userViewModel.loginAuto()
+            navigateToActivity(MainActivity::class.java)
         }
     }
 

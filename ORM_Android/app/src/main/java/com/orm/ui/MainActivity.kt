@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                 Log.e("FirebaseMessaging", "Fetching FCM registration token failed", task.exception)
                 return@OnCompleteListener
             }
-            Log.d("token", task.result)
+            Log.d("firebase token", task.result)
         })
     }
 
