@@ -16,7 +16,9 @@ import com.bumptech.glide.Glide
 import com.google.android.material.appbar.MaterialToolbar
 import com.orm.data.model.Mountain
 import com.orm.databinding.ActivityMountainDetailBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MountainDetailActivity : AppCompatActivity() {
     private val binding: ActivityMountainDetailBinding by lazy {
         ActivityMountainDetailBinding.inflate(layoutInflater)
@@ -34,14 +36,13 @@ class MountainDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (mountain != null) {
-            binding.topAppBar.title = mountain!!.name
-            binding.tvDescription.text = mountain!!.desc
             mountain!!.imageSrc!!.getNetworkImage(binding.root.context, binding.ivThumbnail)
         }
 
         binding.topAppBar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+        binding.mountain = mountain
     }
 
     private fun String.getNetworkImage(context: Context, view: ImageView) {

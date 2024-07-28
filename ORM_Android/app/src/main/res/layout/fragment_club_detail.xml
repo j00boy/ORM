@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_thumbnail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,9 +18,9 @@
             android:scaleType="centerCrop"
             android:src="@drawable/sample" />
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_member"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
         app:layout_constraintStart_toStartOf="@+id/cv_thumbnail"
         app:layout_constraintTop_toBottomOf="@+id/cv_thumbnail" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
         app:layout_constraintEnd_toEndOf="@+id/cv_thumbnail"
         app:layout_constraintTop_toBottomOf="@+id/cv_thumbnail" />
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cv_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_member">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,9 +58,9 @@
             android:text="description"
             android:textSize="16sp"/>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_sign"
         android:layout_width="match_parent"
         android:layout_height="72dp"

@@ -5,7 +5,7 @@
 <!--        &lt;!&ndash; <item name="colorPrimary">@color/my_light_primary</item> &ndash;&gt;-->
 <!--    </style>-->
 
-    <style name="Base.Theme.Orm" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Base.Theme.Orm" parent="Theme.Material3.DynamicColors.Light.NoActionBar">
         <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
         <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>

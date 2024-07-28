@@ -1,112 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.MountainDetailActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+    <data>
+
+        <variable
+            name="mountain"
+            type="com.orm.data.model.Mountain" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        tools:context=".ui.MountainDetailActivity">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topAppBar"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/md_theme_primary"
-            android:minHeight="?attr/actionBarSize"
-            app:navigationIcon="@drawable/baseline_arrow_back_24"
-            app:title="mountain name" />
-    </com.google.android.material.appbar.AppBarLayout>
+            app:layout_constraintTop_toTopOf="parent">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:scrollbars="none"
-        android:layout_marginHorizontal="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/md_theme_primary"
+                android:minHeight="?attr/actionBarSize"
+                app:navigationIcon="@drawable/baseline_arrow_back_24"
+                app:title="@{mountain.name}" />
+        </com.google.android.material.appbar.AppBarLayout>
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="12dp"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cv_thumbnail"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                app:cardCornerRadius="8dp">
+                android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_thumbnail"
-                    android:layout_width="match_parent"
-                    android:layout_height="270dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/sample" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cv_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="8dp"
-                android:layout_marginTop="12dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_member">
-
-                <TextView
-                    android:id="@+id/tv_description"
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cv_thumbnail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="24dp"
-                    android:text="description"
-                    android:textSize="16sp"/>
+                    android:layout_marginTop="12dp"
+                    app:cardCornerRadius="8dp">
 
-            </androidx.cardview.widget.CardView>
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/iv_thumbnail"
+                        android:layout_width="match_parent"
+                        android:layout_height="270dp"
+                        android:scaleType="centerCrop"
+                        app:imageSrc="@{mountain.imageSrc}" />
+                </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="18dp"
-                android:textSize="24sp"
-                android:text="날씨"
-                />
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cv_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:cardCornerRadius="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_member">
 
-            <androidx.fragment.app.FragmentContainerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tv_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="24dp"
+                        android:text="@{mountain.desc}"
+                        android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="18dp"
-                android:textSize="24sp"
-                android:text="등산로 정보"
-                />
+                </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="18dp"
-                android:textSize="24sp"
-                android:text="이 산을 대표로 하는 모임"
-                />
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="18dp"
+                    android:text="날씨"
+                    android:textSize="24sp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:listitem="@layout/profile_basic" />
+                <androidx.fragment.app.FragmentContainerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
-        </LinearLayout>
-    </ScrollView>
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="18dp"
+                    android:text="등산로 정보"
+                    android:textSize="24sp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="18dp"
+                    android:text="이 산을 대표로 하는 모임"
+                    android:textSize="24sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/profile_basic" />
+
+            </LinearLayout>
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
