@@ -1,7 +1,10 @@
 package com.orm.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -18,12 +21,24 @@ class TraceActivity : AppCompatActivity() {
     private val binding: ActivityTraceBinding by lazy {
         ActivityTraceBinding.inflate(layoutInflater)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         binding.topAppBar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
+        }
+
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.edit -> {
+                    startActivity(Intent(this, TraceEditActivity::class.java))
+                    true
+                }
+
+                else -> false
+            }
         }
 
         val rvBoard = binding.recyclerView
@@ -42,7 +57,8 @@ class TraceActivity : AppCompatActivity() {
                         coordinates = null,
                         trailId = 0
                     )
-                ),Trace.toRecyclerViewNumberItem(
+                ),
+                Trace.toRecyclerViewNumberItem(
                     Trace(
                         id = 0,
                         title = "제목",
@@ -55,7 +71,8 @@ class TraceActivity : AppCompatActivity() {
                         coordinates = null,
                         trailId = 0
                     )
-                ),Trace.toRecyclerViewNumberItem(
+                ),
+                Trace.toRecyclerViewNumberItem(
                     Trace(
                         id = 0,
                         title = "제목",

@@ -27,10 +27,7 @@ class ClubActivity : AppCompatActivity() {
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.edit -> {
-                    Log.e("ClubActivity", "edit clicked")
-                    // TODO : implements club edit activity
-                    Toast.makeText(this@ClubActivity, "implements club edit activity", Toast.LENGTH_LONG).show()
-                    // startActivity(Intent(this, ClubEditActivity::class.java))
+                    startActivity(Intent(this, ClubEditActivity::class.java))
                     true
                 }
 

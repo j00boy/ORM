@@ -22,16 +22,19 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_member"
+        style="@style/Widget.Material3.Button.ElevatedButton.Icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
+        app:icon="@drawable/ic_baseline_person"
         android:text="16/20"
         app:layout_constraintStart_toStartOf="@+id/cv_thumbnail"
         app:layout_constraintTop_toBottomOf="@+id/cv_thumbnail" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_edit"
+        style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -63,8 +66,8 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_sign"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:layout_marginTop="12dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:text="가입하기 / 채팅하기"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

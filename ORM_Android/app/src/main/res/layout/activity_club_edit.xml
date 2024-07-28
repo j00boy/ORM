@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.TraceActivity">
+    tools:context=".ui.ClubEditActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
@@ -17,24 +17,22 @@
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:menu="@menu/top_app_bar"
             android:background="@color/md_theme_primary"
             android:minHeight="?attr/actionBarSize"
             app:navigationIcon="@drawable/baseline_arrow_back_24"
-            app:title="발자국" />
+            app:title="모임 생성 / 수정" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_club_edit"
+        android:name="com.orm.ui.fragment.club.ClubEditFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-        tools:listitem="@layout/profile_number" />
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -70,12 +70,14 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_accept"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="수락" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_reject"
+                style="@style/Widget.Material3.Button.ElevatedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="거절" />

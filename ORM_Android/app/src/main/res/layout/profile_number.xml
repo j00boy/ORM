@@ -71,13 +71,13 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_text"
+            style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="숫자"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/tv_number"
-            app:layout_constraintStart_toEndOf="@+id/text_container" />
+            app:layout_constraintEnd_toEndOf="@+id/tv_number" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
