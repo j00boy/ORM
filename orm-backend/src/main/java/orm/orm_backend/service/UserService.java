@@ -37,8 +37,7 @@ public class UserService {
     }
 
     @Transactional
-    public LoginResponseDto autoLogin(String accessToken) throws JsonProcessingException {
-        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+    public LoginResponseDto autoLogin(Integer userId) throws JsonProcessingException {
         User user = userRepository.findById(userId).orElseThrow();
         kakaoUtil.refreshAccessToken(user.getKakaoRefreshToken(), user); // 추후 리프레시 토큰 만료시 로그아웃 처리 로직 추가
 

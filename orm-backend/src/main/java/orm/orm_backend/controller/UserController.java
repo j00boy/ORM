@@ -52,7 +52,8 @@ public class UserController {
     @GetMapping("/login/auto")
     public ResponseEntity<LoginResponseDto> autoLogin(HttpServletRequest request) throws JsonProcessingException {
         String accessToken = request.getHeader(HEADER_AUTH);
-        LoginResponseDto loginResponseDto = userService.autoLogin(accessToken);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        LoginResponseDto loginResponseDto = userService.autoLogin(userId);
         HttpHeaders headers = jwtUtil.createTokenHeaders(loginResponseDto.getUserId());
         return ResponseEntity.ok().headers(headers).body(loginResponseDto);
     }
