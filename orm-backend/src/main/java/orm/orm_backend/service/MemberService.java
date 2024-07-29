@@ -40,7 +40,7 @@ public class MemberService {
     }
 
     // Member 삭제
-    public void delete(MemberRequestDto memberRequestDto) {
-        memberRepository.deleteByUserIdAndClubId(memberRequestDto.getUserId(), memberRequestDto.getClubId());
+    public void delete(Integer userId, Integer clubId) {
+        memberRepository.deleteByUserIdAndClubId(userId, clubId);
     }
 }

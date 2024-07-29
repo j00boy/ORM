@@ -70,8 +70,8 @@ public class ClubController {
     }
 
     @DeleteMapping("/members/leave")
-    public ResponseEntity<Void> deleteMember(@RequestBody MemberRequestDto memberRequestDto) {
-        clubService.deleteMember(memberRequestDto);
+    public ResponseEntity<Void> deleteMember(@RequestParam("userId") Integer userId, @RequestParam("clubId") Integer clubId) {
+        clubService.deleteMember(userId, clubId);
         return ResponseEntity.noContent().build();
     }
 

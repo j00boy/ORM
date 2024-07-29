@@ -124,8 +124,8 @@ public class ClubService {
     }
 
     // 추방 탈퇴
-    public void deleteMember(MemberRequestDto memberRequestDto) {
-        memberService.delete(memberRequestDto);
+    public void deleteMember(Integer userId, Integer clubId) {
+        memberService.delete(userId, clubId);
     }
 
     // 가입 수락/거절
