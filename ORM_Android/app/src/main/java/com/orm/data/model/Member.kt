@@ -7,5 +7,7 @@ import androidx.room.PrimaryKey
 data class Member(
     @PrimaryKey val id: Int,
     val nickname: String,
-    val imgSrc: String
+    val imgSrc: String,
+    val clubId: Int,
+    val joinedAt: String
 )

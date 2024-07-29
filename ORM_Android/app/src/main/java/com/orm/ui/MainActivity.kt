@@ -1,22 +1,31 @@
 package com.orm.ui
 
 import android.Manifest
-import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.gson.Gson
 import com.orm.R
+import com.orm.data.model.ApproveClub
+import com.orm.data.model.CreateClub
+import com.orm.data.model.RequestMember
 import com.orm.databinding.ActivityMainBinding
 import com.orm.util.PermissionManager
+import com.orm.viewmodel.ClubViewModel
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.ByteArrayOutputStream
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -67,6 +76,7 @@ class MainActivity : AppCompatActivity() {
         permissionManager.initializeLauncher()
         permissionManager.checkAndRequestPermissions(permissions)
     }
+
 }
 
 // reference
