@@ -28,6 +28,8 @@ public class KakaoUtil {
 
     private final String ACCESS_TOKEN = "access_token";
     private final String REFRESH_TOKEN = "refresh_token";
+    private final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
+    private final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
 
     public String createKakaoRedirectUri() {
         return "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + appKey + "&redirect_uri=" + redirectUri;
@@ -57,12 +59,8 @@ public class KakaoUtil {
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(body, headers);
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(
-                "https://kauth.kakao.com/oauth/token",
-                HttpMethod.POST,
-                kakaoTokenRequest,
-                String.class
-        );
+        ResponseEntity<String> response = getResponseFromExternalApi(
+                kakaoTokenRequest, HttpMethod.POST, KAKAO_TOKEN_URL, String.class);
 
         return response.getBody();
     }
@@ -78,13 +76,8 @@ public class KakaoUtil {
 
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(
-                "https://kapi.kakao.com/v2/user/me",
-                HttpMethod.POST,
-                kakaoUserInfoRequest,
-                String.class
-        );
+        ResponseEntity<String> response = getResponseFromExternalApi(
+                kakaoUserInfoRequest, HttpMethod.POST, KAKAO_USER_INFO_URL, String.class);
 
         // responseBody에 있는 정보 꺼내기
         String responseBody = response.getBody();
@@ -103,19 +96,20 @@ public class KakaoUtil {
         body.add("refresh_token", kakaoRefreshToken);
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(body, headers);
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(
-                "https://kauth.kakao.com/oauth/token",
-                HttpMethod.POST,
-                kakaoUserInfoRequest,
-                String.class
-        );
+        ResponseEntity<String> response = getResponseFromExternalApi(
+                kakaoUserInfoRequest, HttpMethod.POST, KAKAO_TOKEN_URL, String.class);
 
         String responseBody = response.getBody();
         String kakaoAccessToken = extractToken(responseBody, ACCESS_TOKEN);
         kakaoRefreshToken = extractToken(responseBody, REFRESH_TOKEN);
 
         user.refreshKakaoTokens(kakaoAccessToken, kakaoRefreshToken);
+    }
+
+    private <T> ResponseEntity<T> getResponseFromExternalApi(HttpEntity<MultiValueMap<String, String>> requestHttpEntity,
+                                                             HttpMethod httpMethod, String url, Class<T> responseType) {
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.exchange(url, httpMethod, requestHttpEntity, responseType);
     }
 
     private KakaoInfoVo parseKakaoUserInfo(String kakaoResponse, String accessToken, String refreshToken) throws JsonProcessingException {
