@@ -46,4 +46,16 @@ class MountainRepository @Inject constructor(
             }
         }
     }
+
+    suspend fun getMountainsTop(): List<Mountain>? {
+        return withContext(Dispatchers.IO) {
+            val response = mountainService.getMountainsTop().execute()
+
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                emptyList()
+            }
+        }
+    }
 }

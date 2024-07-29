@@ -19,4 +19,8 @@ interface MountainService {
     // 산 이름으로 검색
     @GET("mountains/search")
     fun searchMountains(@Query("name") name: String): Call<List<Mountain>>
+
+    // 100대 명산 불러오기
+    @GET("mountains/top")
+    fun getMountainsTop(): Call<List<Mountain>>
 }
