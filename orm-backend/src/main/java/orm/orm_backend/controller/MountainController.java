@@ -23,7 +23,7 @@ public class MountainController {
     private final MountainService mountainService;
     private final TrailService trailService;
 
-    @GetMapping
+    @GetMapping("/top")
     public ResponseEntity<List<MountainResponseDto>> get100Mountains() {
         List<MountainResponseDto> mountainDtos = mountainService.get100Mountains();
         return ResponseEntity.ok().body(mountainDtos);
