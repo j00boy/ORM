@@ -41,7 +41,7 @@ public class ClubController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ClubResponseDto>> findClubs(@RequestBody ClubSearchRequestDto clubSearchRequestDto, HttpServletRequest request) {
+    public ResponseEntity<List<ClubResponseDto>> findClubs(ClubSearchRequestDto clubSearchRequestDto, HttpServletRequest request) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         List<ClubResponseDto> clubs = clubService.getAllClubs(clubSearchRequestDto, userId);
