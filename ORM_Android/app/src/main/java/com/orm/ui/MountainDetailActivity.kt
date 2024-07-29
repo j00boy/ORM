@@ -35,9 +35,9 @@ class MountainDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        if (mountain != null) {
-            mountain!!.imageSrc!!.getNetworkImage(binding.root.context, binding.ivThumbnail)
-        }
+//        if (mountain != null) {
+//            mountain!!.imageSrc!!.getNetworkImage(binding.root.context, binding.ivThumbnail)
+//        }
 
         binding.topAppBar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
