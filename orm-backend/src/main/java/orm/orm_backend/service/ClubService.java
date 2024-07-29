@@ -35,19 +35,18 @@ public class ClubService {
     private final MemberService memberService;
     private final ApplicantService applicantService;
 
-    public Integer createClub(ClubRequestDto clubRequestDTO, Integer userId) {
+    public Integer createClub(ClubRequestDto clubRequestDTO, MultipartFile imgFile, Integer userId) {
         // user 찾기
         User user = userService.findUserById(userId);
         // mountain 찾기
         Mountain mountain = mountainService.getMountainById(clubRequestDTO.getMountainId());
 
         // 사진 업로드
-        MultipartFile image = clubRequestDTO.getImgFile();
         String imageSrc = null;
 
-        if (image != null) {
+        if (imgFile != null) {
             try {
-                imageSrc = saveImage(image);
+                imageSrc = saveImage(imgFile);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -60,6 +59,7 @@ public class ClubService {
         // club 생성 이후 해당 user 를 member table에 추가 (관리자도 회원)
         Member member = MemberRequestDto.toEntity(user, club);
         memberService.saveMember(member);
+
         return club.getId();
     }
 
