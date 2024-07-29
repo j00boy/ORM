@@ -100,10 +100,11 @@ public class ClubService {
         List<MemberResponseDto> members = memberService.getMembersInClub(clubId).stream().map(MemberResponseDto::toDto).toList();
         List<ApplicantRequestDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantRequestDto::toDto).toList();
 
-        return Map.of(
-                "members", members,
-                "requestMembers", applicants
-        );
+        Map<String, Object> result = new HashMap<>();
+        result.put("members", members);
+        result.put("requestMembers", applicants);
+
+        return result;
     }
 
     // 중복 체크
