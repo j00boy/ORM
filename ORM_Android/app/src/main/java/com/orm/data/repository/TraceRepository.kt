@@ -35,6 +35,18 @@ class TraceRepository @Inject constructor(
         }
     }
 
+    suspend fun createTrace(trace: Trace) {
+        return withContext(Dispatchers.IO) {
+            val response = traceService.createTrace(trace).execute()
+
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        }
+    }
+
     suspend fun updateTrace(trace: Trace) {
         return withContext(Dispatchers.IO) {
             val response = traceService.updateTrace(trace).execute()
