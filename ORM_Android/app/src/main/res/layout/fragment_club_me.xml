@@ -9,6 +9,6 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/item_main_profile" />
+        tools:listitem="@layout/profile_basic" />
 
 </FrameLayout>

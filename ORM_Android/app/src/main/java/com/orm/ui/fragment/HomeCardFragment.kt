@@ -1,13 +1,11 @@
 package com.orm.ui.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
 import com.orm.R
-import com.orm.databinding.FragmentChatListBinding
 import com.orm.databinding.FragmentHomeCardBinding
 
 class HomeCardFragment : Fragment() {
@@ -23,10 +21,11 @@ class HomeCardFragment : Fragment() {
 
         val title = arguments?.getString("title") ?: "Default Title"
         val subtitle = arguments?.getString("subtitle") ?: "Default Subtitle"
+//        val backGround = arguments?.getInt("background") ?: R.drawable.sample
 
         binding.tvTitle.text = title
         binding.tvSubTitle.text = subtitle
-//        root.background = ResourcesCompat.getDrawable(resources, R.drawable.sample, null)
+//        root.setBackgroundResource(backGround)
         return root
     }
 
@@ -41,6 +40,7 @@ class HomeCardFragment : Fragment() {
             val args = Bundle()
             args.putString("title", title)
             args.putString("subtitle", subtitle)
+//            args.putInt("background", backGround)
             fragment.arguments = args
             return fragment
         }

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.orm.R
 import com.orm.databinding.FragmentHomeBinding
 import com.orm.ui.ClubActivity
 import com.orm.ui.MountainSearchActivity

@@ -1,86 +1,76 @@
 package com.orm.ui
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.orm.R
-import com.orm.data.model.RecyclerViewItem
+import androidx.recyclerview.widget.RecyclerView
+import com.orm.data.model.Mountain
 import com.orm.databinding.ActivityMountainSearchBinding
-import com.orm.ui.adapter.ItemMainAdapter
+import com.orm.ui.adapter.ProfileBasicAdapter
+import com.orm.viewmodel.MountainViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MountainSearchActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMountainSearchBinding
+    private val binding: ActivityMountainSearchBinding by lazy {
+        ActivityMountainSearchBinding.inflate(layoutInflater)
+    }
+    private val mountainViewModel: MountainViewModel by viewModels()
+    private val rvBoard: RecyclerView by lazy { binding.recyclerView }
+    private lateinit var adapter: ProfileBasicAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_mountain_search)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        setContentView(binding.root)
+
+        mountainViewModel.mountains.observe(this@MountainSearchActivity) {
+            setupAdapter(it!!)
         }
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_mountain_search)
 
+        binding.topAppBar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
-        val rvBoard = binding.recyclerView
-        val adapter = ItemMainAdapter(
-            listOf(
-                RecyclerViewItem(
-                    imageSrc = "https://img.tenping.kr/Content/Upload/Images/2023021311020002_Dis_20230223085848.jpg?RS=180x120",
-                    title = "안녕하세요.",
-                    subTitle = "반갑습니다."
-                ),
-                RecyclerViewItem(
-                    imageSrc = "http://via.placeholder.com/300.png",
-                    title = "asdfghjkl",
-                    subTitle = "iuytre1243"
-                ),                RecyclerViewItem(
-                    imageSrc = "https://img.tenping.kr/Content/Upload/Images/2023021311020002_Dis_20230223085848.jpg?RS=180x120",
-                    title = "안녕하세요.",
-                    subTitle = "반갑습니다."
-                ),
-                RecyclerViewItem(
-                    imageSrc = "http://via.placeholder.com/300.png",
-                    title = "asdfghjkl",
-                    subTitle = "iuytre1243"
-                ),                RecyclerViewItem(
-                    imageSrc = "https://img.tenping.kr/Content/Upload/Images/2023021311020002_Dis_20230223085848.jpg?RS=180x120",
-                    title = "안녕하세요.",
-                    subTitle = "반갑습니다."
-                ),
-                RecyclerViewItem(
-                    imageSrc = "http://via.placeholder.com/300.png",
-                    title = "asdfghjkl",
-                    subTitle = "iuytre1243"
-                ),
-                RecyclerViewItem(
-                    imageSrc = "https://img.tenping.kr/Content/Upload/Images/2023021311020002_Dis_20230223085848.jpg?RS=180x120",
-                    title = "안녕하세요.",
-                    subTitle = "반갑습니다."
-                ),
-                RecyclerViewItem(
-                    imageSrc = "http://via.placeholder.com/300.png",
-                    title = "asdfghjkl",
-                    subTitle = "iuytre1243"
-                ),
-            )
-        )
+        binding.svMountain.isSubmitButtonEnabled = true
+        binding.svMountain.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(name: String?): Boolean {
 
-        adapter.setItemClickListener(object : ItemMainAdapter.OnItemClickListener {
+                Log.e("onQueryTextSubmit", name.toString())
+                mountainViewModel.fetchMountainByName(name.toString())
+                mountainViewModel.mountains.observe(this@MountainSearchActivity) {
+                    setupAdapter(it!!)
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                return false
+            }
+
+        })
+    }
+
+    private fun setupAdapter(mountains: List<Mountain>) {
+        adapter =
+            ProfileBasicAdapter(mountains.map { Mountain.toRecyclerViewBasicItem(it) })
+
+        adapter.setItemClickListener(object : ProfileBasicAdapter.OnItemClickListener {
             override fun onClick(v: View, position: Int) {
-                Toast.makeText(this@MountainSearchActivity, position.toString() + "번 클릭", Toast.LENGTH_SHORT).show()
+                val intent = Intent(
+                    this@MountainSearchActivity,
+                    MountainDetailActivity::class.java
+                ).apply {
+                    putExtra("mountain", mountains[position])
+                }
+                startActivity(intent)
             }
         })
-
         rvBoard.adapter = adapter
-        rvBoard.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-
-        setSupportActionBar(binding.toolbar)
+        rvBoard.layoutManager = LinearLayoutManager(this@MountainSearchActivity)
     }
 }

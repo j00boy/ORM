@@ -67,5 +67,5 @@ interface ClubService {
     fun checkDuplicateClubs(
         @Header("Authorization") accessToken: String,
         @Query("name") name:String,
-    ): Call<ResponseBody>
+    ): Call<Unit>
 }

@@ -2,6 +2,10 @@ package com.orm.ui.fragment.map
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -22,47 +26,68 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.orm.R
 import com.orm.databinding.FragmentGoogleMapBinding
+import kotlin.math.pow
 
-class GoogleMapFragment : Fragment(R.layout.fragment_google_map), OnMapReadyCallback {
+class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
 
     private lateinit var binding: FragmentGoogleMapBinding
-    private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationManager: LocationManager
-
-    private val locationListener = object : LocationListener {
-        override fun onLocationChanged(location: Location) {
-            val currentLatLng = LatLng(location.latitude, location.longitude)
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
-            googleMap.clear()  // Clear previous markers
-            googleMap.addMarker(MarkerOptions().position(currentLatLng).title("현재 위치"))
-            Log.e("gmap", currentLatLng.toString())
-        }
-
-        override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-
-        override fun onProviderDisabled(provider: String) {		// Provider 이용 불가 시 자동 호출
-            super.onProviderDisabled(provider)
-        }
-        override fun onProviderEnabled(provider: String) {		// Provider 다시 이용 가능 시 자동 호출
-            super.onProviderEnabled(provider)
-        }
-    }
+    private lateinit var sensorManager: SensorManager
+    private lateinit var googleMap: GoogleMap
+    private lateinit var pressureSensor: Sensor
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        Log.e("gmap", "oncreateview")
+        savedInstanceState: Bundle?,
+    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_google_map, container, false)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initializeServices()
+        pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) ?: run {
+            Log.e(TAG, "Pressure sensor not available")
+            return
+        }
+    }
+
+    private fun initializeServices() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        locationManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    }
+
+    override fun onResume() {
+        super.onResume()
+        sensorManager.registerListener(this, pressureSensor, SensorManager.SENSOR_DELAY_NORMAL)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(this)
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        event?.let {
+            Log.d(TAG, "Pressure sensor values: ${calculateAltitude(it.values[0].toDouble())}m")
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        // Implement accuracy changes if needed
+    }
+
+    private val locationListener = LocationListener { location ->
+        Log.d(TAG, "Location changed: $location")
+        updateMapWithLocation(location)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.e("gmap", "onviewcreated")
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
@@ -74,33 +99,12 @@ class GoogleMapFragment : Fragment(R.layout.fragment_google_map), OnMapReadyCall
     }
 
     @SuppressLint("MissingPermission")
-    private fun fetchLocation() {
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    val currentLatLng = LatLng(it.latitude, it.longitude)
-                    googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
-                    googleMap.addMarker(MarkerOptions().position(currentLatLng).title("한라산"))
-                    Log.e("gmap", currentLatLng.toString())
-                } ?: run {
-                    Log.e("gmap", "Location not available")
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("gmap", "Failed to get location", e)
-            }
-    }
-
-    @SuppressLint("MissingPermission")
     private fun fetchLocationByDevice() {
-        val location: Location? = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         location?.let {
-            val currentLatLng = LatLng(it.latitude, it.longitude)
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
-            googleMap.addMarker(MarkerOptions().position(currentLatLng).title("현재 위치"))
-            Log.e("gmap", currentLatLng.toString())
+            updateMapWithLocation(it)
         } ?: run {
-            Log.e("gmap", "Location not available")
+            Log.e(TAG, "Location not available")
         }
 
         locationManager.requestLocationUpdates(
@@ -111,8 +115,23 @@ class GoogleMapFragment : Fragment(R.layout.fragment_google_map), OnMapReadyCall
         )
     }
 
+    private fun updateMapWithLocation(location: Location) {
+        val currentLatLng = LatLng(location.latitude, location.longitude)
+        googleMap.clear()
+        googleMap.addMarker(MarkerOptions().position(currentLatLng).title("현재 위치"))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
+        Log.d(TAG, "Current location: $currentLatLng, Altitude: ${location.altitude}")
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         locationManager.removeUpdates(locationListener)
     }
+
+    companion object {
+        private const val TAG = "GoogleMapFragment"
+    }
+
+    private fun calculateAltitude(pressure: Double) = 44330 * (1 - (pressure / 1013.25).pow(1 / 5.255))
+
 }

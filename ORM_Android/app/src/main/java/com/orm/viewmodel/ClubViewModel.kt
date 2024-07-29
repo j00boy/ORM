@@ -1,6 +1,5 @@
 package com.orm.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -45,7 +44,6 @@ class ClubViewModel @Inject constructor(
         viewModelScope.launch {
             val clubs = clubRepository.getClubs()
             _clubs.postValue(clubs)
-            Log.d("ClubViewModel", "Fetched clubs: $clubs")
         }
     }
 
@@ -53,7 +51,6 @@ class ClubViewModel @Inject constructor(
         viewModelScope.launch {
             val members = clubRepository.getMembers(accessToken, clubId)
             _members.postValue(members)
-            Log.d("ClubViewModel", "Fetched : $members")
         }
     }
 
@@ -65,7 +62,6 @@ class ClubViewModel @Inject constructor(
             try {
                 val success = clubRepository.approveClubs(accessToken, approveClub)
                 _isOperationSuccessful.postValue(success)
-                Log.d("ClubViewModel", "Fetched success: $success")
             } catch (e: Exception) {
                 e.printStackTrace()
                 _isOperationSuccessful.postValue(false)
@@ -81,8 +77,7 @@ class ClubViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val success = clubRepository.leaveClubs(accessToken, clubId, userId)
-//                _isOperationSuccessful.postValue(success)
-                Log.d("ClubViewModel", "Fetched leaveClubs: $success")
+                _isOperationSuccessful.postValue(success)
             } catch (e: Exception) {
                 e.printStackTrace()
                 _isOperationSuccessful.postValue(false)
@@ -98,7 +93,6 @@ class ClubViewModel @Inject constructor(
             try {
                 val success = clubRepository.applyClubs(accessToken, requestMember)
                 _isOperationSuccessful.postValue(success)
-                Log.d("ClubViewModel", "Fetched applyClubs: $success")
             } catch (e: Exception) {
                 e.printStackTrace()
                 _isOperationSuccessful.postValue(false)
@@ -117,12 +111,10 @@ class ClubViewModel @Inject constructor(
                 val clubId = clubRepository.createClubs(accessToken, createClub, imgFile)
                 _clubId.postValue(clubId)
                 _isOperationSuccessful.postValue(clubId != null)
-                Log.d("ClubViewModel", "Created club with ID: $clubId")
             } catch (e: Exception) {
                 e.printStackTrace()
                 _clubId.postValue(null)
                 _isOperationSuccessful.postValue(false)
-                Log.e("ClubViewModel", "Error creating club", e)
             }
         }
     }
@@ -134,7 +126,6 @@ class ClubViewModel @Inject constructor(
             try {
                 val isDuplicate = clubRepository.checkDuplicateClubs(accessToken, clubName)
                 _isOperationSuccessful.postValue(isDuplicate ?: false)
-                Log.d("ClubViewModel", "Fetched checkDuplicateClubs: $isDuplicate")
             } catch (e: Exception) {
                 e.printStackTrace()
                 _isOperationSuccessful.postValue(false)
