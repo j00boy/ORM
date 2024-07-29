@@ -48,7 +48,10 @@ class UserRepository @Inject constructor(
             if (response.isSuccessful) {
                 Log.d("test", response.headers().get("accessToken").toString())
                 saveAccessToken(response.headers().get("accessToken").toString())
-                response.body() ?: throw Exception("Login failed")
+
+                val body = response.body() ?: throw Exception("Login failed")
+                saveUserInfo(body)
+                body
             } else {
                 throw Exception(response.errorBody()?.string())
             }
@@ -68,5 +71,33 @@ class UserRepository @Inject constructor(
         }
         Log.d("UserRepository", "getAccessToken: ${accessToken.first()}")
         return accessToken.first()
+    }
+
+    private suspend fun saveUserInfo(user: User) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.userId] = user.userId
+            preferences[PreferencesKeys.imageSrc] = user.imageSrc
+            preferences[PreferencesKeys.nickname] = user.nickname
+        }
+    }
+
+    suspend fun getUserInfo(): User {
+        val userId: Flow<String> = context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.userId] ?: ""
+        }
+
+        val imageSrc: Flow<String> = context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.imageSrc] ?: ""
+        }
+
+        val nickname: Flow<String> = context.dataStore.data.map { preferences ->
+            preferences[PreferencesKeys.nickname] ?: ""
+        }
+
+        Log.d(
+            "UserRepository",
+            "userInfo: ${userId.first() + imageSrc.first() + nickname.first()}"
+        )
+        return User(userId.first(), imageSrc.first(), nickname.first())
     }
 }
