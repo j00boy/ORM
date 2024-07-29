@@ -8,15 +8,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import orm.orm_backend.dto.request.ApplicantRequestDto;
-import orm.orm_backend.dto.request.ClubRequestDto;
-import orm.orm_backend.dto.request.ClubSearchRequestDto;
-import orm.orm_backend.dto.request.MemberRequestDto;
+import orm.orm_backend.dto.common.ApplicantDto;
+import orm.orm_backend.dto.request.*;
 import orm.orm_backend.dto.response.ClubResponseDto;
 import orm.orm_backend.dto.response.MemberResponseDto;
 import orm.orm_backend.entity.*;
 import orm.orm_backend.exception.UnAuthorizedException;
-import orm.orm_backend.repository.*;
+import orm.orm_backend.repository.ClubRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -99,7 +97,7 @@ public class ClubService {
         }
 
         List<MemberResponseDto> members = memberService.getMembersInClub(clubId).stream().map(MemberResponseDto::toDto).toList();
-        List<ApplicantRequestDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantRequestDto::toDto).toList();
+        List<ApplicantDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantDto::toDto).toList();
 
         Map<String, Object> result = new HashMap<>();
         result.put("members", members);
@@ -114,13 +112,13 @@ public class ClubService {
     }
 
     // 가입 신청
-    public Applicant joinClub(ApplicantRequestDto applicantRequestDto) {
+    public Applicant joinClub(ApplicantDto applicantDto) {
         // user 찾기
-        User user = userService.findUserById(applicantRequestDto.getUserId());
+        User user = userService.findUserById(applicantDto.getUserId());
         // club 찾기
-        Club club = clubRepository.findById(applicantRequestDto.getClubId()).orElseThrow(NoResultException::new);
+        Club club = clubRepository.findById(applicantDto.getClubId()).orElseThrow(NoResultException::new);
         // applicant 저장
-        Applicant applicant = applicantRequestDto.toEntity(user, club);
+        Applicant applicant = applicantDto.toEntity(user, club);
         return applicantService.saveApplicant(applicant);
     }
 

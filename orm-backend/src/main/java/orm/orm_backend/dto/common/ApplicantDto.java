@@ -1,4 +1,4 @@
-package orm.orm_backend.dto.request;
+package orm.orm_backend.dto.common;
 
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,7 @@ import orm.orm_backend.entity.User;
 
 @Data
 @Builder
-public class ApplicantRequestDto {
+public class ApplicantDto {
     private Integer clubId;
     private Integer userId;
     private String introduction;
@@ -21,8 +21,8 @@ public class ApplicantRequestDto {
                 .build();
     }
 
-    public static ApplicantRequestDto toDto(Applicant applicant) {
-        return ApplicantRequestDto.builder()
+    public static ApplicantDto toDto(Applicant applicant) {
+        return ApplicantDto.builder()
                 .clubId(applicant.getClub().getId())
                 .userId(applicant.getUser().getId())
                 .introduction(applicant.getIntroduction())
