@@ -22,9 +22,8 @@ class UserViewModel @Inject constructor(
     val token: LiveData<String> get() = _token
 
     init {
-        _token.value = ""
-
-        _user.value = User("1", "22", "ssafy")
+        getAccessToken()
+        getUserInfo()
     }
 
     fun loginKakao(code: String) {
@@ -63,6 +62,14 @@ class UserViewModel @Inject constructor(
                 _token.postValue(token)
                 Log.d("UserViewModel", "token= $_token")
             }
+        }
+    }
+
+    fun getUserInfo() {
+        Log.d("UserViewModel", "getUserInfo")
+        viewModelScope.launch {
+            val user = userRepository.getUserInfo()
+            _user.postValue(user)
         }
     }
 }
