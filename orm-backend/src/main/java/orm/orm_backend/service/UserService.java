@@ -32,28 +32,23 @@ public class UserService {
         }
 
         // 가입 절차를 밟았기 때문에 nullPointerException이 발생하지 않음이 보장됨
-        User user = userRepository.findByKakaoId(kakaoInfo.getKakaoId()).get();
+        User user = userRepository.findByKakaoId(kakaoInfo.getKakaoId()).orElseThrow();
         return user.toLoginResponseDto();
     }
 
     @Transactional
     public LoginResponseDto autoLogin(String accessToken) throws JsonProcessingException {
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
-        Optional<User> userById = userRepository.findById(userId);
-        if (userById.isEmpty()) {
-            throw new UnAuthorizedException();
-        }
-
-        User user = userById.get();
+        User user = userRepository.findById(userId).orElseThrow();
         kakaoUtil.refreshAccessToken(user.getKakaoRefreshToken(), user); // 추후 리프레시 토큰 만료시 로그아웃 처리 로직 추가
 
         return user.toLoginResponseDto();
     }
 
     public User findUserById(Integer userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent() && user.get().isActiveMember()) {
-            return user.get();
+        User user = userRepository.findById(userId).orElseThrow();
+        if (user.isActiveMember()) {
+            return user;
         }
         throw new UserWithdrawalException();
     }
