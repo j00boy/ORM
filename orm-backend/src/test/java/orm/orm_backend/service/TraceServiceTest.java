@@ -56,7 +56,7 @@ class TraceServiceTest {
         userId = 2;
         trail = null;
         traceRequestDto = TraceRequestDto.builder().title(traceTitle)
-                .hikingDate(new Date(System.currentTimeMillis()))
+                .hikingDate(new Date(System.currentTimeMillis()).toString())
                 .build();
     }
 
@@ -65,7 +65,7 @@ class TraceServiceTest {
         when(userService.findUserById(userId)).thenReturn(user);
         when(traceRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
         TraceDto traceDto = traceService.createTrace(traceRequestDto, userId);
-        isSameDay(traceDto.getHikingDate(), new Date(System.currentTimeMillis()));
+        isSameDay(Date.valueOf(traceDto.getHikingDate()), new Date(System.currentTimeMillis()));
         assertThat(traceDto.getTitle()).isEqualTo(traceTitle);
     }
 

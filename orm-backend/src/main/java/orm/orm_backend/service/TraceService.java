@@ -99,7 +99,7 @@ public class TraceService {
         List<String> imageFileNames = oldImages.stream().map(TraceImage::getImageSrc).toList();
         imageUtil.deleteImages(imageFileNames);
 
-        String path = "/trace/" + traceId;
+        String path = "trace/" + traceId + "/";
         List<TraceImage> traceImages = images.stream()
                 .map(image -> imageUtil.saveImage(image, path)).map(TraceImage::new).toList();
         traceImageRepository.saveAll(traceImages);
