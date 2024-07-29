@@ -16,6 +16,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -24,10 +30,18 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.orm.R
+import com.orm.data.model.Point
+import com.orm.data.repository.MountainRepository
 import com.orm.databinding.FragmentGoogleMapBinding
+import com.orm.viewmodel.MountainViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.pow
 
+@AndroidEntryPoint
 class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
 
     private lateinit var binding: FragmentGoogleMapBinding
@@ -36,6 +50,7 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private lateinit var googleMap: GoogleMap
     private lateinit var pressureSensor: Sensor
+    private val mountainViewModel: MountainViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,9 +63,26 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeServices()
+
         pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) ?: run {
             Log.e(TAG, "Pressure sensor not available")
             return
+        }
+    }
+
+    private fun updateMap(points: List<Point>) {
+        val latLngPoints = points.map { LatLng(it.latitude, it.longitude) }
+
+        // Polyline 추가
+        val polyline = googleMap.addPolyline(
+            PolylineOptions()
+                .clickable(true)
+                .addAll(latLngPoints)
+        )
+
+        // 지도 카메라를 첫 번째 점으로 이동
+        if (latLngPoints.isNotEmpty()) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngPoints[0], 15f))
         }
     }
 
@@ -90,12 +122,22 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        // ViewModel에서 데이터를 가져오도록 요청
+        mountainViewModel.fetchTrailById(126)
+
+        // LiveData 관찰
+        mountainViewModel.points.observe(viewLifecycleOwner, Observer { points ->
+            if (points != null) {
+                updateMap(points)
+            }
+        })
     }
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
-        fetchLocationByDevice()
+//        fetchLocationByDevice()
     }
 
     @SuppressLint("MissingPermission")
