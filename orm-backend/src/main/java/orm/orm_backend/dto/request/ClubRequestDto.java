@@ -11,11 +11,9 @@ import orm.orm_backend.entity.User;
 @Data
 @Builder
 public class ClubRequestDto {
-    private Integer traceId;
     private Integer mountainId;
     private String clubName;
     private String description;
-    private MultipartFile imgFile;
 
     public Club toEntity(User user, Mountain mountain, String imageSrc) {
         return Club.builder()

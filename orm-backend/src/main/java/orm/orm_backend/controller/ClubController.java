@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import orm.orm_backend.dto.request.ApplicantRequestDto;
 import orm.orm_backend.dto.request.ClubRequestDto;
 import orm.orm_backend.dto.request.ClubSearchRequestDto;
@@ -32,17 +33,15 @@ public class ClubController {
     private final ClubService clubService;
 
     @PostMapping("/create")
-    public ResponseEntity<Integer> createClub(@RequestBody ClubRequestDto clubRequestDto, HttpServletRequest request) {
+    public ResponseEntity<Integer> createClub(@RequestPart("createClub") ClubRequestDto clubRequestDto, @RequestPart(value = "imgFile", required = false) MultipartFile imgFile, HttpServletRequest request) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
-        Integer clubId = clubService.createClub(clubRequestDto, userId);
-        HttpHeaders headers = jwtUtil.createTokenHeaders(userId);
-        return ResponseEntity.created(URI.create("/clubs"))
-                .headers(headers).body(clubId);
+        Integer clubId = clubService.createClub(clubRequestDto, imgFile, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(clubId);
     }
 
     @GetMapping
-    public ResponseEntity<List<ClubResponseDto>> findClubs(@RequestBody ClubSearchRequestDto clubSearchRequestDto, HttpServletRequest request) {
+    public ResponseEntity<List<ClubResponseDto>> findClubs(ClubSearchRequestDto clubSearchRequestDto, HttpServletRequest request) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         List<ClubResponseDto> clubs = clubService.getAllClubs(clubSearchRequestDto, userId);
