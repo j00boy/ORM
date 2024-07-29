@@ -2,10 +2,15 @@ package orm.orm_backend.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,13 +21,27 @@ import java.io.InputStream;
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
+@ExtendWith(MockitoExtension.class)
 class ImageUtilTest {
 
     private final String UPLOAD_DIR = "src/main/resources/static/uploads/image";
 
     static MultipartFile image;
-    ImageUtil imageUtil = new ImageUtil();
+
+    @InjectMocks
+    ImageUtil imageUtil;
+
     private String fileName;
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(imageUtil, "SFTP_HOST", "i11A709.p.ssafy.io");
+        ReflectionTestUtils.setField(imageUtil, "SFTP_PORT", 22);
+        ReflectionTestUtils.setField(imageUtil, "SFTP_USER", "ubuntu");
+        ReflectionTestUtils.setField(imageUtil, "PEM_FILE_PATH", "src/main/resources/I11A709T.pem");
+        ReflectionTestUtils.setField(imageUtil, "REMOTE_UPLOAD_DIR", "/home/upload/orm/");
+        ReflectionTestUtils.setField(imageUtil, "REMOTE_ACCESS_DIR", "/files/orm/");
+    }
 
     @BeforeAll
     static void beforeAll() throws IOException {
@@ -33,11 +52,10 @@ class ImageUtilTest {
     // 눈 테스트 하기
     @Test
     void saveImageTest() throws IOException, InterruptedException {
-        String directory = "/test";
-        assertThat(image).isNotNull();
-        String fileName = imageUtil.saveImage(image, directory);
-        String[] tmp = fileName.split("/");
-        fileName = tmp[tmp.length - 1];
+        log.info("remoteUploadDir={}", imageUtil.getREMOTE_UPLOAD_DIR());
+        String directory = "test/";
+        String filePath = imageUtil.saveImage(image, directory);
+        log.info("filePath={}", filePath);
     }
 
     // fileName은 저장 후 이름을 직접넣어줘야 한다.
