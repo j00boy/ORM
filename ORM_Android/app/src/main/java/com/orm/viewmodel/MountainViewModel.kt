@@ -30,22 +30,15 @@ class MountainViewModel @Inject constructor(
     private val _trail = MutableLiveData<Trail?>()
     val trail: LiveData<Trail?> get() = _trail
 
+    init {
+        if (_mountain.value == null) {
+            fetchMountainsTop()
+        }
+    }
+
     fun fetchMountainByName(name: String) {
         viewModelScope.launch {
             val mountains = mountainRepository.getMountainByName(name)
-            Log.e("fetchMountainByName", mountains.toString())
-//            val mountains = listOf(
-//                Mountain(
-//                    id = 1,
-//                    name = "산1",
-//                    code = 1,
-//                    address = "주소1",
-//                    imageSrc = "https://gongu.copyright.or.kr/gongu/wrt/cmmn/wrtFileImageView.do?wrtSn=13262118&filePath=L2Rpc2sxL25ld2RhdGEvMjAyMC8yMS9DTFMxMDAwNi82MmZhMWExMy03ZjRmLTQ1NWMtYTZlNy02ZTk2YjhjMjBkYTk=&thumbAt=Y&thumbSe=b_tbumb&wrtTy=10006",
-//                    desc = "설명1",
-//                    height = 1.0,
-//                    trails = listOf()
-//                )
-//            )
             _mountains.postValue(mountains)
         }
     }
@@ -56,13 +49,15 @@ class MountainViewModel @Inject constructor(
             _mountain.postValue(mountain)
         }
     }
+
     fun fetchMountainByRouteId(trailId: Int) {
         viewModelScope.launch {
             val trail = mountainRepository.getTrailById(trailId)
             _trail.postValue(trail)
         }
     }
-    fun fetchMountainsTop() {
+
+    private fun fetchMountainsTop() {
         viewModelScope.launch {
             val mountains = mountainRepository.getMountainsTop()
             _mountains.postValue(mountains)

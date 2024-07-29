@@ -25,8 +25,12 @@ class MountainSearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(binding.root)
+
+        mountainViewModel.mountains.observe(this@MountainSearchActivity) {
+            setupAdapter(it!!)
+        }
+
         binding.topAppBar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -38,23 +42,8 @@ class MountainSearchActivity : AppCompatActivity() {
 
                 Log.e("onQueryTextSubmit", name.toString())
                 mountainViewModel.fetchMountainByName(name.toString())
-                mountainViewModel.mountains.observe(this@MountainSearchActivity) { it ->
-                    adapter =
-                        ProfileBasicAdapter(it.map { Mountain.toRecyclerViewBasicItem(it) })
-
-                    adapter.setItemClickListener(object : ProfileBasicAdapter.OnItemClickListener {
-                        override fun onClick(v: View, position: Int) {
-                            val intent = Intent(
-                                this@MountainSearchActivity,
-                                MountainDetailActivity::class.java
-                            ).apply {
-                                putExtra("mountain", it[position])
-                            }
-                            startActivity(intent)
-                        }
-                    })
-                    rvBoard.adapter = adapter
-                    rvBoard.layoutManager = LinearLayoutManager(this@MountainSearchActivity)
+                mountainViewModel.mountains.observe(this@MountainSearchActivity) {
+                    setupAdapter(it!!)
                 }
                 return false
             }
@@ -64,5 +53,24 @@ class MountainSearchActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    private fun setupAdapter(mountains: List<Mountain>) {
+        adapter =
+            ProfileBasicAdapter(mountains.map { Mountain.toRecyclerViewBasicItem(it) })
+
+        adapter.setItemClickListener(object : ProfileBasicAdapter.OnItemClickListener {
+            override fun onClick(v: View, position: Int) {
+                val intent = Intent(
+                    this@MountainSearchActivity,
+                    MountainDetailActivity::class.java
+                ).apply {
+                    putExtra("mountain", mountains[position])
+                }
+                startActivity(intent)
+            }
+        })
+        rvBoard.adapter = adapter
+        rvBoard.layoutManager = LinearLayoutManager(this@MountainSearchActivity)
     }
 }
