@@ -1,6 +1,5 @@
 package orm.orm_backend.repository;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +15,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-@Transactional
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Slf4j
@@ -67,6 +65,8 @@ public class MountainRepositoryTest {
     @Test
     @DisplayName("이름 검색으로 산 가져오기")
     void getMountainByName() throws Exception {
+        // Given 생략
+
         // When
         List<Mountain> mountains = mountainRepository.findByMountainNameContaining("테스트");
 
@@ -91,8 +91,6 @@ public class MountainRepositoryTest {
         // Then
         assertThat(famousMountains).hasSize(18);
         assertThat(famousMountains).doesNotContain(mountain1);
-
-        famousMountains.forEach(mountain -> log.info(mountain.getMountainName()));
     }
  
 }
