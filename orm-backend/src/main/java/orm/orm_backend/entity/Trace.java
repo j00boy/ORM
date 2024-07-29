@@ -54,8 +54,8 @@ public class Trace extends BaseEntity {
                 .id(id)
                 .title(title)
                 .hikingDate(hikingDate.toString())
-                .hikingStartedAt(startTime.toString())
-                .hikingEndedAt(endTime.toString())
+                .hikingStartedAt(startTime == null ? null : startTime.toString())
+                .hikingEndedAt(endTime == null ? null : endTime.toString())
                 .maxHeight(maxAltitude).build();
     }
 
