@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import orm.orm_backend.dto.response.LoginResponseDto;
 import orm.orm_backend.entity.User;
-import orm.orm_backend.entity.UserStatus;
 import orm.orm_backend.exception.UnAuthorizedException;
 import orm.orm_backend.exception.UserWithdrawalException;
 import orm.orm_backend.repository.UserRepository;
@@ -22,8 +21,8 @@ public class UserService {
 
     private final KakaoUtil kakaoUtil;
     private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
 
+    private final UserRepository userRepository;
 
     public LoginResponseDto kakaoLogin(String kakaoTokens) throws JsonProcessingException {
         KakaoInfoVo kakaoInfo = kakaoUtil.getKakaoUserInfo(kakaoTokens);
