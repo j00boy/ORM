@@ -34,6 +34,7 @@ public class User extends BaseEntity {
     private String kakaoRefreshToken;
 
     private Long kakaoId;
+    private String firebaseToken;
 
     public User(KakaoInfoVo kakaoInfo) {
         this.kakaoId = kakaoInfo.getKakaoId();
@@ -73,5 +74,9 @@ public class User extends BaseEntity {
 
     public boolean isActiveMember() {
         return isActive == UserStatus.Y;
+    }
+
+    public void registerFirebaseToken(String firebaseToken) {
+        this.firebaseToken = firebaseToken;
     }
 }
