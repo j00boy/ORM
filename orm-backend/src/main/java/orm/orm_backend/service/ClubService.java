@@ -15,6 +15,7 @@ import orm.orm_backend.dto.request.MemberRequestDto;
 import orm.orm_backend.dto.response.ClubResponseDto;
 import orm.orm_backend.dto.response.MemberResponseDto;
 import orm.orm_backend.entity.*;
+import orm.orm_backend.exception.UnAuthorizedException;
 import orm.orm_backend.repository.*;
 
 import java.io.IOException;
@@ -112,7 +113,6 @@ public class ClubService {
         return clubRepository.existsByClubName(clubName);
     }
 
-
     // 가입 신청
     public Applicant joinClub(ApplicantRequestDto applicantRequestDto) {
         // user 찾기
@@ -124,8 +124,21 @@ public class ClubService {
         return applicantService.saveApplicant(applicant);
     }
 
-    // 추방 탈퇴
+    // 탈퇴
     public void deleteMember(Integer userId, Integer clubId) {
+        Club club = clubRepository.findById(clubId).orElseThrow();
+        // 클럽의 매니저인 경우 탈퇴가 불가
+        if (club.getManager().getId().equals(userId)) throw new UnAuthorizedException();
+        memberService.delete(userId, clubId);
+    }
+
+    // 추방
+    public void dropMember(Integer currId, Integer userId, Integer clubId) {
+        Club club = clubRepository.findById(clubId).orElseThrow();
+        // 클럽의 매니저가 아닌 경우 추방 불가함.
+        if (!club.getManager().getId().equals(currId)) throw new UnAuthorizedException();
+        // 본인은 추방 불가능함
+        if (!club.getManager().getId().equals(userId)) throw new UnAuthorizedException();
         memberService.delete(userId, clubId);
     }
 

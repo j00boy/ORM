@@ -14,6 +14,7 @@ import orm.orm_backend.dto.request.ClubRequestDto;
 import orm.orm_backend.dto.request.ClubSearchRequestDto;
 import orm.orm_backend.dto.request.MemberRequestDto;
 import orm.orm_backend.dto.response.ClubResponseDto;
+import orm.orm_backend.exception.UnAuthorizedException;
 import orm.orm_backend.service.ClubService;
 import orm.orm_backend.util.JwtUtil;
 
@@ -70,8 +71,20 @@ public class ClubController {
     }
 
     @DeleteMapping("/members/leave")
-    public ResponseEntity<Void> deleteMember(@RequestParam("userId") Integer userId, @RequestParam("clubId") Integer clubId) {
+    public ResponseEntity<Void> deleteMember(@RequestParam("userId") Integer userId, @RequestParam("clubId") Integer clubId, HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer currId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        // 본인 아이디가 아닌 경우 탈퇴하지 못한다.
+        if (!currId.equals(userId)) throw new UnAuthorizedException();
         clubService.deleteMember(userId, clubId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/members/drop")
+    public ResponseEntity<Void> dropMember(@RequestParam("userId") Integer userId, @RequestParam("clubId") Integer clubId, HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer currId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        clubService.dropMember(currId, userId, clubId);
         return ResponseEntity.noContent().build();
     }
 
