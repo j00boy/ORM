@@ -73,7 +73,7 @@ public class JwtUtil {
 
     public HttpHeaders createTokenHeaders(Integer userId) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("accessToken", "Bearer " + createAccessToken(userId));
+        headers.add("accessToken", createAccessToken(userId));
         return headers;
     }
 

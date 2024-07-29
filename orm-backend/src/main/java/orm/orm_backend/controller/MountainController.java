@@ -23,6 +23,12 @@ public class MountainController {
     private final MountainService mountainService;
     private final TrailService trailService;
 
+    @GetMapping
+    public ResponseEntity<List<MountainResponseDto>> get100Mountains() {
+        List<MountainResponseDto> mountainDtos = mountainService.get100Mountains();
+        return ResponseEntity.ok().body(mountainDtos);
+    }
+
     @GetMapping("/{mountainId}")
     public ResponseEntity<MountainResponseDto> getMountainById(@PathVariable("mountainId") Integer id) {
         MountainResponseDto mountainDto = mountainService.getMountainDtoById(id);
