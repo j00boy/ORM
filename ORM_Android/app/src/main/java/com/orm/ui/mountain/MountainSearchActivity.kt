@@ -28,10 +28,8 @@ class MountainSearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        if (NetworkUtils.isNetworkAvailable(this)) {
-            mountainViewModel.mountains.observe(this@MountainSearchActivity) {
-                setupAdapter(it!!)
-            }
+        mountainViewModel.mountains.observe(this@MountainSearchActivity) {
+            setupAdapter(it!!)
         }
 
         binding.topAppBar.setNavigationOnClickListener {

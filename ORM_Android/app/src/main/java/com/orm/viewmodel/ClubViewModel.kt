@@ -31,12 +31,17 @@ class ClubViewModel @Inject constructor(
     val isOperationSuccessful: LiveData<Boolean> get() = _isOperationSuccessful
 
     private val _clubId = MutableLiveData<Int?>()
-    val createdClubId: LiveData<Int?> get() = _clubId
+    val clubId: LiveData<Int?> get() = _clubId
 
+    init {
+        if (_clubs.value.isNullOrEmpty()) {
+            getClubs()
+        }
+    }
 
-    fun getClubs() {
+    fun getClubs(keyword: String = "", isMyClub: Boolean = false) {
         viewModelScope.launch {
-            val clubs = clubRepository.getClubs()
+            val clubs = clubRepository.getClubs(keyword, isMyClub)
             _clubs.postValue(clubs)
         }
     }
@@ -103,7 +108,7 @@ class ClubViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val isDuplicate = clubRepository.checkDuplicateClubs(clubName)
-                _isOperationSuccessful.postValue(isDuplicate ?: false)
+                _isOperationSuccessful.postValue(isDuplicate)
             } catch (e: Exception) {
                 e.printStackTrace()
                 _isOperationSuccessful.postValue(false)

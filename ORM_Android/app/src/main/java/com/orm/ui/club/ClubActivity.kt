@@ -5,7 +5,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.orm.R
 import com.orm.databinding.ActivityClubBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ClubActivity : AppCompatActivity() {
     private val binding: ActivityClubBinding by lazy {
         ActivityClubBinding.inflate(layoutInflater)

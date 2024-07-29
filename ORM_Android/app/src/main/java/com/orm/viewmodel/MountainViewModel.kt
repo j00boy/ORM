@@ -33,7 +33,7 @@ class MountainViewModel @Inject constructor(
     val trail: LiveData<Trail?> get() = _trail
 
     init {
-        if (_mountain.value == null) {
+        if (_mountains.value.isNullOrEmpty()) {
             fetchMountainsTop()
         }
     }

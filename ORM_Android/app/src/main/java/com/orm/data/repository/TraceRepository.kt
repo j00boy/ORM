@@ -1,5 +1,6 @@
 package com.orm.data.repository
 
+import android.util.Log
 import com.orm.data.api.TraceService
 import com.orm.data.local.dao.TraceDao
 import com.orm.data.model.Trace
@@ -35,13 +36,17 @@ class TraceRepository @Inject constructor(
         }
     }
 
-    suspend fun createTrace(trace: Trace) {
+    suspend fun createTrace(trace: Trace): Trace? {
         return withContext(Dispatchers.IO) {
-            val response = traceService.createTrace(trace).execute()
-
-            if (response.isSuccessful) {
-                response.body()
-            } else {
+            try {
+                val response = traceService.createTrace(trace).execute()
+                if (response.isSuccessful) {
+                    response.body()
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("TraceRepository", "Error creating trace", e)
                 null
             }
         }
@@ -49,35 +54,47 @@ class TraceRepository @Inject constructor(
 
     suspend fun updateTrace(trace: Trace) {
         return withContext(Dispatchers.IO) {
-            val response = traceService.updateTrace(trace).execute()
-
-            if (response.isSuccessful) {
-                response.body()
-            } else {
+            try {
+                val response = traceService.updateTrace(trace).execute()
+                if (response.isSuccessful) {
+                    response.body()
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("TraceRepository", "Error updating trace", e)
                 null
             }
         }
     }
 
-    suspend fun measureComplete(trace: Trace) {
+    suspend fun measureComplete(trace: Trace): Unit? {
         return withContext(Dispatchers.IO) {
-            val response = traceService.measureComplete(trace).execute()
-
-            if (response.isSuccessful) {
-                response.body()
-            } else {
+            try {
+                val response = traceService.measureComplete(trace).execute()
+                if (response.isSuccessful) {
+                    response.body()
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("TraceRepository", "Error measuring complete trace", e)
                 null
             }
         }
     }
 
-    suspend fun deleteTrace(traceId: Int) {
+    suspend fun deleteTrace(traceId: Int): Unit? {
         return withContext(Dispatchers.IO) {
-            val response = traceService.deleteTrace(traceId).execute()
-
-            if (response.isSuccessful) {
-                response.body()
-            } else {
+            try {
+                val response = traceService.deleteTrace(traceId).execute()
+                if (response.isSuccessful) {
+                    response.body()
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("TraceRepository", "Error deleting trace", e)
                 null
             }
         }

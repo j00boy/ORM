@@ -1,5 +1,6 @@
 package com.orm.data.repository
 
+import android.util.Log
 import com.orm.data.api.ClubService
 import com.orm.data.model.club.ClubApprove
 import com.orm.data.model.club.Club
@@ -11,35 +12,42 @@ import okhttp3.RequestBody
 import javax.inject.Inject
 
 class ClubRepository @Inject constructor(
-    private val clubService: ClubService
+    private val clubService: ClubService,
 ) {
-    suspend fun getClubs(): List<Club> {
+    suspend fun getClubs(keyword: String, isMyClub: Boolean): List<Club> {
         return withContext(Dispatchers.IO) {
-            val isConnected = true
-            (if (isConnected) {
-                val response = clubService.getClubs().execute()
+            try {
+                val response =
+                    clubService.getClubs(keyword = keyword, isMyClub = isMyClub).execute()
                 if (response.isSuccessful) {
                     response.body() ?: emptyList()
                 } else {
                     emptyList()
                 }
-            } else {
+            } catch (e: Exception) {
+                Log.e("ClubRepository", "Error getting clubs", e)
                 emptyList()
-            })
+            }
         }
     }
 
     suspend fun getMembers(clubId: Int): Map<String, List<Any?>> {
         return withContext(Dispatchers.IO) {
             val resultMap: MutableMap<String, List<Any?>> = mutableMapOf()
-            val response = clubService.getMembers(clubId).execute()
-            if (response.isSuccessful) {
-                val responseBody = response.body()
-                val members = responseBody?.get("members") ?: emptyList()
-                val requestMembers = responseBody?.get("requestMembers") ?: emptyList()
-                resultMap["members"] = members
-                resultMap["requestMembers"] = requestMembers
-            } else {
+            try {
+                val response = clubService.getMembers(clubId).execute()
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    val members = responseBody?.get("members") ?: emptyList()
+                    val requestMembers = responseBody?.get("requestMembers") ?: emptyList()
+                    resultMap["members"] = members
+                    resultMap["requestMembers"] = requestMembers
+                } else {
+                    resultMap["members"] = emptyList()
+                    resultMap["requestMembers"] = emptyList()
+                }
+            } catch (e: Exception) {
+                Log.e("ClubRepository", "Error getting members", e)
                 resultMap["members"] = emptyList()
                 resultMap["requestMembers"] = emptyList()
             }
@@ -48,25 +56,39 @@ class ClubRepository @Inject constructor(
         }
     }
 
-
     suspend fun approveClubs(approveClub: ClubApprove): Boolean {
         return withContext(Dispatchers.IO) {
-            val response = clubService.approveClubs(approveClub).execute()
-            response.isSuccessful
+            try {
+                val response = clubService.approveClubs(approveClub).execute()
+                response.isSuccessful
+            } catch (e: Exception) {
+                Log.e("ClubRepository", "Error approving clubs", e)
+                false
+            }
         }
     }
 
     suspend fun leaveClubs(clubId: Int, userId: Int): Boolean {
         return withContext(Dispatchers.IO) {
-            val response = clubService.leaveClubs(clubId, userId).execute()
-            response.isSuccessful
+            try {
+                val response = clubService.leaveClubs(clubId, userId).execute()
+                response.isSuccessful
+            } catch (e: Exception) {
+                Log.e("ClubRepository", "Error leaving club", e)
+                false
+            }
         }
     }
 
     suspend fun applyClubs(requestMember: RequestMember): Boolean {
         return withContext(Dispatchers.IO) {
-            val response = clubService.applyClubs(requestMember).execute()
-            response.isSuccessful
+            try {
+                val response = clubService.applyClubs(requestMember).execute()
+                response.isSuccessful
+            } catch (e: Exception) {
+                Log.e("ClubRepository", "Error applying to club", e)
+                false
+            }
         }
     }
 
@@ -81,6 +103,7 @@ class ClubRepository @Inject constructor(
                     null
                 }
             } catch (e: Exception) {
+                Log.e("ClubRepository", "Error creating club", e)
                 null
             }
         }
@@ -92,6 +115,7 @@ class ClubRepository @Inject constructor(
                 val response = clubService.checkDuplicateClubs(name).execute()
                 response.isSuccessful
             } catch (e: Exception) {
+                Log.e("ClubRepository", "Error checking duplicate clubs", e)
                 false
             }
         }
