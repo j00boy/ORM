@@ -29,6 +29,10 @@ public class KakaoUtil {
     private final String ACCESS_TOKEN = "access_token";
     private final String REFRESH_TOKEN = "refresh_token";
 
+    public String createKakaoRedirectUri() {
+        return "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + appKey + "&redirect_uri=" + redirectUri;
+    }
+
     public String extractToken(String kakaoResponse, String tokenType) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(kakaoResponse);

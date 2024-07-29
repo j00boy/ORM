@@ -22,20 +22,17 @@ import java.net.URI;
 @Slf4j
 public class UserController {
 
-    @Value("${kakao.redirect-uri}")
-    private String redirectUri;
-
-    @Value("${kakao.app-key}")
-    private String appKey;
+    @Value("${orm.header.auth}")
+    private String HEADER_AUTH;
 
     private final KakaoUtil kakaoUtil;
     private final JwtUtil jwtUtil;
+
     private final UserService userService;
-    private final String HEADER_AUTH = "Authorization";
 
     @GetMapping("/login/kakao")
     public ResponseEntity<?> tryKakaoLogin() {
-        String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + appKey + "&redirect_uri=" + redirectUri;
+        String url = kakaoUtil.createKakaoRedirectUri();
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(url));
         return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY);
