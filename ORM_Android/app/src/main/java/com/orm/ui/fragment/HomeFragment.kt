@@ -6,11 +6,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.orm.R
 import com.orm.databinding.FragmentHomeBinding
-import com.orm.ui.ClubActivity
-import com.orm.ui.MountainSearchActivity
-import com.orm.ui.TraceActivity
+import com.orm.ui.club.ClubActivity
+import com.orm.ui.mountain.MountainSearchActivity
+import com.orm.ui.trace.TraceActivity
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null

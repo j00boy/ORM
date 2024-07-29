@@ -72,4 +72,11 @@ class UserViewModel @Inject constructor(
             _user.postValue(user)
         }
     }
+
+    fun deleteUser() {
+        viewModelScope.launch {
+            userRepository.deleteAccessToken()
+            userRepository.deleteUserInfo()
+        }
+    }
 }

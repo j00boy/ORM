@@ -73,6 +73,12 @@ class UserRepository @Inject constructor(
         return accessToken.first()
     }
 
+    suspend fun deleteAccessToken() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(PreferencesKeys.tokenString)
+        }
+    }
+
     private suspend fun saveUserInfo(user: User) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.userId] = user.userId
@@ -99,5 +105,17 @@ class UserRepository @Inject constructor(
             "userInfo: ${userId.first() + imageSrc.first() + nickname.first()}"
         )
         return User(userId.first(), imageSrc.first(), nickname.first())
+    }
+
+    suspend fun deleteUserInfo() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(PreferencesKeys.userId)
+            preferences.remove(PreferencesKeys.imageSrc)
+            preferences.remove(PreferencesKeys.nickname)
+        }
+
+        withContext(Dispatchers.IO) {
+            userService.deleteUser().execute()
+        }
     }
 }

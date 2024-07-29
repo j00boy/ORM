@@ -28,16 +28,16 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".ui.ClubEditActivity"
+            android:name=".ui.club.ClubEditActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.TraceEditActivity"
+            android:name=".ui.trace.TraceEditActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.ClubSearchActivity"
+            android:name=".ui.club.ClubSearchActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.MountainDetailActivity"
+            android:name=".ui.mountain.MountainDetailActivity"
             android:exported="false" />
         <activity
             android:name=".ui.LauncherActivity"
@@ -50,13 +50,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.ClubActivity"
+            android:name=".ui.club.ClubActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.TraceActivity"
+            android:name=".ui.trace.TraceActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.MountainSearchActivity"
+            android:name=".ui.mountain.MountainSearchActivity"
             android:exported="false" />
         <activity
             android:name=".ui.LoginActivity"
@@ -66,7 +66,7 @@
             android:exported="false"
             android:launchMode="singleTop" />
         <activity
-            android:name=".ui.ClubDetailActivity"
+            android:name=".ui.club.ClubDetailActivity"
             android:exported="false" /> <!-- kakao login -->
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"

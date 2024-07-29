@@ -1,12 +1,8 @@
-package com.orm.ui
+package com.orm.ui.club
 
-import android.os.Build
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.orm.data.model.Club
 import com.orm.databinding.ActivityClubDetailBinding
-import com.orm.viewmodel.ClubViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

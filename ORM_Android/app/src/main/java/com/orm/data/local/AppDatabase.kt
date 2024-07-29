@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import com.orm.data.local.dao.ClubDao
 import com.orm.data.local.dao.MemberDao
 import com.orm.data.local.dao.TraceDao
-import com.orm.data.model.Club
+import com.orm.data.model.club.Club
 import com.orm.data.model.Member
 import com.orm.data.model.Trace
 

@@ -1,6 +1,6 @@
-package com.orm.data.model
+package com.orm.data.model.club
 
-data class CreateClub(
+data class ClubCreate(
     val clubName: String,
     val description: String,
     val mountainId: Int,

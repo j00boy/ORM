@@ -1,4 +1,4 @@
-package com.orm.data.model
+package com.orm.data.model.club
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

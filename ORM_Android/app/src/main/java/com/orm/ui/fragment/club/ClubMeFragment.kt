@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.orm.data.model.recycler.RecyclerViewBasicItem
 import com.orm.databinding.FragmentClubMeBinding
-import com.orm.ui.ClubDetailActivity
+import com.orm.ui.club.ClubDetailActivity
 import com.orm.ui.adapter.ProfileBasicAdapter
 
 class ClubMeFragment : Fragment() {

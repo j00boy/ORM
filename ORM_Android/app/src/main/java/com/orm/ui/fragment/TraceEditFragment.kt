@@ -9,10 +9,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.orm.data.model.Club
+import com.orm.data.model.club.Club
 import com.orm.databinding.FragmentTraceEditBinding
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 

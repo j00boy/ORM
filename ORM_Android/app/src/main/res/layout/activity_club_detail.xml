@@ -6,13 +6,13 @@
     <data>
         <variable
             name="club"
-            type="com.orm.data.model.Club" />
+            type="com.orm.data.model.club.Club" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.ClubDetailActivity">
+        tools:context=".ui.club.ClubDetailActivity">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appBarLayout"

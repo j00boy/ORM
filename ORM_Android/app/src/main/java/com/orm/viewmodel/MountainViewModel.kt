@@ -10,6 +10,7 @@ import com.orm.data.model.Mountain
 import com.orm.data.model.Point
 import com.orm.data.model.Trail
 import com.orm.data.repository.MountainRepository
+import com.orm.util.NetworkUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

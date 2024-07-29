@@ -1,4 +1,4 @@
-package com.orm.ui
+package com.orm.ui.mountain
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.orm.data.model.Mountain
 import com.orm.databinding.ActivityMountainSearchBinding
 import com.orm.ui.adapter.ProfileBasicAdapter
+import com.orm.util.NetworkUtils
 import com.orm.viewmodel.MountainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,8 +28,10 @@ class MountainSearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        mountainViewModel.mountains.observe(this@MountainSearchActivity) {
-            setupAdapter(it!!)
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            mountainViewModel.mountains.observe(this@MountainSearchActivity) {
+                setupAdapter(it!!)
+            }
         }
 
         binding.topAppBar.setNavigationOnClickListener {

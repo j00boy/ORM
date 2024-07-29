@@ -52,7 +52,7 @@ object NetworkModule {
         @Throws(IOException::class)
         override fun intercept(chain: Interceptor.Chain): Response = with(chain) {
             val newRequest = request().newBuilder()
-                .addHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhY2Nlc3MtdG9rZW4iLCJpYXQiOjE3MjE3MDM4NDAsImV4cCI6MjA4MTcwMzg0MCwidXNlcklkIjo1fQ.KaAVNkL9-6pxSexWPrF6BOG8gL_HlKkF_JLzF2qnTiI") // 예시 헤더
+                .addHeader("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhY2Nlc3MtdG9rZW4iLCJpYXQiOjE3MjE3MDM4NDAsImV4cCI6MjA4MTcwMzg0MCwidXNlcklkIjo1fQ.KaAVNkL9-6pxSexWPrF6BOG8gL_HlKkF_JLzF2qnTiI")
                 .build()
             proceed(newRequest)
         }

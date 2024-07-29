@@ -1,18 +1,13 @@
 package com.orm.data.repository
 
-import android.util.Log
-import com.google.gson.Gson
 import com.orm.data.api.ClubService
-import com.orm.data.model.ApproveClub
-import com.orm.data.model.Club
+import com.orm.data.model.club.ClubApprove
+import com.orm.data.model.club.Club
 import com.orm.data.model.RequestMember
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import org.json.JSONException
-import org.json.JSONObject
 import javax.inject.Inject
 
 class ClubRepository @Inject constructor(
@@ -34,10 +29,10 @@ class ClubRepository @Inject constructor(
         }
     }
 
-    suspend fun getMembers(accessToken: String, clubId: Int): Map<String, List<Any?>> {
+    suspend fun getMembers(clubId: Int): Map<String, List<Any?>> {
         return withContext(Dispatchers.IO) {
             val resultMap: MutableMap<String, List<Any?>> = mutableMapOf()
-            val response = clubService.getMembers(accessToken, clubId).execute()
+            val response = clubService.getMembers(clubId).execute()
             if (response.isSuccessful) {
                 val responseBody = response.body()
                 val members = responseBody?.get("members") ?: emptyList()
@@ -54,47 +49,31 @@ class ClubRepository @Inject constructor(
     }
 
 
-    suspend fun approveClubs(
-        accessToken: String,
-        approveClub: ApproveClub
-    ): Boolean {
+    suspend fun approveClubs(approveClub: ClubApprove): Boolean {
         return withContext(Dispatchers.IO) {
-                val response =clubService.approveClubs(accessToken, approveClub).execute()
-                response.isSuccessful
+            val response = clubService.approveClubs(approveClub).execute()
+            response.isSuccessful
         }
     }
 
-    suspend fun leaveClubs(
-        accessToken: String,
-        clubId: Int,
-        userId: Int
-    ): Boolean {
+    suspend fun leaveClubs(clubId: Int, userId: Int): Boolean {
         return withContext(Dispatchers.IO) {
-
-                val response = clubService.leaveClubs(accessToken, clubId, userId).execute()
-                response.isSuccessful
+            val response = clubService.leaveClubs(clubId, userId).execute()
+            response.isSuccessful
         }
     }
 
-    suspend fun applyClubs(
-        accessToken: String,
-        requestMember: RequestMember
-    ): Boolean {
+    suspend fun applyClubs(requestMember: RequestMember): Boolean {
         return withContext(Dispatchers.IO) {
-
-                val response = clubService.applyClubs(accessToken, requestMember).execute()
-                response.isSuccessful
+            val response = clubService.applyClubs(requestMember).execute()
+            response.isSuccessful
         }
     }
 
-    suspend fun createClubs(
-        accessToken: String,
-        createClub: RequestBody,
-        imgFile: MultipartBody.Part
-    ): Int? {
+    suspend fun createClubs(createClub: RequestBody, imgFile: MultipartBody.Part): Int? {
         return withContext(Dispatchers.IO) {
             try {
-                val response = clubService.createClubs(accessToken, createClub, imgFile).execute()
+                val response = clubService.createClubs(createClub, imgFile).execute()
                 if (response.isSuccessful) {
                     val responseBody = response.body()?.string()
                     responseBody?.toIntOrNull()
@@ -107,18 +86,11 @@ class ClubRepository @Inject constructor(
         }
     }
 
-    suspend fun checkDuplicateClubs(
-        accessToken: String,
-        name: String
-    ): Boolean? {
+    suspend fun checkDuplicateClubs(name: String): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                val response = clubService.checkDuplicateClubs(accessToken, name).execute()
-                if (response.isSuccessful) {
-                    true
-                } else {
-                    false
-                }
+                val response = clubService.checkDuplicateClubs(name).execute()
+                response.isSuccessful
             } catch (e: Exception) {
                 false
             }

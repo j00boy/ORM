@@ -1,19 +1,11 @@
-package com.orm.ui
+package com.orm.ui.mountain
 
-import android.content.ClipDescription
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
-import com.google.android.material.appbar.MaterialToolbar
 import com.orm.data.model.Mountain
 import com.orm.databinding.ActivityMountainDetailBinding
 import dagger.hilt.android.AndroidEntryPoint

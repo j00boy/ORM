@@ -1,14 +1,9 @@
-package com.orm.ui
+package com.orm.ui.club
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.orm.data.model.Club
 import com.orm.databinding.ActivityClubSearchBinding
 import com.orm.ui.adapter.ProfileBasicAdapter
 import com.orm.viewmodel.ClubViewModel

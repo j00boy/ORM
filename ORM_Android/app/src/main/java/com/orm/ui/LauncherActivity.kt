@@ -21,33 +21,31 @@ class LauncherActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        installSplashScreen()
-
-        if (userViewModel.token.value.isNullOrEmpty()) {
-            lifecycleScope.launch {
-                userViewModel.getAccessToken()
+        installSplashScreen().setKeepOnScreenCondition(
+            condition = {
+                false
             }
-        }
-
-        userViewModel.token.observe(this) { token ->
-            handleToken(token)
-        }
+        )
+            handleToken("")
+//        userViewModel.token.observe(this) { token ->
+//            handleToken(token)
+//        }
     }
 
     private fun handleToken(token: String?) {
-        val isNetworkAvailable = NetworkUtils.isNetworkAvailable(this)
+//        val isNetworkAvailable = NetworkUtils.isNetworkAvailable(this)
 
-        if (token.isNullOrEmpty() && isNetworkAvailable) {
-            Log.e("LauncherActivity", "checkAccessToken: false")
-            navigateToActivity(LoginActivity::class.java)
-        } else {
-            Log.e("LauncherActivity", "checkAccessToken: true, token: $token")
-            if (isNetworkAvailable) {
-                // TODO : 동기 처리
-                userViewModel.loginAuto()
-            }
+//        if (token.isNullOrEmpty()) {
+//            Log.e("LauncherActivity", "checkAccessToken: false")
+//            navigateToActivity(LoginActivity::class.java)
+//        } else {
+//            Log.e("LauncherActivity", "checkAccessToken: true, token: $token")
+//            if (isNetworkAvailable) {
+            // TODO : 동기 처리
+//            userViewModel.loginAuto()
+//            }
             navigateToActivity(MainActivity::class.java)
-        }
+//        }
     }
 
     private fun navigateToActivity(activityClass: Class<*>) {

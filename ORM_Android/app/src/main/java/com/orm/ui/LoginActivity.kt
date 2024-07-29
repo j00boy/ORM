@@ -31,6 +31,7 @@ class LoginActivity : AppCompatActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("LoginActivity", "onCreate")
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setupWebView()
