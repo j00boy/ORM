@@ -3,21 +3,36 @@ package com.orm.ui.trace
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.orm.R
+import com.orm.data.model.Mountain
 import com.orm.data.model.Trace
 import com.orm.databinding.ActivityTraceBinding
+import com.orm.ui.adapter.ProfileBasicAdapter
 import com.orm.ui.adapter.ProfileNumberAdapter
+import com.orm.ui.mountain.MountainDetailActivity
+import com.orm.viewmodel.TraceViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TraceActivity : AppCompatActivity() {
     private val binding: ActivityTraceBinding by lazy {
         ActivityTraceBinding.inflate(layoutInflater)
     }
+    private val traceViewModel: TraceViewModel by viewModels()
+    private val rvBoard: RecyclerView by lazy { binding.recyclerView }
+    private lateinit var adapter: ProfileNumberAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        traceViewModel.traces.observe(this@TraceActivity){
+            setupAdapter(it!!)
+        }
 
         binding.topAppBar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
@@ -33,80 +48,23 @@ class TraceActivity : AppCompatActivity() {
                 else -> false
             }
         }
-
-        val rvBoard = binding.recyclerView
-        val adapter = ProfileNumberAdapter(
-            listOf(
-                Trace.toRecyclerViewNumberItem(
-                    Trace(
-                        id = 0,
-                        localId = 1,
-                        title = "제목",
-                        hikingDate = "2024.07.07",
-                        hikingEndedAt = "2024.07.07",
-                        hikingStartedAt = "2024.07.07",
-                        maxHeight = 100.0,
-                        mountainId = 0,
-                        mountainName = "산 이름",
-                        coordinates = null,
-                        trailId = 0
-                    )
-                ),
-                Trace.toRecyclerViewNumberItem(
-                    Trace(
-                        id = 0,
-                        localId = 1,
-                        title = "제목",
-                        hikingDate = "2024.07.07",
-                        hikingEndedAt = "2024.07.07",
-                        hikingStartedAt = "2024.07.07",
-                        maxHeight = 100.0,
-                        mountainId = 0,
-                        mountainName = "산 이름",
-                        coordinates = null,
-                        trailId = 0
-                    )
-                ),
-                Trace.toRecyclerViewNumberItem(
-                    Trace(
-                        id = 0,
-                        localId = 1,
-                        title = "제목",
-                        hikingDate = "2024.07.07",
-                        hikingEndedAt = "2024.07.07",
-                        hikingStartedAt = "2024.07.07",
-                        maxHeight = 100.0,
-                        mountainId = 0,
-                        mountainName = "산 이름",
-                        coordinates = null,
-                        trailId = 0
-                    )
-                ),
-                Trace.toRecyclerViewNumberItem(
-                    Trace(
-                        id = 0,
-                        localId = 1,
-                        title = "제목",
-                        hikingDate = "2024.07.07",
-                        hikingEndedAt = "2024.07.07",
-                        hikingStartedAt = "2024.07.07",
-                        maxHeight = 100.0,
-                        mountainId = 0,
-                        mountainName = "산 이름",
-                        coordinates = null,
-                        trailId = 0
-                    )
-                ),
-            )
-        )
+    }
+    private fun setupAdapter(traces: List<Trace>) {
+        adapter =
+            ProfileNumberAdapter(traces.map { Trace.toRecyclerViewNumberItem(it) })
 
         adapter.setItemClickListener(object : ProfileNumberAdapter.OnItemClickListener {
-            override fun onClick(v: View, position: Int) {}
+            override fun onClick(v: View, position: Int) {
+                val intent = Intent(
+                    this@TraceActivity,
+                    MountainDetailActivity::class.java
+                ).apply {
+                    putExtra("trace", traces[position])
+                }
+                startActivity(intent)
+            }
         })
-
         rvBoard.adapter = adapter
-        rvBoard.layoutManager =
-            LinearLayoutManager(this@TraceActivity, LinearLayoutManager.VERTICAL, false)
-
+        rvBoard.layoutManager = LinearLayoutManager(this@TraceActivity)
     }
 }
