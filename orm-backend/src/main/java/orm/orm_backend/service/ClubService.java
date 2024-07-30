@@ -8,14 +8,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import orm.orm_backend.dto.request.ApplicantRequestDto;
-import orm.orm_backend.dto.request.ClubRequestDto;
-import orm.orm_backend.dto.request.ClubSearchRequestDto;
-import orm.orm_backend.dto.request.MemberRequestDto;
+import orm.orm_backend.dto.common.ApplicantDto;
+import orm.orm_backend.dto.request.*;
 import orm.orm_backend.dto.response.ClubResponseDto;
 import orm.orm_backend.dto.response.MemberResponseDto;
 import orm.orm_backend.entity.*;
-import orm.orm_backend.repository.*;
+import orm.orm_backend.exception.UnAuthorizedException;
+import orm.orm_backend.repository.ClubRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -90,6 +89,24 @@ public class ClubService {
         return clubs;
     }
 
+    // 특정 산을 기반으로 하는 모임 찾기
+    public List<ClubResponseDto> getAllClubsByMountain(Integer mountainId, Integer userId) {
+        List<Club> result = clubRepository.findAllByMountainId(mountainId);
+
+        Set<Integer> clubMap = memberService.getClubs(userId);
+        Set<Integer> applicantMap = applicantService.getApplicants(userId);
+
+        List<ClubResponseDto> clubs = new ArrayList<>();
+
+        for (Club c : result) {
+            Boolean isMember = clubMap.contains(c.getId());
+            Boolean isApplied = applicantMap.contains(c.getId());
+            clubs.add(ClubResponseDto.toDto(c, isMember, isApplied));
+        }
+
+        return clubs;
+    }
+
     // 회원 목록 조회
     public Map<String, Object> getMembers(Integer clubId, Integer userId) {
         Club club = clubRepository.findById(clubId).orElse(null);
@@ -98,12 +115,13 @@ public class ClubService {
         }
 
         List<MemberResponseDto> members = memberService.getMembersInClub(clubId).stream().map(MemberResponseDto::toDto).toList();
-        List<ApplicantRequestDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantRequestDto::toDto).toList();
+        List<ApplicantDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantDto::toDto).toList();
 
-        return Map.of(
-                "members", members,
-                "requestMembers", applicants
-        );
+        Map<String, Object> result = new HashMap<>();
+        result.put("members", members);
+        result.put("requestMembers", applicants);
+
+        return result;
     }
 
     // 중복 체크
@@ -111,21 +129,39 @@ public class ClubService {
         return clubRepository.existsByClubName(clubName);
     }
 
-
     // 가입 신청
-    public Applicant joinClub(ApplicantRequestDto applicantRequestDto) {
+    public Applicant joinClub(ApplicantDto applicantDto) {
         // user 찾기
-        User user = userService.findUserById(applicantRequestDto.getUserId());
+        User user = userService.findUserById(applicantDto.getUserId());
         // club 찾기
-        Club club = clubRepository.findById(applicantRequestDto.getClubId()).orElseThrow(NoResultException::new);
+        Club club = clubRepository.findById(applicantDto.getClubId()).orElseThrow(NoResultException::new);
         // applicant 저장
-        Applicant applicant = applicantRequestDto.toEntity(user, club);
+        Applicant applicant = applicantDto.toEntity(user, club);
         return applicantService.saveApplicant(applicant);
     }
 
-    // 추방 탈퇴
-    public void deleteMember(MemberRequestDto memberRequestDto) {
-        memberService.delete(memberRequestDto);
+    // 탈퇴
+    public void deleteMember(Integer userId, Integer clubId) {
+        Club club = clubRepository.findById(clubId).orElseThrow();
+        // 클럽의 매니저인 경우 탈퇴가 불가
+        if (club.getManager().getId().equals(userId)) {
+            throw new UnAuthorizedException();
+        }
+        memberService.delete(userId, clubId);
+    }
+
+    // 추방
+    public void dropMember(Integer currId, Integer userId, Integer clubId) {
+        Club club = clubRepository.findById(clubId).orElseThrow();
+        // 클럽의 매니저가 아닌 경우 추방 불가함.
+        if (!club.getManager().getId().equals(currId)) {
+            throw new UnAuthorizedException();
+        }
+        // 본인은 추방 불가능함
+        if (!club.getManager().getId().equals(userId)) {
+            throw new UnAuthorizedException();
+        }
+        memberService.delete(userId, clubId);
     }
 
     // 가입 수락/거절
@@ -158,4 +194,6 @@ public class ClubService {
 
         return dbFilePath;
     }
+
+
 }
