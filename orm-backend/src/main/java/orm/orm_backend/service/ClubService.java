@@ -144,7 +144,9 @@ public class ClubService {
     public void deleteMember(Integer userId, Integer clubId) {
         Club club = clubRepository.findById(clubId).orElseThrow();
         // 클럽의 매니저인 경우 탈퇴가 불가
-        if (club.getManager().getId().equals(userId)) throw new UnAuthorizedException();
+        if (club.getManager().getId().equals(userId)) {
+            throw new UnAuthorizedException();
+        }
         memberService.delete(userId, clubId);
     }
 
@@ -152,9 +154,13 @@ public class ClubService {
     public void dropMember(Integer currId, Integer userId, Integer clubId) {
         Club club = clubRepository.findById(clubId).orElseThrow();
         // 클럽의 매니저가 아닌 경우 추방 불가함.
-        if (!club.getManager().getId().equals(currId)) throw new UnAuthorizedException();
+        if (!club.getManager().getId().equals(currId)) {
+            throw new UnAuthorizedException();
+        }
         // 본인은 추방 불가능함
-        if (!club.getManager().getId().equals(userId)) throw new UnAuthorizedException();
+        if (!club.getManager().getId().equals(userId)) {
+            throw new UnAuthorizedException();
+        }
         memberService.delete(userId, clubId);
     }
 
