@@ -56,6 +56,14 @@ public class ClubController {
         return ResponseEntity.ok().body(result);
     }
 
+    @GetMapping("/mountain/{mountainId}")
+    public ResponseEntity<List<ClubResponseDto>> findClubsByMountain(@PathVariable Integer mountainId, HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        List<ClubResponseDto> result = clubService.getAllClubsByMountain(mountainId, userId);
+        return ResponseEntity.ok().body(result);
+    }
+
     @GetMapping("/name/check-duplicate")
     public ResponseEntity<Boolean> isValid(@RequestParam("name") String name) {
         Boolean isValid = clubService.isValid(name);

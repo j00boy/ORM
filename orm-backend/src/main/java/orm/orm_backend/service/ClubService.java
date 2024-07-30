@@ -89,6 +89,24 @@ public class ClubService {
         return clubs;
     }
 
+    // 특정 산을 기반으로 하는 모임 찾기
+    public List<ClubResponseDto> getAllClubsByMountain(Integer mountainId, Integer userId) {
+        List<Club> result = clubRepository.findAllByMountainId(mountainId);
+
+        Set<Integer> clubMap = memberService.getClubs(userId);
+        Set<Integer> applicantMap = applicantService.getApplicants(userId);
+
+        List<ClubResponseDto> clubs = new ArrayList<>();
+
+        for (Club c : result) {
+            Boolean isMember = clubMap.contains(c.getId());
+            Boolean isApplied = applicantMap.contains(c.getId());
+            clubs.add(ClubResponseDto.toDto(c, isMember, isApplied));
+        }
+
+        return clubs;
+    }
+
     // 회원 목록 조회
     public Map<String, Object> getMembers(Integer clubId, Integer userId) {
         Club club = clubRepository.findById(clubId).orElse(null);
@@ -170,4 +188,6 @@ public class ClubService {
 
         return dbFilePath;
     }
+
+
 }
