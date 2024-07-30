@@ -2,6 +2,7 @@ package com.orm.ui.trace
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -58,7 +59,7 @@ class TraceActivity : AppCompatActivity() {
             override fun onClick(v: View, position: Int) {
                 val intent = Intent(
                     this@TraceActivity,
-                    MountainDetailActivity::class.java
+                    TraceDetailActivity::class.java
                 ).apply {
                     putExtra("trace", traces[position])
                 }
