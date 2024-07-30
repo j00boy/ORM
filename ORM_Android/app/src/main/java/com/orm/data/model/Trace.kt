@@ -1,15 +1,18 @@
 package com.orm.data.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.orm.data.model.recycler.RecyclerViewBasicItem
 import com.orm.data.model.recycler.RecyclerViewNumberItem
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 import java.util.Date
 
+@Parcelize
 @Entity(tableName = "trace")
 data class Trace(
-    @PrimaryKey val localId: Int,
+    @PrimaryKey(autoGenerate = true) val localId: Int = 0,
     val id: Int?,
     val title: String,
     val hikingDate: String?,
@@ -20,7 +23,7 @@ data class Trace(
     val mountainName: String,
     val coordinates: List<Point>?,
     val trailId: Int
-) {
+) : Parcelable {
     companion object {
         fun toRecyclerViewNumberItem(trace: Trace): RecyclerViewNumberItem {
             return RecyclerViewNumberItem(
