@@ -22,7 +22,7 @@ import java.util.List;
 public class TraceService {
 
     private final String imagePathPrefix = "trace/";
-    private final String imagePathPostFist = "/";
+    private final String imagePathPostFix = "/";
 
     private final ImageUtil imageUtil;
 
@@ -96,7 +96,7 @@ public class TraceService {
         List<String> imageFileNames = oldImages.stream().map(TraceImage::getImageSrc).toList();
         imageUtil.deleteImages(imageFileNames);
 
-        String path = imagePathPrefix + traceId + imagePathPostFist;
+        String path = imagePathPrefix + traceId + imagePathPostFix;
         List<TraceImage> traceImages = images.stream()
                 .map(image -> imageUtil.saveImage(image, path)).map(TraceImage::new).toList();
         traceImageRepository.saveAll(traceImages);
