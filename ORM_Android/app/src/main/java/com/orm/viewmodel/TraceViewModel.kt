@@ -14,7 +14,6 @@ import javax.inject.Inject
 @HiltViewModel
 class TraceViewModel @Inject constructor(
     private val traceRepository: TraceRepository,
-    private val traceDao: TraceDao,
 ) : ViewModel() {
 
     private val _traces = MutableLiveData<List<Trace>>()
@@ -29,21 +28,21 @@ class TraceViewModel @Inject constructor(
 
     private fun getTraces() {
         viewModelScope.launch {
-            val traces = traceDao.getAllTraces()
+            val traces = traceRepository.getAllTraces()
             _traces.postValue(traces)
         }
     }
 
     fun getTrace(id: Int) {
         viewModelScope.launch {
-            val trace = traceDao.getTrace(id)
+            val trace = traceRepository.getTrace(id)
             _trace.postValue(trace)
         }
     }
 
-    fun insertTrace(trace: Trace) {
+    fun createTrace(trace: Trace) {
         viewModelScope.launch {
-            traceDao.insertTrace(trace)
+            traceRepository.createTrace(trace)
 
             val updateTraces = _traces.value?.toMutableList() ?: mutableListOf()
             updateTraces.add(trace)
@@ -53,7 +52,7 @@ class TraceViewModel @Inject constructor(
 
     fun deleteTrace(trace: Trace) {
         viewModelScope.launch {
-            traceDao.deleteTrace(trace)
+            traceRepository.deleteTrace(trace)
 
             val updateTraces = _traces.value?.toMutableList()?.filter {
                 it.id != trace.id

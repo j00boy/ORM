@@ -9,7 +9,8 @@ import java.util.Date
 
 @Entity(tableName = "trace")
 data class Trace(
-    @PrimaryKey val id: Int,
+    @PrimaryKey val localId: Int,
+    val id: Int?,
     val title: String,
     val hikingDate: String?,
     val hikingEndedAt: String?,
@@ -23,7 +24,7 @@ data class Trace(
     companion object {
         fun toRecyclerViewNumberItem(trace: Trace): RecyclerViewNumberItem {
             return RecyclerViewNumberItem(
-                id = trace.id,
+                id = trace.localId,
                 imageSrc = "https://media.istockphoto.com/id/2109478335/ko/%EC%82%AC%EC%A7%84/morning-and-spring-view-of-pink-azalea-flowers-at-hwangmaesan-mountain-with-the-background-of.jpg?s=612x612&w=0&k=20&c=IS-ZtgomSJ01DNoz2bLyRvZ8RYzlJ7pDXnmsERwkf3o=",
                 title = trace.title,
                 subTitle = "sub Title",

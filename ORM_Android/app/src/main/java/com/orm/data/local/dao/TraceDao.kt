@@ -18,7 +18,7 @@ interface TraceDao {
     @Query("SELECT * FROM trace")
     suspend fun getAllTraces(): List<Trace>
 
-    @Query("SELECT * FROM trace WHERE id = :id")
+    @Query("SELECT * FROM trace WHERE localId = :id")
     suspend fun getTrace(id: Int): Trace
 
 }

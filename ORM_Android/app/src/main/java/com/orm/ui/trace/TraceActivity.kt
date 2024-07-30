@@ -40,6 +40,7 @@ class TraceActivity : AppCompatActivity() {
                 Trace.toRecyclerViewNumberItem(
                     Trace(
                         id = 0,
+                        localId = 1,
                         title = "제목",
                         hikingDate = "2024.07.07",
                         hikingEndedAt = "2024.07.07",
@@ -54,6 +55,7 @@ class TraceActivity : AppCompatActivity() {
                 Trace.toRecyclerViewNumberItem(
                     Trace(
                         id = 0,
+                        localId = 1,
                         title = "제목",
                         hikingDate = "2024.07.07",
                         hikingEndedAt = "2024.07.07",
@@ -68,6 +70,7 @@ class TraceActivity : AppCompatActivity() {
                 Trace.toRecyclerViewNumberItem(
                     Trace(
                         id = 0,
+                        localId = 1,
                         title = "제목",
                         hikingDate = "2024.07.07",
                         hikingEndedAt = "2024.07.07",
@@ -82,6 +85,7 @@ class TraceActivity : AppCompatActivity() {
                 Trace.toRecyclerViewNumberItem(
                     Trace(
                         id = 0,
+                        localId = 1,
                         title = "제목",
                         hikingDate = "2024.07.07",
                         hikingEndedAt = "2024.07.07",
