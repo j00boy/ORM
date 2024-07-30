@@ -3,7 +3,7 @@ package orm.orm_backend.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,7 +12,6 @@ import orm.orm_backend.dto.request.TraceRequestDto;
 import orm.orm_backend.service.TraceService;
 import orm.orm_backend.util.JwtUtil;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -32,9 +31,7 @@ public class TraceController {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         TraceDto traceDto = traceService.createTrace(traceRequestDto, userId);
-        HttpHeaders headers = jwtUtil.createTokenHeaders(userId);
-        return ResponseEntity.created(URI.create("/trace/" + traceDto.getId()))
-                .headers(headers).body(traceDto);
+        return new ResponseEntity<>(traceDto, HttpStatus.CREATED);
     }
 
     @PatchMapping("/update")
@@ -42,7 +39,8 @@ public class TraceController {
                                                         @RequestBody TraceRequestDto traceRequestDto) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
-        return ResponseEntity.ok(traceService.updateTrace(traceRequestDto.getId(), traceRequestDto, userId));
+        TraceDto traceDto = traceService.updateTrace(traceRequestDto.getId(), traceRequestDto, userId);
+        return ResponseEntity.ok(traceDto);
     }
 
     @DeleteMapping("/{traceId}")

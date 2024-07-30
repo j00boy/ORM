@@ -15,14 +15,14 @@ import orm.orm_backend.repository.TraceImageRepository;
 import orm.orm_backend.repository.TraceRepository;
 import orm.orm_backend.util.ImageUtil;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class TraceService {
+
+    private final String imagePathPrefix = "trace/";
+    private final String imagePathPostFix = "/";
 
     private final ImageUtil imageUtil;
 
@@ -35,9 +35,6 @@ public class TraceService {
     private final TraceCoordinateRepository traceCoordinateRepository;
 
     public TraceDto createTrace(TraceRequestDto creationRequestDto, Integer userId) {
-        // mountain, trail 객체 받는 로직 추후 추가
-//        Mountain mountain = mountainService.get()
-//        Trail trail = trailService.get();
         Mountain mountain = mountainService.getMountainById(creationRequestDto.getMountainId());
         Trail trail = trailService.getTrailEntityById(creationRequestDto.getTrailId());
 
@@ -99,7 +96,7 @@ public class TraceService {
         List<String> imageFileNames = oldImages.stream().map(TraceImage::getImageSrc).toList();
         imageUtil.deleteImages(imageFileNames);
 
-        String path = "trace/" + traceId + "/";
+        String path = imagePathPrefix + traceId + imagePathPostFix;
         List<TraceImage> traceImages = images.stream()
                 .map(image -> imageUtil.saveImage(image, path)).map(TraceImage::new).toList();
         traceImageRepository.saveAll(traceImages);

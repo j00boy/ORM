@@ -10,14 +10,11 @@ import orm.orm_backend.dto.request.TraceRequestDto;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Trace extends BaseEntity {
-
-    // 주석으로 처리된 부분은 추 후 마운틴 부분 DB 및 Entity생성이 완료된 후 대체할 예정
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

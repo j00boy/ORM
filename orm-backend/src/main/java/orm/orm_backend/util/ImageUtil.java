@@ -74,9 +74,24 @@ public class ImageUtil {
     }
 
     public void deleteImage(String fileName) {
-        fileName = PREFIX_DIR + fileName;
-        File file = new File(fileName);
-        if (!file.delete()) {
+        fileName = fileName.replace("http://", "");
+        fileName = fileName.replace(SFTP_HOST, "");
+        fileName = fileName.replace(REMOTE_ACCESS_DIR, REMOTE_UPLOAD_DIR);
+        try {
+            JSch jsch = new JSch();
+            jsch.addIdentity(PEM_FILE_PATH);
+            Session session = jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT);
+            session.setConfig("StrictHostKeyChecking", "no");
+            session.connect();
+
+            ChannelSftp sftpChannel = (ChannelSftp) session.openChannel("sftp");
+            sftpChannel.connect();
+
+            sftpChannel.rm(fileName);
+
+            sftpChannel.disconnect();
+            session.disconnect();
+        } catch (JSchException | SftpException e) {
             throw new IllegalArgumentException(fileName + "의 이름으로 된 파일이 존재하지 않습니다.");
         }
     }

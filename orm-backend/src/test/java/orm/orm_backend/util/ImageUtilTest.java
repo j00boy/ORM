@@ -61,7 +61,7 @@ class ImageUtilTest {
     // fileName은 저장 후 이름을 직접넣어줘야 한다.
     @Test
     void deleteTest() throws IOException {
-        String fileName = "/uploads/image/test/b50d02f475e143f38f04a89f9230cf77_test.png";
+        String fileName = "http://i11A709.p.ssafy.io/files/orm/test/f193052a9c2548499749ed463bbad701_test.png";
         imageUtil.deleteImage(fileName);
     }
 
