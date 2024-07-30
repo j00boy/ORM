@@ -125,7 +125,7 @@ public class ClubService {
     }
 
     // 중복 체크
-    public Boolean isValid(String clubName) {
+    public Boolean isDuplicated(String clubName) {
         return clubRepository.existsByClubName(clubName);
     }
 
@@ -194,6 +194,7 @@ public class ClubService {
 
         return dbFilePath;
     }
+
 
 
 }

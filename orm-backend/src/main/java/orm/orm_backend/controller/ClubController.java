@@ -65,8 +65,8 @@ public class ClubController {
     }
 
     @GetMapping("/name/check-duplicate")
-    public ResponseEntity<Boolean> isValid(@RequestParam("name") String name) {
-        Boolean isValid = clubService.isValid(name);
+    public ResponseEntity<Boolean> isDuplicated(@RequestParam("name") String name) {
+        Boolean isValid = clubService.isDuplicated(name);
         return ResponseEntity.ok().body(isValid);
     }
 
