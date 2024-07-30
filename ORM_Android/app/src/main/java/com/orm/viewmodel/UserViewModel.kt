@@ -15,8 +15,8 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     private val userRepository: UserRepository,
 ) : ViewModel() {
-    private val _user = MutableLiveData<User>()
-    val user: LiveData<User> get() = _user
+    private val _user = MutableLiveData<User?>()
+    val user: LiveData<User?> get() = _user
 
     private val _token = MutableLiveData<String>()
     val token: LiveData<String> get() = _token

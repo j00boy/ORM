@@ -1,6 +1,7 @@
 package com.orm.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -36,20 +37,17 @@ class ClubViewModel @Inject constructor(
     private val _members = MutableLiveData<Map<String, List<Any?>>>()
     val members: LiveData<Map<String, List<Any?>>> get() = _members
 
-    private val _isOperationSuccessful = MutableLiveData<Boolean>()
-    val isOperationSuccessful: LiveData<Boolean> get() = _isOperationSuccessful
+    private val _isOperationSuccessful = MutableLiveData<Boolean?>()
+    val isOperationSuccessful: LiveData<Boolean?> get() = _isOperationSuccessful
 
     private val _clubId = MutableLiveData<Int?>()
     val clubId: LiveData<Int?> get() = _clubId
 
-    init {
-        getClubs()
-
-    }
-
     fun getClubs(keyword: String = "", isMyClub: Boolean = false) {
         viewModelScope.launch {
+            _clubs.postValue(emptyList())
             val clubs = clubRepository.getClubs(keyword, isMyClub)
+            Log.e("getClubs", clubs.toString())
             _clubs.postValue(clubs)
         }
     }
@@ -125,6 +123,10 @@ class ClubViewModel @Inject constructor(
                 _isOperationSuccessful.postValue(false)
             }
         }
+    }
+
+    fun resetOperationStatus() {
+        _isOperationSuccessful.value = null
     }
 
     private fun createClubRequestBody(clubCreate: ClubCreate): RequestBody {

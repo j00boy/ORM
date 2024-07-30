@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -44,16 +45,20 @@ class ClubEditActivity : AppCompatActivity() {
         }
 
         binding.tfClubName.setEndIconOnClickListener {
-            clubViewModel.checkDuplicateClubs(binding.tfClubName.editText?.text.toString())
-            clubViewModel.isOperationSuccessful.observe(this) { isSuccessful ->
-                if (isSuccessful) {
-                    // Handle successful check
-                } else {
-                    // Handle unsuccessful check
+            clubViewModel.isOperationSuccessful.removeObservers(this)
+
+            clubViewModel.resetOperationStatus()
+
+            clubViewModel.isOperationSuccessful.observe(this) { isDuplicate ->
+                isDuplicate?.let {
+                    Log.d("ClubEditActivity", "isDuplicate: $isDuplicate")
+                    val message = if (isDuplicate) "생성 불가능한 이름입니다." else "생성 가능한 이름입니다."
+                    showDuplicateCheckDialog(message)
                 }
             }
-        }
 
+            clubViewModel.checkDuplicateClubs(binding.tfClubName.editText?.text.toString())
+        }
         binding.tfClubMountain.setEndIconOnClickListener {
             Toast.makeText(
                 this,
@@ -62,10 +67,11 @@ class ClubEditActivity : AppCompatActivity() {
             ).show()
         }
 
+        val content = if (club == null) "생성" else "수정"
         binding.btnSign.setOnClickListener {
             MaterialAlertDialogBuilder(this)
-                .setTitle("생성하기 / 수정하기")
-                .setMessage("모임을 생성/수정 하시겠습니까?")
+                .setTitle(content)
+                .setMessage("모임을 $content 하시겠습니까?")
                 .setNegativeButton("취소") { _, _ -> }
                 .setPositiveButton("확인") { dialog, which ->
 
@@ -81,5 +87,13 @@ class ClubEditActivity : AppCompatActivity() {
                 }
                 .show()
         }
+    }
+
+    private fun showDuplicateCheckDialog(message: String) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("중복 체크")
+            .setMessage(message)
+            .setPositiveButton("확인") { dialog, which -> }
+            .show()
     }
 }
