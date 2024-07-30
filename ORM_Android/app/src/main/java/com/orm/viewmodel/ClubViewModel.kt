@@ -152,4 +152,12 @@ class ClubViewModel @Inject constructor(
         return emptyFile
     }
 
+    fun findClubsByMountain(mountainId: Int) {
+        viewModelScope.launch {
+            _clubs.postValue(emptyList())
+            val clubs = clubRepository.findClubsByMountain(mountainId)
+            Log.e("findClubsByMountain", clubs.toString())
+            _clubs.postValue(clubs)
+        }
+    }
 }

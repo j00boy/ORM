@@ -124,4 +124,21 @@ class ClubRepository @Inject constructor(
             }
         }
     }
+
+    suspend fun findClubsByMountain(mountainId: Int): List<Club> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response =
+                    clubService.findClubsByMountain(mountainId = mountainId).execute()
+                if (response.isSuccessful) {
+                    response.body() ?: emptyList()
+                } else {
+                    emptyList()
+                }
+            } catch (e: Exception) {
+                Log.e("ClubRepository", "Error getting clubs", e)
+                emptyList()
+            }
+        }
+    }
 }
