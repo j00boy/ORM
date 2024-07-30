@@ -39,6 +39,17 @@ public class ClubController {
         return ResponseEntity.status(HttpStatus.CREATED).body(clubId);
     }
 
+    @PatchMapping("/{clubId}")
+    public ResponseEntity<ClubResponseDto> updateClub(@RequestPart("updateClub") ClubRequestDto clubRequestDto,
+                                                      @RequestPart(value = "imgFile", required = false) MultipartFile imgFile,
+                                                      @PathVariable Integer clubId,
+                                                      HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        ClubResponseDto result = clubService.updateClub(clubRequestDto, clubId, userId, imgFile);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping
     public ResponseEntity<List<ClubResponseDto>> findClubs(ClubSearchRequestDto clubSearchRequestDto, HttpServletRequest request) {
         String accessToken = request.getHeader(HEADER_AUTH);
