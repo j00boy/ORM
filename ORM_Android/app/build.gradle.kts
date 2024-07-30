@@ -36,6 +36,7 @@ android {
         buildConfigField("String", "BASE_URL", getApiKey("BASE_URL"))
         buildConfigField("String", "DATASTORE_NAME", getApiKey("DATASTORE_NAME"))
         buildConfigField("String", "KAKAO_APP_KEY", getApiKey("KAKAO_APP_KEY"))
+        buildConfigField("String", "WEATHER_API_KEY", getApiKey("WEATHER_API_KEY"))
     }
 
 
