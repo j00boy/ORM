@@ -77,7 +77,7 @@ public class ClubController {
     }
 
     @DeleteMapping("/members/leave")
-    public ResponseEntity<Void> deleteMember(@RequestParam("userId") Integer userId, @RequestParam("clubId") Integer clubId, HttpServletRequest request) {
+    public ResponseEntity<Void> leaveMember(@RequestParam("userId") Integer userId, @RequestParam("clubId") Integer clubId, HttpServletRequest request) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer currId = jwtUtil.getUserIdFromAccessToken(accessToken);
         // 본인 아이디가 아닌 경우 탈퇴하지 못한다.
