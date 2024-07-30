@@ -19,7 +19,7 @@ interface ClubService {
     @GET("clubs")
     fun getClubs(
         @Query("pgno") pgno: Int = 0,
-        @Query("recordSize") recordSize: Int = 10,
+        @Query("recordSize") recordSize: Int = 1000,
         @Query("keyword") keyword: String = "",
         @Query("isMyClub") isMyClub: Boolean = false,
     ): Call<List<Club>>
