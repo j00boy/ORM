@@ -9,7 +9,6 @@ import orm.orm_backend.entity.User;
 import orm.orm_backend.exception.UnAuthorizedException;
 import orm.orm_backend.exception.UserWithdrawalException;
 import orm.orm_backend.repository.UserRepository;
-import orm.orm_backend.util.JwtUtil;
 import orm.orm_backend.util.KakaoUtil;
 import orm.orm_backend.vo.KakaoInfoVo;
 
@@ -20,7 +19,6 @@ import java.util.Optional;
 public class UserService {
 
     private final KakaoUtil kakaoUtil;
-    private final JwtUtil jwtUtil;
 
     private final UserRepository userRepository;
 
