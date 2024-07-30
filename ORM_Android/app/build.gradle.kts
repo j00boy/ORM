@@ -115,5 +115,9 @@ dependencies {
 
     // google map
     implementation(libs.play.services.maps)
-    implementation ("com.google.android.gms:play-services-location:21.0.1")
+    implementation (libs.play.services.location.v2101)
+
+    // okhttp
+    implementation (libs.okhttp)
+    implementation (libs.logging.interceptor)
 }

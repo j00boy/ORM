@@ -2,6 +2,7 @@ package com.orm.ui.fragment.club
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +35,9 @@ class ClubMeFragment : Fragment() {
         _binding = FragmentClubMeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        clubViewModel.getClubs(isMyClub = true)
         clubViewModel.clubs.observe(viewLifecycleOwner) { clubs ->
+            Log.e("clubMeFragment", clubs.toString())
             setupAdapter(clubs)
         }
 
@@ -58,6 +61,7 @@ class ClubMeFragment : Fragment() {
                 ).apply {
                     putExtra("club", clubs[position])
                 }
+                Log.e("clubMeFragment", "club: ${clubs[position]}")
                 startActivity(intent)
             }
         })
