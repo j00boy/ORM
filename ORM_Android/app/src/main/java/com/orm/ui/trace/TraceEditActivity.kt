@@ -1,5 +1,6 @@
 package com.orm.ui.trace
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -61,18 +62,14 @@ class TraceEditActivity : AppCompatActivity() {
                         id = null,
                         title = binding.tfTraceName.editText?.text.toString(),
                         hikingDate = binding.tfDate.editText?.text.toString(),
-                        hikingEndedAt = null,
-                        hikingStartedAt = null,
-                        maxHeight = null,
                         mountainId = binding.tfTraceMountain.editText?.text.toString().toInt(),
                         mountainName = "실험",
                         coordinates = null,
                         trailId = 1,
                     )
                     traceViewModel.createTrace(traceCreate)
-
-                    // TODO : move to this trace detail
                     dialog.dismiss()
+                    finish()
                 }
                 .show()
         }

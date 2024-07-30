@@ -22,11 +22,7 @@ class TraceViewModel @Inject constructor(
     private val _trace = MutableLiveData<Trace>()
     val trace: LiveData<Trace> get() = _trace
 
-    init {
-        getTraces()
-    }
-
-    private fun getTraces() {
+    fun getTraces() {
         viewModelScope.launch {
             val traces = traceRepository.getAllTraces()
             _traces.postValue(traces)

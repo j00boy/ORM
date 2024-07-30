@@ -30,6 +30,7 @@ class TraceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        traceViewModel.getTraces()
         traceViewModel.traces.observe(this@TraceActivity){
             setupAdapter(it!!)
         }
