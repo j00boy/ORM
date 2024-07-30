@@ -12,6 +12,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import orm.orm_backend.dto.common.TraceDto;
 import orm.orm_backend.dto.request.TraceRequestDto;
+import orm.orm_backend.entity.Mountain;
+import orm.orm_backend.entity.Trace;
 import orm.orm_backend.entity.Trail;
 import orm.orm_backend.entity.User;
 import orm.orm_backend.repository.TraceImageRepository;
@@ -36,7 +38,13 @@ class TraceServiceTest {
     TraceRepository traceRepository;
 
     @Mock
+    MountainService mountainService;
+
+    @Mock
     UserService userService;
+
+    @Mock
+    TrailService trailService;
 
     @Spy
     ImageUtil imageUtil = new ImageUtil();
@@ -49,21 +57,32 @@ class TraceServiceTest {
     Trail trail;
     TraceRequestDto traceRequestDto;
     String traceTitle = "traceTitle";
+    Mountain mountain;
+    Integer mountainId;
+    Integer trailId;
 
     @BeforeEach
     void init() {
         user = User.builder().build();
         userId = 2;
+        mountainId = 1;
+        trailId = 1;
         trail = null;
         traceRequestDto = TraceRequestDto.builder().title(traceTitle)
+                .mountainId(mountainId)
+                .trailId(trailId)
                 .hikingDate(new Date(System.currentTimeMillis()).toString())
                 .build();
+
+        mountain = Mountain.builder().build();
     }
 
     @Test
     void createTraceTest() {
         when(userService.findUserById(userId)).thenReturn(user);
         when(traceRepository.save(any())).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+        when(mountainService.getMountainById(mountainId)).thenReturn(mountain);
+        when(trailService.getTrailEntityById(trailId)).thenReturn(trail);
         TraceDto traceDto = traceService.createTrace(traceRequestDto, userId);
         isSameDay(Date.valueOf(traceDto.getHikingDate()), new Date(System.currentTimeMillis()));
         assertThat(traceDto.getTitle()).isEqualTo(traceTitle);
