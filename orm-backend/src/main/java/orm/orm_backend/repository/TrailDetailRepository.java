@@ -10,6 +10,11 @@ import java.util.Optional;
 @Repository
 public interface TrailDetailRepository extends JpaRepository<TrailDetail, Integer> {
 
+    /**
+     * 고유 trailId를 가진 등산로 세부 좌표들을 반환한다.
+     * @param trailId
+     * @return
+     */
     List<TrailDetail> findTrailDetailsByTrailId(Integer trailId);
 
 }
