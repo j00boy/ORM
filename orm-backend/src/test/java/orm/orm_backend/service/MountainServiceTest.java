@@ -71,7 +71,7 @@ public class MountainServiceTest {
         MountainResponseDto mountainDto = mountainService.getMountainDtoById(id);
 
         assertThat(mountainDto.getName()).isEqualTo(mountain1Name);
-        assertThat(mountainDto.getCode()).isNotEqualTo(mountain2Name);
+        assertThat(mountainDto.getCode()).isNotEqualTo(mountain2Code);
     }
 
     @Test
