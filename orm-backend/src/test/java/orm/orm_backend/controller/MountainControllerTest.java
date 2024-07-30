@@ -52,18 +52,29 @@ public class MountainControllerTest {
     @Mock
     private TrailResponseDto trail1;
 
+    private Integer mountain1Id = 1;
+    private String mountain1Name = "Mountain 1";
+    private String mountain1Code = "11111111";
+
+    private Integer mountain2Id = 2;
+    private String mountain2Name = "Mountain 2";
+    private String mountain2Code = "22222222";
+
+    private Integer trail1Id = 3;
+    private Float trail1Distance = 5.0F;
+
     @BeforeEach
     void setUp() {
-        lenient().when(mountain1.getId()).thenReturn(1);
-        lenient().when(mountain1.getName()).thenReturn("테스트 산1");
-        lenient().when(mountain1.getCode()).thenReturn("11111111");
+        lenient().when(mountain1.getId()).thenReturn(mountain1Id);
+        lenient().when(mountain1.getName()).thenReturn(mountain1Name);
+        lenient().when(mountain1.getCode()).thenReturn(mountain1Code);
 
-        lenient().when(mountain2.getId()).thenReturn(2);
-        lenient().when(mountain2.getName()).thenReturn("테스트 산2");
-        lenient().when(mountain2.getCode()).thenReturn("22222222");
+        lenient().when(mountain2.getId()).thenReturn(mountain2Id);
+        lenient().when(mountain2.getName()).thenReturn(mountain2Name);
+        lenient().when(mountain2.getCode()).thenReturn(mountain2Code);
 
-        lenient().when(trail1.getId()).thenReturn(1);
-        lenient().when(trail1.getDistance()).thenReturn(3.0F);
+        lenient().when(trail1.getId()).thenReturn(trail1Id);
+        lenient().when(trail1.getDistance()).thenReturn(trail1Distance);
     }
 
     @Test
@@ -74,12 +85,12 @@ public class MountainControllerTest {
 
         mockMvc.perform(get(url + api))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("테스트 산1"))
-                .andExpect(jsonPath("$[0].code").value("11111111"))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].name").value("테스트 산2"))
-                .andExpect(jsonPath("$[1].code").value("22222222"));
+                .andExpect(jsonPath("$[0].id").value(mountain1Id))
+                .andExpect(jsonPath("$[0].name").value(mountain1Name))
+                .andExpect(jsonPath("$[0].code").value(mountain1Code))
+                .andExpect(jsonPath("$[1].id").value(mountain2Id))
+                .andExpect(jsonPath("$[1].name").value(mountain2Name))
+                .andExpect(jsonPath("$[1].code").value(mountain2Code));
     }
 
     @Test
@@ -91,26 +102,26 @@ public class MountainControllerTest {
 
         mockMvc.perform(get(url + api))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("테스트 산1"))
-                .andExpect(jsonPath("$.code").value("11111111"));
+                .andExpect(jsonPath("$.id").value(mountain1Id))
+                .andExpect(jsonPath("$.name").value(mountain1Name))
+                .andExpect(jsonPath("$.code").value(mountain1Code));
     }
 
     @Test
     @DisplayName("이름 검색해서 산 list 조회하기")
     void getAllMountainsBySearch() throws Exception {
-        String name = "테스트";
+        String name = "Mountain";
         String api = "/search";
         given(mountainService.getAllMountains(name)).willReturn(List.of(mountain1, mountain2));
 
         mockMvc.perform(get(url + api + "?name=" + name))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].name").value("테스트 산1"))
-                .andExpect(jsonPath("$[0].code").value("11111111"))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].name").value("테스트 산2"))
-                .andExpect(jsonPath("$[1].code").value("22222222"));
+                .andExpect(jsonPath("$[0].id").value(mountain1Id))
+                .andExpect(jsonPath("$[0].name").value(mountain1Name))
+                .andExpect(jsonPath("$[0].code").value(mountain1Code))
+                .andExpect(jsonPath("$[1].id").value(mountain2Id))
+                .andExpect(jsonPath("$[1].name").value(mountain2Name))
+                .andExpect(jsonPath("$[1].code").value(mountain2Code));
     }
 
     @Test
@@ -122,7 +133,7 @@ public class MountainControllerTest {
 
         mockMvc.perform(get(url + api + "/" + id))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.distance").value(3.0F));
+                .andExpect(jsonPath("$.id").value(trail1Id))
+                .andExpect(jsonPath("$.distance").value(trail1Distance));
     }
 }

@@ -40,15 +40,24 @@ public class MountainServiceTest {
     @Mock
     private Mountain mountain2;
 
+    private Integer mountain1Id = 1;
+    private String mountain1Name = "Mountain 1";
+    private String mountain1Code = "11111111";
+
+    private Integer mountain2Id = 2;
+    private String mountain2Name = "Mountain 2";
+    private String mountain2Code = "22222222";
+
+
     @BeforeEach
     void setUp() {
-        lenient().when(mountain1.getId()).thenReturn(1);
-        lenient().when(mountain1.getMountainName()).thenReturn("테스트 산1");
-        lenient().when(mountain1.getMountainCode()).thenReturn("11111111");
+        lenient().when(mountain1.getId()).thenReturn(mountain1Id);
+        lenient().when(mountain1.getMountainName()).thenReturn(mountain1Name);
+        lenient().when(mountain1.getMountainCode()).thenReturn(mountain1Code);
 
-        lenient().when(mountain2.getId()).thenReturn(2);
-        lenient().when(mountain2.getMountainName()).thenReturn("테스트 산2");
-        lenient().when(mountain2.getMountainCode()).thenReturn("22222222");
+        lenient().when(mountain2.getId()).thenReturn(mountain2Id);
+        lenient().when(mountain2.getMountainName()).thenReturn(mountain2Name);
+        lenient().when(mountain2.getMountainCode()).thenReturn(mountain2Code);
     }
 
     @Test
@@ -61,8 +70,8 @@ public class MountainServiceTest {
         // when
         MountainResponseDto mountainDto = mountainService.getMountainDtoById(id);
 
-        assertThat(mountainDto.getName()).isEqualTo("테스트 산1");
-        assertThat(mountainDto.getCode()).isNotEqualTo("22222222");
+        assertThat(mountainDto.getName()).isEqualTo(mountain1Name);
+        assertThat(mountainDto.getCode()).isNotEqualTo(mountain2Name);
     }
 
     @Test
@@ -78,12 +87,12 @@ public class MountainServiceTest {
 
         // then
         assertThat(allMountains.size()).isEqualTo(2);
-        assertThat(allMountains.get(0).getId()).isEqualTo(1);
-        assertThat(allMountains.get(0).getName()).isEqualTo("테스트 산1");
-        assertThat(allMountains.get(0).getCode()).isEqualTo("11111111");
-        assertThat(allMountains.get(1).getId()).isEqualTo(2);
-        assertThat(allMountains.get(1).getName()).isEqualTo("테스트 산2");
-        assertThat(allMountains.get(1).getCode()).isEqualTo("22222222");
+        assertThat(allMountains.get(0).getId()).isEqualTo(mountain1Id);
+        assertThat(allMountains.get(0).getName()).isEqualTo(mountain1Name);
+        assertThat(allMountains.get(0).getCode()).isEqualTo(mountain1Code);
+        assertThat(allMountains.get(1).getId()).isNotEqualTo(100);
+        assertThat(allMountains.get(1).getName()).isNotEqualTo("Error");
+        assertThat(allMountains.get(1).getCode()).isNotEqualTo("99999999");
     }
 
     @Test
@@ -98,11 +107,12 @@ public class MountainServiceTest {
         List<MountainResponseDto> mountains100 = mountainService.get100Mountains();
 
         // then
-        assertThat(mountains100.get(0).getId()).isEqualTo(1);
-        assertThat(mountains100.get(0).getName()).isEqualTo("테스트 산1");
-        assertThat(mountains100.get(0).getCode()).isEqualTo("11111111");
-        assertThat(mountains100.get(1).getId()).isEqualTo(2);
-        assertThat(mountains100.get(1).getName()).isEqualTo("테스트 산2");
-        assertThat(mountains100.get(1).getCode()).isEqualTo("22222222");
+        assertThat(mountains100.size()).isEqualTo(2);
+        assertThat(mountains100.get(0).getId()).isEqualTo(mountain1Id);
+        assertThat(mountains100.get(0).getName()).isEqualTo(mountain1Name);
+        assertThat(mountains100.get(0).getCode()).isEqualTo(mountain1Code);
+        assertThat(mountains100.get(1).getId()).isNotEqualTo(100);
+        assertThat(mountains100.get(1).getName()).isNotEqualTo("Error");
+        assertThat(mountains100.get(1).getCode()).isNotEqualTo("99999999");
     }
 }
