@@ -113,7 +113,11 @@ class ClubRepository @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val response = clubService.checkDuplicateClubs(name).execute()
-                response.isSuccessful
+                if (response.isSuccessful) {
+                    response.body() ?: false
+                } else {
+                    false
+                }
             } catch (e: Exception) {
                 Log.e("ClubRepository", "Error checking duplicate clubs", e)
                 false

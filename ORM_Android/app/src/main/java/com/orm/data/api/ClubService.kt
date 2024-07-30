@@ -56,5 +56,5 @@ interface ClubService {
     @GET("clubs/name/check-duplicate")
     fun checkDuplicateClubs(
         @Query("name") name: String,
-    ): Call<Unit>
+    ): Call<Boolean>
 }
