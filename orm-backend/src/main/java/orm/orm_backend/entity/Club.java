@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import orm.orm_backend.dto.request.ClubRequestDto;
+import orm.orm_backend.dto.response.ClubResponseDto;
 
 import java.util.List;
 
@@ -45,5 +47,12 @@ public class Club extends BaseEntity {
     public Boolean isManager(Integer userId){
         Integer managerId = manager.getId();
         return managerId != null && managerId.equals(userId);
+    }
+
+    public void update(ClubRequestDto clubRequestDto, Mountain mountain, String imageSrc) {
+        this.clubName = clubRequestDto.getClubName();
+        this.description = clubRequestDto.getDescription();
+        this.mountain = mountain;
+        this.imageSrc = imageSrc;
     }
 }
