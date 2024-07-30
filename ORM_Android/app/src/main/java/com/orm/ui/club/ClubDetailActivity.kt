@@ -2,6 +2,7 @@ package com.orm.ui.club
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.orm.data.model.club.Club
 import com.orm.databinding.ActivityClubDetailBinding
@@ -24,6 +25,7 @@ class ClubDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        Log.d("ClubDetailActivity", "club: $club")
 
         binding.topAppBar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()

@@ -3,6 +3,7 @@ package com.orm.data.model.club
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.orm.R
 import com.orm.data.model.recycler.RecyclerViewBasicItem
 import kotlinx.parcelize.Parcelize
 
@@ -12,7 +13,7 @@ data class Club(
     @PrimaryKey val id: Int,
     val clubName: String,
     val description: String,
-    val imageSrc: String,
+    val imageSrc: String?,
     val managerId: String,
     val managerName: String,
     val memberCount: String,
@@ -25,7 +26,7 @@ data class Club(
         fun toRecyclerViewBasicItem(club: Club): RecyclerViewBasicItem {
             return RecyclerViewBasicItem(
                 id = club.id,
-                imageSrc = club.imageSrc,
+                imageSrc = club.imageSrc ?: "",
                 title = club.clubName,
                 subTitle = club.description
             )

@@ -1,24 +1,33 @@
 package com.orm.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.orm.data.local.dao.ClubDao
 import com.orm.data.model.club.ClubApprove
 import com.orm.data.model.club.Club
 import com.orm.data.model.RequestMember
+import com.orm.data.model.club.ClubCreate
 import com.orm.data.repository.ClubRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class ClubViewModel @Inject constructor(
     private val clubRepository: ClubRepository,
     private val clubDao: ClubDao,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _clubs = MutableLiveData<List<Club>>()
@@ -34,9 +43,8 @@ class ClubViewModel @Inject constructor(
     val clubId: LiveData<Int?> get() = _clubId
 
     init {
-        if (_clubs.value.isNullOrEmpty()) {
-            getClubs()
-        }
+        getClubs()
+
     }
 
     fun getClubs(keyword: String = "", isMyClub: Boolean = false) {
@@ -90,10 +98,13 @@ class ClubViewModel @Inject constructor(
     }
 
 
-    fun createClubs(createClub: RequestBody, imgFile: MultipartBody.Part) {
+    fun createClubs(clubCreate: ClubCreate, imgFile: File?) {
         viewModelScope.launch {
             try {
-                val clubId = clubRepository.createClubs(createClub, imgFile)
+                val createClubRequestBody = createClubRequestBody(clubCreate)
+                val imgFilePart = createImagePart(imgFile)
+
+                val clubId = clubRepository.createClubs(createClubRequestBody, imgFilePart)
                 _clubId.postValue(clubId)
                 _isOperationSuccessful.postValue(clubId != null)
             } catch (e: Exception) {
@@ -114,6 +125,29 @@ class ClubViewModel @Inject constructor(
                 _isOperationSuccessful.postValue(false)
             }
         }
+    }
+
+    private fun createClubRequestBody(clubCreate: ClubCreate): RequestBody {
+        val gson = Gson()
+        val clubJson = gson.toJson(clubCreate)
+        return clubJson.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+    }
+
+    private fun createImagePart(file: File?): MultipartBody.Part {
+        // Create an empty file if the input file is null or doesn't exist
+        val actualFile = file?.takeIf { it.exists() } ?: createEmptyFile()
+        val requestFile = actualFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
+
+        return MultipartBody.Part.createFormData("imgFile", actualFile.name, requestFile)
+    }
+
+    private fun createEmptyFile(): File {
+        val emptyFileName = "empty_image.jpg"
+        val emptyFile = File(context.cacheDir, emptyFileName)
+        if (!emptyFile.exists()) {
+            emptyFile.createNewFile()
+        }
+        return emptyFile
     }
 
 }
