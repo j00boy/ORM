@@ -6,20 +6,20 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ClubMember(
-    val introduction: String? = null,
+    val introduction: String = "",
     val userId: Int,
     val imgSrc: String?,
     val nickname: String,
     val clubId: Int? = null,
     val jointedAt: String? = null,
-): Parcelable {
+) : Parcelable {
     companion object {
         fun toRecyclerViewButtonItem(clubMember: ClubMember): RecyclerViewButtonItem {
             return RecyclerViewButtonItem(
-                id = clubMember.userId.toInt(),
-                imageSrc = clubMember.imgSrc ?: "",
+                id = clubMember.userId,
+                imageSrc = clubMember.imgSrc!!,
                 title = clubMember.nickname,
-                subTitle = "",
+                subTitle = clubMember.introduction,
                 btnUp = "수락",
                 btnDown = "거절",
             )
