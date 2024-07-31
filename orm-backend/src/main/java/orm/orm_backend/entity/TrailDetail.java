@@ -17,7 +17,7 @@ public class TrailDetail {
     @ManyToOne
     @JoinColumn(name = "trail_id")
     private Trail trail;
-
+    @Column(columnDefinition = "TINYINT")
     private Integer difficulty;
     private String latitude;
     private String longitude;
