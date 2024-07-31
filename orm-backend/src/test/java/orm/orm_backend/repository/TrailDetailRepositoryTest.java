@@ -107,7 +107,7 @@ public class TrailDetailRepositoryTest {
         // then
         assertThat(findTrailDetails).hasSize(2);
         assertThat(findTrailDetails.size()).isNotEqualTo(3);
-        assertThat(findTrailDetails.get(0).getLatitude()).isEqualTo(latitude);
+        assertThat(findTrailDetails.get(0).getLatitude()).isEqualTo(trailDetail1.getLatitude());
     }
 
 }

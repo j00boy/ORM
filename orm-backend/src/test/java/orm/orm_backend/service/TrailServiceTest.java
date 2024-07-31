@@ -96,11 +96,12 @@ public class TrailServiceTest {
 
         // then
         assertThat(trailsByMountainId).hasSize(2);
+        assertThat(trailsByMountainId.size()).isNotEqualTo(3);
         assertThat(trailsByMountainId.get(0).getId()).isNotEqualTo(trail2.getId());
     }
 
     @Test
-    @DisplayName("등산로 ID로 등산롸 좌표 List 가져오기")
+    @DisplayName("등산로 ID로 등산로 좌표 List 가져오기")
     void showTrailDetails() {
         // given
         List<TrailDetail> list = List.of(trailDetail1, trailDetail2);
@@ -111,6 +112,7 @@ public class TrailServiceTest {
 
         // then
         assertThat(allTrailDetailsByTrailId).hasSize(2);
-        assertThat(allTrailDetailsByTrailId.get(0).getDifficulty()).isEqualTo(trailDetail1Difficulty);
+        assertThat(allTrailDetailsByTrailId.size()).isNotEqualTo(3);
+        assertThat(allTrailDetailsByTrailId.get(0).getDifficulty()).isEqualTo(trailDetail1.getDifficulty());
     }
 }

@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import orm.orm_backend.configuration.Mountain100Config;
 import orm.orm_backend.dto.response.MountainResponseDto;
+import orm.orm_backend.dto.response.SearchMountainResponseDto;
 import orm.orm_backend.entity.Mountain;
 import orm.orm_backend.repository.MountainRepository;
 
@@ -19,7 +20,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
-
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -70,8 +70,8 @@ public class MountainServiceTest {
         // when
         MountainResponseDto mountainDto = mountainService.getMountainDtoById(id);
 
-        assertThat(mountainDto.getName()).isEqualTo(mountain1Name);
-        assertThat(mountainDto.getCode()).isNotEqualTo(mountain2Code);
+        assertThat(mountainDto.getName()).isEqualTo(mountain1.getMountainName());
+        assertThat(mountainDto.getCode()).isNotEqualTo(mountain2.getMountainCode());
     }
 
     @Test
@@ -83,16 +83,16 @@ public class MountainServiceTest {
         when(mountainRepository.findByMountainNameContaining(name)).thenReturn(list);
 
         // when
-        List<Mountain> allMountains = mountainService.getMountainsBySearch(name);
+        List<SearchMountainResponseDto> allMountains = mountainService.getMountainsBySearch(name);
 
         // then
-        assertThat(allMountains.size()).isEqualTo(2);
-        assertThat(allMountains.get(0).getId()).isEqualTo(mountain1Id);
-        assertThat(allMountains.get(0).getMountainName()).isEqualTo(mountain1Name);
-        assertThat(allMountains.get(0).getMountainCode()).isEqualTo(mountain1Code);
+        assertThat(allMountains).hasSize(2);
+        assertThat(allMountains.get(0).getId()).isEqualTo(mountain1.getId());
+        assertThat(allMountains.get(0).getName()).isEqualTo(mountain1.getMountainName());
+        assertThat(allMountains.get(0).getCode()).isEqualTo(mountain1.getMountainCode());
         assertThat(allMountains.get(1).getId()).isNotEqualTo(100);
-        assertThat(allMountains.get(1).getMountainCode()).isNotEqualTo("Error");
-        assertThat(allMountains.get(1).getMountainCode()).isNotEqualTo("99999999");
+        assertThat(allMountains.get(1).getCode()).isNotEqualTo("Error");
+        assertThat(allMountains.get(1).getCode()).isNotEqualTo("99999999");
     }
 
     @Test
@@ -104,15 +104,15 @@ public class MountainServiceTest {
         when(mountainRepository.findByMountainCodeIn(theFamous)).thenReturn(list);
 
         // when
-        List<Mountain> mountains100 = mountainService.get100Mountains();
+        List<SearchMountainResponseDto> mountains100 = mountainService.get100Mountains();
 
         // then
         assertThat(mountains100.size()).isEqualTo(2);
-        assertThat(mountains100.get(0).getId()).isEqualTo(mountain1Id);
-        assertThat(mountains100.get(0).getMountainName()).isEqualTo(mountain1Name);
-        assertThat(mountains100.get(0).getMountainCode()).isEqualTo(mountain1Code);
+        assertThat(mountains100.get(0).getId()).isEqualTo(mountain1.getId());
+        assertThat(mountains100.get(0).getName()).isEqualTo(mountain1.getMountainName());
+        assertThat(mountains100.get(0).getCode()).isEqualTo(mountain1.getMountainCode());
         assertThat(mountains100.get(1).getId()).isNotEqualTo(100);
-        assertThat(mountains100.get(1).getMountainName()).isNotEqualTo("Error");
-        assertThat(mountains100.get(1).getMountainCode()).isNotEqualTo("99999999");
+        assertThat(mountains100.get(1).getName()).isNotEqualTo("Error");
+        assertThat(mountains100.get(1).getCode()).isNotEqualTo("99999999");
     }
 }
