@@ -143,7 +143,7 @@ public class ClubService {
 
         Map<String, Object> result = new HashMap<>();
         result.put("members", members);
-        result.put("requestMembers", applicants);
+        result.put("applicants", applicants);
 
         return result;
     }
@@ -155,6 +155,17 @@ public class ClubService {
 
     // 가입 신청
     public Applicant joinClub(ApplicantRequestDto applicantRequestDto) {
+        Integer userId = applicantRequestDto.getUserId();
+        Integer clubId = applicantRequestDto.getClubId();
+
+        if (applicantService.isContained(userId, clubId)) {
+            throw new CustomException(ErrorCode.ALREADY_APPLIED);
+        }
+
+        if (memberService.isContained(userId, clubId)) {
+            throw new CustomException(ErrorCode.ALREADY_JOINED);
+        }
+
         // user 찾기
         User user = userService.findUserById(applicantRequestDto.getUserId());
         // club 찾기

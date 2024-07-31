@@ -16,6 +16,8 @@ public enum ErrorCode {
 
     // Club
     INVALID_CLUB_ID(HttpStatus.BAD_REQUEST, "해당 클럽이 존재하지 않습니다."),
+    ALREADY_JOINED(HttpStatus.BAD_REQUEST, "이미 가입한 클럽입니다."),
+    ALREADY_APPLIED(HttpStatus.BAD_REQUEST, "이미 가입 신청한 클럽입니다."),
     ;
     private final HttpStatus status;
     private final String message;
