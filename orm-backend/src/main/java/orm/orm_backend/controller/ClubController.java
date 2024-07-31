@@ -32,7 +32,9 @@ public class ClubController {
     private final ClubService clubService;
 
     @PostMapping("/create")
-    public ResponseEntity<Integer> createClub(@RequestPart("createClub") ClubRequestDto clubRequestDto, @RequestPart(value = "imgFile", required = false) MultipartFile imgFile, HttpServletRequest request) {
+    public ResponseEntity<Integer> createClub(@RequestPart("createClub") ClubRequestDto clubRequestDto,
+                                              @RequestPart(value = "imgFile", required = false) MultipartFile imgFile,
+                                              HttpServletRequest request) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         Integer clubId = clubService.createClub(clubRequestDto, imgFile, userId);

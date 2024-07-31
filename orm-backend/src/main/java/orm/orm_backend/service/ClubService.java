@@ -60,12 +60,7 @@ public class ClubService {
     }
 
     public ClubResponseDto updateClub(ClubRequestDto clubRequestDto, Integer clubId, Integer userId, MultipartFile imgFile) {
-        Optional<Club> opt = clubRepository.findById(clubId);
-
-        if(opt.isEmpty()) {
-            throw new CustomException(ErrorCode.INVALID_CLUB_ID);
-        }
-        Club club = opt.get();
+        Club club = clubRepository.findById(clubId).orElseThrow(() -> new CustomException(ErrorCode.INVALID_CLUB_ID));
 
         if (!club.getManager().getId().equals(userId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
@@ -75,10 +70,11 @@ public class ClubService {
         String imageSrc = null;
 
         if (imgFile != null) {
-            if (club.getImageSrc() != null) {
-                imageUtil.deleteImage(club.getImageSrc());
-            }
             imageSrc = imageUtil.saveImage(imgFile, IMAGE_PATH);
+        }
+
+        if (club.getImageSrc() != null) {
+            imageUtil.deleteImage(club.getImageSrc());
         }
 
         Mountain mountain = mountainService.getMountainById(clubRequestDto.getMountainId());
