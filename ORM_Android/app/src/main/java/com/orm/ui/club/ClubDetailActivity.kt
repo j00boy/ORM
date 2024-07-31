@@ -42,13 +42,12 @@ class ClubDetailActivity : AppCompatActivity() {
         }
 
         binding.btnMember.setOnClickListener {
-            if (club?.isMember != true) {
-                // TODO : 클럽 멤버 리스트 페이지 이동
+            if (club?.isMember == true) {
+                startActivity(Intent(this, ClubMemberActivity::class.java))
             }
         }
 
-        // TODO : reverse condition
-        if (userViewModel.user.value?.userId != club?.managerId) {
+        if (userViewModel.user.value?.userId == club?.managerId) {
             binding.btnEdit.visibility = View.VISIBLE
         } else {
             binding.btnEdit.visibility = View.INVISIBLE

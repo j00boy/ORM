@@ -12,6 +12,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
@@ -53,7 +54,16 @@ interface ClubService {
     fun createClubs(
         @Part("createClub") createClub: RequestBody,
         @Part imgFile: MultipartBody.Part?
-    ): Call<ResponseBody>
+    ): Call<Int>
+
+    @Multipart
+    @PATCH("clubs/{clubId}")
+    fun updateClubs(
+        @Path("clubId") clubId: Int,
+        @Part("createClub") createClub: RequestBody,
+        @Part imgFile: MultipartBody.Part?
+    ): Call<Unit>
+
 
     @GET("clubs/name/check-duplicate")
     fun checkDuplicateClubs(

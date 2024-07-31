@@ -41,8 +41,8 @@ class UserRepository @Inject constructor(
             try {
                 val response = userService.loginAuto().execute()
                 if (response.isSuccessful) {
-                    Log.d("test", response.headers().get("accessToken").toString())
-                    saveAccessToken(response.headers().get("accessToken").toString())
+                    Log.d("test", response.headers()["accessToken"].toString())
+                    saveAccessToken(response.headers()["accessToken"].toString())
 
                     val body = response.body() ?: throw Exception("Login failed")
                     saveUserInfo(body)
@@ -53,6 +53,21 @@ class UserRepository @Inject constructor(
             } catch (e: Exception) {
                 Log.e("UserRepository", "Error during auto login", e)
                 null
+            }
+        }
+    }
+
+    suspend fun registerFirebaseToken(firebaseToken: String) {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = userService.registerFirebaseToken(firebaseToken).execute()
+                if (response.isSuccessful) {
+                    Log.d("UserRepository", "registerFirebaseToken: $firebaseToken")
+                } else {
+                    throw Exception(response.errorBody()?.string())
+                }
+            } catch (e: Exception) {
+                Log.d("UserRepository", "Error during auto login", e)
             }
         }
     }

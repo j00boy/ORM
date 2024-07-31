@@ -40,17 +40,17 @@ class ClubRepository @Inject constructor(
                 if (response.isSuccessful) {
                     val responseBody = response.body()
                     val members = responseBody?.get("members") ?: emptyList()
-                    val applicants = responseBody?.get("applicants") ?: emptyList()
+                    val requestMembers = responseBody?.get("requestMembers") ?: emptyList()
                     resultMap["members"] = members
-                    resultMap["applicants"] = applicants
+                    resultMap["requestMembers"] = requestMembers
                 } else {
                     resultMap["members"] = emptyList()
-                    resultMap["applicants"] = emptyList()
+                    resultMap["requestMembers"] = emptyList()
                 }
             } catch (e: Exception) {
                 Log.e("ClubRepository", "Error getting members", e)
                 resultMap["members"] = emptyList()
-                resultMap["applicants"] = emptyList()
+                resultMap["requestMembers"] = emptyList()
             }
 
             resultMap
@@ -93,19 +93,38 @@ class ClubRepository @Inject constructor(
         }
     }
 
-    suspend fun createClubs(createClub: RequestBody, imgFile: MultipartBody.Part): Int? {
+    suspend fun createClubs(createClub: RequestBody, imgFile: MultipartBody.Part): Int {
         return withContext(Dispatchers.IO) {
             try {
                 val response = clubService.createClubs(createClub, imgFile).execute()
                 if (response.isSuccessful) {
-                    val responseBody = response.body()?.string()
-                    responseBody?.toIntOrNull()
+                    response.body() ?: -1
                 } else {
-                    null
+                    -1
                 }
             } catch (e: Exception) {
                 Log.e("ClubRepository", "Error creating club", e)
-                null
+                -1
+            }
+        }
+    }
+
+    suspend fun updateClubs(
+        clubId: Int,
+        createClub: RequestBody,
+        imgFile: MultipartBody.Part
+    ): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = clubService.updateClubs(clubId, createClub, imgFile).execute()
+                if (response.isSuccessful) {
+                    true
+                } else {
+                    false
+                }
+            } catch (e: Exception) {
+                Log.e("ClubRepository", "Error creating club", e)
+                false
             }
         }
     }

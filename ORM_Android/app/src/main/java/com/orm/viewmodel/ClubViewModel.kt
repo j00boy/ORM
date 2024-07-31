@@ -114,6 +114,22 @@ class ClubViewModel @Inject constructor(
         }
     }
 
+    fun updateClubs(cludId: Int, clubCreate: ClubCreate, imgFile: File?) {
+        viewModelScope.launch {
+            try {
+                val createClubRequestBody = createClubRequestBody(clubCreate)
+                val imgFilePart = createImagePart(imgFile)
+
+                val result = clubRepository.updateClubs(cludId, createClubRequestBody, imgFilePart)
+                _isOperationSuccessful.postValue(result)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _clubId.postValue(null)
+                _isOperationSuccessful.postValue(false)
+            }
+        }
+    }
+
     fun checkDuplicateClubs(clubName: String) {
         viewModelScope.launch {
             try {
