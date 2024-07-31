@@ -60,7 +60,11 @@ public class ImageUtil {
             try {
                 sftpChannel.stat(REMOTE_UPLOAD_DIR + directoryPath);
             } catch (SftpException e) {
-                sftpChannel.mkdir(REMOTE_UPLOAD_DIR + directoryPath);
+                StringBuilder directory = new StringBuilder(REMOTE_UPLOAD_DIR);
+                for (String path : directoryPath.split("/")) {
+                    directory.append("/").append(path);
+                    sftpChannel.mkdir(directory.toString());
+                }
             }
 
             sftpChannel.put(inputStream, REMOTE_UPLOAD_DIR + directoryPath + fileName);
