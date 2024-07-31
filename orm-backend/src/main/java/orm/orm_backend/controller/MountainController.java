@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import orm.orm_backend.dto.response.MountainResponseDto;
 import orm.orm_backend.dto.response.TrailResponseDto;
+import orm.orm_backend.entity.Mountain;
 import orm.orm_backend.service.MountainService;
 import orm.orm_backend.service.TrailService;
 
@@ -24,9 +25,9 @@ public class MountainController {
     private final TrailService trailService;
 
     @GetMapping("/top")
-    public ResponseEntity<List<MountainResponseDto>> get100Mountains() {
-        List<MountainResponseDto> mountainDtos = mountainService.get100Mountains();
-        return ResponseEntity.ok().body(mountainDtos);
+    public ResponseEntity<List<Mountain>> get100Mountains() {
+        List<Mountain> mountains = mountainService.get100Mountains();
+        return ResponseEntity.ok().body(mountains);
     }
 
     @GetMapping("/{mountainId}")
@@ -36,9 +37,9 @@ public class MountainController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<MountainResponseDto>> getAllMountains(String name) {
-        List<MountainResponseDto> mountainDtos = mountainService.getAllMountains(name);
-        return ResponseEntity.ok().body(mountainDtos);
+    public ResponseEntity<List<Mountain>> getMountainsBySearch(String name) {
+        List<Mountain> mountains = mountainService.getMountainsBySearch(name);
+        return ResponseEntity.ok().body(mountains);
     }
 
     @GetMapping("/trail/{trailId}")

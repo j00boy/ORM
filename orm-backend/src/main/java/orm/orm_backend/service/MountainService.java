@@ -33,28 +33,14 @@ public class MountainService {
     }
 
     // name으로 산 조회
-    public List<MountainResponseDto> getAllMountains(String name) {
-        List<Mountain> mountains = mountainRepository.findByMountainNameContaining(name);
-        List<MountainResponseDto> mountainResponseDtos = new ArrayList<>();
-        for(Mountain mountain : mountains) {
-            List<TrailResponseDto> trailsByMountainId = trailService.getTrailsByMountainId(mountain.getId());
-            MountainResponseDto dto = new MountainResponseDto(mountain, trailsByMountainId);
-            mountainResponseDtos.add(dto);
-        }
-        return mountainResponseDtos;
+    public List<Mountain> getMountainsBySearch(String name) {
+        return mountainRepository.findByMountainNameContaining(name);
     }
 
     // 100대 명산 조회
-    public List<MountainResponseDto> get100Mountains() {
+    public List<Mountain> get100Mountains() {
         List<String> mountainCodes = Mountain100Config.CODE_100;
-        List<Mountain> mountains = mountainRepository.findByMountainCodeIn(mountainCodes);
-        List<MountainResponseDto> mountainResponseDtos = new ArrayList<>();
-        for(Mountain mountain : mountains) {
-            List<TrailResponseDto> trailsByMountainId = trailService.getTrailsByMountainId(mountain.getId());
-            MountainResponseDto dto = new MountainResponseDto(mountain, trailsByMountainId);
-            mountainResponseDtos.add(dto);
-        }
-        return mountainResponseDtos;
+        return mountainRepository.findByMountainCodeIn(mountainCodes);
     }
 
 }
