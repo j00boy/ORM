@@ -60,7 +60,7 @@ interface ClubService {
     @PATCH("clubs/{clubId}")
     fun updateClubs(
         @Path("clubId") clubId: Int,
-        @Part("createClub") createClub: RequestBody,
+        @Part("updateClub") createClub: RequestBody,
         @Part imgFile: MultipartBody.Part?
     ): Call<Unit>
 

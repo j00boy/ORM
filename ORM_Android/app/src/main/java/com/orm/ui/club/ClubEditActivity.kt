@@ -82,8 +82,15 @@ class ClubEditActivity : AppCompatActivity() {
                     )
 
                     // TODO : image upload
-                    clubViewModel.createClubs(clubCreate, null)
+                    if (club == null) {
+                        Log.d("ClubEditActivity create", "club: $club")
+                        clubViewModel.createClubs(clubCreate, null)
+                    } else {
+                        Log.d("ClubEditActivity edit", "club: $club")
+                        clubViewModel.updateClubs(club!!.id, clubCreate, null)
+                    }
                     dialog.dismiss()
+                    finish()
                 }
                 .show()
         }

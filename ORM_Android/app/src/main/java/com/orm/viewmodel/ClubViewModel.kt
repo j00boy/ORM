@@ -114,13 +114,13 @@ class ClubViewModel @Inject constructor(
         }
     }
 
-    fun updateClubs(cludId: Int, clubCreate: ClubCreate, imgFile: File?) {
+    fun updateClubs(clubId: Int, clubCreate: ClubCreate, imgFile: File?) {
         viewModelScope.launch {
             try {
                 val createClubRequestBody = createClubRequestBody(clubCreate)
                 val imgFilePart = createImagePart(imgFile)
 
-                val result = clubRepository.updateClubs(cludId, createClubRequestBody, imgFilePart)
+                val result = clubRepository.updateClubs(clubId, createClubRequestBody, imgFilePart)
                 _isOperationSuccessful.postValue(result)
             } catch (e: Exception) {
                 e.printStackTrace()
