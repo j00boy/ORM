@@ -2,6 +2,7 @@ package orm.orm_backend.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public class TrailDetail {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne
@@ -20,5 +21,13 @@ public class TrailDetail {
     private Integer difficulty;
     private String latitude;
     private String longitude;
+
+    @Builder
+    public TrailDetail(Trail trail, Integer difficulty, String latitude, String longitude) {
+        this.trail = trail;
+        this.difficulty = difficulty;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 
 }
