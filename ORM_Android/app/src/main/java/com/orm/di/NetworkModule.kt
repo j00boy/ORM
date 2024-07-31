@@ -5,6 +5,7 @@ import com.orm.data.api.ClubService
 import com.orm.data.api.MountainService
 import com.orm.data.api.TraceService
 import com.orm.data.api.UserService
+import com.orm.data.api.WeatherService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,6 +17,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -80,6 +82,22 @@ object NetworkModule {
     @Singleton
     fun provideUserService(retrofit: Retrofit): UserService {
         return retrofit.create(UserService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    @Named("weatherRetrofit")
+    fun provideWeatherRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("http://api.openweathermap.org/data/2.5/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideWeatherService(@Named("weatherRetrofit") retrofit: Retrofit): WeatherService {
+        return retrofit.create(WeatherService::class.java)
     }
 
 }
