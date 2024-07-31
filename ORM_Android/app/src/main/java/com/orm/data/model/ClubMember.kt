@@ -20,8 +20,6 @@ data class ClubMember(
                 imageSrc = clubMember.imgSrc!!,
                 title = clubMember.nickname,
                 subTitle = clubMember.introduction,
-                btnUp = "수락",
-                btnDown = "거절",
             )
         }
     }

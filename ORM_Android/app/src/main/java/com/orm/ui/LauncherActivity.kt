@@ -1,20 +1,14 @@
 package com.orm.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
-import com.orm.databinding.ActivityLauncherBinding
 import com.orm.util.NetworkUtils
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LauncherActivity : AppCompatActivity() {
@@ -25,12 +19,13 @@ class LauncherActivity : AppCompatActivity() {
 
         installSplashScreen()
 
-        userViewModel.isLoading.observe(this) { isLoading ->
-            if (!isLoading) {
-                val token = userViewModel.token.value
-                handleToken(token)
-            }
-        }
+//        userViewModel.isLoading.observe(this) { isLoading ->
+//            if (!isLoading) {
+//                val token = userViewModel.token.value
+//                handleToken(token)
+//            }
+//        }
+        startActivity(Intent(this, MainActivity::class.java))
     }
 
     private fun handleToken(token: String?) {

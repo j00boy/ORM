@@ -37,7 +37,6 @@
             android:layout_height="0dp"
             android:layout_marginHorizontal="12dp"
             android:scrollbars="none"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
             <LinearLayout
@@ -75,7 +74,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="24dp"
-                        android:text="@{mountain.desc}"
+                        android:text="@{(mountain.desc.length() != 0) ? mountain.desc : `설명이 없습니다.`}"
                         android:textSize="16sp" />
 
                 </com.google.android.material.card.MaterialCardView>
@@ -84,31 +83,41 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="18dp"
+                    android:layout_marginBottom="12dp"
                     android:text="날씨"
                     android:textSize="24sp" />
 
                 <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/fcv_weather"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="135dp" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="18dp"
+                    android:layout_marginBottom="12dp"
                     android:text="등산로 정보"
                     android:textSize="24sp" />
 
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/fcv_map"
+                    android:name="com.orm.ui.fragment.map.GoogleMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="270dp" />
+
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="18dp"
-                    android:text="이 산을 대표로 하는 모임"
+                    android:layout_marginBottom="12dp"
+                    android:text="@{mountain.name + `을 대표로 하는 모임`}"
                     android:textSize="24sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     tools:listitem="@layout/profile_basic" />
 
             </LinearLayout>

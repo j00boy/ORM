@@ -15,13 +15,15 @@ import com.orm.data.model.recycler.RecyclerViewButtonItem
 class ProfileButtonAdapter(private val items: List<RecyclerViewButtonItem>) :
     RecyclerView.Adapter<ProfileButtonAdapter.ProfileButtonViewHolder>() {
     private lateinit var itemClickListener: OnItemClickListener
+    private lateinit var type: String
+    private lateinit var userId: String
 
     inner class ProfileButtonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val ivThumbnail = itemView.findViewById<ImageView>(R.id.iv_thumbnail)
-        val tvMain = itemView.findViewById<TextView>(R.id.tv_main)
-        val tvSub = itemView.findViewById<TextView>(R.id.tv_sub)
-        val btnUp = itemView.findViewById<TextView>(R.id.btn_accept)
-        val btnDown = itemView.findViewById<Button>(R.id.btn_reject)
+        val ivThumbnail: ImageView = itemView.findViewById(R.id.iv_thumbnail)
+        val tvMain: TextView = itemView.findViewById(R.id.tv_main)
+        val tvSub: TextView = itemView.findViewById(R.id.tv_sub)
+        val btnUp: Button = itemView.findViewById(R.id.btn_accept)
+        val btnDown: Button = itemView.findViewById(R.id.btn_reject)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileButtonViewHolder {
@@ -37,11 +39,23 @@ class ProfileButtonAdapter(private val items: List<RecyclerViewButtonItem>) :
         )
         holder.tvMain.text = items[position].title
         holder.tvSub.text = items[position].subTitle
-        holder.btnUp.text = items[position].btnUp
-        holder.btnDown.text = items[position].btnDown
+
+        if (this.type == "member") {
+            if (items[position].id != userId.toInt()) {
+                holder.btnUp.visibility = View.GONE
+            }
+            holder.btnUp.text = "탈퇴"
+            holder.btnDown.visibility = View.GONE
+        }
 
         holder.itemView.setOnClickListener {
             itemClickListener.onClick(it, position)
+        }
+        holder.btnUp.setOnClickListener {
+            itemClickListener.onClickBtnUp(it, position)
+        }
+        holder.btnDown.setOnClickListener {
+            itemClickListener.onClickBtnDown(it, position)
         }
     }
 
@@ -51,10 +65,20 @@ class ProfileButtonAdapter(private val items: List<RecyclerViewButtonItem>) :
 
     interface OnItemClickListener {
         fun onClick(v: View, position: Int)
+        fun onClickBtnUp(v: View, position: Int)
+        fun onClickBtnDown(v: View, position: Int)
     }
 
     fun setItemClickListener(onItemClickListener: OnItemClickListener) {
         this.itemClickListener = onItemClickListener
+    }
+
+    fun setType(type: String) {
+        this.type = type
+    }
+
+    fun setUserId(userId: String) {
+        this.userId = userId
     }
 
     private fun String.getNetworkImage(context: Context, view: ImageView) {

@@ -5,6 +5,4 @@ data class RecyclerViewButtonItem(
     val imageSrc: String,
     val title: String,
     val subTitle: String? = null,
-    val btnUp: String,
-    val btnDown: String,
 )
