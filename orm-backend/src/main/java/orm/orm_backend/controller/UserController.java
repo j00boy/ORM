@@ -62,6 +62,7 @@ public class UserController {
     public ResponseEntity<Void> registerFirebase(HttpServletRequest request, @RequestBody String firebaseToken) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userIdFromAccessToken = jwtUtil.getUserIdFromAccessToken(accessToken);
+        firebaseToken = firebaseToken.replaceAll("\"", "");
         userService.registerFirebaseToken(firebaseToken, userIdFromAccessToken);
         return ResponseEntity.ok().build();
     }
