@@ -24,6 +24,7 @@ class TraceRepository @Inject constructor(
 
     suspend fun createTrace(trace: Trace): Long {
         return withContext(Dispatchers.IO) {
+            val result = traceDao.insertTrace(trace)
             if (NetworkUtils.isNetworkAvailable(context)) {
                 try {
                     traceService.createTrace(trace).execute()
@@ -31,12 +32,13 @@ class TraceRepository @Inject constructor(
                     Log.e("TraceRepository", "Error creating trace", e)
                 }
             }
-            traceDao.insertTrace(trace)
+            result
         }
     }
 
-    suspend fun deleteTrace(trace: Trace) {
+    suspend fun deleteTrace(trace: Trace): Int {
         return withContext(Dispatchers.IO) {
+            val result = traceDao.deleteTrace(trace)
             if (NetworkUtils.isNetworkAvailable(context)) {
                 try {
                     traceService.deleteTrace(trace.id!!).execute()
@@ -44,7 +46,7 @@ class TraceRepository @Inject constructor(
                     Log.e("TraceRepository", "Error deleting trace", e)
                 }
             }
-            traceDao.deleteTrace(trace)
+            result
         }
     }
 
@@ -54,8 +56,9 @@ class TraceRepository @Inject constructor(
         }
     }
 
-    suspend fun updateTrace(trace: Trace) {
+    suspend fun updateTrace(trace: Trace): Long {
         return withContext(Dispatchers.IO) {
+            val result = traceDao.insertTrace(trace)
             if (NetworkUtils.isNetworkAvailable(context)) {
                 try {
                     traceService.updateTrace(trace).execute()
@@ -63,12 +66,13 @@ class TraceRepository @Inject constructor(
                     Log.e("TraceRepository", "Error updating trace", e)
                 }
             }
-            traceDao.insertTrace(trace)
+            result
         }
     }
 
     suspend fun measureComplete(trace: Trace): Long {
         return withContext(Dispatchers.IO) {
+            val result = traceDao.insertTrace(trace)
             if (NetworkUtils.isNetworkAvailable(context)) {
                 try {
                     traceService.measureComplete(trace).execute()
@@ -76,7 +80,7 @@ class TraceRepository @Inject constructor(
                     Log.e("TraceRepository", "Error measuring complete trace", e)
                 }
             }
-            traceDao.insertTrace(trace)
+            result
         }
     }
 }
