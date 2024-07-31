@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.orm.data.model.User
 import com.orm.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +22,10 @@ class UserViewModel @Inject constructor(
 
     private val _token = MutableLiveData<String>()
     val token: LiveData<String> get() = _token
+
+
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
 
     init {
         getAccessToken()
@@ -52,15 +58,25 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    fun registerFirebaseToken(firebaseToken: String) {
+        viewModelScope.launch {
+            Log.d("UserViewModel", "registerFirebaseToken")
+            userRepository.registerFirebaseToken(firebaseToken)
+        }
+    }
+
     fun getAccessToken() {
         Log.d("UserViewModel", "getAccessToken")
+        _isLoading.value = true
         viewModelScope.launch {
-            val token: String = userRepository.getAccessToken()
-            if (token.isEmpty()) {
-                Log.d("UserViewModel", "token is empty")
-            } else {
+            try {
+                val token: String = userRepository.getAccessToken()
                 _token.postValue(token)
-                Log.d("UserViewModel", "token= $_token")
+            } catch (e: Exception) {
+                Log.e("UserViewModel", "getAccessToken failed: ${e.message}", e)
+                _token.postValue("")
+            } finally {
+                _isLoading.postValue(false)
             }
         }
     }
@@ -79,4 +95,5 @@ class UserViewModel @Inject constructor(
             userRepository.deleteUserInfo()
         }
     }
+
 }
