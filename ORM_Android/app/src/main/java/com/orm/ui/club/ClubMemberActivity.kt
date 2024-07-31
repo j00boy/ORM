@@ -21,8 +21,10 @@ class ClubMemberActivity : AppCompatActivity() {
         ActivityClubMemberBinding.inflate(layoutInflater)
     }
     private val clubViewModel: ClubViewModel by viewModels()
-    private val rvBoard: RecyclerView by lazy { binding.recyclerView }
-    private lateinit var adapter: ProfileButtonAdapter
+    private val rvMemberList: RecyclerView by lazy { binding.rvMemberList }
+    private val rvApplicant: RecyclerView by lazy { binding.rvApplicant }
+    private lateinit var adapterMemberList: ProfileButtonAdapter
+    private lateinit var adapterApplicant: ProfileButtonAdapter
 
     private val club: Club? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -38,8 +40,9 @@ class ClubMemberActivity : AppCompatActivity() {
 
         clubViewModel.getMembers(club!!.id)
         clubViewModel.members.observe(this@ClubMemberActivity){
-            Log.d("clubTest", it["members"].toString())
-            setupAdapter(it["members"])
+            Log.d("clubTest", it["applicants"].toString())
+            setupAdapterMemberList(it["members"])
+            setupAdapterApplicant(it["applicants"])
         }
 
         binding.topAppBar.setNavigationOnClickListener {
@@ -47,11 +50,19 @@ class ClubMemberActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupAdapter(members: List<ClubMember>?) {
-        adapter =
+    private fun setupAdapterMemberList(members: List<ClubMember>?) {
+        adapterMemberList =
             ProfileButtonAdapter(members!!.map { ClubMember.toRecyclerViewButtonItem(it) })
 
-        rvBoard.adapter = adapter
-        rvBoard.layoutManager = LinearLayoutManager(this@ClubMemberActivity)
+        rvMemberList.adapter = adapterMemberList
+        rvMemberList.layoutManager = LinearLayoutManager(this@ClubMemberActivity)
+    }
+
+    private fun setupAdapterApplicant(applicant: List<ClubMember>?) {
+        adapterApplicant =
+            ProfileButtonAdapter(applicant!!.map { ClubMember.toRecyclerViewButtonItem(it) })
+
+        rvApplicant.adapter = adapterApplicant
+        rvApplicant.layoutManager = LinearLayoutManager(this@ClubMemberActivity)
     }
 }

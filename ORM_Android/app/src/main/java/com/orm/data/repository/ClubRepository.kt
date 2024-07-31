@@ -40,17 +40,17 @@ class ClubRepository @Inject constructor(
                 if (response.isSuccessful) {
                     val responseBody = response.body()
                     val members = responseBody?.get("members") ?: emptyList()
-                    val requestMembers = responseBody?.get("requestMembers") ?: emptyList()
+                    val applicants = responseBody?.get("applicants") ?: emptyList()
                     resultMap["members"] = members
-                    resultMap["requestMembers"] = requestMembers
+                    resultMap["applicants"] = applicants
                 } else {
                     resultMap["members"] = emptyList()
-                    resultMap["requestMembers"] = emptyList()
+                    resultMap["applicants"] = emptyList()
                 }
             } catch (e: Exception) {
                 Log.e("ClubRepository", "Error getting members", e)
                 resultMap["members"] = emptyList()
-                resultMap["requestMembers"] = emptyList()
+                resultMap["applicants"] = emptyList()
             }
 
             resultMap
