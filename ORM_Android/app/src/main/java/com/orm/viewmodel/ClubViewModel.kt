@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.orm.data.local.dao.ClubDao
+import com.orm.data.model.ClubMember
 import com.orm.data.model.club.ClubApprove
 import com.orm.data.model.club.Club
 import com.orm.data.model.RequestMember
@@ -34,8 +35,8 @@ class ClubViewModel @Inject constructor(
     private val _clubs = MutableLiveData<List<Club>>()
     val clubs: LiveData<List<Club>> get() = _clubs
 
-    private val _members = MutableLiveData<Map<String, List<Any?>>>()
-    val members: LiveData<Map<String, List<Any?>>> get() = _members
+    private val _members = MutableLiveData<Map<String, List<ClubMember>>>()
+    val members: LiveData<Map<String, List<ClubMember>>> get() = _members
 
     private val _isOperationSuccessful = MutableLiveData<Boolean?>()
     val isOperationSuccessful: LiveData<Boolean?> get() = _isOperationSuccessful

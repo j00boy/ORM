@@ -1,5 +1,6 @@
 package com.orm.data.api
 
+import com.orm.data.model.ClubMember
 import com.orm.data.model.RequestMember
 import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubApprove
@@ -29,7 +30,7 @@ interface ClubService {
     @GET("clubs/members")
     fun getMembers(
         @Query("clubId") clubId: Int
-    ): Call<Map<String, List<Any>>>
+    ): Call<Map<String, List<ClubMember>>>
 
 
     @POST("clubs/members/approve")

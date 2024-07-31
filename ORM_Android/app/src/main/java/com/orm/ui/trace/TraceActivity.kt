@@ -2,19 +2,15 @@ package com.orm.ui.trace
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.orm.R
-import com.orm.data.model.Mountain
 import com.orm.data.model.Trace
 import com.orm.databinding.ActivityTraceBinding
-import com.orm.ui.adapter.ProfileBasicAdapter
 import com.orm.ui.adapter.ProfileNumberAdapter
-import com.orm.ui.mountain.MountainDetailActivity
 import com.orm.viewmodel.TraceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
