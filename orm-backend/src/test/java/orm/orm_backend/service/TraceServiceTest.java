@@ -26,6 +26,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,22 +54,27 @@ class TraceServiceTest {
     @InjectMocks
     TraceService traceService;
 
+    @Mock
     User user;
     Integer userId;
-    Trail trail;
+
+    @Mock
+    Mountain mountain;
+
+//    @Mock
+    Trace trace;
+
     TraceRequestDto traceRequestDto;
     String traceTitle = "traceTitle";
-    Mountain mountain;
+    Trail trail;
     Integer mountainId;
     Integer trailId;
-    Trace trace;
     Integer traceId;
 
     @BeforeEach
     void init() throws NoSuchFieldException, IllegalAccessException {
         userId = 2;
-        user = User.builder().build();
-        setId(user, userId);
+        lenient().when(user.getId()).thenReturn(userId);
         mountainId = 1;
         trailId = 1;
         trail = null;
@@ -78,11 +84,10 @@ class TraceServiceTest {
                 .hikingDate(new Date(System.currentTimeMillis()).toString())
                 .build();
 
-        mountain = Mountain.builder().build();
-        setId(mountain, mountainId);
+        lenient().when(mountain.getId()).thenReturn(mountainId);
         trace = Trace.builder().traceRequestDto(traceRequestDto).mountain(mountain).trail(trail).user(user).build();
         traceId = 1;
-        setId(trace, traceId);
+//        when(trace.getId()).thenReturn(traceId);
     }
 
     @Test
@@ -116,11 +121,5 @@ class TraceServiceTest {
 
     void isSameDay(Date date1, Date date2) {
         assertThat(date1.toLocalDate()).isEqualTo(date2.toLocalDate());
-    }
-
-    private <T> void setId(T target, Integer id) throws NoSuchFieldException, IllegalAccessException {
-        Field userIdField = target.getClass().getDeclaredField("id");
-        userIdField.setAccessible(true);
-        userIdField.set(target, id);
     }
 }

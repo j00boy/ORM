@@ -20,9 +20,6 @@ public class JwtUtil {
     @Value("${jwt.access-token.expiretime}")
     private long accessTokenExpireTime;
 
-    @Value("${jwt.refresh-token.expiretime}")
-    private long refreshTokenExpireTime;
-
     public String createAccessToken(Integer userId) {
         return create(userId, "access-token", accessTokenExpireTime);
     }

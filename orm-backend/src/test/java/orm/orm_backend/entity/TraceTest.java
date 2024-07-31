@@ -2,19 +2,26 @@ package orm.orm_backend.entity;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import orm.orm_backend.dto.common.TraceDto;
 import orm.orm_backend.dto.request.TraceRequestDto;
 
-import java.lang.reflect.Field;
 import java.sql.Date;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
+
+@ExtendWith(MockitoExtension.class)
 public class TraceTest {
 
-    Integer userId;
+    @Mock
     User user;
+
+    Integer userId;
     Trace trace;
     Mountain mountain;
     Trail trail;
@@ -24,13 +31,8 @@ public class TraceTest {
     @BeforeEach
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
         userId = 1;
-        user = new User();
-        Field userIdField = User.class.getDeclaredField("id");
-        userIdField.setAccessible(true);
-        userIdField.set(user, userId);
         mountain = new Mountain();
         trail = new Trail();
-
         traceRequestDto = TraceRequestDto.builder().title(traceTitle)
                 .hikingDate(new Date(System.currentTimeMillis()).toString()).build();
 
@@ -39,8 +41,9 @@ public class TraceTest {
 
     @Test
     void isOwnerTest() {
-        assertThat(trace.isOwner(userId)).isEqualTo(true);
-        assertThat(trace.isOwner(userId + 1)).isEqualTo(false);
+        when(user.getId()).thenReturn(userId);
+        assertThat(trace.isOwner(user.getId())).isEqualTo(true);
+        assertThat(trace.isOwner(user.getId() + 1)).isEqualTo(false);
         assertThat(trace.isOwner(null)).isEqualTo(false);
     }
 
