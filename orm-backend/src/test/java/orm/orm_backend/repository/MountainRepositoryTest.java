@@ -29,30 +29,48 @@ public class MountainRepositoryTest {
     private Mountain mountain3;
     private List<String> famous;
 
+    private String mountain1Name = "테스트 산1";
+    private String mountain1Code = "11111111";
+    private String mountain1address = "테스트도 테스트시 테스트동";
+    private String mountain1imageSrc = "images/test1.jpg";
+    private String mountain1description = "test1";
+
+    private String mountain2Name = "테스트 산2";
+    private String mountain2Code = "22222222";
+    private String mountain2address = "테스트도 테스트시 테스트동";
+    private String mountain2imageSrc = "images/test2.jpg";
+    private String mountain2description = "test2";
+
+    private String mountain3Name = "일반 산3";
+    private String mountain3Code = "33333333";
+    private String mountain3address = "테스트도 테스트시 테스트동";
+    private String mountain3imageSrc = "images/test3.jpg";
+    private String mountain3description = "test3";
+
     @BeforeEach
     void setUp() {
         mountain1 = Mountain.builder()
-                .mountainName("테스트 산1")
-                .mountainCode("11111111")
-                .address("테스트도 테스트시 테스트동")
-                .imageSrc("images/mountain1.jpg")
-                .description("test1")
+                .mountainName(mountain1Name)
+                .mountainCode(mountain1Code)
+                .address(mountain1address)
+                .imageSrc(mountain1imageSrc)
+                .description(mountain1description)
                 .build();
 
         mountain2 = Mountain.builder()
-                .mountainName("테스트 산2")
-                .mountainCode("22222222")
-                .address("테스트도 테스트시 테스트동")
-                .imageSrc("images/mountain2.jpg")
-                .description("test2")
+                .mountainName(mountain2Name)
+                .mountainCode(mountain2Code)
+                .address(mountain2address)
+                .imageSrc(mountain2imageSrc)
+                .description(mountain2description)
                 .build();
 
         mountain3 = Mountain.builder()
-                .mountainName("test 3")
-                .mountainCode("33333333")
-                .address("test test test")
-                .imageSrc("images/mountain3.jpg")
-                .description("test3")
+                .mountainName(mountain3Name)
+                .mountainCode(mountain3Code)
+                .address(mountain3address)
+                .imageSrc(mountain3imageSrc)
+                .description(mountain3description)
                 .build();
 
         list.add(mountain1);
@@ -72,16 +90,13 @@ public class MountainRepositoryTest {
 
         // Then
         assertThat(mountains).hasSize(2);
-        assertThat(mountains).contains(mountain1, mountain2);
+        assertThat(mountains).containsExactly(mountain1, mountain2);
         assertThat(mountains).doesNotContain(mountain3);
-
-        mountains.forEach(mountain -> log.info(mountain.getMountainName()));
     }
 
     @Test
     @DisplayName("100대 명산 가져오기")
     void get100Mountains() throws Exception {
-
         // given
         famous = Mountain100Config.CODE_100;
 
