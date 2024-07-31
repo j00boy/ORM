@@ -37,10 +37,7 @@ public class MountainService {
     public List<SearchMountainResponseDto> getMountainsBySearch(String name) {
         List<Mountain> mountains = mountainRepository.findByMountainNameContaining(name);
         List<SearchMountainResponseDto> dtos = new ArrayList<>();
-        for(Mountain mountain : mountains) {
-            SearchMountainResponseDto dto = new SearchMountainResponseDto(mountain);
-            dtos.add(dto);
-        }
+        mountains.forEach(m -> dtos.add(new SearchMountainResponseDto(m)));
         return dtos;
     }
 
@@ -49,10 +46,7 @@ public class MountainService {
         List<String> mountainCodes = Mountain100Config.CODE_100;
         List<Mountain> mountains = mountainRepository.findByMountainCodeIn(mountainCodes);
         List<SearchMountainResponseDto> dtos = new ArrayList<>();
-        for(Mountain mountain : mountains) {
-            SearchMountainResponseDto dto = new SearchMountainResponseDto(mountain);
-            dtos.add(dto);
-        }
+        mountains.forEach(m -> dtos.add(new SearchMountainResponseDto(m)));
         return dtos;
     }
 

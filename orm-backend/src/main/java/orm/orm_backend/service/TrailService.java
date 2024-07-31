@@ -23,10 +23,7 @@ public class TrailService {
     public List<TrailResponseDto> getTrailsByMountainId(int mountainId) {
         List<Trail> findTrails = trailRepository.findByMountainId(mountainId);
         List<TrailResponseDto> trailResponseDtos = new ArrayList<>();
-        for (Trail trail : findTrails) {
-            List<TrailDetailResponseDto> allTrailDetailsByTrailId = getAllTrailDetailsByTrailId(trail.getId());
-            trailResponseDtos.add(new TrailResponseDto(trail, allTrailDetailsByTrailId));
-        }
+        findTrails.forEach(trail -> trailResponseDtos.add(new TrailResponseDto(trail, getAllTrailDetailsByTrailId(trail.getId()))));
         return trailResponseDtos;
     }
 
@@ -34,20 +31,15 @@ public class TrailService {
         Trail trail = trailRepository.findById(trailId).orElseThrow();
         List<TrailDetail> findTrailDetails = trailDetailRepository.findTrailDetailsByTrailId(trailId);
         List<TrailDetailResponseDto> trailDetailResponseDtos = new ArrayList<>();
-        for(TrailDetail trailDetail : findTrailDetails) {
-            trailDetailResponseDtos.add(new TrailDetailResponseDto(trailDetail));
-        }
-        TrailResponseDto dto = new TrailResponseDto(trail, trailDetailResponseDtos);
-        return dto;
+        findTrailDetails.forEach(trailDetail -> trailDetailResponseDtos.add(new TrailDetailResponseDto(trailDetail)));
+        return new TrailResponseDto(trail, trailDetailResponseDtos);
     }
 
-    // 등산로ID로 등산로 상세 조회
+    // 등산로 ID로 등산로 상세 조회
     public List<TrailDetailResponseDto> getAllTrailDetailsByTrailId(int trailId) {
         List<TrailDetail> findTrailDetails = trailDetailRepository.findTrailDetailsByTrailId(trailId);
         List<TrailDetailResponseDto> trailDetailResponseDtos = new ArrayList<>();
-        for(TrailDetail trailDetail : findTrailDetails) {
-            trailDetailResponseDtos.add(new TrailDetailResponseDto(trailDetail));
-        }
+        findTrailDetails.forEach(trailDetail -> trailDetailResponseDtos.add(new TrailDetailResponseDto(trailDetail)));
         return trailDetailResponseDtos;
     }
     
