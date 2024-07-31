@@ -83,16 +83,16 @@ public class MountainServiceTest {
         when(mountainRepository.findByMountainNameContaining(name)).thenReturn(list);
 
         // when
-        List<MountainResponseDto> allMountains = mountainService.getAllMountains(name);
+        List<Mountain> allMountains = mountainService.getMountainsBySearch(name);
 
         // then
         assertThat(allMountains.size()).isEqualTo(2);
         assertThat(allMountains.get(0).getId()).isEqualTo(mountain1Id);
-        assertThat(allMountains.get(0).getName()).isEqualTo(mountain1Name);
-        assertThat(allMountains.get(0).getCode()).isEqualTo(mountain1Code);
+        assertThat(allMountains.get(0).getMountainName()).isEqualTo(mountain1Name);
+        assertThat(allMountains.get(0).getMountainCode()).isEqualTo(mountain1Code);
         assertThat(allMountains.get(1).getId()).isNotEqualTo(100);
-        assertThat(allMountains.get(1).getName()).isNotEqualTo("Error");
-        assertThat(allMountains.get(1).getCode()).isNotEqualTo("99999999");
+        assertThat(allMountains.get(1).getMountainCode()).isNotEqualTo("Error");
+        assertThat(allMountains.get(1).getMountainCode()).isNotEqualTo("99999999");
     }
 
     @Test
@@ -104,15 +104,15 @@ public class MountainServiceTest {
         when(mountainRepository.findByMountainCodeIn(theFamous)).thenReturn(list);
 
         // when
-        List<MountainResponseDto> mountains100 = mountainService.get100Mountains();
+        List<Mountain> mountains100 = mountainService.get100Mountains();
 
         // then
         assertThat(mountains100.size()).isEqualTo(2);
         assertThat(mountains100.get(0).getId()).isEqualTo(mountain1Id);
-        assertThat(mountains100.get(0).getName()).isEqualTo(mountain1Name);
-        assertThat(mountains100.get(0).getCode()).isEqualTo(mountain1Code);
+        assertThat(mountains100.get(0).getMountainName()).isEqualTo(mountain1Name);
+        assertThat(mountains100.get(0).getMountainCode()).isEqualTo(mountain1Code);
         assertThat(mountains100.get(1).getId()).isNotEqualTo(100);
-        assertThat(mountains100.get(1).getName()).isNotEqualTo("Error");
-        assertThat(mountains100.get(1).getCode()).isNotEqualTo("99999999");
+        assertThat(mountains100.get(1).getMountainName()).isNotEqualTo("Error");
+        assertThat(mountains100.get(1).getMountainCode()).isNotEqualTo("99999999");
     }
 }

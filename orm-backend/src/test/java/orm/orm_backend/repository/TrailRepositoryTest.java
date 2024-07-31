@@ -31,34 +31,45 @@ public class TrailRepositoryTest {
     private Trail trail2;
     private List<Trail> trails;
 
+    private String mountainCode = "11111111";
+    private String mountainName = "Mountain 1";
+    private String address = "테스트도 테스트시 테스트구";
+
+    private Float distance = 100F;
+    private Float heuristic = 10F;
+    private String startLatitude = "12.345678";
+    private String startLongitude = "123.456789";
+    private String peakLatitude = "12.345678";
+    private String peakLongitude = "123.456789";
+
     @BeforeEach
     void setUp() throws Exception {
         mountain = Mountain.builder()
-                .mountainCode("11111111")
-                .mountainName("Mountain 1")
-                .address("테스트도 테스트시 테스트구")
+                .mountainCode(mountainCode)
+                .mountainName(mountainName)
+                .address(address)
                 .build();
 
         mountainRepository.save(mountain);
 
         trail1 = Trail.builder()
                 .mountain(mountain)
-                .distance(100F)
-                .heuristic(10F)
-                .startLatitude("12.345678")
-                .startLongitude("123.456789")
-                .peakLatitude("98.765432")
-                .peakLongitude("987.654321")
+                .distance(distance)
+                .heuristic(heuristic)
+                .startLatitude(startLatitude)
+                .startLongitude(startLongitude)
+                .peakLatitude(peakLatitude)
+                .peakLongitude(peakLongitude)
                 .build();
 
         trail2 = Trail.builder()
                 .mountain(mountain)
-                .distance(100F)
-                .heuristic(10F)
-                .startLatitude("12.345678")
-                .startLongitude("123.456789")
-                .peakLatitude("98.765432")
-                .peakLongitude("987.654321")
+                .distance(distance)
+                .heuristic(heuristic)
+                .startLatitude(startLatitude)
+                .startLongitude(startLongitude)
+                .peakLatitude(peakLatitude)
+                .peakLongitude(peakLongitude)
                 .build();
 
         trails = new ArrayList<>();
@@ -78,7 +89,8 @@ public class TrailRepositoryTest {
         List<Trail> findList = trailRepository.findByMountainId(id);
 
         // then
+        assertThat(findList).hasSize(2);
         assertThat(findList.size()).isNotEqualTo(3);
-        assertThat(findList).contains(trail1, trail2);
+        assertThat(findList).containsExactly(trail1, trail2);
     }
 }

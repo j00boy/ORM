@@ -59,8 +59,10 @@ public class TrailServiceTest {
     private Integer trail2Id = 3;
 
     private Integer trailDetail1Id = 4;
+    private Integer trailDetail1Difficulty = 1;
 
     private Integer trailDetail2Id = 5;
+    private Integer trailDetail2Difficulty = 2;
 
     @BeforeEach
     public void setUp() {
@@ -76,10 +78,10 @@ public class TrailServiceTest {
 
         lenient().when(trailDetail1.getId()).thenReturn(trailDetail1Id);
         lenient().when(trailDetail1.getTrail()).thenReturn(trail1);
-        lenient().when(trailDetail1.getDifficulty()).thenReturn(1);
+        lenient().when(trailDetail1.getDifficulty()).thenReturn(trailDetail1Difficulty);
 
         lenient().when(trailDetail2.getId()).thenReturn(trailDetail2Id);
-        lenient().when(trailDetail2.getDifficulty()).thenReturn(2);
+        lenient().when(trailDetail2.getDifficulty()).thenReturn(trailDetail2Difficulty);
     }
 
     @Test
@@ -109,6 +111,6 @@ public class TrailServiceTest {
 
         // then
         assertThat(allTrailDetailsByTrailId).hasSize(2);
-        assertThat(allTrailDetailsByTrailId.get(0).getDifficulty()).isNotEqualTo(3);
+        assertThat(allTrailDetailsByTrailId.get(0).getDifficulty()).isEqualTo(trailDetail1Difficulty);
     }
 }

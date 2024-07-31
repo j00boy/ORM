@@ -37,40 +37,55 @@ public class TrailDetailRepositoryTest {
     private TrailDetail trailDetail2;
     private List<TrailDetail> trailDetails;
 
+    private String mountainCode = "11111111";
+    private String mountainName = "Mountain 1";
+    private String address = "테스트도 테스트시 테스트구";
+
+    private Float distance = 100F;
+    private Float heuristic = 10F;
+    private String startLatitude = "12.345678";
+    private String startLongitude = "123.456789";
+    private String peakLatitude = "12.345678";
+    private String peakLongitude = "123.456789";
+
+    private Integer difficulty = 1;
+    private String latitude = "55.555555";
+    private String longitude = "555.555555";
+
     @BeforeEach
     void setUp() {
         mountain = Mountain.builder()
-                .mountainCode("11111111")
-                .mountainName("Mountain 1")
-                .address("테스트도 테스트시 테스트구")
+                .mountainCode(mountainCode)
+                .mountainName(mountainName)
+                .address(address)
                 .build();
 
         mountainRepository.save(mountain);
 
         trail = Trail.builder()
                 .mountain(mountain)
-                .distance(100F)
-                .heuristic(10F)
-                .startLatitude("12.345678")
-                .startLongitude("123.456789")
-                .peakLatitude("98.765432")
-                .peakLongitude("987.654321")
+                .distance(distance)
+                .heuristic(heuristic)
+                .startLatitude(startLatitude)
+                .startLongitude(startLongitude)
+                .peakLatitude(peakLatitude)
+                .peakLongitude(peakLongitude)
                 .build();
 
         trailRepository.save(trail);
 
         trailDetail1 = TrailDetail.builder()
                 .trail(trail)
-                .difficulty(1)
-                .latitude("11.111111")
-                .longitude("222.222222")
+                .difficulty(difficulty)
+                .latitude(latitude)
+                .longitude(longitude)
                 .build();
 
         trailDetail2 = TrailDetail.builder()
                 .trail(trail)
-                .difficulty(2)
-                .latitude("33.333333")
-                .longitude("444.444444")
+                .difficulty(difficulty)
+                .latitude(latitude)
+                .longitude(longitude)
                 .build();
 
         trailDetails = new ArrayList<>();
@@ -91,8 +106,9 @@ public class TrailDetailRepositoryTest {
         List<TrailDetail> findTrailDetails = trailDetailRepository.findTrailDetailsByTrailId(trailId);
 
         // then
+        assertThat(findTrailDetails).hasSize(2);
         assertThat(findTrailDetails.size()).isNotEqualTo(3);
-        assertThat(findTrailDetails.get(0).getLatitude()).isEqualTo("11.111111");
+        assertThat(findTrailDetails.get(0).getLatitude()).isEqualTo(latitude);
     }
 
 }
