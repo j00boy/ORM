@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import orm.orm_backend.dto.request.ClubRequestDto;
 import orm.orm_backend.dto.response.ClubResponseDto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,7 +34,7 @@ public class Club extends BaseEntity {
     private String imageSrc;
 
     @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
-    private List<Member> members;
+    private List<Member> members = new ArrayList<>();
 
     @Builder
     public Club(User manager, Mountain mountain, String clubName, String description, String imageSrc) {
