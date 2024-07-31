@@ -47,10 +47,12 @@ class ClubDetailActivity : AppCompatActivity() {
             }
         }
 
-        if (userViewModel.user.value?.userId == club?.managerId) {
-            binding.btnEdit.visibility = View.VISIBLE
-        } else {
-            binding.btnEdit.visibility = View.INVISIBLE
+        userViewModel.user.observe(this) {
+            if (it != null && it.userId == club?.managerId) {
+                binding.btnEdit.visibility = View.VISIBLE
+            } else {
+                binding.btnEdit.visibility = View.INVISIBLE
+            }
         }
 
         binding.btnEdit.setOnClickListener {
