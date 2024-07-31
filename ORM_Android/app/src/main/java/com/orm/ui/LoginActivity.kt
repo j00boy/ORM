@@ -88,15 +88,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun navigateToMainActivity() {
-        Log.d("LoginActivity", "navigateToMainActivity")
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.e("FirebaseMessaging", "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
-            Log.d("firebase token", task.result)
-            userViewModel.registerFirebaseToken(task.result.toString())
-        })
+        userViewModel.getFirebaseToken()
         startActivity(Intent(this, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         })

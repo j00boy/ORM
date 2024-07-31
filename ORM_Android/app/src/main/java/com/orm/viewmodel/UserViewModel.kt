@@ -27,6 +27,8 @@ class UserViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
+    private var isTokenSent = false
+
     init {
         getAccessToken()
         getUserInfo()
@@ -55,13 +57,6 @@ class UserViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("UserViewModel", "Login failed: ${e.message}", e)
             }
-        }
-    }
-
-    fun registerFirebaseToken(firebaseToken: String) {
-        viewModelScope.launch {
-            Log.d("UserViewModel", "registerFirebaseToken")
-            userRepository.registerFirebaseToken(firebaseToken)
         }
     }
 
@@ -94,6 +89,29 @@ class UserViewModel @Inject constructor(
             userRepository.deleteAccessToken()
             userRepository.deleteUserInfo()
         }
+    }
+
+    fun registerFirebaseToken(firebaseToken: String) {
+        viewModelScope.launch {
+            Log.d("UserViewModel", "registerFirebaseToken")
+            userRepository.registerFirebaseToken(firebaseToken)
+        }
+    }
+
+    fun getFirebaseToken() {
+        if (isTokenSent) return
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.e("FirebaseMessaging", "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            Log.d("firebase token", task.result)
+
+            registerFirebaseToken(task.result.toString())
+
+            isTokenSent = true
+        })
     }
 
 }

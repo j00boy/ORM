@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.findFragmentById(binding.navHostFragmentActivityMain.id) as NavHostFragment
     }
     private lateinit var permissionManager: PermissionManager
-    private val userViewModel: UserViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val permissions = arrayOf(
@@ -42,21 +41,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         checkPermissions()
-        getFirebaseToken()
         NavigationUI.setupWithNavController(binding.navView, navHostFragment.navController)
     }
-
-    // TODO : Firebase Token 서버에 전송
-    private fun getFirebaseToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.e("FirebaseMessaging", "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
-            Log.d("firebase token", task.result)
-        })
-    }
-
 
     private fun checkPermissions() {
         permissionManager = PermissionManager(this)

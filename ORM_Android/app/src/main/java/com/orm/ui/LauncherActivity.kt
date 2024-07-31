@@ -42,14 +42,6 @@ class LauncherActivity : AppCompatActivity() {
         } else {
             Log.e("LauncherActivity", "checkAccessToken: true, token: $token")
             if (isNetworkAvailable) {
-                FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-                    if (!task.isSuccessful) {
-                        Log.e("FirebaseMessaging", "Fetching FCM registration token failed", task.exception)
-                        return@OnCompleteListener
-                    }
-                    Log.d("firebase token", task.result)
-                    userViewModel.registerFirebaseToken(task.result.toString())
-                })
                 userViewModel.loginAuto()
             }
             navigateToActivity(MainActivity::class.java)
