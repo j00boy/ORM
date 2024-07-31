@@ -1,7 +1,6 @@
 package orm.orm_backend.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -81,6 +80,7 @@ public class TrailServiceTest {
         lenient().when(trailDetail1.getDifficulty()).thenReturn(trailDetail1Difficulty);
 
         lenient().when(trailDetail2.getId()).thenReturn(trailDetail2Id);
+        lenient().when(trailDetail2.getTrail()).thenReturn(trail1);
         lenient().when(trailDetail2.getDifficulty()).thenReturn(trailDetail2Difficulty);
     }
 
