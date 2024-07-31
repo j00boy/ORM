@@ -19,13 +19,12 @@ class LauncherActivity : AppCompatActivity() {
 
         installSplashScreen()
 
-//        userViewModel.isLoading.observe(this) { isLoading ->
-//            if (!isLoading) {
-//                val token = userViewModel.token.value
-//                handleToken(token)
-//            }
-//        }
-        startActivity(Intent(this, MainActivity::class.java))
+        userViewModel.isLoading.observe(this) { isLoading ->
+            if (!isLoading) {
+                val token = userViewModel.token.value
+                handleToken(token)
+            }
+        }
     }
 
     private fun handleToken(token: String?) {
