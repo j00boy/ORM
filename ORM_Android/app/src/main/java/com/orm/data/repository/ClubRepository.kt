@@ -2,6 +2,7 @@ package com.orm.data.repository
 
 import android.util.Log
 import com.orm.data.api.ClubService
+import com.orm.data.model.ClubMember
 import com.orm.data.model.club.ClubApprove
 import com.orm.data.model.club.Club
 import com.orm.data.model.RequestMember
@@ -31,9 +32,9 @@ class ClubRepository @Inject constructor(
         }
     }
 
-    suspend fun getMembers(clubId: Int): Map<String, List<Any?>> {
+    suspend fun getMembers(clubId: Int): Map<String, List<ClubMember>> {
         return withContext(Dispatchers.IO) {
-            val resultMap: MutableMap<String, List<Any?>> = mutableMapOf()
+            val resultMap: MutableMap<String, List<ClubMember>> = mutableMapOf()
             try {
                 val response = clubService.getMembers(clubId).execute()
                 if (response.isSuccessful) {
