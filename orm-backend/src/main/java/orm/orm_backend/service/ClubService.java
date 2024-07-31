@@ -8,32 +8,33 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import orm.orm_backend.dto.common.ApplicantDto;
 import orm.orm_backend.dto.request.*;
+import orm.orm_backend.dto.response.ApplicantResponseDto;
 import orm.orm_backend.dto.response.ClubResponseDto;
 import orm.orm_backend.dto.response.MemberResponseDto;
 import orm.orm_backend.entity.*;
+import orm.orm_backend.exception.CustomException;
+import orm.orm_backend.exception.ErrorCode;
 import orm.orm_backend.exception.UnAuthorizedException;
 import orm.orm_backend.repository.ClubRepository;
+import orm.orm_backend.util.ImageUtil;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class ClubService {
-    private final String UPLOADDIR = "src/main/resources/static/uploads/image";
+    private final String IMAGE_PATH = "club/thumbnail/";
+
+    private final ImageUtil imageUtil;
 
     private final UserService userService;
-    private final ClubRepository clubRepository;
     private final MountainService mountainService;
     private final MemberService memberService;
     private final ApplicantService applicantService;
 
+    private final ClubRepository clubRepository;
     public Integer createClub(ClubRequestDto clubRequestDTO, MultipartFile imgFile, Integer userId) {
         // user 찾기
         User user = userService.findUserById(userId);
@@ -44,11 +45,7 @@ public class ClubService {
         String imageSrc = null;
 
         if (imgFile != null) {
-            try {
-                imageSrc = saveImage(imgFile);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            imageSrc = imageUtil.saveImage(imgFile, IMAGE_PATH);
         }
 
         // club 생성
@@ -60,6 +57,29 @@ public class ClubService {
         memberService.saveMember(member);
 
         return club.getId();
+    }
+
+    public ClubResponseDto updateClub(ClubRequestDto clubRequestDto, Integer clubId, Integer userId, MultipartFile imgFile) {
+        Club club = clubRepository.findById(clubId).orElseThrow(() -> new CustomException(ErrorCode.INVALID_CLUB_ID));
+
+        if (!club.getManager().getId().equals(userId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        // 사진 업로드
+        String imageSrc = null;
+
+        if (imgFile != null) {
+            imageSrc = imageUtil.saveImage(imgFile, IMAGE_PATH);
+        }
+
+        if (club.getImageSrc() != null) {
+            imageUtil.deleteImage(club.getImageSrc());
+        }
+
+        Mountain mountain = mountainService.getMountainById(clubRequestDto.getMountainId());
+        club.update(clubRequestDto, mountain, imageSrc);
+        return ClubResponseDto.toMyDto(club);
     }
 
     // Club 조회
@@ -115,28 +135,39 @@ public class ClubService {
         }
 
         List<MemberResponseDto> members = memberService.getMembersInClub(clubId).stream().map(MemberResponseDto::toDto).toList();
-        List<ApplicantDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantDto::toDto).toList();
+        List<ApplicantResponseDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantResponseDto::toDto).toList();
 
         Map<String, Object> result = new HashMap<>();
         result.put("members", members);
-        result.put("requestMembers", applicants);
+        result.put("applicants", applicants);
 
         return result;
     }
 
     // 중복 체크
-    public Boolean isValid(String clubName) {
+    public Boolean isDuplicated(String clubName) {
         return clubRepository.existsByClubName(clubName);
     }
 
     // 가입 신청
-    public Applicant joinClub(ApplicantDto applicantDto) {
+    public Applicant joinClub(ApplicantRequestDto applicantRequestDto) {
+        Integer userId = applicantRequestDto.getUserId();
+        Integer clubId = applicantRequestDto.getClubId();
+
+        if (applicantService.isContained(userId, clubId)) {
+            throw new CustomException(ErrorCode.ALREADY_APPLIED);
+        }
+
+        if (memberService.isContained(userId, clubId)) {
+            throw new CustomException(ErrorCode.ALREADY_JOINED);
+        }
+
         // user 찾기
-        User user = userService.findUserById(applicantDto.getUserId());
+        User user = userService.findUserById(applicantRequestDto.getUserId());
         // club 찾기
-        Club club = clubRepository.findById(applicantDto.getClubId()).orElseThrow(NoResultException::new);
+        Club club = clubRepository.findById(applicantRequestDto.getClubId()).orElseThrow(NoResultException::new);
         // applicant 저장
-        Applicant applicant = applicantDto.toEntity(user, club);
+        Applicant applicant = applicantRequestDto.toEntity(user, club);
         return applicantService.saveApplicant(applicant);
     }
 
@@ -173,27 +204,4 @@ public class ClubService {
         }
         applicantService.deleteApplicant(memberRequestDto);
     }
-
-    // 이미지 파일을 저장하는 메서드
-    private String saveImage(MultipartFile image) throws IOException {
-        // 파일 이름 생성
-        String fileName = UUID.randomUUID().toString().replace("-", "") + "_" + image.getOriginalFilename();
-        // 실제 파일이 저장될 경로
-        String filePath = UPLOADDIR + fileName;
-
-        // DB에 저장할 경로 문자열
-        String dbFilePath = "/uploads/image/" + fileName;
-
-        Path path = Paths.get(filePath); // Path 객체 생성
-
-        // 디렉토리 없다면 생성
-        if (!Files.exists(path)) {
-            Files.createDirectories(path.getParent());
-        }
-        Files.write(path, image.getBytes()); // 디렉토리에 파일 저장
-
-        return dbFilePath;
-    }
-
-
 }

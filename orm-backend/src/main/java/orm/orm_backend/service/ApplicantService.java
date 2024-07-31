@@ -38,4 +38,9 @@ public class ApplicantService {
     public void deleteApplicant(MemberRequestDto memberRequestDto) {
         applicantRepository.deleteByUserIdAndClubId(memberRequestDto.getUserId(), memberRequestDto.getClubId());
     }
+
+    // Applicant 목록에 이미 존재하는가?
+    public Boolean isContained(Integer userId, Integer clubId) {
+        return applicantRepository.existsByUserIdAndClubId(userId, clubId);
+    }
 }

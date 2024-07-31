@@ -13,4 +13,6 @@ public interface ApplicantRepository extends JpaRepository<Applicant, Integer> {
     List<Applicant> findByClubId(Integer clubId);
 
     void deleteByUserIdAndClubId(Integer userId, Integer clubId);
+
+    Boolean existsByUserIdAndClubId(Integer userId, Integer clubId);
 }

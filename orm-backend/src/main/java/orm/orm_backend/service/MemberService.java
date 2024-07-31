@@ -20,7 +20,6 @@ public class MemberService {
         List<Member> members = memberRepository.findByUserId(userId);
         Set<Integer> result = new HashSet<>();
         members.stream().map(member -> member.getClub().getId()).forEach(result::add);
-
         return result;
     }
 
@@ -42,5 +41,10 @@ public class MemberService {
     // Member 삭제
     public void delete(Integer userId, Integer clubId) {
         memberRepository.deleteByUserIdAndClubId(userId, clubId);
+    }
+
+    // club 내부에 해당 member가 존재하는지?
+    public Boolean isContained(Integer userId, Integer clubId) {
+        return memberRepository.existsByUserIdAndClubId(userId, clubId);
     }
 }
