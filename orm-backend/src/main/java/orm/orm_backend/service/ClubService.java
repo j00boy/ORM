@@ -8,8 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import orm.orm_backend.dto.common.ApplicantDto;
 import orm.orm_backend.dto.request.*;
+import orm.orm_backend.dto.response.ApplicantResponseDto;
 import orm.orm_backend.dto.response.ClubResponseDto;
 import orm.orm_backend.dto.response.MemberResponseDto;
 import orm.orm_backend.entity.*;
@@ -19,10 +19,6 @@ import orm.orm_backend.exception.UnAuthorizedException;
 import orm.orm_backend.repository.ClubRepository;
 import orm.orm_backend.util.ImageUtil;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -143,7 +139,7 @@ public class ClubService {
         }
 
         List<MemberResponseDto> members = memberService.getMembersInClub(clubId).stream().map(MemberResponseDto::toDto).toList();
-        List<ApplicantDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantDto::toDto).toList();
+        List<ApplicantResponseDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantResponseDto::toDto).toList();
 
         Map<String, Object> result = new HashMap<>();
         result.put("members", members);
@@ -158,13 +154,13 @@ public class ClubService {
     }
 
     // 가입 신청
-    public Applicant joinClub(ApplicantDto applicantDto) {
+    public Applicant joinClub(ApplicantRequestDto applicantRequestDto) {
         // user 찾기
-        User user = userService.findUserById(applicantDto.getUserId());
+        User user = userService.findUserById(applicantRequestDto.getUserId());
         // club 찾기
-        Club club = clubRepository.findById(applicantDto.getClubId()).orElseThrow(NoResultException::new);
+        Club club = clubRepository.findById(applicantRequestDto.getClubId()).orElseThrow(NoResultException::new);
         // applicant 저장
-        Applicant applicant = applicantDto.toEntity(user, club);
+        Applicant applicant = applicantRequestDto.toEntity(user, club);
         return applicantService.saveApplicant(applicant);
     }
 

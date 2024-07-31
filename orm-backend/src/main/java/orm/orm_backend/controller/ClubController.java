@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import orm.orm_backend.dto.common.ApplicantDto;
+import orm.orm_backend.dto.request.ApplicantRequestDto;
 import orm.orm_backend.dto.request.ClubRequestDto;
 import orm.orm_backend.dto.request.ClubSearchRequestDto;
 import orm.orm_backend.dto.request.MemberRequestDto;
@@ -82,8 +82,8 @@ public class ClubController {
     }
 
     @PostMapping("/members/apply")
-    public ResponseEntity<Integer> joinClub(@RequestBody ApplicantDto applicantDto){
-        Integer result = clubService.joinClub(applicantDto).getId();
+    public ResponseEntity<Integer> joinClub(@RequestBody ApplicantRequestDto applicantRequestDto){
+        Integer result = clubService.joinClub(applicantRequestDto).getId();
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
