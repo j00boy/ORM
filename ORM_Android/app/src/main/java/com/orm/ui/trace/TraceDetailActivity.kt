@@ -15,7 +15,7 @@ class TraceDetailActivity : AppCompatActivity() {
     private val binding: ActivityTraceDetailBinding by lazy {
         ActivityTraceDetailBinding.inflate(layoutInflater)
     }
-//    private val traceViewModel: TraceViewModel by viewModels()
+    private val traceViewModel: TraceViewModel by viewModels()
 
     private val trace: Trace? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -28,7 +28,12 @@ class TraceDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        Log.e("traceTest", "before binding")
+
+        binding.topAppBar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
         binding.trace = trace
+
     }
 }

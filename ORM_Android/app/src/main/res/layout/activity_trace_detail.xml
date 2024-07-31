@@ -99,26 +99,26 @@
                     app:startIconDrawable="@drawable/ic_baseline_calendar_month_24">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:text="@{trace.hikingDate}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingStart="48dp"
-                        />
+                        android:text="@{trace.hikingDate}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-<!--                <androidx.fragment.app.FragmentContainerView-->
-<!--                    android:id="@+id/fcv_map"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:name="com.orm.ui.fragment.map.GoogleMapFragment"-->
-<!--                    />-->
+                <!--                <androidx.fragment.app.FragmentContainerView-->
+                <!--                    android:id="@+id/fcv_map"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="match_parent"-->
+                <!--                    android:name="com.orm.ui.fragment.map.GoogleMapFragment"-->
+                <!--                    />-->
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/fcv_table"
+                    android:name="com.orm.ui.fragment.table.TextTableFragment"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:name="com.orm.ui.fragment.table.TextTableFragment" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp" />
 
 
                 <com.google.android.material.button.MaterialButton
