@@ -18,6 +18,7 @@ import com.orm.databinding.ActivityMountainDetailBinding
 import com.orm.ui.adapter.ProfileBasicAdapter
 import com.orm.ui.club.ClubDetailActivity
 import com.orm.viewmodel.ClubViewModel
+import com.orm.viewmodel.MountainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,6 +26,7 @@ class MountainDetailActivity : AppCompatActivity() {
     private val binding: ActivityMountainDetailBinding by lazy {
         ActivityMountainDetailBinding.inflate(layoutInflater)
     }
+    private val mountainViewModel: MountainViewModel by viewModels()
     private val clubViewModel: ClubViewModel by viewModels()
     private val rvBoard: RecyclerView by lazy { binding.recyclerView }
     private lateinit var adapter: ProfileBasicAdapter
@@ -40,6 +42,9 @@ class MountainDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        mountainViewModel.fetchMountainById(mountain!!.id)
+
+        binding.mountain = mountain
 
 //        if (mountain != null) {
 //            mountain!!.imageSrc!!.getNetworkImage(binding.root.context, binding.ivThumbnail)

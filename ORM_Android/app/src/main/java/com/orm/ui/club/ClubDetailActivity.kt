@@ -43,7 +43,9 @@ class ClubDetailActivity : AppCompatActivity() {
 
         binding.btnMember.setOnClickListener {
             if (club?.isMember == true) {
-                startActivity(Intent(this, ClubMemberActivity::class.java))
+                val intent = Intent(this, ClubMemberActivity::class.java)
+                intent.putExtra("club", club)
+                startActivity(intent)
             }
         }
 
