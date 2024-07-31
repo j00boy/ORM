@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import orm.orm_backend.configuration.Mountain100Config;
 import orm.orm_backend.dto.response.MountainResponseDto;
+import orm.orm_backend.dto.response.SearchMountainResponseDto;
 import orm.orm_backend.dto.response.TrailResponseDto;
 import orm.orm_backend.entity.Mountain;
 import orm.orm_backend.repository.MountainRepository;
@@ -33,14 +34,26 @@ public class MountainService {
     }
 
     // name으로 산 조회
-    public List<Mountain> getMountainsBySearch(String name) {
-        return mountainRepository.findByMountainNameContaining(name);
+    public List<SearchMountainResponseDto> getMountainsBySearch(String name) {
+        List<Mountain> mountains = mountainRepository.findByMountainNameContaining(name);
+        List<SearchMountainResponseDto> dtos = new ArrayList<>();
+        for(Mountain mountain : mountains) {
+            SearchMountainResponseDto dto = new SearchMountainResponseDto(mountain);
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
     // 100대 명산 조회
-    public List<Mountain> get100Mountains() {
+    public List<SearchMountainResponseDto> get100Mountains() {
         List<String> mountainCodes = Mountain100Config.CODE_100;
-        return mountainRepository.findByMountainCodeIn(mountainCodes);
+        List<Mountain> mountains = mountainRepository.findByMountainCodeIn(mountainCodes);
+        List<SearchMountainResponseDto> dtos = new ArrayList<>();
+        for(Mountain mountain : mountains) {
+            SearchMountainResponseDto dto = new SearchMountainResponseDto(mountain);
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
 }
