@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import orm.orm_backend.dto.response.LoginResponseDto;
 import orm.orm_backend.entity.User;
+import orm.orm_backend.exception.CustomException;
+import orm.orm_backend.exception.ErrorCode;
 import orm.orm_backend.exception.UnAuthorizedException;
 import orm.orm_backend.exception.UserWithdrawalException;
 import orm.orm_backend.repository.UserRepository;
@@ -43,18 +45,18 @@ public class UserService {
     }
 
     public User findUserById(Integer userId) {
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
         if (user.isActiveMember()) {
             return user;
         }
-        throw new UserWithdrawalException();
+        throw new CustomException(ErrorCode.WITHDRAWN_USER_ID);
     }
 
     @Transactional
     public void registerFirebaseToken(String firebaseToken, Integer userId) {
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
         if (!user.isActiveMember()) {
-            throw new UnAuthorizedException();
+            throw new CustomException(ErrorCode.WITHDRAWN_USER_ID);
         }
         user.registerFirebaseToken(firebaseToken);
     }

@@ -9,6 +9,8 @@ import orm.orm_backend.dto.common.TraceCoordinateDto;
 import orm.orm_backend.dto.common.TraceDto;
 import orm.orm_backend.dto.request.TraceRequestDto;
 import orm.orm_backend.entity.*;
+import orm.orm_backend.exception.CustomException;
+import orm.orm_backend.exception.ErrorCode;
 import orm.orm_backend.exception.UnAuthorizedException;
 import orm.orm_backend.repository.TraceCoordinateRepository;
 import orm.orm_backend.repository.TraceImageRepository;
@@ -52,7 +54,7 @@ public class TraceService {
 
     @Transactional
     public TraceDto updateTrace(Integer traceeId, TraceRequestDto traceRequestDto, Integer userId) {
-        Trace trace = traceRepository.findById(traceeId).orElseThrow(NoResultException::new);
+        Trace trace = traceRepository.findById(traceeId).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXISTENT_TRACE));
         if (!trace.isOwner(userId)) {
             throw new UnAuthorizedException();
         }
@@ -63,18 +65,18 @@ public class TraceService {
     }
 
     public void deleteTrace(Integer traceId, Integer userId) {
-        Trace trace = traceRepository.findById(traceId).orElseThrow(NoResultException::new);
+        Trace trace = traceRepository.findById(traceId).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXISTENT_TRACE));
         if (!trace.isOwner(userId)) {
-            throw new UnAuthorizedException();
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
         traceRepository.delete(trace);
     }
 
     @Transactional
     public void completeMeasure(Integer userId, TraceDto traceDto) {
-        Trace trace = traceRepository.findById(traceDto.getId()).orElseThrow();
+        Trace trace = traceRepository.findById(traceDto.getId()).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXISTENT_TRACE));
         if (!trace.isOwner(userId)) {
-            throw new UnAuthorizedException();
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
         trace.completeMeasure(traceDto);
         List<TraceCoordinateDto> coordinateDtos = traceDto.getCoordinates();
@@ -85,9 +87,9 @@ public class TraceService {
 
     @Transactional
     public void updateTraceImages(Integer userId, Integer traceId, List<MultipartFile> images) {
-        Trace trace = traceRepository.findById(traceId).orElseThrow();
+        Trace trace = traceRepository.findById(traceId).orElseThrow(() -> new CustomException(ErrorCode.NOT_EXISTENT_TRACE));
         if (!trace.isOwner(userId)) {
-            throw new UnAuthorizedException();
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
         List<TraceImage> oldImages = traceImageRepository.findByTraceId(traceId);
