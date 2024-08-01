@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import orm.orm_backend.dto.fcmalert.FcmAlertData;
 import orm.orm_backend.dto.fcmalert.FcmAlertDto;
 import orm.orm_backend.dto.fcmalert.FcmMessageDto;
+import orm.orm_backend.dto.fcmalert.FcmNotification;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -26,8 +27,9 @@ public class FirebaseUtil {
     @Value("$firebase.config-path}")
     private String firebaseConfigPath;
 
-    public void pushAlert(FcmAlertData fcmAlertData, String receiverFcmToken) throws IOException {
-        String message = createMessage(fcmAlertData, receiverFcmToken);
+    public void pushAlert(FcmAlertData fcmAlertData, String receiverFcmToken, FcmNotification fcmNotification)
+            throws IOException {
+        String message = createMessage(fcmAlertData, receiverFcmToken, fcmNotification);
         RestTemplate restTemplate = new RestTemplate();
 
         // 한글 깨짐 증상에 대한 수정
@@ -50,10 +52,12 @@ public class FirebaseUtil {
         return googleCredentials.getAccessToken().getTokenValue();
     }
 
-    private String createMessage(FcmAlertData fcmAlertData, String receiverFcmToken) throws JsonProcessingException {
+    private String createMessage(FcmAlertData fcmAlertData, String receiverFcmToken, FcmNotification notification)
+            throws JsonProcessingException {
         FcmMessageDto fcmMessageDto = FcmMessageDto.builder()
                 .token(receiverFcmToken)
                 .data(fcmAlertData)
+                .notification(notification)
                 .build();
 
         FcmAlertDto alertDto = FcmAlertDto.builder()
