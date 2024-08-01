@@ -12,8 +12,6 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     List<Member> findByUserId(Integer userId);
     List<Member> findByClubId(Integer clubId);
 
-    Page<Member> findByUserId(Pageable pageable, Integer userId);
-
     void deleteByUserIdAndClubId(Integer userId, Integer clubId);
 
     Boolean existsByUserIdAndClubId(Integer userId, Integer clubId);

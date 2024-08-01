@@ -15,7 +15,7 @@ import java.util.*;
 public class MemberService {
     private final MemberRepository memberRepository;
 
-    // UserId에 해당하는 클럽 반환
+    // userId에 해당하는 클럽 반환
     public Set<Integer> getClubs(Integer userId) {
         List<Member> members = memberRepository.findByUserId(userId);
         Set<Integer> result = new HashSet<>();
@@ -23,9 +23,9 @@ public class MemberService {
         return result;
     }
 
-    // UserId에 해당하는 Page 형태의 Member 반환
-    public Page<Member> getPageableMembers(Pageable pageable, Integer userId) {
-        return memberRepository.findByUserId(pageable, userId);
+    // userId에 해당하는 member 반환
+    public List<Member> getMemberList(Integer userId) {
+        return memberRepository.findByUserId(userId);
     }
 
     // club에 속한 member 반환

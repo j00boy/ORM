@@ -85,18 +85,17 @@ public class ClubService {
     // Club 조회
     public List<ClubResponseDto> getAllClubs(ClubSearchRequestDto clubSearchRequestDto, Integer userId) {
         Boolean isMyClub = clubSearchRequestDto.getIsMyClub();
-        Pageable pageable = PageRequest.of(clubSearchRequestDto.getPgno(), clubSearchRequestDto.getRecordSize());
         List<ClubResponseDto> clubs = new ArrayList<>();
 
         // 내 모임 검색이면
         if (isMyClub) {
-            Page<Member> members = memberService.getPageableMembers(pageable, userId);
+            List<Member> members = memberService.getMemberList(userId);
             for (Member m : members) {
                 clubRepository.findById(m.getClub().getId())
                         .ifPresent(club -> clubs.add(new ClubResponseDto(club)));
             }
         } else {
-            Page<Club> results = clubRepository.findAllByClubNameContaining(pageable, clubSearchRequestDto.getKeyword());
+            List<Club> results = clubRepository.findAllByClubNameContaining(clubSearchRequestDto.getKeyword());
             Set<Integer> clubMap = memberService.getClubs(userId);
             Set<Integer> applicantMap = applicantService.getApplicants(userId);
 
