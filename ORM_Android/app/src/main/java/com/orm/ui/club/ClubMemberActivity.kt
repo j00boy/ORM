@@ -37,10 +37,7 @@ class ClubMemberActivity : AppCompatActivity() {
         }
     }
 
-    private val userId: String by lazy {
-        userViewModel.getUserInfo()
-        userViewModel.user.value!!.userId
-    }
+    private lateinit var userId: String
 
     private val clubViewModel: ClubViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
@@ -59,9 +56,17 @@ class ClubMemberActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        userViewModel.user.observe(this) {
+            if (it != null && it.userId != club!!.managerId) {
+                binding.cvApplicant.visibility = View.GONE
+                binding.rvApplicant.visibility = View.GONE
+            }
+        }
+
         clubViewModel.getMembers(club!!.id)
         clubViewModel.members.observe(this@ClubMemberActivity) {
-            Log.d("clubTest", it["applicants"].toString())
+            Log.d("ClubMemberActivity", it["members"].toString())
+            Log.d("ClubMemberActivity", it["applicants"].toString())
             setupAdapterMemberList(it["members"])
             setupAdapterApplicant(it["applicants"])
         }
@@ -73,7 +78,7 @@ class ClubMemberActivity : AppCompatActivity() {
         adapterMemberList = ProfileButtonAdapter(clubMembers)
 
         adapterMemberList.setType("member")
-        adapterMemberList.setUserId(userId)
+//        adapterMemberList.setUserId(userId)
 
         adapterMemberList.setItemClickListener(object : ProfileButtonAdapter.OnItemClickListener {
             override fun onClick(v: View, position: Int) {
