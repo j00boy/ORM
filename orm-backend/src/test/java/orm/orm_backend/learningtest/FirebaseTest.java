@@ -10,6 +10,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+import orm.orm_backend.dto.fcmalert.AlertType;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -22,7 +23,7 @@ public class FirebaseTest {
     @BeforeEach
     void setUp() {
         fcmSendDto = FcmSendDto.builder()
-                .token("fvDschy1ROeID7oXqGpyPY:APA91bF7J-XMHYED40TWl2uY7dQPC9a7ewB0faSE2TiGawVyCBYoBL11WMC2u0kHYn7LTSJJBL3rPDiVsG86AQrYTB6xFkmlpj0kVEBNzxIxd-5PZN41sP8A_-XnXFwPpWE-uorbtv6u")
+                .token("emjBpLWpRv6gA0kMewxdma:APA91bEfNOwN11-BV3NzLPAcrkgEk8r3qw2UphKd2LBLjr2UjmBneqqU_TeL0YA8V74rZK47fzApU-6Z8kz5T1YP07yfQu3YUInv3UqvKXnKvRTy8p3dFXIDFtBsollFxbNACgRap48D")
                 .title("test title")
                 .body("test content")
                 .build();
@@ -75,6 +76,12 @@ public class FirebaseTest {
         FcmMessageDto.Data data = FcmMessageDto.Data.builder()
                 .name("test name")
                 .address("test address")
+                .clubName("클럽 이름")
+                .clubId("1")
+                .userName("김세진")
+                .userId("6")
+                .clubImageSrc("www.naver.com")
+                .alertType(AlertType.APPLICATION.toString())
                 .build();
         FcmMessageDto.Message message = FcmMessageDto.Message.builder()
                 .token(fcmSendDto.token)
@@ -142,6 +149,12 @@ public class FirebaseTest {
         public static class Data {
             private String name;
             private String address;
+            private String clubName;
+            private String clubId;
+            private String userId;
+            private String userName;
+            private String clubImageSrc;
+            private String alertType;
         }
     }
 }
