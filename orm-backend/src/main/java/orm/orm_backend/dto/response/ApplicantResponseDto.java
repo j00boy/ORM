@@ -10,7 +10,7 @@ public class ApplicantResponseDto {
     private Integer userId;
     private String nickname;
     private String introduction;
-    private String imageSrc;
+    private String imgSrc;
 
 
     public static ApplicantResponseDto toDto(Applicant applicant) {
@@ -18,7 +18,7 @@ public class ApplicantResponseDto {
                 .userId(applicant.getUser().getId())
                 .nickname(applicant.getUser().getNickname())
                 .introduction(applicant.getIntroduction())
-                .imageSrc(applicant.getUser().getImageSrc())
+                .imgSrc(applicant.getUser().getImageSrc())
                 .build();
     }
 }

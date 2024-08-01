@@ -57,14 +57,6 @@ public class User extends BaseEntity {
         this.kakaoRefreshToken = kakaoRefreshToken;
     }
 
-    public LoginResponseDto toLoginResponseDto() {
-        return LoginResponseDto.builder()
-                .userId(id)
-                .imageSrc(imageSrc)
-                .nickname(nickname)
-                .build();
-    }
-
     public void refreshKakaoTokens(String kakaoAccessToken, String kakaoRefreshToken) {
         this.kakaoAccessToken = kakaoAccessToken;
         if (kakaoRefreshToken != null) { // kakaoToken은 refresh되지 않을 수 있음

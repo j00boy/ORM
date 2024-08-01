@@ -61,12 +61,15 @@ class TraceServiceTest {
     @Mock
     Mountain mountain;
 
-//    @Mock
+    @Mock
     Trace trace;
+
+    @Mock
+    Trail trail;
 
     TraceRequestDto traceRequestDto;
     String traceTitle = "traceTitle";
-    Trail trail;
+
     Integer mountainId;
     Integer trailId;
     Integer traceId;
@@ -74,20 +77,22 @@ class TraceServiceTest {
     @BeforeEach
     void init() throws NoSuchFieldException, IllegalAccessException {
         userId = 2;
-        lenient().when(user.getId()).thenReturn(userId);
         mountainId = 1;
         trailId = 1;
-        trail = null;
+        traceId = 1;
+
         traceRequestDto = TraceRequestDto.builder().title(traceTitle)
                 .mountainId(mountainId)
                 .trailId(trailId)
                 .hikingDate(new Date(System.currentTimeMillis()).toString())
                 .build();
+//        trace = Trace.builder().traceRequestDto(traceRequestDto).mountain(mountain).trail(trail).user(user).build();
 
+        lenient().when(user.getId()).thenReturn(userId);
         lenient().when(mountain.getId()).thenReturn(mountainId);
-        trace = Trace.builder().traceRequestDto(traceRequestDto).mountain(mountain).trail(trail).user(user).build();
-        traceId = 1;
-//        when(trace.getId()).thenReturn(traceId);
+        lenient().when(trail.getId()).thenReturn(trailId);
+        lenient().when(trace.getId()).thenReturn(traceId);
+        lenient().when(trace.getUser()).thenReturn(user);
     }
 
     @Test
