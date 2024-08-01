@@ -7,7 +7,6 @@ import orm.orm_backend.entity.Club;
 import orm.orm_backend.entity.User;
 
 @Data
-@Builder
 public class ApplicantRequestDto {
     private Integer clubId;
     private Integer userId;
@@ -21,6 +20,7 @@ public class ApplicantRequestDto {
                 .build();
     }
 
+    @Builder
     public ApplicantRequestDto(Applicant applicant) {
         this.clubId = applicant.getClub().getId();
         this.userId = applicant.getUser().getId();

@@ -7,12 +7,13 @@ import orm.orm_backend.entity.Member;
 import orm.orm_backend.entity.User;
 
 @Data
-@Builder
+
 public class MemberRequestDto {
     private Integer userId;
     private Integer clubId;
     private Boolean isApproved;
 
+    @Builder
     public MemberRequestDto(User user, Club club) {
         this.userId = user.getId();
         this.clubId = club.getId();

@@ -7,7 +7,6 @@ import orm.orm_backend.entity.Member;
 import java.time.LocalDateTime;
 
 @Data
-@Builder
 public class MemberResponseDto {
     private Integer userId;
     private Integer clubId;
@@ -15,6 +14,7 @@ public class MemberResponseDto {
     private String imgSrc;
     private String nickname;
 
+    @Builder
     public MemberResponseDto (Member member) {
         this.userId = member.getUser().getId();
         this.clubId = member.getClub().getId();
