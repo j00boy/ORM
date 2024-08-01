@@ -54,8 +54,7 @@ public class ClubService {
         clubRepository.save(club);
 
         // club 생성 이후 해당 user 를 member table에 추가 (관리자도 회원)
-        MemberRequestDto memberRequestDto = new MemberRequestDto(user, club);
-        memberService.saveMember(memberRequestDto.toEntity(user, club));
+        memberService.saveMember(Member.builder().user(user).club(club).build());
 
         return club.getId();
     }

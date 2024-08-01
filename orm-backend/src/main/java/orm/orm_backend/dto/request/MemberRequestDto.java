@@ -1,13 +1,15 @@
 package orm.orm_backend.dto.request;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import orm.orm_backend.entity.Club;
 import orm.orm_backend.entity.Member;
 import orm.orm_backend.entity.User;
 
 @Data
-
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberRequestDto {
     private Integer userId;
     private Integer clubId;
