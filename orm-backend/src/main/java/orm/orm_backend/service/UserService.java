@@ -33,7 +33,7 @@ public class UserService {
 
         // 가입 절차를 밟았기 때문에 nullPointerException이 발생하지 않음이 보장됨
         User user = userRepository.findByKakaoId(kakaoInfo.getKakaoId()).orElseThrow();
-        return user.toLoginResponseDto();
+        return new LoginResponseDto(user);
     }
 
     @Transactional
@@ -41,7 +41,7 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow();
         kakaoUtil.refreshAccessToken(user.getKakaoRefreshToken(), user); // 추후 리프레시 토큰 만료시 로그아웃 처리 로직 추가
 
-        return user.toLoginResponseDto();
+        return new LoginResponseDto(user);
     }
 
     public User findUserById(Integer userId) {
