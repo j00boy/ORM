@@ -33,6 +33,7 @@ public class ClubService {
     private final MountainService mountainService;
     private final MemberService memberService;
     private final ApplicantService applicantService;
+    private final FirebasePushAlertService firebasePushAlertService;
 
     private final ClubRepository clubRepository;
     public Integer createClub(ClubRequestDto clubRequestDTO, MultipartFile imgFile, Integer userId) {
@@ -167,6 +168,11 @@ public class ClubService {
         Club club = clubRepository.findById(applicantRequestDto.getClubId()).orElseThrow(NoResultException::new);
         // applicant 저장
         Applicant applicant = applicantRequestDto.toEntity(user, club);
+
+        // manager 조회
+        User manager = club.getManager();
+        firebasePushAlertService.pushClubApplicationAlert(manager.getFirebaseToken(), user, club);
+
         return applicantService.saveApplicant(applicant);
     }
 
