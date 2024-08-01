@@ -26,18 +26,6 @@ class  GraphFragment : Fragment() {
     ): View {
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
         val root = binding.root
-
-        arguments?.let {
-            @Suppress("UNCHECKED_CAST")
-            val dataArray = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getSerializable("data", ArrayList::class.java) as? ArrayList<Pair<Float, Float>>
-            } else {
-                @Suppress("DEPRECATION")
-                it.getSerializable("data") as? ArrayList<Pair<Float, Float>>
-            }
-            dataArray?.let { data = it }
-        }
-
         return root
     }
 
