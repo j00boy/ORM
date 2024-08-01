@@ -113,6 +113,12 @@
                     android:layout_marginVertical="24dp"
                     android:text="@{trace == null ? `생성하기` : `수정하기`}" />
 
+<!--                GraphFragment를 표시할 컨테이너 &ndash;&gt;-->
+<!--                <androidx.fragment.app.FragmentContainerView-->
+<!--                    android:id="@+id/fragmentContainer"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="400dp"-->
+<!--                    />-->
 
             </LinearLayout>
 

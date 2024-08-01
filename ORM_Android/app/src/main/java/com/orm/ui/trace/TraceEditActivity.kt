@@ -13,6 +13,7 @@ import com.orm.data.model.Mountain
 import com.orm.data.model.Trace
 import com.orm.databinding.ActivityTraceEditBinding
 import com.orm.ui.fragment.BottomSheetMountainList
+import com.orm.ui.fragment.GraphFragment
 import com.orm.viewmodel.TraceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -95,6 +96,14 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         binding.tfDate.setStartIconOnClickListener {
             picker.show(supportFragmentManager, "trace_date")
         }
+
+//        GraphFragment test code
+//        val testData = (0..180).map { x -> Pair(x.toFloat(), (500 * x / 180.0f)) }
+//        // GraphFragment 생성 및 데이터 전달
+//        val graphFragment = GraphFragment.newInstance(testData)
+//        supportFragmentManager.beginTransaction()
+//            .replace(binding.fragmentContainer.id, graphFragment)
+//            .commit()
 
     }
 
