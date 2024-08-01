@@ -6,11 +6,13 @@ import orm.orm_backend.dto.response.TrailDetailResponseDto;
 import orm.orm_backend.dto.response.TrailResponseDto;
 import orm.orm_backend.entity.Trail;
 import orm.orm_backend.entity.TrailDetail;
+import orm.orm_backend.exception.CustomException;
 import orm.orm_backend.repository.TrailDetailRepository;
 import orm.orm_backend.repository.TrailRepository;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static orm.orm_backend.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +30,7 @@ public class TrailService {
     public List<TrailResponseDto> getTrailsByMountainId(int mountainId) {
         List<Trail> trails = trailRepository.findByMountainId(mountainId);
         return trails.stream()
-                .map(t -> new TrailResponseDto(t, getAllTrailDetailsByTrailId(t.getId())))
-                .toList();
+                .map(t -> new TrailResponseDto(t, getAllTrailDetailsByTrailId(t.getId()))).toList();
     }
 
     /**
@@ -39,7 +40,7 @@ public class TrailService {
      * @return trailId로 조회한 Trail을 변환한 TrailResponseDto
      */
     public TrailResponseDto getTrailById(Integer trailId) {
-        Trail trail = trailRepository.findById(trailId).orElseThrow();
+        Trail trail = trailRepository.findById(trailId).orElseThrow(() -> new CustomException(TRAIL_NOT_FOUND));
         List<TrailDetail> trailDetails = trailDetailRepository.findTrailDetailsByTrailId(trailId);
         List<TrailDetailResponseDto> dtos = trailDetails.stream().map(TrailDetailResponseDto::new).toList();
         return new TrailResponseDto(trail, dtos);
@@ -62,7 +63,7 @@ public class TrailService {
      * @return trailId로 조회한 Trail
      */
     public Trail getTrailEntityById(Integer trailId) {
-        return trailRepository.findById(trailId).orElseThrow();
+        return trailRepository.findById(trailId).orElseThrow(() -> new CustomException(TRAIL_NOT_FOUND));
     }
 
 }

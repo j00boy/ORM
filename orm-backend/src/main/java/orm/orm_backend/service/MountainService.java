@@ -7,9 +7,12 @@ import orm.orm_backend.dto.response.MountainResponseDto;
 import orm.orm_backend.dto.response.MountainDto;
 import orm.orm_backend.dto.response.TrailResponseDto;
 import orm.orm_backend.entity.Mountain;
+import orm.orm_backend.exception.CustomException;
 import orm.orm_backend.repository.MountainRepository;
 
 import java.util.List;
+
+import static orm.orm_backend.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +28,7 @@ public class MountainService {
      * @return mountainId로 조회된 Mountain룰 변환한 MountainResponseDto
      */
     public MountainResponseDto getMountainDtoById(Integer mountainId) {
-        Mountain mountain = mountainRepository.findById(mountainId).orElseThrow();
+        Mountain mountain = mountainRepository.findById(mountainId).orElseThrow(() -> new CustomException(MOUNTAIN_NOT_FOUND));
         List<TrailResponseDto> trails = trailService.getTrailsByMountainId(mountain.getId());
         return new MountainResponseDto(mountain, trails);
     }
@@ -36,7 +39,7 @@ public class MountainService {
      * @return id로 조회된 Mountain
      */
     public Mountain getMountainById(Integer id) {
-        return mountainRepository.findById(id).orElseThrow();
+        return mountainRepository.findById(id).orElseThrow(() -> new CustomException(MOUNTAIN_NOT_FOUND));
     }
 
     /**
