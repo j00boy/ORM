@@ -9,4 +9,5 @@ public class FcmMessageDto {
     private String token;
     private FcmAlertData data;
     private String message;
+    private FcmNotification notification;
 }
