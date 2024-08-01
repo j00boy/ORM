@@ -20,6 +20,8 @@ dependencyResolutionManagement {
         maven { url = java.net.URI("https://devrepo.kakao.com/nexus/content/groups/public/") }
         //kakao map
         maven { url = java.net.URI("https://devrepo.kakao.com/nexus/repository/kakaomap-releases/") }
+        //graph
+        maven { setUrl("https://jitpack.io") }
     }
 }
 

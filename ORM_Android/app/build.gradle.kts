@@ -121,4 +121,7 @@ dependencies {
     // okhttp
     implementation (libs.okhttp)
     implementation (libs.logging.interceptor)
+
+    // graph
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
