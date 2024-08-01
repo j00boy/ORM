@@ -53,8 +53,8 @@ public class ClubService {
         clubRepository.save(club);
 
         // club 생성 이후 해당 user 를 member table에 추가 (관리자도 회원)
-        Member member = MemberRequestDto.toEntity(user, club);
-        memberService.saveMember(member);
+        MemberRequestDto memberRequestDto = new MemberRequestDto(user, club);
+        memberService.saveMember(memberRequestDto.toEntity(user, club));
 
         return club.getId();
     }
@@ -199,7 +199,7 @@ public class ClubService {
         if (memberRequestDto.getIsApproved()) {
             User user = userService.findUserById(memberRequestDto.getUserId());
             Club club = clubRepository.findById(memberRequestDto.getClubId()).orElseThrow();
-            memberService.saveMember(MemberRequestDto.toEntity(user, club));
+            memberService.saveMember(memberRequestDto.toEntity(user, club));
         }
         applicantService.deleteApplicant(memberRequestDto);
     }

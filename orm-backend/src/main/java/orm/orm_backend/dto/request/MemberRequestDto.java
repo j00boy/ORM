@@ -13,10 +13,17 @@ public class MemberRequestDto {
     private Integer clubId;
     private Boolean isApproved;
 
-    public static Member toEntity(User user, Club club) {
+    public MemberRequestDto(User user, Club club) {
+        this.userId = user.getId();
+        this.clubId = club.getId();
+    }
+
+    public Member toEntity(User user, Club club) {
         return Member.builder()
                 .user(user)
                 .club(club)
                 .build();
     }
+
+
 }
