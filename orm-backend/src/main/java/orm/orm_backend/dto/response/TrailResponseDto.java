@@ -19,7 +19,7 @@ public class TrailResponseDto {
     private String peakLongitude;
     private List<TrailDetailResponseDto> trailDetails;
 
-    public TrailResponseDto toTrailResponseDto(Trail trail, List<TrailDetailResponseDto> trailDetails) {
+    public static TrailResponseDto toTrailResponseDto(Trail trail, List<TrailDetailResponseDto> trailDetails) {
         return TrailResponseDto.builder()
                 .id(trail.getId())
                 .distance(trail.getDistance())
