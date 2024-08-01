@@ -12,34 +12,40 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardBackgroundColor="@color/md_theme_secondary"
+        android:layout_margin="6dp"
+        app:cardBackgroundColor="@color/md_theme_primary"
         app:cardCornerRadius="8dp"
-        app:cardElevation="1dp">
+        app:cardElevation="2dp"
+        app:strokeColor="@color/md_theme_onPrimary"
+        app:strokeWidth="2dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/white"
             android:padding="24dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cv_thumbnail"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    app:cardCornerRadius="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    app:cardCornerRadius="8dp">
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/iv_thumbnail"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
                         app:imageSrc="@{user.imageSrc}" />
 
                 </com.google.android.material.card.MaterialCardView>
@@ -51,10 +57,10 @@
                     android:layout_marginStart="12dp"
                     android:gravity="center"
                     android:text="@{user.nickname}"
-                    android:textColor="@color/white"
-                    android:textSize="28sp" />
+                    android:textColor="@color/md_theme_primary"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
             </LinearLayout>
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

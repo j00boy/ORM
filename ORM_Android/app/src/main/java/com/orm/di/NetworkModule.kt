@@ -8,6 +8,7 @@ import com.orm.data.api.TraceService
 import com.orm.data.api.UserService
 import com.orm.data.api.WeatherService
 import com.orm.data.local.PreferencesKeys
+import com.orm.util.NetworkUtils
 import com.orm.util.dataStore
 import dagger.Module
 import dagger.Provides
@@ -63,11 +64,15 @@ object NetworkModule {
     }
 
     class AppInterceptor @Inject constructor(
-        @ApplicationContext private val context: Context
+        @ApplicationContext private val context: Context,
     ) : Interceptor {
 
         @Throws(IOException::class)
         override fun intercept(chain: Interceptor.Chain): Response = runBlocking {
+            if (!NetworkUtils.isNetworkAvailable(context)) {
+                throw IOException("No network available")
+            }
+
             val token = context.dataStore.data.map { preferences ->
                 preferences[PreferencesKeys.tokenString] ?: ""
             }.first()

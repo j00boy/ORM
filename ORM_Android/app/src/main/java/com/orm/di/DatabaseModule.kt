@@ -8,6 +8,7 @@ import com.orm.data.local.dao.MemberDao
 import com.orm.data.local.dao.NotificationDao
 import com.orm.data.local.dao.PointDao
 import com.orm.data.local.dao.TraceDao
+import com.orm.data.local.dao.TrailDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -55,5 +56,10 @@ object DatabaseModule {
     @Provides
     fun providePointDao(database: AppDatabase): PointDao {
         return database.pointDao()
+    }
+
+    @Provides
+    fun provideTrailDao(database: AppDatabase): TrailDao {
+        return database.trailDao()
     }
 }

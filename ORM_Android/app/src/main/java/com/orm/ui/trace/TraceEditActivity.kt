@@ -1,5 +1,6 @@
 package com.orm.ui.trace
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -75,6 +76,12 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                     )
                     traceViewModel.createTrace(traceCreate)
                     dialog.dismiss()
+
+                    val resultIntent = Intent().apply {
+                        putExtra("traceCreated", true)
+                    }
+
+                    setResult(Activity.RESULT_OK, resultIntent)
                     finish()
                 }
                 .show()

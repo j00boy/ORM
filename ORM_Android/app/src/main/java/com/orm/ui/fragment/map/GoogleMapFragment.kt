@@ -116,12 +116,10 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // ViewModel에서 데이터를 가져오도록 요청
         mountainViewModel.fetchTrailById(126)
 
-        // LiveData 관찰
         mountainViewModel.points.observe(viewLifecycleOwner) { points ->
-            if (points != null) {
+            if (!points.isNullOrEmpty()) {
                 updateMap(points)
             }
         }

@@ -12,14 +12,8 @@ object NetworkUtils {
         val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
 
         return when {
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> {
-                true
-            }
-
-            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> {
-                true
-            }
-
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+            actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
             else -> false
         }
     }

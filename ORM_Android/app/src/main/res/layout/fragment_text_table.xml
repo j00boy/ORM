@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,7 +8,12 @@
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/md_theme_surface"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="8dp"
+        app:strokeColor="@color/md_theme_outline"
+        app:strokeWidth="1dp">
 
         <TableLayout
             android:id="@+id/tableLayout"
@@ -17,103 +23,115 @@
             android:stretchColumns="*">
 
             <!-- 첫 번째 행 -->
-            <TableRow>
+            <TableRow
+                android:background="@color/md_theme_surfaceVariant"
+                android:paddingVertical="8dp">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="시작시간" />
+                    android:text="시작시간"
+                    android:textColor="@color/md_theme_onSurface" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="Text" />
+                    android:text="Text"
+                    android:textColor="@color/md_theme_onSurface" />
             </TableRow>
 
             <!-- 점선 -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@android:color/darker_gray"
+                android:layout_marginVertical="8dp"
+                android:background="@color/md_theme_outline"
                 android:layerType="software" />
 
             <!-- 두 번째 행 -->
-            <TableRow>
+            <TableRow
+                android:background="@color/md_theme_surfaceVariant"
+                android:paddingVertical="8dp">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="종료시간" />
+                    android:text="종료시간"
+                    android:textColor="@color/md_theme_onSurface" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="Text" />
+                    android:text="Text"
+                    android:textColor="@color/md_theme_onSurface" />
             </TableRow>
 
             <!-- 점선 -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@android:color/darker_gray"
+                android:layout_marginVertical="8dp"
+                android:background="@color/md_theme_outline"
                 android:layerType="software" />
 
             <!-- 세 번째 행 -->
-            <TableRow>
+            <TableRow
+                android:background="@color/md_theme_surfaceVariant"
+                android:paddingVertical="8dp">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="등반시간" />
+                    android:text="등반시간"
+                    android:textColor="@color/md_theme_onSurface" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="Text" />
+                    android:text="Text"
+                    android:textColor="@color/md_theme_onSurface" />
             </TableRow>
-
 
             <!-- 점선 -->
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:background="@android:color/darker_gray"
+                android:layout_marginVertical="8dp"
+                android:background="@color/md_theme_outline"
                 android:layerType="software" />
 
             <!-- 네 번째 행 -->
-            <TableRow>
+            <TableRow
+                android:background="@color/md_theme_surfaceVariant"
+                android:paddingVertical="8dp">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="총 산행거리" />
+                    android:text="총 산행거리"
+                    android:textColor="@color/md_theme_onSurface" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="Text" />
+                    android:text="Text"
+                    android:textColor="@color/md_theme_onSurface" />
             </TableRow>
         </TableLayout>
     </com.google.android.material.card.MaterialCardView>

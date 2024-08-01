@@ -37,7 +37,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/card_search"
+        android:id="@+id/card_trace"
         android:name="com.orm.ui.fragment.HomeCardFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -48,7 +48,7 @@
         app:layout_constraintTop_toBottomOf="@+id/guideline_horizontal_center" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/card_trace"
+        android:id="@+id/card_search"
         android:name="com.orm.ui.fragment.HomeCardFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"

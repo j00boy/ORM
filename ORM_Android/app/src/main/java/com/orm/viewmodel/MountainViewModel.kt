@@ -64,7 +64,11 @@ class MountainViewModel @Inject constructor(
     fun fetchTrailById(trailId: Int) {
         viewModelScope.launch {
             val trail = mountainRepository.getTrailById(trailId)
-            _points.postValue(trail!!.trailDetails)
+            if (trail != null) {
+                _points.postValue(trail.trailDetails)
+            } else {
+                _points.postValue(emptyList())
+            }
         }
     }
 }

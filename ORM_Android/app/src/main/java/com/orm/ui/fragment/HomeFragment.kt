@@ -45,8 +45,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupCardFragments() {
-        setupCardFragment(binding.cardSearch.id, "검색", "산을 찾으세요")
-        setupCardFragment(binding.cardTrace.id, "발자국", "발자국을\n추적하세요")
+        setupCardFragment(binding.cardSearch.id, "검색", "산을\n찾으세요")
+        setupCardFragment(binding.cardTrace.id, "발자국", "발자국을 추적하세요")
         setupCardFragment(binding.cardClub.id, "모임", "모임을\n찾으세요")
     }
 

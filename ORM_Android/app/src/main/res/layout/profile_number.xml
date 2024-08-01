@@ -3,9 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:background="@android:color/white"
+    app:cardBackgroundColor="@android:color/white"
     app:cardCornerRadius="12dp"
-    app:cardElevation="6dp">
+    app:cardElevation="8dp"
+    app:strokeColor="@android:color/transparent"
+    app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,15 +20,20 @@
             android:id="@+id/tv_thumbnail"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:layout_marginEnd="16dp"
             app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@android:color/transparent"
+            app:strokeWidth="0dp">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_thumbnail"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
                 android:src="@drawable/sample" />
 
         </com.google.android.material.card.MaterialCardView>
@@ -34,30 +41,33 @@
         <LinearLayout
             android:id="@+id/text_container"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:gravity="center_vertical"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_thumbnail"
-            app:layout_constraintEnd_toStartOf="@+id/btn_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_text"
             app:layout_constraintStart_toEndOf="@id/tv_thumbnail"
-            app:layout_constraintTop_toTopOf="@+id/tv_thumbnail">
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tv_main"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:text="Main Text"
-                android:textSize="32sp"
+                android:textColor="@color/md_theme_onSurface"
+                android:textSize="28sp"
                 android:textStyle="bold" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tv_sub"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Sub Text"
-                android:textSize="20sp" />
+                android:textColor="@color/md_theme_onSurfaceVariant"
+                android:textSize="18sp" />
         </LinearLayout>
 
         <com.google.android.material.textview.MaterialTextView
@@ -65,19 +75,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Number"
-            android:textSize="12sp"
+            android:textColor="@color/md_theme_onSurfaceVariant"
+            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_text"
             style="@style/Widget.Material3.Button.ElevatedButton"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="숫자"
             android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/tv_number" />
+            app:layout_constraintBottom_toBottomOf="@+id/tv_thumbnail"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

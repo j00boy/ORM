@@ -1,8 +1,10 @@
 package com.orm.ui.trace
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,12 +25,23 @@ class TraceActivity : AppCompatActivity() {
     private val rvBoard: RecyclerView by lazy { binding.recyclerView }
     private lateinit var adapter: ProfileNumberAdapter
 
+    private val createTraceLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val traceCreated = data?.getBooleanExtra("traceCreated", false) ?: false
+                if (traceCreated) {
+                    traceViewModel.getTraces()
+                }
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         traceViewModel.getTraces()
-        traceViewModel.traces.observe(this@TraceActivity){
+        traceViewModel.traces.observe(this@TraceActivity) {
             setupAdapter(it!!)
         }
 
@@ -39,7 +52,7 @@ class TraceActivity : AppCompatActivity() {
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.edit -> {
-                    startActivity(Intent(this, TraceEditActivity::class.java))
+                    createTraceLauncher.launch(Intent(this, TraceEditActivity::class.java))
                     true
                 }
 
@@ -47,6 +60,7 @@ class TraceActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun setupAdapter(traces: List<Trace>) {
         adapter =
             ProfileNumberAdapter(traces.map { Trace.toRecyclerViewNumberItem(it) })

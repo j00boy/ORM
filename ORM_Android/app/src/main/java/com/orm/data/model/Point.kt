@@ -9,11 +9,11 @@ import java.time.LocalDateTime
 @Parcelize
 @Entity(tableName = "point")
 data class Point(
-    val id: Int? = null,
+    @PrimaryKey(autoGenerate = true) val id: Int? = null,
     val trailId: Int? = null,
     val latitude: Double,
     val longitude: Double,
     val altitude: Double? = null,
     val time: LocalDateTime? = null,
-    val difficulty: Int? = null
+    val difficulty: Int? = null,
 ) : Parcelable
