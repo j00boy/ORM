@@ -9,4 +9,5 @@ public class FcmAlertDto {
     @Builder.Default
     private Boolean validateOnly = false;
     private FcmMessageDto message;
+    private FcmNotification notification;
 }
