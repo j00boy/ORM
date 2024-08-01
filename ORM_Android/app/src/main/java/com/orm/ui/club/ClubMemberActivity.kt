@@ -37,7 +37,7 @@ class ClubMemberActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var userId: String
+//    private lateinit var userId: String
 
     private val clubViewModel: ClubViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
@@ -61,6 +61,7 @@ class ClubMemberActivity : AppCompatActivity() {
                 binding.cvApplicant.visibility = View.GONE
                 binding.rvApplicant.visibility = View.GONE
             }
+//            userId = it!!.userId
         }
 
         clubViewModel.getMembers(club!!.id)
@@ -72,21 +73,20 @@ class ClubMemberActivity : AppCompatActivity() {
         }
     }
 
+    // TODO : 본인만 탈퇴 버튼이 보이도록 수정
     private fun setupAdapterMemberList(members: List<ClubMember>?) {
         val clubMembers = members!!.map { ClubMember.toRecyclerViewButtonItem(it) }
 
         adapterMemberList = ProfileButtonAdapter(clubMembers)
 
         adapterMemberList.setType("member")
-//        adapterMemberList.setUserId(userId)
-
         adapterMemberList.setItemClickListener(object : ProfileButtonAdapter.OnItemClickListener {
             override fun onClick(v: View, position: Int) {
                 TODO("Not yet implemented")
             }
 
             override fun onClickBtnUp(v: View, position: Int) {
-                clubViewModel.leaveClubs(club!!.id, userId.toInt())
+                clubViewModel.leaveClubs(club!!.id, clubMembers[position].id!!.toInt())
             }
 
             override fun onClickBtnDown(v: View, position: Int) {

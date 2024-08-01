@@ -28,6 +28,7 @@ class MountainSearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        mountainViewModel.fetchMountainsTop()
         mountainViewModel.mountains.observe(this@MountainSearchActivity) {
             setupAdapter(it!!)
         }

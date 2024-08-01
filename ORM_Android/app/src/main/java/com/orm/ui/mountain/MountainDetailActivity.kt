@@ -42,29 +42,20 @@ class MountainDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        mountainViewModel.fetchMountainById(mountain!!.id)
+
+        binding.topAppBar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
         binding.mountain = mountain
 
-//        if (mountain != null) {
-//            mountain!!.imageSrc!!.getNetworkImage(binding.root.context, binding.ivThumbnail)
-//        }
+        mountainViewModel.fetchMountainById(mountain!!.id)
+
         clubViewModel.findClubsByMountain(mountain!!.id)
         clubViewModel.clubs.observe(this@MountainDetailActivity){
             Log.d("clubTest", it.toString())
             setupAdapter(it!!)
         }
-        binding.topAppBar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
-        binding.mountain = mountain
-    }
-
-    private fun String.getNetworkImage(context: Context, view: ImageView) {
-        Glide.with(context)
-            .load(this)
-            .centerCrop()
-            .into(view)
     }
 
     private fun setupAdapter(clubs: List<Club>) {
