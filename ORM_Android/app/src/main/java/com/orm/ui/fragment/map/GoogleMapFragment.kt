@@ -17,11 +17,6 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -33,12 +28,9 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.orm.R
 import com.orm.data.model.Point
-import com.orm.data.repository.MountainRepository
 import com.orm.databinding.FragmentGoogleMapBinding
 import com.orm.viewmodel.MountainViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlin.math.pow
 
 @AndroidEntryPoint
@@ -48,7 +40,7 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationManager: LocationManager
     private lateinit var sensorManager: SensorManager
-    private lateinit var googleMap: GoogleMap
+    private var googleMap: GoogleMap? = null
     private lateinit var pressureSensor: Sensor
     private val mountainViewModel: MountainViewModel by viewModels()
 
@@ -71,25 +63,26 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     }
 
     private fun updateMap(points: List<Point>) {
-        val latLngPoints = points.map { LatLng(it.latitude, it.longitude) }
+        googleMap?.let { map ->
+            val latLngPoints = points.map { LatLng(it.latitude, it.longitude) }
 
-        // Polyline 추가
-        val polyline = googleMap.addPolyline(
-            PolylineOptions()
-                .clickable(true)
-                .addAll(latLngPoints)
-        )
+            // Polyline 추가
+            val polyline = map.addPolyline(
+                PolylineOptions()
+                    .clickable(true)
+                    .addAll(latLngPoints)
+            )
 
-        // 지도 카메라를 첫 번째 점으로 이동
-        if (latLngPoints.isNotEmpty()) {
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngPoints[0], 15f))
-        }
+            // 지도 카메라를 첫 번째 점으로 이동
+            if (latLngPoints.isNotEmpty()) {
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngPoints[0], 15f))
+            }
+        } ?: Log.e(TAG, "GoogleMap is not initialized")
     }
 
     private fun initializeServices() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        locationManager =
-            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
@@ -127,17 +120,17 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         mountainViewModel.fetchTrailById(126)
 
         // LiveData 관찰
-        mountainViewModel.points.observe(viewLifecycleOwner, Observer { points ->
+        mountainViewModel.points.observe(viewLifecycleOwner) { points ->
             if (points != null) {
                 updateMap(points)
             }
-        })
+        }
     }
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
-//        fetchLocationByDevice()
+        googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
+        fetchLocationByDevice()
     }
 
     @SuppressLint("MissingPermission")
@@ -145,9 +138,7 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
         location?.let {
             updateMapWithLocation(it)
-        } ?: run {
-            Log.e(TAG, "Location not available")
-        }
+        } ?: Log.e(TAG, "Location not available")
 
         locationManager.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
@@ -158,15 +149,18 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     }
 
     private fun updateMapWithLocation(location: Location) {
-        val currentLatLng = LatLng(location.latitude, location.longitude)
-        googleMap.clear()
-        googleMap.addMarker(MarkerOptions().position(currentLatLng).title("현재 위치"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
-        Log.d(TAG, "Current location: $currentLatLng, Altitude: ${location.altitude}")
+        googleMap?.let { map ->
+            val currentLatLng = LatLng(location.latitude, location.longitude)
+            map.clear()
+            map.addMarker(MarkerOptions().position(currentLatLng).title("현재 위치"))
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
+            Log.d(TAG, "Current location: $currentLatLng, Altitude: ${location.altitude}")
+        } ?: Log.e(TAG, "GoogleMap is not initialized")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        googleMap = null
         locationManager.removeUpdates(locationListener)
     }
 
@@ -174,6 +168,7 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         private const val TAG = "GoogleMapFragment"
     }
 
-    private fun calculateAltitude(pressure: Double) = 44330 * (1 - (pressure / 1013.25).pow(1 / 5.255))
+    private fun calculateAltitude(pressure: Double) =
+        44330 * (1 - (pressure / 1013.25).pow(1 / 5.255))
 
 }

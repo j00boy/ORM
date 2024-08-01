@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.orm.data.local.AppDatabase
 import com.orm.data.local.dao.ClubDao
 import com.orm.data.local.dao.MemberDao
+import com.orm.data.local.dao.NotificationDao
 import com.orm.data.local.dao.TraceDao
 import dagger.Module
 import dagger.Provides
@@ -43,6 +44,11 @@ object DatabaseModule {
     @Provides
     fun provideTraceDao(database: AppDatabase): TraceDao {
         return database.traceDao()
+    }
+
+    @Provides
+    fun provideNotificationDao(database: AppDatabase): NotificationDao {
+        return database.notificationDao()
     }
 
 }

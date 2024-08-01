@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Entity(tableName = "trail")
 data class Trail(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val peekLatitude: Double,
     val peekLongitude: Double,
     val startLatitude: Double,
