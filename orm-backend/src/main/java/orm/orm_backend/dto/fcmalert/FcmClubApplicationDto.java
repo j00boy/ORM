@@ -6,12 +6,12 @@ import lombok.Getter;
 @Builder
 @Getter
 public class FcmClubApplicationDto implements FcmAlertData {
-    private Integer applicationId;
-    private Integer clubId;
+    private String applicationId;
+    private String clubId;
     private String clubName;
-    private Integer userId;
+    private String userId;
     private String userName;
-    private AlertType alertType;
+    private final AlertType alertType = AlertType.APPLICATION;
 
     @Override
     public String getMessage() {
