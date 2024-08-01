@@ -22,7 +22,7 @@ data class Trace(
     val mountainId: Int,
     val mountainName: String,
     val coordinates: List<Point>?,
-    val trailId: Int
+    val trailId: Int? = null,
 ) : Parcelable {
     companion object {
         fun toRecyclerViewNumberItem(trace: Trace): RecyclerViewNumberItem {

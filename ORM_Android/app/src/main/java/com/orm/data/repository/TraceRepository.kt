@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class TraceRepository @Inject constructor(
+class   TraceRepository @Inject constructor(
     private val traceDao: TraceDao,
     private val traceService: TraceService,
     @ApplicationContext private val context: Context,
