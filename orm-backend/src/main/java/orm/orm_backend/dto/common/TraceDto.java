@@ -1,11 +1,10 @@
 package orm.orm_backend.dto.common;
 
-import lombok.Builder;
 import lombok.Getter;
+import orm.orm_backend.entity.Trace;
 
 import java.util.List;
 
-@Builder
 @Getter
 public class TraceDto {
     private final Integer id;
@@ -17,5 +16,17 @@ public class TraceDto {
     private final String hikingStartedAt;
     private final String hikingEndedAt;
     private final Float maxHeight;
-    private final List<TraceCoordinateDto> coordinates;
+    private List<TraceCoordinateDto> coordinates;
+
+    public TraceDto(Trace trace) {
+        this.id = trace.getId();
+        this.title = trace.getTitle();
+        this.mountainName = trace.getMountain().getMountainName();
+        this.mountainId = trace.getMountain().getId();
+        this.hikingDate = trace.getHikingDate().toString();
+        this.trailId = trace.getTrail().getId();
+        this.hikingStartedAt = trace.getStartTime() == null ? "" : trace.getStartTime().toString();
+        this.hikingEndedAt = trace.getEndTime() == null ? "" : trace.getEndTime().toString();
+        this.maxHeight= trace.getMaxAltitude();
+    }
 }

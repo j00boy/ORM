@@ -46,16 +46,6 @@ public class Trace extends BaseEntity {
         this.user = user;
     }
 
-    public TraceDto toResponseDto() {
-        return TraceDto.builder()
-                .id(id)
-                .title(title)
-                .hikingDate(hikingDate.toString())
-                .hikingStartedAt(startTime == null ? null : startTime.toString())
-                .hikingEndedAt(endTime == null ? null : endTime.toString())
-                .maxHeight(maxAltitude).build();
-    }
-
     public void update(TraceRequestDto traceRequestDto, Mountain mountain, Trail trail) {
         this.title = traceRequestDto.getTitle();
         this.hikingDate = Date.valueOf(traceRequestDto.getHikingDate());

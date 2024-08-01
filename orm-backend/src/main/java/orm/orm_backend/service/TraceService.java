@@ -49,7 +49,7 @@ public class TraceService {
                 .user(user)
                 .build();
         Trace savedTrace = traceRepository.save(trace);
-        return savedTrace.toResponseDto();
+        return new TraceDto(savedTrace);
     }
 
     @Transactional
@@ -61,7 +61,7 @@ public class TraceService {
         Mountain mountain = mountainService.getMountainById(traceRequestDto.getMountainId());
         Trail trail = trailService.getTrailEntityById(traceRequestDto.getTrailId());
         trace.update(traceRequestDto, mountain, trail);
-        return trace.toResponseDto();
+        return new TraceDto(trace);
     }
 
     public void deleteTrace(Integer traceId, Integer userId) {
