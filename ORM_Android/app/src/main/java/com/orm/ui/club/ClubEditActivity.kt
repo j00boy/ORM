@@ -1,25 +1,21 @@
 package com.orm.ui.club
 
-import android.content.Intent
-import android.net.Uri
+import com.orm.ui.fragment.BottomSheetMountainList
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.orm.data.model.Mountain
 import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubCreate
 import com.orm.databinding.ActivityClubEditBinding
 import com.orm.viewmodel.ClubViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.File
 
 @AndroidEntryPoint
-class ClubEditActivity : AppCompatActivity() {
+class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountainSelectedListener {
     private val binding: ActivityClubEditBinding by lazy {
         ActivityClubEditBinding.inflate(layoutInflater)
     }
@@ -32,6 +28,7 @@ class ClubEditActivity : AppCompatActivity() {
         }
     }
 
+    private var mountainId: Int = 0
     private val clubViewModel: ClubViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,12 +56,14 @@ class ClubEditActivity : AppCompatActivity() {
 
             clubViewModel.checkDuplicateClubs(binding.tfClubName.editText?.text.toString())
         }
+
         binding.tfClubMountain.setEndIconOnClickListener {
-            Toast.makeText(
-                this,
-                "산 검색 ${binding.tfClubMountain.editText?.text.toString()}",
-                Toast.LENGTH_SHORT
-            ).show()
+            Log.d("ClubEditActivity", binding.tfClubMountain.editText?.text.toString())
+
+            val mountainName = binding.tfClubMountain.editText?.text.toString()
+            val bottomSheetFragment =
+                BottomSheetMountainList.newInstance(mountainName)
+            bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
 
         val content = if (club == null) "생성" else "수정"
@@ -78,7 +77,7 @@ class ClubEditActivity : AppCompatActivity() {
                     val clubCreate = ClubCreate(
                         clubName = binding.tfClubName.editText?.text.toString(),
                         description = binding.tfClubDesc.editText?.text.toString(),
-                        mountainId = 1
+                        mountainId = mountainId
                     )
 
                     // TODO : image upload
@@ -102,5 +101,10 @@ class ClubEditActivity : AppCompatActivity() {
             .setMessage(message)
             .setPositiveButton("확인") { dialog, which -> }
             .show()
+    }
+
+    override fun onMountainSelected(mountain: Mountain) {
+        binding.tfClubMountain.editText?.setText(mountain.name)
+        mountainId = mountain.id
     }
 }

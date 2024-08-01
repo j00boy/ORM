@@ -32,12 +32,6 @@ class MountainViewModel @Inject constructor(
     private val _trail = MutableLiveData<Trail?>()
     val trail: LiveData<Trail?> get() = _trail
 
-    init {
-        if (_mountains.value.isNullOrEmpty()) {
-            fetchMountainsTop()
-        }
-    }
-
     fun fetchMountainByName(name: String) {
         viewModelScope.launch {
             val mountains = mountainRepository.getMountainByName(name)
@@ -59,7 +53,7 @@ class MountainViewModel @Inject constructor(
         }
     }
 
-    private fun fetchMountainsTop() {
+    fun fetchMountainsTop() {
         viewModelScope.launch {
             val mountains = mountainRepository.getMountainsTop()
             _mountains.postValue(mountains)

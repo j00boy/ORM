@@ -37,10 +37,7 @@ class ClubMemberActivity : AppCompatActivity() {
         }
     }
 
-    private val userId: String by lazy {
-        userViewModel.getUserInfo()
-        userViewModel.user.value!!.userId
-    }
+//    private lateinit var userId: String
 
     private val clubViewModel: ClubViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
@@ -59,29 +56,37 @@ class ClubMemberActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        userViewModel.user.observe(this) {
+            if (it != null && it.userId != club!!.managerId) {
+                binding.cvApplicant.visibility = View.GONE
+                binding.rvApplicant.visibility = View.GONE
+            }
+//            userId = it!!.userId
+        }
+
         clubViewModel.getMembers(club!!.id)
         clubViewModel.members.observe(this@ClubMemberActivity) {
-            Log.d("clubTest", it["applicants"].toString())
+            Log.d("ClubMemberActivity", it["members"].toString())
+            Log.d("ClubMemberActivity", it["applicants"].toString())
             setupAdapterMemberList(it["members"])
             setupAdapterApplicant(it["applicants"])
         }
     }
 
+    // TODO : 본인만 탈퇴 버튼이 보이도록 수정
     private fun setupAdapterMemberList(members: List<ClubMember>?) {
         val clubMembers = members!!.map { ClubMember.toRecyclerViewButtonItem(it) }
 
         adapterMemberList = ProfileButtonAdapter(clubMembers)
 
         adapterMemberList.setType("member")
-        adapterMemberList.setUserId(userId)
-
         adapterMemberList.setItemClickListener(object : ProfileButtonAdapter.OnItemClickListener {
             override fun onClick(v: View, position: Int) {
                 TODO("Not yet implemented")
             }
 
             override fun onClickBtnUp(v: View, position: Int) {
-                clubViewModel.leaveClubs(club!!.id, userId.toInt())
+                clubViewModel.leaveClubs(club!!.id, clubMembers[position].id!!.toInt())
             }
 
             override fun onClickBtnDown(v: View, position: Int) {

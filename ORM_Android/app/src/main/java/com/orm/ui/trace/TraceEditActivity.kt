@@ -9,8 +9,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.orm.data.model.Mountain
 import com.orm.data.model.Trace
 import com.orm.databinding.ActivityTraceEditBinding
+import com.orm.ui.fragment.BottomSheetMountainList
 import com.orm.viewmodel.TraceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -18,7 +20,7 @@ import java.util.Date
 import java.util.Locale
 
 @AndroidEntryPoint
-class TraceEditActivity : AppCompatActivity() {
+class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountainSelectedListener {
     private val binding: ActivityTraceEditBinding by lazy {
         ActivityTraceEditBinding.inflate(layoutInflater)
     }
@@ -31,6 +33,8 @@ class TraceEditActivity : AppCompatActivity() {
         }
     }
 
+    private var mountainId: Int = 0
+    private var mountainName: String = ""
     private val traceViewModel: TraceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,11 +48,12 @@ class TraceEditActivity : AppCompatActivity() {
         }
 
         binding.tfTraceMountain.setEndIconOnClickListener {
-            Toast.makeText(
-                this,
-                "산 검색 ${binding.tfTraceMountain.editText?.text.toString()}",
-                Toast.LENGTH_SHORT
-            ).show()
+            Log.d("TraceEditActivity", binding.tfTraceMountain.editText?.text.toString())
+
+            val mountainName = binding.tfTraceMountain.editText?.text.toString()
+            val bottomSheetFragment =
+                BottomSheetMountainList.newInstance(mountainName)
+            bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
 
         binding.btnSign.setOnClickListener {
@@ -62,8 +67,8 @@ class TraceEditActivity : AppCompatActivity() {
                         id = null,
                         title = binding.tfTraceName.editText?.text.toString(),
                         hikingDate = binding.tfDate.editText?.text.toString(),
-                        mountainId = binding.tfTraceMountain.editText?.text.toString().toInt(),
-                        mountainName = "실험",
+                        mountainId = mountainId,
+                        mountainName = mountainName,
                         coordinates = null,
                         trailId = 1,
                     )
@@ -91,5 +96,11 @@ class TraceEditActivity : AppCompatActivity() {
             picker.show(supportFragmentManager, "trace_date")
         }
 
+    }
+
+    override fun onMountainSelected(mountain: Mountain) {
+        binding.tfTraceMountain.editText?.setText(mountain.name)
+        mountainId = mountain.id
+        mountainName = mountain.name
     }
 }
