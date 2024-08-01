@@ -2,8 +2,8 @@ package orm.orm_backend.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.util.Value;
 import com.google.auth.oauth2.GoogleCredentials;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -23,7 +23,7 @@ public class FirebaseUtil {
     @Value("${firebase.api-url}")
     private String firebaseApiUrl;
 
-    @Value("firebase.config-path")
+    @Value("$firebase.config-path}")
     private String firebaseConfigPath;
 
     public void pushAlert(FcmAlertData fcmAlertData, String receiverFcmToken) throws IOException {
@@ -54,7 +54,6 @@ public class FirebaseUtil {
         FcmMessageDto fcmMessageDto = FcmMessageDto.builder()
                 .token(receiverFcmToken)
                 .data(fcmAlertData)
-                .message(fcmAlertData.getMessage())
                 .build();
 
         FcmAlertDto alertDto = FcmAlertDto.builder()
