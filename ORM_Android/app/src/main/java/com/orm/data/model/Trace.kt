@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 import java.util.Date
 
 @Parcelize
-@Entity(tableName = "trace")
+
 data class Trace(
     @PrimaryKey(autoGenerate = true) val localId: Int = 0,
     val id: Int?,

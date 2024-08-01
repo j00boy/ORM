@@ -7,9 +7,10 @@ import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 
 @Parcelize
+@Entity(tableName = "point")
 data class Point(
     val id: Int? = null,
-    val traceId: Int? = null,
+    val trailId: Int? = null,
     val latitude: Double,
     val longitude: Double,
     val altitude: Double? = null,
