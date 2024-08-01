@@ -30,7 +30,7 @@ public class TrailService {
     public List<TrailResponseDto> getTrailsByMountainId(int mountainId) {
         List<Trail> trails = trailRepository.findByMountainId(mountainId);
         return trails.stream()
-                .map(t -> new TrailResponseDto(t, getAllTrailDetailsByTrailId(t.getId()))).toList();
+                .map(trail -> new TrailResponseDto(trail, getAllTrailDetailsByTrailId(trail.getId()))).toList();
     }
 
     /**
