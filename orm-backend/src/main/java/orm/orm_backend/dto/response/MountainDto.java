@@ -4,11 +4,9 @@ import lombok.Builder;
 import lombok.Data;
 import orm.orm_backend.entity.Mountain;
 
-import java.util.List;
-
 @Data
 @Builder
-public class MountainResponseDto {
+public class MountainDto {
 
     private Integer id;
     private String name;
@@ -18,10 +16,8 @@ public class MountainResponseDto {
     private String desc;
     private Float height;
 
-    private List<TrailResponseDto> trails;
-
-    public static MountainResponseDto toMountainResponseDto(Mountain mountain, List<TrailResponseDto> trails) {
-        return MountainResponseDto.builder()
+    public static MountainDto toMountainDto(Mountain mountain) {
+        return MountainDto.builder()
                 .id(mountain.getId())
                 .name(mountain.getMountainName())
                 .address(mountain.getAddress())
@@ -29,7 +25,6 @@ public class MountainResponseDto {
                 .imageSrc(mountain.getImageSrc())
                 .desc(mountain.getDescription())
                 .height(mountain.getAltitude())
-                .trails(trails)
                 .build();
     }
 }

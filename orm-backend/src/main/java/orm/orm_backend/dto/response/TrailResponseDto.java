@@ -7,6 +7,7 @@ import orm.orm_backend.entity.Trail;
 import java.util.List;
 
 @Data
+@Builder
 public class TrailResponseDto {
 
     private Integer id;
@@ -18,15 +19,15 @@ public class TrailResponseDto {
     private String peakLongitude;
     private List<TrailDetailResponseDto> trailDetails;
 
-    @Builder
-    public TrailResponseDto(Trail trail, List<TrailDetailResponseDto> trailDetails) {
-        this.id = trail.getId();
-        this.distance = trail.getDistance();
-        this.heuristic = trail.getHeuristic();
-        this.startLatitude = trail.getStartLatitude();
-        this.startLongitude = trail.getStartLongitude();
-        this.peakLatitude = trail.getPeakLatitude();
-        this.peakLongitude = trail.getPeakLongitude();
-        this.trailDetails = trailDetails;
+    public TrailResponseDto toTrailResponseDto(Trail trail, List<TrailDetailResponseDto> trailDetails) {
+        return TrailResponseDto.builder()
+                .id(trail.getId())
+                .distance(trail.getDistance())
+                .heuristic(trail.getHeuristic())
+                .startLatitude(trail.getStartLatitude())
+                .startLongitude(trail.getStartLongitude())
+                .peakLatitude(trail.getPeakLatitude())
+                .peakLongitude(trail.getPeakLongitude())
+                .build();
     }
 }
