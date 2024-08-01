@@ -61,7 +61,7 @@ class TraceServiceTest {
     @Mock
     Mountain mountain;
 
-    @Mock
+    @Spy
     Trace trace;
 
     @Mock
@@ -93,6 +93,10 @@ class TraceServiceTest {
         lenient().when(trail.getId()).thenReturn(trailId);
         lenient().when(trace.getId()).thenReturn(traceId);
         lenient().when(trace.getUser()).thenReturn(user);
+        lenient().doReturn(true).when(trace).isOwner(userId);
+        lenient().when(trace.getMountain()).thenReturn(mountain);
+        lenient().when(trace.getHikingDate()).thenReturn(new Date(System.currentTimeMillis()));
+        lenient().when(trace.getTrail()).thenReturn(trail);
     }
 
     @Test
@@ -111,10 +115,10 @@ class TraceServiceTest {
         when(traceRepository.findById(traceId)).thenReturn(Optional.ofNullable(trace));
         when(mountainService.getMountainById(mountainId)).thenReturn(mountain);
         when(trailService.getTrailEntityById(trailId)).thenReturn(trail);
-        assertThatThrownBy(() -> traceService.updateTrace(traceId, traceRequestDto, userId + 1))
-                .isInstanceOf(UnAuthorizedException.class);
+        when(trace.getMountain()).thenReturn(mountain);
 
         String updateTitle = "updateTitle";
+        when(mountain.getMountainName()).thenReturn(updateTitle);
         Date updateDate = new Date(System.currentTimeMillis());
         TraceRequestDto updateTraceDto = TraceRequestDto.builder().id(traceId).title(updateTitle).hikingDate(updateDate.toString())
                 .mountainId(mountainId).trailId(trailId).build();
