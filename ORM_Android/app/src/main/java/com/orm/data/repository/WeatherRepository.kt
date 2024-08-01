@@ -13,7 +13,7 @@ import javax.inject.Inject
 class WeatherRepository @Inject constructor(
     private val weatherService: WeatherService
 ) {
-    suspend fun getWeather(lat: String, lon: String): Weather? {
+    suspend fun getWeather(lat: Double, lon: Double): Weather? {
         return withContext(Dispatchers.IO) {
             val response = weatherService.getWeather(lat = lat, lon = lon).execute()
             if (response.isSuccessful) {

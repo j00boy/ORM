@@ -12,13 +12,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.orm.R
 import com.orm.data.model.Mountain
 import com.orm.data.model.club.Club
+import com.orm.data.model.weather.Weather
 import com.orm.databinding.ActivityMountainDetailBinding
 import com.orm.ui.adapter.ProfileBasicAdapter
 import com.orm.ui.club.ClubDetailActivity
+import com.orm.ui.fragment.WeatherFragment
 import com.orm.viewmodel.ClubViewModel
 import com.orm.viewmodel.MountainViewModel
+import com.orm.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,6 +32,7 @@ class MountainDetailActivity : AppCompatActivity() {
     }
     private val mountainViewModel: MountainViewModel by viewModels()
     private val clubViewModel: ClubViewModel by viewModels()
+    private val weatherViewModel: WeatherViewModel by viewModels()
     private val rvBoard: RecyclerView by lazy { binding.recyclerView }
     private lateinit var adapter: ProfileBasicAdapter
 
@@ -56,6 +61,21 @@ class MountainDetailActivity : AppCompatActivity() {
             Log.d("clubTest", it.toString())
             setupAdapter(it!!)
         }
+
+        //weather
+        val lat = 37.74913611
+        val lon = 128.8784972
+        weatherViewModel.getWeather(lat, lon)
+        weatherViewModel.weather.observe(this) { weather ->
+            weather?.let { updateWeather(it) }
+        }
+
+        // Add WeatherFragment dynamically
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fcv_weather, WeatherFragment())
+                .commit()
+        }
     }
 
     private fun setupAdapter(clubs: List<Club>) {
@@ -75,5 +95,10 @@ class MountainDetailActivity : AppCompatActivity() {
         })
         rvBoard.adapter = adapter
         rvBoard.layoutManager = LinearLayoutManager(this@MountainDetailActivity)
+    }
+
+    private fun updateWeather(weather: Weather) {
+        val fragment = supportFragmentManager.findFragmentById(R.id.fcv_weather) as WeatherFragment?
+        fragment?.updateWeather(weather)
     }
 }

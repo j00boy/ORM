@@ -21,7 +21,7 @@ class WeatherViewModel @Inject constructor(
     private val _weather = MutableLiveData<Weather?>()
     val weather: LiveData<Weather?> get() = _weather
 
-    fun getWeather(lat: String, lon: String) {
+    fun getWeather(lat: Double, lon: Double) {
         viewModelScope.launch {
             val weatherItem = weatherRepository.getWeather(lat, lon)
             _weather.postValue(weatherItem)
