@@ -79,7 +79,7 @@ public class ClubService {
 
         Mountain mountain = mountainService.getMountainById(clubRequestDto.getMountainId());
         club.update(clubRequestDto, mountain, imageSrc);
-        return ClubResponseDto.toMyDto(club);
+        return new ClubResponseDto(club);
     }
 
     // Club 조회
@@ -93,7 +93,7 @@ public class ClubService {
             Page<Member> members = memberService.getPageableMembers(pageable, userId);
             for (Member m : members) {
                 clubRepository.findById(m.getClub().getId())
-                        .ifPresent(club -> clubs.add(ClubResponseDto.toMyDto(club)));
+                        .ifPresent(club -> clubs.add(new ClubResponseDto(club)));
             }
         } else {
             Page<Club> results = clubRepository.findAllByClubNameContaining(pageable, clubSearchRequestDto.getKeyword());
@@ -103,7 +103,7 @@ public class ClubService {
             for (Club c : results) {
                 Boolean isMember = clubMap.contains(c.getId());
                 Boolean isApplied = applicantMap.contains(c.getId());
-                clubs.add(ClubResponseDto.toDto(c, isMember, isApplied));
+                clubs.add(new ClubResponseDto(c, isMember, isApplied));
             }
         }
         return clubs;
@@ -121,7 +121,7 @@ public class ClubService {
         for (Club c : result) {
             Boolean isMember = clubMap.contains(c.getId());
             Boolean isApplied = applicantMap.contains(c.getId());
-            clubs.add(ClubResponseDto.toDto(c, isMember, isApplied));
+            clubs.add(new ClubResponseDto(c, isMember, isApplied));
         }
 
         return clubs;
