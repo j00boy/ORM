@@ -5,7 +5,7 @@ import lombok.Data;
 import orm.orm_backend.entity.Mountain;
 
 @Data
-public class SearchMountainResponseDto {
+public class MountainDto {
 
     private Integer id;
     private String name;
@@ -16,7 +16,7 @@ public class SearchMountainResponseDto {
     private Float height;
 
     @Builder
-    public SearchMountainResponseDto(Mountain mountain) {
+    public MountainDto(Mountain mountain) {
         this.id = mountain.getId();
         this.name = mountain.getMountainName();
         this.address = mountain.getAddress();

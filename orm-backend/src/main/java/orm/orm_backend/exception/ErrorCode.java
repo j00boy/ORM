@@ -20,7 +20,14 @@ public enum ErrorCode {
     ALREADY_APPLIED(HttpStatus.BAD_REQUEST, "이미 가입 신청한 클럽입니다."),
 
     // Trace
-    NOT_EXISTENT_TRACE(HttpStatus.NOT_FOUND, "삭제되었거나 존재하지 않는 발자국입니다.")
+    NOT_EXISTENT_TRACE(HttpStatus.NOT_FOUND, "삭제되었거나 존재하지 않는 발자국입니다."),
+
+    // Mountain
+    MOUNTAIN_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 산입니다."),
+
+    // Trail
+    TRAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 등산로입니다.")
+
     ;
     private final HttpStatus status;
     private final String message;

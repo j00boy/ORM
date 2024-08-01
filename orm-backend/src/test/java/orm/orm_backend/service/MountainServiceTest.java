@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import orm.orm_backend.configuration.Mountain100Config;
 import orm.orm_backend.dto.response.MountainResponseDto;
-import orm.orm_backend.dto.response.SearchMountainResponseDto;
+import orm.orm_backend.dto.response.MountainDto;
 import orm.orm_backend.entity.Mountain;
 import orm.orm_backend.repository.MountainRepository;
 
@@ -48,7 +48,6 @@ public class MountainServiceTest {
     private String mountain2Name = "Mountain 2";
     private String mountain2Code = "22222222";
 
-
     @BeforeEach
     void setUp() {
         lenient().when(mountain1.getId()).thenReturn(mountain1Id);
@@ -83,7 +82,7 @@ public class MountainServiceTest {
         when(mountainRepository.findByMountainNameContaining(name)).thenReturn(list);
 
         // when
-        List<SearchMountainResponseDto> allMountains = mountainService.getMountainsBySearch(name);
+        List<MountainDto> allMountains = mountainService.getMountainsBySearch(name);
 
         // then
         assertThat(allMountains).hasSize(2);
@@ -104,7 +103,7 @@ public class MountainServiceTest {
         when(mountainRepository.findByMountainCodeIn(theFamous)).thenReturn(list);
 
         // when
-        List<SearchMountainResponseDto> mountains100 = mountainService.get100Mountains();
+        List<MountainDto> mountains100 = mountainService.get100Mountains();
 
         // then
         assertThat(mountains100.size()).isEqualTo(2);
