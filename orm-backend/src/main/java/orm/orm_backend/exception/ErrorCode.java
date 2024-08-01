@@ -26,8 +26,10 @@ public enum ErrorCode {
     MOUNTAIN_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 산입니다."),
 
     // Trail
-    TRAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 등산로입니다.")
+    TRAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 등산로입니다."),
 
+    // firebase alert service
+    PUSH_ALERT_FAIL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "푸쉬 알림 전송 중 에러가 발생하였습니다.");
     ;
     private final HttpStatus status;
     private final String message;
