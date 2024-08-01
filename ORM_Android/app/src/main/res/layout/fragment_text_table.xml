@@ -5,18 +5,14 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.table.TextTableFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="16dp"
-        tools:context=".ui.fragment.TableFragment">
+        android:layout_height="match_parent">
 
         <TableLayout
             android:id="@+id/tableLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
             android:padding="8dp"
             android:stretchColumns="*">
 
@@ -28,7 +24,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="Text" />
+                    android:text="시작시간" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
@@ -45,7 +41,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:background="@android:color/darker_gray"
-                android:layerType="software"/>
+                android:layerType="software" />
 
             <!-- 두 번째 행 -->
             <TableRow>
@@ -55,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="8dp"
-                    android:text="Text" />
+                    android:text="종료시간" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
@@ -72,7 +68,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:background="@android:color/darker_gray"
-                android:layerType="software"/>
+                android:layerType="software" />
 
             <!-- 세 번째 행 -->
             <TableRow>
@@ -82,7 +78,35 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="8dp"
+                    android:text="등반시간" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="8dp"
                     android:text="Text" />
+            </TableRow>
+
+
+            <!-- 점선 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/darker_gray"
+                android:layerType="software" />
+
+            <!-- 네 번째 행 -->
+            <TableRow>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="총 산행거리" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"

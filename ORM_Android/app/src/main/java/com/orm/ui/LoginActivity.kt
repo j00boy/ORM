@@ -11,6 +11,8 @@ import android.webkit.WebViewClient
 import android.widget.ImageButton
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.orm.BuildConfig
 import com.orm.databinding.ActivityLoginBinding
 import com.orm.viewmodel.UserViewModel
@@ -65,7 +67,11 @@ class LoginActivity : AppCompatActivity() {
         }
 
         @SuppressLint("WebViewClientOnReceivedSslError")
-        override fun onReceivedSslError(view: WebView?, handler: SslErrorHandler?, error: SslError?) {
+        override fun onReceivedSslError(
+            view: WebView?,
+            handler: SslErrorHandler?,
+            error: SslError?
+        ) {
             handler?.proceed()
         }
     }
@@ -82,6 +88,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun navigateToMainActivity() {
+        userViewModel.getFirebaseToken()
         startActivity(Intent(this, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         })

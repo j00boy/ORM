@@ -2,6 +2,7 @@ package com.orm.data.repository
 
 import android.util.Log
 import com.orm.data.api.ClubService
+import com.orm.data.model.ClubMember
 import com.orm.data.model.club.ClubApprove
 import com.orm.data.model.club.Club
 import com.orm.data.model.RequestMember
@@ -31,25 +32,25 @@ class ClubRepository @Inject constructor(
         }
     }
 
-    suspend fun getMembers(clubId: Int): Map<String, List<Any?>> {
+    suspend fun getMembers(clubId: Int): Map<String, List<ClubMember>> {
         return withContext(Dispatchers.IO) {
-            val resultMap: MutableMap<String, List<Any?>> = mutableMapOf()
+            val resultMap: MutableMap<String, List<ClubMember>> = mutableMapOf()
             try {
                 val response = clubService.getMembers(clubId).execute()
                 if (response.isSuccessful) {
                     val responseBody = response.body()
                     val members = responseBody?.get("members") ?: emptyList()
-                    val requestMembers = responseBody?.get("requestMembers") ?: emptyList()
+                    val applicants = responseBody?.get("applicants") ?: emptyList()
                     resultMap["members"] = members
-                    resultMap["requestMembers"] = requestMembers
+                    resultMap["applicants"] = applicants
                 } else {
                     resultMap["members"] = emptyList()
-                    resultMap["requestMembers"] = emptyList()
+                    resultMap["applicants"] = emptyList()
                 }
             } catch (e: Exception) {
                 Log.e("ClubRepository", "Error getting members", e)
                 resultMap["members"] = emptyList()
-                resultMap["requestMembers"] = emptyList()
+                resultMap["applicants"] = emptyList()
             }
 
             resultMap
@@ -92,19 +93,38 @@ class ClubRepository @Inject constructor(
         }
     }
 
-    suspend fun createClubs(createClub: RequestBody, imgFile: MultipartBody.Part): Int? {
+    suspend fun createClubs(createClub: RequestBody, imgFile: MultipartBody.Part): Int {
         return withContext(Dispatchers.IO) {
             try {
                 val response = clubService.createClubs(createClub, imgFile).execute()
                 if (response.isSuccessful) {
-                    val responseBody = response.body()?.string()
-                    responseBody?.toIntOrNull()
+                    response.body() ?: -1
                 } else {
-                    null
+                    -1
                 }
             } catch (e: Exception) {
                 Log.e("ClubRepository", "Error creating club", e)
-                null
+                -1
+            }
+        }
+    }
+
+    suspend fun updateClubs(
+        clubId: Int,
+        createClub: RequestBody,
+        imgFile: MultipartBody.Part
+    ): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = clubService.updateClubs(clubId, createClub, imgFile).execute()
+                if (response.isSuccessful) {
+                    true
+                } else {
+                    false
+                }
+            } catch (e: Exception) {
+                Log.e("ClubRepository", "Error creating club", e)
+                false
             }
         }
     }
@@ -121,6 +141,23 @@ class ClubRepository @Inject constructor(
             } catch (e: Exception) {
                 Log.e("ClubRepository", "Error checking duplicate clubs", e)
                 false
+            }
+        }
+    }
+
+    suspend fun findClubsByMountain(mountainId: Int): List<Club> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response =
+                    clubService.findClubsByMountain(mountainId = mountainId).execute()
+                if (response.isSuccessful) {
+                    response.body() ?: emptyList()
+                } else {
+                    emptyList()
+                }
+            } catch (e: Exception) {
+                Log.e("ClubRepository", "Error getting clubs", e)
+                emptyList()
             }
         }
     }

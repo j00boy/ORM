@@ -1,5 +1,6 @@
 package com.orm.data.api
 
+import com.orm.data.model.ClubMember
 import com.orm.data.model.RequestMember
 import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubApprove
@@ -11,8 +12,10 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ClubService {
@@ -27,7 +30,7 @@ interface ClubService {
     @GET("clubs/members")
     fun getMembers(
         @Query("clubId") clubId: Int
-    ): Call<Map<String, List<Any>>>
+    ): Call<Map<String, List<ClubMember>>>
 
 
     @POST("clubs/members/approve")
@@ -51,10 +54,24 @@ interface ClubService {
     fun createClubs(
         @Part("createClub") createClub: RequestBody,
         @Part imgFile: MultipartBody.Part?
-    ): Call<ResponseBody>
+    ): Call<Int>
+
+    @Multipart
+    @PATCH("clubs/{clubId}")
+    fun updateClubs(
+        @Path("clubId") clubId: Int,
+        @Part("updateClub") createClub: RequestBody,
+        @Part imgFile: MultipartBody.Part?
+    ): Call<Unit>
+
 
     @GET("clubs/name/check-duplicate")
     fun checkDuplicateClubs(
         @Query("name") name: String,
     ): Call<Boolean>
+
+    @GET("clubs/mountain/{mountainId}")
+    fun findClubsByMountain(
+        @Path("mountainId") mountainId: Int
+    ): Call<List<Club>>
 }

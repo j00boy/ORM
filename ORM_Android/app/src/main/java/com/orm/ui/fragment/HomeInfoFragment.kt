@@ -1,11 +1,14 @@
 package com.orm.ui.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.orm.databinding.FragmentHomeInfoBinding
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint

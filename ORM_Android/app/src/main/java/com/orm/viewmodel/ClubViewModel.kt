@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.orm.data.local.dao.ClubDao
+import com.orm.data.model.ClubMember
 import com.orm.data.model.club.ClubApprove
 import com.orm.data.model.club.Club
 import com.orm.data.model.RequestMember
@@ -34,8 +35,8 @@ class ClubViewModel @Inject constructor(
     private val _clubs = MutableLiveData<List<Club>>()
     val clubs: LiveData<List<Club>> get() = _clubs
 
-    private val _members = MutableLiveData<Map<String, List<Any?>>>()
-    val members: LiveData<Map<String, List<Any?>>> get() = _members
+    private val _members = MutableLiveData<Map<String, List<ClubMember>>>()
+    val members: LiveData<Map<String, List<ClubMember>>> get() = _members
 
     private val _isOperationSuccessful = MutableLiveData<Boolean?>()
     val isOperationSuccessful: LiveData<Boolean?> get() = _isOperationSuccessful
@@ -113,6 +114,22 @@ class ClubViewModel @Inject constructor(
         }
     }
 
+    fun updateClubs(clubId: Int, clubCreate: ClubCreate, imgFile: File?) {
+        viewModelScope.launch {
+            try {
+                val createClubRequestBody = createClubRequestBody(clubCreate)
+                val imgFilePart = createImagePart(imgFile)
+
+                val result = clubRepository.updateClubs(clubId, createClubRequestBody, imgFilePart)
+                _isOperationSuccessful.postValue(result)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _clubId.postValue(null)
+                _isOperationSuccessful.postValue(false)
+            }
+        }
+    }
+
     fun checkDuplicateClubs(clubName: String) {
         viewModelScope.launch {
             try {
@@ -152,4 +169,12 @@ class ClubViewModel @Inject constructor(
         return emptyFile
     }
 
+    fun findClubsByMountain(mountainId: Int) {
+        viewModelScope.launch {
+            _clubs.postValue(emptyList())
+            val clubs = clubRepository.findClubsByMountain(mountainId)
+            Log.e("findClubsByMountain", clubs.toString())
+            _clubs.postValue(clubs)
+        }
+    }
 }

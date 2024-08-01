@@ -8,12 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.orm.R
-import com.orm.data.model.Mountain
 import com.orm.data.model.Trace
 import com.orm.databinding.ActivityTraceBinding
-import com.orm.ui.adapter.ProfileBasicAdapter
 import com.orm.ui.adapter.ProfileNumberAdapter
-import com.orm.ui.mountain.MountainDetailActivity
 import com.orm.viewmodel.TraceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,6 +27,7 @@ class TraceActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        traceViewModel.getTraces()
         traceViewModel.traces.observe(this@TraceActivity){
             setupAdapter(it!!)
         }
@@ -57,7 +55,7 @@ class TraceActivity : AppCompatActivity() {
             override fun onClick(v: View, position: Int) {
                 val intent = Intent(
                     this@TraceActivity,
-                    MountainDetailActivity::class.java
+                    TraceDetailActivity::class.java
                 ).apply {
                     putExtra("trace", traces[position])
                 }
