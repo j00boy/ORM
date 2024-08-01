@@ -21,11 +21,9 @@ public class ApplicantRequestDto {
                 .build();
     }
 
-    public static ApplicantRequestDto toDto(Applicant applicant) {
-        return ApplicantRequestDto.builder()
-                .clubId(applicant.getClub().getId())
-                .userId(applicant.getUser().getId())
-                .introduction(applicant.getIntroduction())
-                .build();
+    public ApplicantRequestDto(Applicant applicant) {
+        this.clubId = applicant.getClub().getId();
+        this.userId = applicant.getUser().getId();
+        this.introduction = applicant.getIntroduction();
     }
 }
