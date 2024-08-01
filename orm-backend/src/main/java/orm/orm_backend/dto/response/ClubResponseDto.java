@@ -3,7 +3,7 @@ package orm.orm_backend.dto.response;
 import lombok.*;
 import orm.orm_backend.entity.Club;
 
-@Getter
+@Data
 public class ClubResponseDto {
     private Integer id;
     private Integer managerId;
@@ -20,35 +20,31 @@ public class ClubResponseDto {
     private Boolean isMember;
     private Boolean isApplied;
 
-    public static ClubResponseDto toMyDto(Club club) {
-        ClubResponseDto clubResponseDto = new ClubResponseDto();
-        clubResponseDto.id = club.getId();
-        clubResponseDto.managerId = club.getManager().getId();
-        clubResponseDto.managerName = club.getManager().getNickname();
-        clubResponseDto.memberCount = club.getMembers().size();
-        clubResponseDto.clubName = club.getClubName();
-        clubResponseDto.description = club.getDescription();
-        clubResponseDto.imgSrc = club.getImageSrc();
-        clubResponseDto.mountainId = club.getMountain().getId();
-        clubResponseDto.mountainName = club.getMountain().getMountainName();
-        clubResponseDto.isMember = Boolean.TRUE;
-        clubResponseDto.isApplied = Boolean.FALSE;
-        return clubResponseDto;
+    public ClubResponseDto(Club club) {
+        this.id = club.getId();
+        this.managerId = club.getManager().getId();
+        this.managerName = club.getManager().getNickname();
+        this.memberCount = club.getMembers().size();
+        this.clubName = club.getClubName();
+        this.description = club.getDescription();
+        this.imgSrc = club.getImageSrc();
+        this.mountainId = club.getMountain().getId();
+        this.mountainName = club.getMountain().getMountainName();
+        this.isMember = Boolean.TRUE;
+        this.isApplied = Boolean.FALSE;
     }
 
-    public static ClubResponseDto toDto(Club club, Boolean isMember, Boolean isApplied) {
-        ClubResponseDto clubResponseDto = new ClubResponseDto();
-        clubResponseDto.id = club.getId();
-        clubResponseDto.managerId = club.getManager().getId();
-        clubResponseDto.managerName = club.getManager().getNickname();
-        clubResponseDto.memberCount = club.getMembers().size();
-        clubResponseDto.clubName = club.getClubName();
-        clubResponseDto.description = club.getDescription();
-        clubResponseDto.imgSrc = club.getImageSrc();
-        clubResponseDto.mountainId = club.getMountain().getId();
-        clubResponseDto.mountainName = club.getMountain().getMountainName();
-        clubResponseDto.isMember = isMember;
-        clubResponseDto.isApplied = isApplied;
-        return clubResponseDto;
+    public ClubResponseDto(Club club, Boolean isMember, Boolean isApplied) {
+        this.id = club.getId();
+        this.managerId = club.getManager().getId();
+        this.managerName = club.getManager().getNickname();
+        this.memberCount = club.getMembers().size();
+        this.clubName = club.getClubName();
+        this.description = club.getDescription();
+        this.imgSrc = club.getImageSrc();
+        this.mountainId = club.getMountain().getId();
+        this.mountainName = club.getMountain().getMountainName();
+        this.isMember = isMember;
+        this.isApplied = isApplied;
     }
 }

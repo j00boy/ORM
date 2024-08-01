@@ -57,7 +57,6 @@ public class ClubController {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         List<ClubResponseDto> clubs = clubService.getAllClubs(clubSearchRequestDto, userId);
-
         return ResponseEntity.ok().body(clubs);
     }
 

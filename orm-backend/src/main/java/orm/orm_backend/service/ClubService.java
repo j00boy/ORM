@@ -53,8 +53,8 @@ public class ClubService {
         clubRepository.save(club);
 
         // club 생성 이후 해당 user 를 member table에 추가 (관리자도 회원)
-        Member member = MemberRequestDto.toEntity(user, club);
-        memberService.saveMember(member);
+        MemberRequestDto memberRequestDto = new MemberRequestDto(user, club);
+        memberService.saveMember(memberRequestDto.toEntity(user, club));
 
         return club.getId();
     }
@@ -79,31 +79,30 @@ public class ClubService {
 
         Mountain mountain = mountainService.getMountainById(clubRequestDto.getMountainId());
         club.update(clubRequestDto, mountain, imageSrc);
-        return ClubResponseDto.toMyDto(club);
+        return new ClubResponseDto(club);
     }
 
     // Club 조회
     public List<ClubResponseDto> getAllClubs(ClubSearchRequestDto clubSearchRequestDto, Integer userId) {
         Boolean isMyClub = clubSearchRequestDto.getIsMyClub();
-        Pageable pageable = PageRequest.of(clubSearchRequestDto.getPgno(), clubSearchRequestDto.getRecordSize());
         List<ClubResponseDto> clubs = new ArrayList<>();
 
         // 내 모임 검색이면
         if (isMyClub) {
-            Page<Member> members = memberService.getPageableMembers(pageable, userId);
+            List<Member> members = memberService.getMemberList(userId);
             for (Member m : members) {
                 clubRepository.findById(m.getClub().getId())
-                        .ifPresent(club -> clubs.add(ClubResponseDto.toMyDto(club)));
+                        .ifPresent(club -> clubs.add(new ClubResponseDto(club)));
             }
         } else {
-            Page<Club> results = clubRepository.findAllByClubNameContaining(pageable, clubSearchRequestDto.getKeyword());
+            List<Club> results = clubRepository.findAllByClubNameContaining(clubSearchRequestDto.getKeyword());
             Set<Integer> clubMap = memberService.getClubs(userId);
             Set<Integer> applicantMap = applicantService.getApplicants(userId);
 
             for (Club c : results) {
                 Boolean isMember = clubMap.contains(c.getId());
                 Boolean isApplied = applicantMap.contains(c.getId());
-                clubs.add(ClubResponseDto.toDto(c, isMember, isApplied));
+                clubs.add(new ClubResponseDto(c, isMember, isApplied));
             }
         }
         return clubs;
@@ -121,7 +120,7 @@ public class ClubService {
         for (Club c : result) {
             Boolean isMember = clubMap.contains(c.getId());
             Boolean isApplied = applicantMap.contains(c.getId());
-            clubs.add(ClubResponseDto.toDto(c, isMember, isApplied));
+            clubs.add(new ClubResponseDto(c, isMember, isApplied));
         }
 
         return clubs;
@@ -134,8 +133,8 @@ public class ClubService {
             throw new NoResultException("id에 해당하는 클럽이 없습니다.");
         }
 
-        List<MemberResponseDto> members = memberService.getMembersInClub(clubId).stream().map(MemberResponseDto::toDto).toList();
-        List<ApplicantResponseDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantResponseDto::toDto).toList();
+        List<MemberResponseDto> members = memberService.getMembersInClub(clubId).stream().map(MemberResponseDto::new).toList();
+        List<ApplicantResponseDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantResponseDto::new).toList();
 
         Map<String, Object> result = new HashMap<>();
         result.put("members", members);
@@ -200,7 +199,7 @@ public class ClubService {
         if (memberRequestDto.getIsApproved()) {
             User user = userService.findUserById(memberRequestDto.getUserId());
             Club club = clubRepository.findById(memberRequestDto.getClubId()).orElseThrow();
-            memberService.saveMember(MemberRequestDto.toEntity(user, club));
+            memberService.saveMember(memberRequestDto.toEntity(user, club));
         }
         applicantService.deleteApplicant(memberRequestDto);
     }

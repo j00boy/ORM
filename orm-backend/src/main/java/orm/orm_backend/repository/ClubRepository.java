@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ClubRepository extends JpaRepository<Club, Integer> {
-    Page<Club> findAllByClubNameContaining(Pageable pageable, String keyword);
+    List<Club> findAllByClubNameContaining(String keyword);
     List<Club> findAllByMountainId(Integer mountainId);
     Boolean existsByClubName(String clubName);
 }

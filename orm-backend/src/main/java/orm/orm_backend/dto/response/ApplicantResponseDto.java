@@ -13,12 +13,10 @@ public class ApplicantResponseDto {
     private String imgSrc;
 
 
-    public static ApplicantResponseDto toDto(Applicant applicant) {
-        return ApplicantResponseDto.builder()
-                .userId(applicant.getUser().getId())
-                .nickname(applicant.getUser().getNickname())
-                .introduction(applicant.getIntroduction())
-                .imgSrc(applicant.getUser().getImageSrc())
-                .build();
+    public ApplicantResponseDto(Applicant applicant) {
+        this.userId = applicant.getUser().getId();
+        this.nickname = applicant.getUser().getNickname();
+        this.introduction = applicant.getIntroduction();
+        this.imgSrc = applicant.getUser().getImageSrc();
     }
 }
