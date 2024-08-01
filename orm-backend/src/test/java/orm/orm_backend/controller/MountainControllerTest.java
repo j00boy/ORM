@@ -11,7 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.test.web.servlet.MockMvc;
 import orm.orm_backend.dto.response.MountainResponseDto;
-import orm.orm_backend.dto.response.SearchMountainResponseDto;
+import orm.orm_backend.dto.response.MountainDto;
 import orm.orm_backend.dto.response.TrailResponseDto;
 import orm.orm_backend.service.MountainService;
 import orm.orm_backend.service.TrailService;
@@ -51,10 +51,10 @@ public class MountainControllerTest {
     private MountainResponseDto mountain2;
 
     @Mock
-    private SearchMountainResponseDto searchMountain1;
+    private MountainDto searchMountain1;
 
     @Mock
-    private SearchMountainResponseDto searchMountain2;
+    private MountainDto searchMountain2;
 
     @Mock
     private TrailResponseDto trail1;
