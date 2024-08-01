@@ -13,7 +13,7 @@ public interface TrailDetailRepository extends JpaRepository<TrailDetail, Intege
     /**
      * 고유 trailId를 가진 등산로 세부 좌표들을 반환한다.
      * @param trailId
-     * @return
+     * @return 같은 trailId를 갖는 TrailDetail List
      */
     List<TrailDetail> findTrailDetailsByTrailId(Integer trailId);
 

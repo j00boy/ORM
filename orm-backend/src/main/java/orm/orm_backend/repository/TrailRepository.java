@@ -13,14 +13,14 @@ public interface TrailRepository extends JpaRepository<Trail, Integer> {
     /**
      * 같은 mountainId를 가진 등산로 객체들을 반환한다.
      * @param mountainId
-     * @return
+     * @return 같은 mountainId를 갖는 Trail List
      */
     List<Trail> findByMountainId(Integer mountainId);
 
     /**
      * 고유 trailId를 가진 등산로 객체를 반환한다.
      * @param trailId
-     * @return
+     * @return trailId로 조회된 Trail
      */
     Optional<Trail> findById(Integer trailId);
 
