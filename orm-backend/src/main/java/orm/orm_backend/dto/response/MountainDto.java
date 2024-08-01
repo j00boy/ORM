@@ -5,7 +5,6 @@ import lombok.Data;
 import orm.orm_backend.entity.Mountain;
 
 @Data
-@Builder
 public class MountainDto {
 
     private Integer id;
@@ -16,15 +15,14 @@ public class MountainDto {
     private String desc;
     private Float height;
 
-    public static MountainDto toMountainDto(Mountain mountain) {
-        return MountainDto.builder()
-                .id(mountain.getId())
-                .name(mountain.getMountainName())
-                .address(mountain.getAddress())
-                .code(mountain.getMountainCode())
-                .imageSrc(mountain.getImageSrc())
-                .desc(mountain.getDescription())
-                .height(mountain.getAltitude())
-                .build();
+    @Builder
+    public MountainDto(Mountain mountain) {
+        this.id = mountain.getId();
+        this.name = mountain.getMountainName();
+        this.address = mountain.getAddress();
+        this.code = mountain.getMountainCode();
+        this.imageSrc = mountain.getImageSrc();
+        this.desc = mountain.getDescription();
+        this.height = mountain.getAltitude();
     }
 }

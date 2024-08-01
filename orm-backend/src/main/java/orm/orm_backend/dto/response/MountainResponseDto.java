@@ -7,7 +7,6 @@ import orm.orm_backend.entity.Mountain;
 import java.util.List;
 
 @Data
-@Builder
 public class MountainResponseDto {
 
     private Integer id;
@@ -20,16 +19,15 @@ public class MountainResponseDto {
 
     private List<TrailResponseDto> trails;
 
-    public static MountainResponseDto toMountainResponseDto(Mountain mountain, List<TrailResponseDto> trails) {
-        return MountainResponseDto.builder()
-                .id(mountain.getId())
-                .name(mountain.getMountainName())
-                .address(mountain.getAddress())
-                .code(mountain.getMountainCode())
-                .imageSrc(mountain.getImageSrc())
-                .desc(mountain.getDescription())
-                .height(mountain.getAltitude())
-                .trails(trails)
-                .build();
+    @Builder
+    public MountainResponseDto(Mountain mountain, List<TrailResponseDto> trails) {
+        this.id = mountain.getId();
+        this.name = mountain.getMountainName();
+        this.address = mountain.getAddress();
+        this.code = mountain.getMountainCode();
+        this.imageSrc = mountain.getImageSrc();
+        this.desc = mountain.getDescription();
+        this.height = mountain.getAltitude();
+        this.trails = trails;
     }
 }
