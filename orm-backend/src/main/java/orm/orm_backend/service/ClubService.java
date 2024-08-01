@@ -133,7 +133,7 @@ public class ClubService {
             throw new NoResultException("id에 해당하는 클럽이 없습니다.");
         }
 
-        List<MemberResponseDto> members = memberService.getMembersInClub(clubId).stream().map(MemberResponseDto::toDto).toList();
+        List<MemberResponseDto> members = memberService.getMembersInClub(clubId).stream().map(MemberResponseDto::new).toList();
         List<ApplicantResponseDto> applicants = (!club.isManager(userId)) ? null : applicantService.getApplicantsInClub(clubId).stream().map(ApplicantResponseDto::new).toList();
 
         Map<String, Object> result = new HashMap<>();

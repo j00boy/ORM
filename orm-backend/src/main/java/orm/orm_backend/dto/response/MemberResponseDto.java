@@ -15,13 +15,11 @@ public class MemberResponseDto {
     private String imgSrc;
     private String nickname;
 
-    public static MemberResponseDto toDto(Member member) {
-        return MemberResponseDto.builder()
-                .userId(member.getUser().getId())
-                .clubId(member.getClub().getId())
-                .joinedAt(member.getCreatedAt())
-                .imgSrc(member.getUser().getImageSrc())
-                .nickname(member.getUser().getNickname())
-                .build();
+    public MemberResponseDto (Member member) {
+        this.userId = member.getUser().getId();
+        this.clubId = member.getClub().getId();
+        this.joinedAt = member.getCreatedAt();
+        this.imgSrc = member.getUser().getImageSrc();
+        this.nickname = member.getUser().getNickname();
     }
 }
