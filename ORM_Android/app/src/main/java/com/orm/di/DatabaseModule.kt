@@ -6,6 +6,7 @@ import com.orm.data.local.AppDatabase
 import com.orm.data.local.dao.ClubDao
 import com.orm.data.local.dao.MemberDao
 import com.orm.data.local.dao.NotificationDao
+import com.orm.data.local.dao.PointDao
 import com.orm.data.local.dao.TraceDao
 import dagger.Module
 import dagger.Provides
@@ -51,4 +52,8 @@ object DatabaseModule {
         return database.notificationDao()
     }
 
+    @Provides
+    fun providePointDao(database: AppDatabase): PointDao {
+        return database.pointDao()
+    }
 }
