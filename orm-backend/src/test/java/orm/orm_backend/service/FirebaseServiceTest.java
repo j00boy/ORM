@@ -70,4 +70,9 @@ public class FirebaseServiceTest {
     void pushClubApplicationAlertTest() {
         firebasePushAlertService.pushClubApplicationAlert(testFirebaseToken, user, club);
     }
+
+    @Test
+    void pushClubAcceptanceAlertTest() {
+        firebasePushAlertService.pushClubAcceptanceAlert(testFirebaseToken, club);
+    }
 }
