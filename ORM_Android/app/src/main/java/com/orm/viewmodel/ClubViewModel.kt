@@ -177,4 +177,16 @@ class ClubViewModel @Inject constructor(
             _clubs.postValue(clubs)
         }
     }
+
+    fun dropMember(clubId: Int, userId: Int) {
+        viewModelScope.launch {
+            try {
+                val success = clubRepository.dropMember(clubId, userId)
+                _isOperationSuccessful.postValue(success)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _isOperationSuccessful.postValue(false)
+            }
+        }
+    }
 }

@@ -74,4 +74,10 @@ interface ClubService {
     fun findClubsByMountain(
         @Path("mountainId") mountainId: Int
     ): Call<List<Club>>
+
+    @DELETE("clubs/members/drop")
+    fun dropMember(
+        @Query("clubId") clubId: Int,
+        @Query("userId") userId: Int,
+    ): Call<Unit>
 }

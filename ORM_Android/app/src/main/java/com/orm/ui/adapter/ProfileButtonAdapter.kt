@@ -18,6 +18,7 @@ class ProfileButtonAdapter(private val items: List<RecyclerViewButtonItem>) :
     private lateinit var itemClickListener: OnItemClickListener
     private lateinit var type: String
     private lateinit var userId: String
+    private lateinit var managerId: String
 
     inner class ProfileButtonViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivThumbnail: ImageView = itemView.findViewById(R.id.iv_thumbnail)
@@ -42,11 +43,19 @@ class ProfileButtonAdapter(private val items: List<RecyclerViewButtonItem>) :
         holder.tvSub.text = items[position].subTitle
 
         if (this.type == "member") {
-//            if (items[position].id != userId.toInt()) {
-//                holder.btnUp.visibility = View.GONE
-//            }
-            holder.btnUp.text = "탈퇴"
-            holder.btnDown.visibility = View.GONE
+            if (items[position].id != managerId.toInt()) {
+                if (items[position].id != userId.toInt()) {
+                    holder.btnUp.visibility = View.GONE
+                }
+                holder.btnDown.visibility = View.GONE
+                holder.btnUp.text = "탈퇴"
+            } else {
+                if(items[position].id == userId.toInt()){
+                    holder.btnDown.visibility = View.GONE
+                }
+                holder.btnUp.visibility = View.GONE
+                holder.btnDown.text = "추방"
+            }
             holder.tvSub.visibility = View.GONE
         }
 
@@ -82,6 +91,10 @@ class ProfileButtonAdapter(private val items: List<RecyclerViewButtonItem>) :
 
     fun setUserId(userId: String) {
         this.userId = userId
+    }
+
+    fun setManagerId(managerId: String) {
+        this.managerId = managerId
     }
 
     private fun String.getNetworkImage(context: Context, view: ImageView) {

@@ -161,4 +161,16 @@ class ClubRepository @Inject constructor(
             }
         }
     }
+
+    suspend fun dropMember(clubId: Int, userId: Int): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = clubService.dropMember(clubId, userId).execute()
+                response.isSuccessful
+            } catch (e: Exception) {
+                Log.e("ClubRepository", "Error drop member", e)
+                false
+            }
+        }
+    }
 }
