@@ -2,10 +2,7 @@ package orm.orm_backend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import orm.orm_backend.dto.fcmalert.FcmAcceptanceDto;
-import orm.orm_backend.dto.fcmalert.FcmAlertData;
-import orm.orm_backend.dto.fcmalert.FcmClubApplicationDto;
-import orm.orm_backend.dto.fcmalert.FcmNotification;
+import orm.orm_backend.dto.fcmalert.*;
 import orm.orm_backend.entity.Club;
 import orm.orm_backend.entity.User;
 import orm.orm_backend.util.FirebaseUtil;
@@ -56,5 +53,17 @@ public class FirebasePushAlertService {
                 .body(data.getMessage())
                 .build();
         firebaseUtil.pushAlert(data, applicantToken, notification);
+    }
+
+    public void pushClubExpelAlert(String expelMemberToken, Club club) {
+        FcmAlertData data = FcmExpelDto.builder()
+                .clubId(String.valueOf(club.getId()))
+                .clubName(club.getClubName())
+                .clubImageSrc(club.getImageSrc())
+                .build();
+        FcmNotification notification = FcmNotification.builder()
+                .body(data.getMessage())
+                .build();
+        firebaseUtil.pushAlert(data, expelMemberToken, notification);
     }
 }

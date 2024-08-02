@@ -197,6 +197,8 @@ public class ClubService {
             throw new UnAuthorizedException();
         }
         memberService.delete(userId, clubId);
+        User user = userService.findUserById(userId);
+        firebasePushAlertService.pushClubExpelAlert(user.getFirebaseToken(), club);
     }
 
     // 가입 수락/거절
