@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/md_theme_primary"
                 android:minHeight="?attr/actionBarSize"
-                app:navigationIcon="@drawable/baseline_arrow_back_24"
+                app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
                 app:title="@{mountain.name}" />
         </com.google.android.material.appbar.AppBarLayout>
 

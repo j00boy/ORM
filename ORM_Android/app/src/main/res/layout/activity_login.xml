@@ -37,7 +37,7 @@
         android:paddingHorizontal="24dp"
         android:contentDescription="카카오 로그인 버튼"
         android:scaleType="fitCenter"
-        android:src="@drawable/kakao_login_large_wide"
+        android:src="@drawable/img_kakao_login_large_wide"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
