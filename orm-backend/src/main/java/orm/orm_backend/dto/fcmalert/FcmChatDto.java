@@ -6,10 +6,11 @@ import lombok.Getter;
 @Builder
 @Getter
 public class FcmChatDto implements FcmAlertData {
-    private Integer chatRoomId;
-    private Integer senderId;
+    private String chatRoomId;
+    private String senderId;
     private String senderName;
     private String chatMessage;
+    private final AlertType alertType = AlertType.CHAT;
 
     @Override
     public String getMessage() {
