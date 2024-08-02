@@ -47,27 +47,26 @@
                 android:id="@+id/iv_search_icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:layout_marginEnd="4dp"
                 android:src="@drawable/ic_search"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginEnd="2dp"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_club_search"
                 app:layout_constraintEnd_toStartOf="@+id/btn_club_search"
-                app:layout_constraintHorizontal_chainStyle="packed"/>
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintTop_toTopOf="@+id/btn_club_search" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/btn_club_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="모임을 검색해보세요"
-                android:textSize="20sp"
-                android:textColor="@color/md_theme_onSurface"
+                android:layout_marginStart="8dp"
                 android:gravity="center_vertical"
-                app:layout_constraintStart_toEndOf="@id/iv_search_icon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:text="모임을 검색해보세요"
+                android:textColor="@color/md_theme_onSurface"
+                android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginStart="8dp"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

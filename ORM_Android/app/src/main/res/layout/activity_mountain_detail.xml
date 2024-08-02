@@ -91,7 +91,7 @@
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/fcv_weather"
                     android:layout_width="match_parent"
-                    android:layout_height="135dp" />
+                    android:layout_height="wrap_content" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="match_parent"
