@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isNotEmpty
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.data.model.Mountain
@@ -59,14 +60,25 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         }
 
         binding.btnSign.setOnClickListener {
+            if (binding.tfTraceName.editText!!.text.isEmpty()) {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("경고")
+                    .setMessage("발자국 이름을 입력하세요.")
+                    .setPositiveButton("확인") { _, _ -> }
+                    .show()
+                return@setOnClickListener
+            }
+            val isModify = trace != null
+            val content = if (isModify) "수정" else "생성"
             MaterialAlertDialogBuilder(this)
-                .setTitle("생성하기 / 수정하기")
-                .setMessage("발자국을 생성/수정 하시겠습니까?")
+                .setTitle("${content}하기")
+                .setMessage("발자국을 ${content} 하시겠습니까?")
                 .setNegativeButton("취소") { _, _ -> }
                 .setPositiveButton("확인") { dialog, which ->
                     // TODO : trace 수정
                     val traceCreate = Trace(
-                        id = null,
+                        localId = trace?.localId ?: 0,
+                        id = trace?.id,
                         title = binding.tfTraceName.editText?.text.toString(),
                         hikingDate = binding.tfDate.editText?.text.toString(),
                         mountainId = mountainId,
