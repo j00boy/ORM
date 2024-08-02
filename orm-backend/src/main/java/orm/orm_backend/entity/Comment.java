@@ -2,6 +2,7 @@ package orm.orm_backend.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,4 +24,12 @@ public class Comment extends BaseEntity {
 
     @Column(length = 100)
     private String content;
+
+    @Builder
+    public Comment(Board board, User user, String content) {
+        this.board = board;
+        this.user = user;
+        this.content = content;
+    }
+
 }

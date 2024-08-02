@@ -2,8 +2,10 @@ package orm.orm_backend.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import orm.orm_backend.dto.request.BoardRequestDto;
 
 @Entity
 @Getter
@@ -28,4 +30,13 @@ public class Board extends BaseEntity{
     private String content;
 
     private Integer hit;
+
+    @Builder
+    public Board(User user, Club club, String title, String content){
+        this.club = club;
+        this.user = user;
+        this.title = title;
+        this.content = content;
+        this.hit = 0;
+    }
 }

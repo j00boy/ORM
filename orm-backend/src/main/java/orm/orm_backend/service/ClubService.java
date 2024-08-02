@@ -213,4 +213,9 @@ public class ClubService {
         }
         applicantService.deleteApplicant(memberRequestDto);
     }
+
+    // 클럽 찾기
+    public Club getByClubId(Integer clubId) {
+        return clubRepository.findById(clubId).orElseThrow(() -> new CustomException(ErrorCode.INVALID_CLUB_ID));
+    }
 }
