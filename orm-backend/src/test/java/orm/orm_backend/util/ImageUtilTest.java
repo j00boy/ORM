@@ -7,9 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +24,8 @@ import java.io.InputStream;
 import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
-@ExtendWith(MockitoExtension.class)
+@TestPropertySource(locations = "classpath:test-application.properties")
+@ExtendWith(SpringExtension.class)
 class ImageUtilTest {
 
     private final String UPLOAD_DIR = "src/main/resources/static/uploads/image";
@@ -31,16 +35,34 @@ class ImageUtilTest {
     @InjectMocks
     ImageUtil imageUtil;
 
+    @Value("${orm.sftp.host}")
+    private String SFTP_HOST;
+
+    @Value("${orm.sftp.port}")
+    private int SFTP_PORT;
+
+    @Value("${orm.sftp.user}")
+    private String SFTP_USER;
+
+    @Value("${orm.sftp.pem-file-path}")
+    private String PEM_FILE_PATH;
+
+    @Value("${orm.sftp.remote-upload-dir}")
+    private String REMOTE_UPLOAD_DIR;
+
+    @Value("${orm.sftp.remote-access-dir}")
+    private String REMOTE_ACCESS_DIR;
+
     private String fileName;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(imageUtil, "SFTP_HOST", "i11A709.p.ssafy.io");
-        ReflectionTestUtils.setField(imageUtil, "SFTP_PORT", 22);
-        ReflectionTestUtils.setField(imageUtil, "SFTP_USER", "ubuntu");
-        ReflectionTestUtils.setField(imageUtil, "PEM_FILE_PATH", "src/main/resources/I11A709T.pem");
-        ReflectionTestUtils.setField(imageUtil, "REMOTE_UPLOAD_DIR", "/home/upload/orm/");
-        ReflectionTestUtils.setField(imageUtil, "REMOTE_ACCESS_DIR", "/files/orm/");
+        ReflectionTestUtils.setField(imageUtil, "SFTP_HOST", SFTP_HOST);
+        ReflectionTestUtils.setField(imageUtil, "SFTP_PORT", SFTP_PORT);
+        ReflectionTestUtils.setField(imageUtil, "SFTP_USER", SFTP_USER);
+        ReflectionTestUtils.setField(imageUtil, "PEM_FILE_PATH", PEM_FILE_PATH);
+        ReflectionTestUtils.setField(imageUtil, "REMOTE_UPLOAD_DIR", REMOTE_UPLOAD_DIR);
+        ReflectionTestUtils.setField(imageUtil, "REMOTE_ACCESS_DIR", REMOTE_ACCESS_DIR);
     }
 
     @BeforeAll

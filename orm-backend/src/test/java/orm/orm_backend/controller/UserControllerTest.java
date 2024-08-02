@@ -4,12 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import orm.orm_backend.dto.response.LoginResponseDto;
@@ -24,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Slf4j
 @WebMvcTest(controllers = UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@TestPropertySource(locations = "classpath:application.yml")
 class UserControllerTest {
 
     @Autowired
@@ -47,14 +50,22 @@ class UserControllerTest {
     @Autowired
     private UserController userController;
 
+    @Value("${orm.header.auth}")
+    private String HEADER_AUTH;
+
+    @Value("${jwt.salt}")
+    private String salt;
+
+    @Value("${jwt.access-token.expiretime}")
+    private Long accessTokenExpireTime;
+
     @BeforeEach
     void init() {
-        ReflectionTestUtils.setField(userController, "HEADER_AUTH", "Authorization");
-        ReflectionTestUtils.setField(jwtUtil, "salt", "ORM-SALT-VALUE-40932999-071e-4368-a21f-6aa4b5fa16b0");
-        ReflectionTestUtils.setField(jwtUtil, "accessTokenExpireTime", 360000000000L);
+        ReflectionTestUtils.setField(userController, "HEADER_AUTH", HEADER_AUTH);
+        ReflectionTestUtils.setField(jwtUtil, "salt", salt);
+        ReflectionTestUtils.setField(jwtUtil, "accessTokenExpireTime", accessTokenExpireTime);
         userId = 2;
         accessToken = jwtUtil.createAccessToken(userId);
-        log.info("accessToken={}", accessToken);
     }
 
     @Test

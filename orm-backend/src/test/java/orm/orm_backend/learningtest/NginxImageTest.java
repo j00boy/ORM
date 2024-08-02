@@ -4,9 +4,13 @@ import com.jcraft.jsch.*;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,14 +18,25 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+@TestPropertySource(locations = "classpath:test-application.properties")
+@ExtendWith(SpringExtension.class)
 @Slf4j
 public class NginxImageTest {
 
-    private static final String SFTP_HOST = "i11A709.p.ssafy.io";
-    private static final int SFTP_PORT = 22;
-    private static final String SFTP_USER = "ubuntu";
-    private static final String PEM_FILE_PATH = "src/main/resources/I11A709T.pem";
-    private static final String REMOTE_UPLOAD_DIR = "/home/upload/orm/";
+    @Value("${orm.sftp.host}")
+    private String SFTP_HOST;
+
+    @Value("${orm.sftp.port}")
+    private int SFTP_PORT;
+
+    @Value("${orm.sftp.user}")
+    private String SFTP_USER;
+
+    @Value("${orm.sftp.pem-file-path}")
+    private String PEM_FILE_PATH;
+
+    @Value("${orm.sftp.remote-upload-dir}")
+    private String REMOTE_UPLOAD_DIR;
 
     @Test
     void imageUploadTest() throws IOException {

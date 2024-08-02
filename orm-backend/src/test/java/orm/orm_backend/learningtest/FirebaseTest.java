@@ -4,11 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 import orm.orm_backend.dto.fcmalert.AlertType;
 
@@ -16,14 +21,28 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+@TestPropertySource(locations = "classpath:test-application.properties")
+@ExtendWith(SpringExtension.class)
+@Slf4j
 public class FirebaseTest {
+
+    @Value("${firebase.api-url}")
+    private String firebaseApiUrl;
+
+    @Value("${firebase.config-path}")
+    private String firebaseConfigPath;
+
+    @Value("${firebase.test-token}")
+    private String testFirebaseToken;
 
     FcmSendDto fcmSendDto;
 
     @BeforeEach
     void setUp() {
+        log.info("firebaseApiUrl={}", firebaseApiUrl);
+        log.info("firebaseConfigPath={}", firebaseConfigPath);
         fcmSendDto = FcmSendDto.builder()
-                .token("emjBpLWpRv6gA0kMewxdma:APA91bEfNOwN11-BV3NzLPAcrkgEk8r3qw2UphKd2LBLjr2UjmBneqqU_TeL0YA8V74rZK47fzApU-6Z8kz5T1YP07yfQu3YUInv3UqvKXnKvRTy8p3dFXIDFtBsollFxbNACgRap48D")
+                .token(testFirebaseToken)
                 .title("test title")
                 .body("test content")
                 .build();
@@ -44,15 +63,13 @@ public class FirebaseTest {
 
         HttpEntity<String> entity = new HttpEntity<>(message, headers);
 
-        String API_URL = "https://fcm.googleapis.com/v1/projects/orm-ssafy/messages:send";
+        String API_URL = firebaseApiUrl;
         ResponseEntity<String> response = restTemplate.exchange(API_URL, HttpMethod.POST, entity, String.class);
 
         System.out.println(response.getStatusCode());
     }
 
     private String getAccessToken() throws IOException {
-        String firebaseConfigPath = "orm-ssafy-firebase-adminsdk-r5bcu-b5d1ad1ab6.json";
-
         GoogleCredentials googleCredentials = GoogleCredentials.fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
                 .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
 
