@@ -54,6 +54,7 @@ public class FirebasePushAlertTest {
         fcmAlertData = FcmClubApplicationDto.builder()
                 .clubId(String.valueOf(clubId))
                 .clubName(clubName)
+                .clubImageSrc(testImageSrc)
                 .userId(String.valueOf(userId))
                 .userName(userName)
                 .build();

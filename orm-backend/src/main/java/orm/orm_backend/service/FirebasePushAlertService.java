@@ -21,6 +21,7 @@ public class FirebasePushAlertService {
         FcmAlertData data = FcmClubApplicationDto.builder()
                 .clubId(String.valueOf(club.getId()))
                 .clubName(club.getClubName())
+                .clubImageSrc(club.getImageSrc())
                 .userId(String.valueOf(applicant.getId()))
                 .userName(applicant.getNickname())
                 .build();

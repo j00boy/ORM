@@ -9,6 +9,7 @@ public class FcmClubApplicationDto implements FcmAlertData {
     private String applicationId;
     private String clubId;
     private String clubName;
+    private String clubImageSrc;
     private String userId;
     private String userName;
     private final AlertType alertType = AlertType.APPLICATION;
