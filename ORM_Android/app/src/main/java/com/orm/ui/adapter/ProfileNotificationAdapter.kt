@@ -40,6 +40,10 @@ class ProfileNotificationAdapter(private val items: List<RecyclerViewNotificatio
         holder.itemView.setOnClickListener {
             itemClickListener.onClick(it, position)
         }
+        holder.itemView.setOnLongClickListener {
+            itemClickListener.onLongClick(it, position)
+            true
+        }
     }
 
     override fun getItemCount(): Int {
@@ -48,6 +52,7 @@ class ProfileNotificationAdapter(private val items: List<RecyclerViewNotificatio
 
     interface OnItemClickListener {
         fun onClick(v: View, position: Int)
+        fun onLongClick(v: View, position: Int)
     }
 
     fun setItemClickListener(onItemClickListener: OnItemClickListener) {

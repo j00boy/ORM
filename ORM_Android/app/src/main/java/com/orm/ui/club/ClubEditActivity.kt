@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isNotEmpty
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.data.model.Mountain
 import com.orm.data.model.club.Club
@@ -68,6 +69,15 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
 
         val content = if (club == null) "생성" else "수정"
         binding.btnSign.setOnClickListener {
+            if(!(binding.tfClubName.isNotEmpty() && mountainId != 0)) {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(content)
+                    .setMessage("필수 정보를 입력해주세요.")
+                    .setPositiveButton("확인"){ _,_ ->
+                    }
+                    .show()
+                return@setOnClickListener
+            }
             MaterialAlertDialogBuilder(this)
                 .setTitle(content)
                 .setMessage("모임을 $content 하시겠습니까?")

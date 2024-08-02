@@ -1,6 +1,7 @@
 package com.orm.data.local.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -13,4 +14,7 @@ interface NotificationDao {
 
     @Query("SELECT * FROM notification")
     suspend fun getAllNotifications(): List<Notification>
+
+    @Delete
+    suspend fun deleteNotification(notification: Notification): Int
 }

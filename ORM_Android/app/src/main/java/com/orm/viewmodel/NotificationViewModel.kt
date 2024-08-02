@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotificationViewModel @Inject constructor(
-    private val notificationRepository: NotificationRepository
+    private val notificationRepository: NotificationRepository,
 ) : ViewModel() {
 
     private val _notifications = MutableLiveData<List<Notification>>()
@@ -25,6 +25,16 @@ class NotificationViewModel @Inject constructor(
         }
     }
 
+    fun deleteNotification(notification: Notification) {
+        viewModelScope.launch {
+            notificationRepository.deleteNotification(notification)
+
+            val updateNotifications = _notifications.value?.toMutableList()?.filter {
+                it.id != notification.id
+            } ?: mutableListOf()
+            _notifications.postValue(updateNotifications)
+        }
+    }
 //    fun insertNotification(notification: Notification) {
 //        viewModelScope.launch {
 //            notificationRepository.insertNotification(notification)

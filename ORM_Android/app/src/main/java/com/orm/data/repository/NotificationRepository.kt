@@ -7,16 +7,23 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class NotificationRepository @Inject constructor(
-    private val notificationDao: NotificationDao
-){
-    suspend fun getAllNotifications(): List<Notification>{
-        return withContext(Dispatchers.IO){
+    private val notificationDao: NotificationDao,
+) {
+    suspend fun getAllNotifications(): List<Notification> {
+        return withContext(Dispatchers.IO) {
             notificationDao.getAllNotifications()
         }
     }
+
     suspend fun insertNotification(notification: Notification): Long {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             notificationDao.insertNotification(notification)
+        }
+    }
+
+    suspend fun deleteNotification(notification: Notification): Int {
+        return withContext(Dispatchers.IO) {
+            notificationDao.deleteNotification(notification)
         }
     }
 }
