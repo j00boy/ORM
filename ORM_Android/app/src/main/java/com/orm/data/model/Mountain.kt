@@ -16,7 +16,7 @@ data class Mountain(
     val imageSrc: String?,
     val desc: String?,
     val height: Double,
-    val trails: List<Trail>? = null,
+    val trails: List<Trail>? = emptyList(),
 ) : Parcelable {
     companion object {
         fun toRecyclerViewBasicItem(mountain: Mountain): RecyclerViewBasicItem {

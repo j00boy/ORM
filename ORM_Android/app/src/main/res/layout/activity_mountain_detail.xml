@@ -88,10 +88,18 @@
                     android:text="날씨"
                     android:textSize="24sp" />
 
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fcv_weather"
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="8dp">
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fcv_weather"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp" />
+                </com.google.android.material.card.MaterialCardView>
+
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="match_parent"
@@ -101,13 +109,27 @@
                     android:text="등산로 정보"
                     android:textSize="24sp" />
 
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fcv_map"
-                    android:name="com.orm.ui.fragment.map.GoogleMapFragment"
+
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="270dp" />
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="8dp">
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fcv_map"
+                        android:layout_width="match_parent"
+                        android:layout_height="270dp" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <Spinner
+                    android:id="@+id/spinner_trails"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp" />
 
                 <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_club"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="18dp"

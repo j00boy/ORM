@@ -11,11 +11,11 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -30,13 +30,15 @@ import com.orm.R
 import com.orm.data.model.Point
 import com.orm.databinding.FragmentGoogleMapBinding
 import com.orm.viewmodel.MountainViewModel
-import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.pow
 
-@AndroidEntryPoint
-class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
 
-    private lateinit var binding: FragmentGoogleMapBinding
+class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
+    private var _binding: FragmentGoogleMapBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationManager: LocationManager
     private lateinit var sensorManager: SensorManager
@@ -48,7 +50,8 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_google_map, container, false)
+        _binding = FragmentGoogleMapBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -82,7 +85,8 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
 
     private fun initializeServices() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
     }
 
@@ -128,22 +132,25 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
-        fetchLocationByDevice()
+        fetchLocation()
     }
 
     @SuppressLint("MissingPermission")
-    private fun fetchLocationByDevice() {
-        val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-        location?.let {
-            updateMapWithLocation(it)
-        } ?: Log.e(TAG, "Location not available")
-
-        locationManager.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER,
-            1000L,
-            1f,
-            locationListener
-        )
+    private fun fetchLocation() {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                location?.let {
+                    val currentLatLng = LatLng(it.latitude, it.longitude)
+                    googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f))
+                    googleMap?.addMarker(MarkerOptions().position(currentLatLng).title("현재 위치"))
+                    Log.e("gmap", currentLatLng.toString())
+                } ?: run {
+                    Log.e("gmap", "Location not available")
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("gmap", "Failed to get location", e)
+            }
     }
 
     private fun updateMapWithLocation(location: Location) {
@@ -162,11 +169,20 @@ class GoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         locationManager.removeUpdates(locationListener)
     }
 
-    companion object {
-        private const val TAG = "GoogleMapFragment"
-    }
-
     private fun calculateAltitude(pressure: Double) =
         44330 * (1 - (pressure / 1013.25).pow(1 / 5.255))
 
+
+    companion object {
+        private const val TAG = "GoogleMapFragment"
+
+        @JvmStatic
+        fun newInstance(param1: String, param2: String) =
+            TraceGoogleMapFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_PARAM1, param1)
+                    putString(ARG_PARAM2, param2)
+                }
+            }
+    }
 }
