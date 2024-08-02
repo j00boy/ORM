@@ -79,4 +79,19 @@ public class FirebasePushAlertTest {
                 .build();
         firebaseUtil.pushAlert(fcmAlertData, testFirebaseToken, notification);
     }
+
+    @Test
+    void clubRejectPushAlertTest() {
+        fcmAlertData = FcmAcceptanceDto.builder()
+                .clubId(String.valueOf(clubId))
+                .clubName(clubName)
+                .clubImageSrc(testImageSrc)
+                .isAccepted(false)
+                .build();
+        notificationBody = fcmAlertData.getMessage();
+        notification = FcmNotification.builder()
+                .body(notificationBody)
+                .build();
+        firebaseUtil.pushAlert(fcmAlertData, testFirebaseToken, notification);
+    }
 }
