@@ -6,8 +6,10 @@ import lombok.Getter;
 @Builder
 @Getter
 public class FcmExpelDto implements FcmAlertData {
-    private Integer clubId;
+    private String clubId;
     private String clubName;
+    private String clubImageSrc;
+    private final AlertType alertType;
 
     @Override
     public String getMessage() {
