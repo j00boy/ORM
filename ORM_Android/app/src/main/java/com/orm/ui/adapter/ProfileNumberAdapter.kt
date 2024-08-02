@@ -15,6 +15,7 @@ import com.orm.data.model.recycler.RecyclerViewNumberItem
 class ProfileNumberAdapter(private val items: List<RecyclerViewNumberItem>) :
     RecyclerView.Adapter<ProfileNumberAdapter.ProfileNumberViewHolder>() {
     private lateinit var itemClickListener: OnItemClickListener
+    private lateinit var type: String
 
     inner class ProfileNumberViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivThumbnail = itemView.findViewById<ImageView>(R.id.iv_thumbnail)
@@ -60,6 +61,10 @@ class ProfileNumberAdapter(private val items: List<RecyclerViewNumberItem>) :
 
     fun setItemClickListener(onItemClickListener: OnItemClickListener) {
         this.itemClickListener = onItemClickListener
+    }
+
+    fun setType(type: String) {
+        this.type = type
     }
 
     private fun String.getNetworkImage(context: Context, view: ImageView) {
