@@ -66,7 +66,7 @@ public class FirebasePushAlertTest {
     }
 
     @Test
-    void clubApplyPushAlertTest() {
+    void clubAcceptancePushAlertTest() {
         fcmAlertData = FcmAcceptanceDto.builder()
                 .clubId(String.valueOf(clubId))
                 .clubName(clubName)
