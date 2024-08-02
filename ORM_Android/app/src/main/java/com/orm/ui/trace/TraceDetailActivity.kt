@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -49,6 +50,14 @@ class TraceDetailActivity : AppCompatActivity() {
         }
 
         binding.trace = trace
+
+        if (trace!!.trailId == -1) {
+            binding.cvMap.visibility = View.GONE
+        }
+
+        if (trace!!.hikingStartedAt.isNullOrEmpty()) {
+            binding.fcvTable.visibility = View.GONE
+        }
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {

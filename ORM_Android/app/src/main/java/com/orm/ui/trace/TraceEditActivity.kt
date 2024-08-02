@@ -5,19 +5,28 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isNotEmpty
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.data.model.Mountain
+import com.orm.data.model.Point
 import com.orm.data.model.Trace
+import com.orm.data.model.Trail
 import com.orm.databinding.ActivityTraceEditBinding
 import com.orm.ui.fragment.BottomSheetMountainList
-import com.orm.ui.fragment.GraphFragment
+import com.orm.ui.fragment.map.BasicGoogleMapFragment
+import com.orm.viewmodel.MountainViewModel
 import com.orm.viewmodel.TraceViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -39,10 +48,17 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
     private var mountainId: Int = 0
     private var mountainName: String = ""
     private val traceViewModel: TraceViewModel by viewModels()
+    private val mountainViewModel: MountainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(binding.fcvMap.id, BasicGoogleMapFragment())
+                .commit()
+        }
 
         binding.trace = trace
 
@@ -50,12 +66,16 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
             onBackPressedDispatcher.onBackPressed()
         }
 
+        if ((trace != null && trace!!.trailId == -1) || trace == null) {
+            binding.cvMap.visibility = View.GONE
+            binding.spinnerTrails.visibility = View.GONE
+        }
+
         binding.tfTraceMountain.setEndIconOnClickListener {
             Log.d("TraceEditActivity", binding.tfTraceMountain.editText?.text.toString())
 
             val mountainName = binding.tfTraceMountain.editText?.text.toString()
-            val bottomSheetFragment =
-                BottomSheetMountainList.newInstance(mountainName)
+            val bottomSheetFragment = BottomSheetMountainList.newInstance(mountainName)
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
 
@@ -68,6 +88,7 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                     .show()
                 return@setOnClickListener
             }
+
             val isModify = trace != null
             val content = if (isModify) "수정" else "생성"
             MaterialAlertDialogBuilder(this)
@@ -75,7 +96,6 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                 .setMessage("발자국을 ${content} 하시겠습니까?")
                 .setNegativeButton("취소") { _, _ -> }
                 .setPositiveButton("확인") { dialog, which ->
-                    // TODO : trace 수정
                     val traceCreate = Trace(
                         localId = trace?.localId ?: 0,
                         id = trace?.id,
@@ -84,7 +104,7 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                         mountainId = mountainId,
                         mountainName = mountainName,
                         coordinates = null,
-                        trailId = 1,
+                        trailId = null,
                     )
                     traceViewModel.createTrace(traceCreate)
                     dialog.dismiss()
@@ -99,11 +119,10 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                 .show()
         }
 
-        val picker =
-            MaterialDatePicker.Builder.datePicker()
-                .setTitleText("등산 날짜 선택")
-                .setTextInputFormat(SimpleDateFormat("yyyy-MM-dd"))
-                .build()
+        val picker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("등산 날짜 선택")
+            .setTextInputFormat(SimpleDateFormat("yyyy-MM-dd"))
+            .build()
 
         picker.addOnPositiveButtonClickListener {
             val selectedDateInMillis = it
@@ -115,20 +134,50 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         binding.tfDate.setStartIconOnClickListener {
             picker.show(supportFragmentManager, "trace_date")
         }
+    }
 
-//        GraphFragment test code
-//        val testData = (0..180).map { x -> Pair(x.toFloat(), (500 * x / 180.0f)) }
-//        // GraphFragment 생성 및 데이터 전달
-//        val graphFragment = GraphFragment.newInstance(testData)
-//        supportFragmentManager.beginTransaction()
-//            .replace(binding.fragmentContainer.id, graphFragment)
-//            .commit()
+    private fun updateMapFragment(points: List<Point>) {
+        val fragment =
+            supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
+        fragment?.updatePoints(points)
+    }
 
+    private fun setupTrailSpinner(trails: List<Trail>) {
+        val spinner = findViewById<Spinner>(binding.spinnerTrails.id)
+        val trailNames = trails.map { it.distance.toString() + "km" }
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, trailNames)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedTrail = trails[position]
+                Log.e("MountainDetailActivity", selectedTrail.trailDetails.toString())
+                updateMapFragment(selectedTrail.trailDetails)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
     }
 
     override fun onMountainSelected(mountain: Mountain) {
         binding.tfTraceMountain.editText?.setText(mountain.name)
         mountainId = mountain.id
         mountainName = mountain.name
+
+        binding.cvMap.visibility = View.VISIBLE
+        binding.spinnerTrails.visibility = View.VISIBLE
+
+        mountainViewModel.fetchMountainById(mountainId)
+        mountainViewModel.mountain.observe(this@TraceEditActivity) { it ->
+            it?.trails?.let { trails ->
+                setupTrailSpinner(trails)
+            }
+        }
     }
 }

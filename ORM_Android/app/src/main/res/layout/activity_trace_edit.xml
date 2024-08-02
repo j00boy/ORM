@@ -62,6 +62,24 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tf_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="날짜를 선택하세요."
+                    android:scrollbars="none"
+                    app:endIconMode="clear_text"
+                    app:startIconDrawable="@drawable/ic_baseline_calendar_month_24">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="48dp"
+                        android:text="@{trace.hikingDate}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tf_trace_mountain"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -79,32 +97,25 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-
-                <!-- TODO : 등산로 -->
-                <androidx.fragment.app.FragmentContainerView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tf_date"
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cv_map"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:hint="날짜를 선택하세요."
-                    android:scrollbars="none"
-                    app:endIconMode="clear_text"
-                    app:startIconDrawable="@drawable/ic_baseline_calendar_month_24">
+                    app:cardCornerRadius="8dp">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:text="@{trace.hikingDate}"
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fcv_map"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="48dp"
-                        />
+                        android:layout_height="270dp" />
+                </com.google.android.material.card.MaterialCardView>
 
-                </com.google.android.material.textfield.TextInputLayout>
-
+                <Spinner
+                    android:id="@+id/spinner_trails"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_sign"
@@ -113,12 +124,12 @@
                     android:layout_marginVertical="24dp"
                     android:text="@{trace == null ? `생성하기` : `수정하기`}" />
 
-<!--                GraphFragment를 표시할 컨테이너 &ndash;&gt;-->
-<!--                <androidx.fragment.app.FragmentContainerView-->
-<!--                    android:id="@+id/fragmentContainer"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="400dp"-->
-<!--                    />-->
+                <!--                GraphFragment를 표시할 컨테이너 &ndash;&gt;-->
+                <!--                <androidx.fragment.app.FragmentContainerView-->
+                <!--                    android:id="@+id/fragmentContainer"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:layout_height="400dp"-->
+                <!--                    />-->
 
             </LinearLayout>
 

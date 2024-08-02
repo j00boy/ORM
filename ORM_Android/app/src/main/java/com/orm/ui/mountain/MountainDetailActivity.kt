@@ -1,6 +1,5 @@
 package com.orm.ui.mountain
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -8,13 +7,11 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.ImageView
 import android.widget.Spinner
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.orm.R
 import com.orm.data.model.Mountain
 import com.orm.data.model.Point
@@ -24,7 +21,6 @@ import com.orm.data.model.weather.Weather
 import com.orm.databinding.ActivityMountainDetailBinding
 import com.orm.ui.adapter.ProfileBasicAdapter
 import com.orm.ui.club.ClubDetailActivity
-import com.orm.ui.fragment.HomeCardFragment
 import com.orm.ui.fragment.WeatherFragment
 import com.orm.ui.fragment.map.BasicGoogleMapFragment
 import com.orm.viewmodel.ClubViewModel
@@ -37,11 +33,6 @@ class MountainDetailActivity : AppCompatActivity() {
     private val binding: ActivityMountainDetailBinding by lazy {
         ActivityMountainDetailBinding.inflate(layoutInflater)
     }
-    private val mountainViewModel: MountainViewModel by viewModels()
-    private val clubViewModel: ClubViewModel by viewModels()
-    private val weatherViewModel: WeatherViewModel by viewModels()
-    private val rvBoard: RecyclerView by lazy { binding.recyclerView }
-    private lateinit var adapter: ProfileBasicAdapter
 
     private val mountain: Mountain? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -51,9 +42,26 @@ class MountainDetailActivity : AppCompatActivity() {
         }
     }
 
+    private val mountainViewModel: MountainViewModel by viewModels()
+    private val clubViewModel: ClubViewModel by viewModels()
+    private val weatherViewModel: WeatherViewModel by viewModels()
+    private val rvBoard: RecyclerView by lazy { binding.recyclerView }
+    private lateinit var adapter: ProfileBasicAdapter
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fcv_weather, WeatherFragment())
+                .commit()
+
+            supportFragmentManager.beginTransaction()
+                .replace(binding.fcvMap.id, BasicGoogleMapFragment())
+                .commit()
+        }
 
         binding.topAppBar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
@@ -85,16 +93,6 @@ class MountainDetailActivity : AppCompatActivity() {
                 return@observe
             }
             setupAdapter(it!!)
-        }
-
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fcv_weather, WeatherFragment())
-                .commit()
-
-            supportFragmentManager.beginTransaction()
-                .replace(binding.fcvMap.id, BasicGoogleMapFragment())
-                .commit()
         }
     }
 
