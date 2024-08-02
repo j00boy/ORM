@@ -3,12 +3,14 @@ package com.orm.ui.trace
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.R
 import com.orm.data.model.Trace
 import com.orm.databinding.ActivityTraceBinding
@@ -42,6 +44,7 @@ class TraceActivity : AppCompatActivity() {
 
         traceViewModel.getTraces()
         traceViewModel.traces.observe(this@TraceActivity) {
+            Log.d("traceTest1", it.toString())
             setupAdapter(it!!)
         }
 
@@ -74,6 +77,19 @@ class TraceActivity : AppCompatActivity() {
                     putExtra("trace", traces[position])
                 }
                 startActivity(intent)
+            }
+
+            override fun onLongClick(v: View, position: Int) {
+                MaterialAlertDialogBuilder(this@TraceActivity)
+                    .setTitle("발자국 삭제")
+                    .setMessage("발자국을 삭제하시겠습니까?")
+                    .setPositiveButton("확인") { _, _ ->
+                        traceViewModel.deleteTrace(traces[position])
+                    }
+                    .setNegativeButton("취소") { _, _ ->
+                        // Dialog에서 취소 버튼을 누른 경우에 실행할 코드
+                    }
+                    .show()
             }
         })
         rvBoard.adapter = adapter

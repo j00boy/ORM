@@ -34,6 +34,5 @@ class TraceDetailActivity : AppCompatActivity() {
         }
 
         binding.trace = trace
-
     }
 }

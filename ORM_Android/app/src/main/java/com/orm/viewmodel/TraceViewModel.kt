@@ -39,21 +39,14 @@ class TraceViewModel @Inject constructor(
     fun createTrace(trace: Trace) {
         viewModelScope.launch {
             traceRepository.createTrace(trace)
-
-            val updateTraces = _traces.value?.toMutableList() ?: mutableListOf()
-            updateTraces.add(trace)
-            _traces.postValue(updateTraces)
+            getTraces()
         }
     }
 
     fun deleteTrace(trace: Trace) {
         viewModelScope.launch {
             traceRepository.deleteTrace(trace)
-
-            val updateTraces = _traces.value?.toMutableList()?.filter {
-                it.id != trace.id
-            } ?: mutableListOf()
-            _traces.postValue(updateTraces)
+            getTraces()
         }
     }
 }

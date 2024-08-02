@@ -43,6 +43,10 @@ class ProfileNumberAdapter(private val items: List<RecyclerViewNumberItem>) :
         holder.itemView.setOnClickListener {
             itemClickListener.onClick(it, position)
         }
+        holder.itemView.setOnLongClickListener {
+            itemClickListener.onLongClick(it, position)
+            true
+        }
     }
 
     override fun getItemCount(): Int {
@@ -51,6 +55,7 @@ class ProfileNumberAdapter(private val items: List<RecyclerViewNumberItem>) :
 
     interface OnItemClickListener {
         fun onClick(v: View, position: Int)
+        fun onLongClick(v: View, position: Int)
     }
 
     fun setItemClickListener(onItemClickListener: OnItemClickListener) {

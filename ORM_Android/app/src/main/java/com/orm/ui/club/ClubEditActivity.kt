@@ -69,7 +69,7 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
 
         val content = if (club == null) "생성" else "수정"
         binding.btnSign.setOnClickListener {
-            if(!(binding.tfClubName.isNotEmpty() && mountainId != 0)) {
+            if(binding.tfClubName.editText!!.text.isEmpty() || mountainId == 0) {
                 MaterialAlertDialogBuilder(this)
                     .setTitle(content)
                     .setMessage("필수 정보를 입력해주세요.")
