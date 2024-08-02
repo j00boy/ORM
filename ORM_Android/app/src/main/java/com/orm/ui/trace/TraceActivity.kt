@@ -32,6 +32,7 @@ class TraceActivity : AppCompatActivity() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = result.data
                 val traceCreated = data?.getBooleanExtra("traceCreated", false) ?: false
+                Log.e("TraceActivity", traceCreated.toString())
                 if (traceCreated) {
                     traceViewModel.getTraces()
                 }
@@ -44,7 +45,6 @@ class TraceActivity : AppCompatActivity() {
 
         traceViewModel.getTraces()
         traceViewModel.traces.observe(this@TraceActivity) {
-            Log.d("traceTest1", it.toString())
             setupAdapter(it!!)
         }
 

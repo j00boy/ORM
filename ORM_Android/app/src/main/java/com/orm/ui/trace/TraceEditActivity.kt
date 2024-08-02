@@ -47,6 +47,8 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
 
     private var mountainId: Int = 0
     private var mountainName: String = ""
+    private var trails: List<Trail> = emptyList()
+
     private val traceViewModel: TraceViewModel by viewModels()
     private val mountainViewModel: MountainViewModel by viewModels()
 
@@ -96,25 +98,37 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                 .setMessage("발자국을 ${content} 하시겠습니까?")
                 .setNegativeButton("취소") { _, _ -> }
                 .setPositiveButton("확인") { dialog, which ->
+
+                    val selectedTrailIndex = binding.spinnerTrails.selectedItemPosition
+                    val selectedTrail = if (selectedTrailIndex != AdapterView.INVALID_POSITION) {
+                        trails[selectedTrailIndex]
+                    } else {
+                        null
+                    }
+
                     val traceCreate = Trace(
-                        localId = trace?.localId ?: 0,
                         id = trace?.id,
+                        localId = trace?.localId ?: 0,
                         title = binding.tfTraceName.editText?.text.toString(),
                         hikingDate = binding.tfDate.editText?.text.toString(),
                         mountainId = mountainId,
                         mountainName = mountainName,
-                        coordinates = null,
-                        trailId = null,
+                        coordinates = selectedTrail?.trailDetails,
                     )
                     traceViewModel.createTrace(traceCreate)
+                    Log.e("TraceEditActivity", traceCreate.toString())
                     dialog.dismiss()
 
-                    val resultIntent = Intent().apply {
-                        putExtra("traceCreated", true)
+                    binding.progressBar.visibility = View.VISIBLE
+                    traceViewModel.traceCreated.observe(this) { traceCreated ->
+                        if (traceCreated) {
+                            binding.progressBar.visibility = View.GONE
+                            setResult(Activity.RESULT_OK, Intent().apply {
+                                putExtra("traceCreated", true)
+                            })
+                            finish()
+                        }
                     }
-
-                    setResult(Activity.RESULT_OK, resultIntent)
-                    finish()
                 }
                 .show()
         }
@@ -177,6 +191,7 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         mountainViewModel.mountain.observe(this@TraceEditActivity) { it ->
             it?.trails?.let { trails ->
                 setupTrailSpinner(trails)
+                this.trails = trails
             }
         }
     }

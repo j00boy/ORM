@@ -22,6 +22,9 @@ class TraceViewModel @Inject constructor(
     private val _trace = MutableLiveData<Trace>()
     val trace: LiveData<Trace> get() = _trace
 
+    private val _traceCreated = MutableLiveData<Boolean>()
+    val traceCreated: LiveData<Boolean> get() = _traceCreated
+
     fun getTraces() {
         viewModelScope.launch {
             val traces = traceRepository.getAllTraces()
@@ -38,8 +41,9 @@ class TraceViewModel @Inject constructor(
 
     fun createTrace(trace: Trace) {
         viewModelScope.launch {
+            _traceCreated.postValue(false)
             traceRepository.createTrace(trace)
-            getTraces()
+            _traceCreated.postValue(true)
         }
     }
 
