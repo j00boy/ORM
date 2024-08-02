@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
-import orm.orm_backend.dto.fcmalert.FcmAcceptanceDto;
-import orm.orm_backend.dto.fcmalert.FcmAlertData;
-import orm.orm_backend.dto.fcmalert.FcmClubApplicationDto;
-import orm.orm_backend.dto.fcmalert.FcmNotification;
+import orm.orm_backend.dto.fcmalert.*;
 
 import java.io.IOException;
 
@@ -87,6 +84,20 @@ public class FirebasePushAlertTest {
                 .clubName(clubName)
                 .clubImageSrc(testImageSrc)
                 .isAccepted(false)
+                .build();
+        notificationBody = fcmAlertData.getMessage();
+        notification = FcmNotification.builder()
+                .body(notificationBody)
+                .build();
+        firebaseUtil.pushAlert(fcmAlertData, testFirebaseToken, notification);
+    }
+
+    @Test
+    void clubExpelPushAlertTest() {
+        fcmAlertData = FcmExpelDto.builder()
+                .clubId(String.valueOf(clubId))
+                .clubName(clubName)
+                .clubImageSrc(testImageSrc)
                 .build();
         notificationBody = fcmAlertData.getMessage();
         notification = FcmNotification.builder()
