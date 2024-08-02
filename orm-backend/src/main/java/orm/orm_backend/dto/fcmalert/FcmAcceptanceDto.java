@@ -1,5 +1,6 @@
 package orm.orm_backend.dto.fcmalert;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -7,9 +8,12 @@ import lombok.Getter;
 @Getter
 public class FcmAcceptanceDto implements FcmAlertData {
 
-    private Integer clubId;
+    private String clubId;
     private String clubName;
+    private String clubImageSrc;
+    @JsonIgnore
     private Boolean isAccepted;
+    private final AlertType alertType = AlertType.ACCEPTANCE;
 
     @Override
     public String getMessage() {
