@@ -2,6 +2,7 @@ package orm.orm_backend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import orm.orm_backend.dto.fcmalert.FcmAcceptanceDto;
 import orm.orm_backend.dto.fcmalert.FcmAlertData;
 import orm.orm_backend.dto.fcmalert.FcmClubApplicationDto;
 import orm.orm_backend.dto.fcmalert.FcmNotification;
@@ -29,5 +30,18 @@ public class FirebasePushAlertService {
                 .body(data.getMessage())
                 .build();
         firebaseUtil.pushAlert(data, managerToken, notification);
+    }
+
+    public void pushClubAcceptanceAlert(String applicantToken, Club club)  {
+        FcmAlertData data = FcmAcceptanceDto.builder()
+                .clubId(String.valueOf(club.getId()))
+                .clubName(club.getClubName())
+                .clubImageSrc(club.getImageSrc())
+                .isAccepted(true)
+                .build();
+        FcmNotification notification = FcmNotification.builder()
+                .body(data.getMessage())
+                .build();
+        firebaseUtil.pushAlert(data, applicantToken, notification);
     }
 }

@@ -205,6 +205,7 @@ public class ClubService {
             User user = userService.findUserById(memberRequestDto.getUserId());
             Club club = clubRepository.findById(memberRequestDto.getClubId()).orElseThrow();
             memberService.saveMember(memberRequestDto.toEntity(user, club));
+            firebasePushAlertService.pushClubAcceptanceAlert(user.getFirebaseToken(), club);
         }
         applicantService.deleteApplicant(memberRequestDto);
     }
