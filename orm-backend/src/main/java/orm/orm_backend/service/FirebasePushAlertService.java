@@ -44,4 +44,17 @@ public class FirebasePushAlertService {
                 .build();
         firebaseUtil.pushAlert(data, applicantToken, notification);
     }
+
+    public void pushClubRejectionAlert(String applicantToken, Club club) {
+        FcmAlertData data = FcmAcceptanceDto.builder()
+                .clubId(String.valueOf(club.getId()))
+                .clubName(club.getClubName())
+                .clubImageSrc(club.getImageSrc())
+                .isAccepted(false)
+                .build();
+        FcmNotification notification = FcmNotification.builder()
+                .body(data.getMessage())
+                .build();
+        firebaseUtil.pushAlert(data, applicantToken, notification);
+    }
 }

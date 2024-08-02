@@ -201,11 +201,13 @@ public class ClubService {
 
     // 가입 수락/거절
     public void approveMember(MemberRequestDto memberRequestDto) {
+        User user = userService.findUserById(memberRequestDto.getUserId());
+        Club club = clubRepository.findById(memberRequestDto.getClubId()).orElseThrow();
         if (memberRequestDto.getIsApproved()) {
-            User user = userService.findUserById(memberRequestDto.getUserId());
-            Club club = clubRepository.findById(memberRequestDto.getClubId()).orElseThrow();
             memberService.saveMember(memberRequestDto.toEntity(user, club));
             firebasePushAlertService.pushClubAcceptanceAlert(user.getFirebaseToken(), club);
+        } else { // 가입거절 시 푸쉬 alert 보내기
+            firebasePushAlertService.pushClubRejectionAlert(user.getFirebaseToken(), club);
         }
         applicantService.deleteApplicant(memberRequestDto);
     }
