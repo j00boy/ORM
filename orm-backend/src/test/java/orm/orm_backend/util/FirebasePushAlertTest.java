@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import orm.orm_backend.dto.fcmalert.FcmAcceptanceDto;
 import orm.orm_backend.dto.fcmalert.FcmAlertData;
 import orm.orm_backend.dto.fcmalert.FcmClubApplicationDto;
 import orm.orm_backend.dto.fcmalert.FcmNotification;
@@ -27,6 +28,9 @@ public class FirebasePushAlertTest {
 
     @Value("${firebase.config-path}")
     private String firebaseConfigPath;
+
+    @Value("${test.image-src}")
+    private String testImageSrc;
 
     private FirebaseUtil firebaseUtil = new FirebaseUtil();
 
@@ -52,6 +56,21 @@ public class FirebasePushAlertTest {
                 .clubName(clubName)
                 .userId(String.valueOf(userId))
                 .userName(userName)
+                .build();
+        notificationBody = fcmAlertData.getMessage();
+        notification = FcmNotification.builder()
+                .body(notificationBody)
+                .build();
+        firebaseUtil.pushAlert(fcmAlertData, testFirebaseToken, notification);
+    }
+
+    @Test
+    void clubApplyPushAlertTest() {
+        fcmAlertData = FcmAcceptanceDto.builder()
+                .clubId(String.valueOf(clubId))
+                .clubName(clubName)
+                .clubImageSrc(testImageSrc)
+                .isAccepted(true)
                 .build();
         notificationBody = fcmAlertData.getMessage();
         notification = FcmNotification.builder()
