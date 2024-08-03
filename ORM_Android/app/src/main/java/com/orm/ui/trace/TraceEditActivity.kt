@@ -64,6 +64,13 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                 .commit()
         }
 
+        if (trace != null) {
+            trailViewModel.getTrail(trace!!.trailId!!)
+            trailViewModel.trail.observe(this@TraceEditActivity) {
+                updateMapFragment(it.trailDetails)
+            }
+        }
+
         binding.trace = trace
 
         binding.topAppBar.setNavigationOnClickListener {

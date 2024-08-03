@@ -68,6 +68,8 @@ class TraceActivity : AppCompatActivity() {
         adapter =
             ProfileNumberAdapter(traces.map { Trace.toRecyclerViewNumberItem(it) })
 
+        adapter.setType("trace")
+
         adapter.setItemClickListener(object : ProfileNumberAdapter.OnItemClickListener {
             override fun onClick(v: View, position: Int) {
                 val intent = Intent(

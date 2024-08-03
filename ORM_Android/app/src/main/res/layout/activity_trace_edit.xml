@@ -30,7 +30,7 @@
                 android:background="@color/md_theme_primary"
                 android:minHeight="?attr/actionBarSize"
                 app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
-                app:title="발자국 생성 / 수정" />
+                app:title="@{`발자국 ` + (trace.title != null ? `수정` : `생성`)}" />
 
         </com.google.android.material.appbar.AppBarLayout>
 

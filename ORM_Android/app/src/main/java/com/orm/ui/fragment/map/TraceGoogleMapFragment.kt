@@ -30,11 +30,13 @@ import com.orm.R
 import com.orm.data.model.Point
 import com.orm.databinding.FragmentGoogleMapBinding
 import com.orm.viewmodel.MountainViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.pow
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
+@AndroidEntryPoint
 class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     private var _binding: FragmentGoogleMapBinding? = null
     private val binding get() = _binding!!

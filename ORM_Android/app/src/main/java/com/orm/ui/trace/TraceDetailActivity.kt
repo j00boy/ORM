@@ -58,6 +58,11 @@ class TraceDetailActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        binding.btnStart.setOnClickListener {
+            val intent = Intent(this, TraceMeasureActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.trace = trace
 
         if (trace!!.trailId == -1) {
@@ -73,6 +78,8 @@ class TraceDetailActivity : AppCompatActivity() {
 
         if (trace!!.hikingStartedAt.isNullOrEmpty()) {
             binding.fcvTable.visibility = View.GONE
+        } else {
+            binding.btnStart.visibility = View.GONE
         }
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
