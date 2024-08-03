@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.ACCESS_NETWORK_STATE,
         Manifest.permission.POST_NOTIFICATIONS,
+//        Manifest.permission.READ_EXTERNAL_STORAGE,
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
