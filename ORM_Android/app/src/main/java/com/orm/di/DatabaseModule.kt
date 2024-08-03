@@ -7,6 +7,7 @@ import com.orm.data.local.dao.ClubDao
 import com.orm.data.local.dao.MemberDao
 import com.orm.data.local.dao.NotificationDao
 import com.orm.data.local.dao.PointDao
+import com.orm.data.local.dao.RecordDao
 import com.orm.data.local.dao.TraceDao
 import com.orm.data.local.dao.TrailDao
 import dagger.Module
@@ -61,5 +62,10 @@ object DatabaseModule {
     @Provides
     fun provideTrailDao(database: AppDatabase): TrailDao {
         return database.trailDao()
+    }
+
+    @Provides
+    fun provideRecordDao(database: AppDatabase): RecordDao {
+        return database.recordDao()
     }
 }
