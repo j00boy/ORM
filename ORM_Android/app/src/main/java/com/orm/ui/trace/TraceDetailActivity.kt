@@ -12,7 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.orm.R
 import com.orm.data.model.Trace
 import com.orm.databinding.ActivityTraceDetailBinding
+import com.orm.ui.fragment.map.BasicGoogleMapFragment
 import com.orm.viewmodel.TraceViewModel
+import com.orm.viewmodel.TrailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,6 +23,7 @@ class TraceDetailActivity : AppCompatActivity() {
         ActivityTraceDetailBinding.inflate(layoutInflater)
     }
     private val traceViewModel: TraceViewModel by viewModels()
+    private val trailViewModel: TrailViewModel by viewModels()
 
     private val createTraceLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -45,6 +48,12 @@ class TraceDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(binding.fcvMap.id, BasicGoogleMapFragment())
+                .commit()
+        }
+
         binding.topAppBar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -53,6 +62,13 @@ class TraceDetailActivity : AppCompatActivity() {
 
         if (trace!!.trailId == -1) {
             binding.cvMap.visibility = View.GONE
+        } else {
+            trailViewModel.getTrail(trace!!.trailId!!)
+            trailViewModel.trail.observe(this@TraceDetailActivity) {
+                val fragment =
+                    supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
+                fragment?.updatePoints(it.trailDetails)
+            }
         }
 
         if (trace!!.hikingStartedAt.isNullOrEmpty()) {

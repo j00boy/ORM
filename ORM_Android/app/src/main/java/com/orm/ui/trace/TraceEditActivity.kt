@@ -23,6 +23,7 @@ import com.orm.ui.fragment.BottomSheetMountainList
 import com.orm.ui.fragment.map.BasicGoogleMapFragment
 import com.orm.viewmodel.MountainViewModel
 import com.orm.viewmodel.TraceViewModel
+import com.orm.viewmodel.TrailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,6 +52,7 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
 
     private val traceViewModel: TraceViewModel by viewModels()
     private val mountainViewModel: MountainViewModel by viewModels()
+    private val trailViewModel: TrailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,9 +116,11 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                         mountainId = mountainId,
                         mountainName = mountainName,
                         coordinates = selectedTrail?.trailDetails,
+                        trailId = selectedTrail?.id
                     )
                     traceViewModel.createTrace(traceCreate)
-                    Log.e("TraceEditActivity", traceCreate.toString())
+                    trailViewModel.createTrail(selectedTrail!!)
+
                     dialog.dismiss()
 
                     binding.progressBar.visibility = View.VISIBLE

@@ -12,21 +12,21 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TrailViewModel @Inject constructor(
-    private val pointRepository: TrailRepository,
+    private val trailRepository: TrailRepository,
 ) : ViewModel() {
     private val _trail = MutableLiveData<Trail>()
     val trail: LiveData<Trail> get() = _trail
 
     fun getTrail(id: Int) {
         viewModelScope.launch {
-            val points = pointRepository.getTrail(id)
+            val points = trailRepository.getTrail(id)
             _trail.postValue(points)
         }
     }
 
     fun createTrail(trail: Trail) {
         viewModelScope.launch {
-            pointRepository.createTrail(trail)
+            trailRepository.createTrail(trail)
         }
     }
 }
