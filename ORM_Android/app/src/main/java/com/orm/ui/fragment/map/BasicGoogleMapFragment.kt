@@ -27,16 +27,12 @@ class BasicGoogleMapFragment : Fragment(), OnMapReadyCallback {
     private var _binding: FragmentGoogleMapBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var googleMap: GoogleMap? = null
-    private val mountainViewModel: MountainViewModel by viewModels()
-
-    private var points: List<Point> = emptyList()
     private var polyline: Polyline? = null
+    private var points: List<Point> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         arguments?.let {
             points = it.getParcelableArrayList(ARG_TRAIL) ?: emptyList()
         }
@@ -66,9 +62,6 @@ class BasicGoogleMapFragment : Fragment(), OnMapReadyCallback {
         googleMap?.let { map ->
             val latLngPoints = points.map { LatLng(it.latitude, it.longitude) }
 
-            // 기존의 폴리라인 삭제
-            polyline?.remove()
-
             if (latLngPoints.isNotEmpty()) {
                 val startPoint = latLngPoints.first()
                 val endPoint = latLngPoints.last()
@@ -79,14 +72,13 @@ class BasicGoogleMapFragment : Fragment(), OnMapReadyCallback {
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(centerPoint, 12.0f))
             }
 
-            // 새로운 폴리라인 추가
+            polyline?.remove()
             polyline = map.addPolyline(
                 PolylineOptions()
                     .clickable(true)
                     .color(R.color.md_theme_errorContainer_mediumContrast)
                     .addAll(latLngPoints)
             )
-
         } ?: Log.e(TAG, "GoogleMap is not initialized")
     }
 
@@ -97,8 +89,7 @@ class BasicGoogleMapFragment : Fragment(), OnMapReadyCallback {
     }
 
     fun updatePoints(newPoints: List<Point>) {
-        points = newPoints
-        updateMap(points)
+        updateMap(newPoints)
     }
 
     companion object {
