@@ -15,5 +15,5 @@ data class Point(
     val y: Double,
     val altitude: Double? = null,
     val time: LocalDateTime? = null,
-    val difficulty: Int? = null,
+    val d: Int? = null,
 ) : Parcelable

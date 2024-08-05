@@ -1,13 +1,13 @@
 package com.orm.data.model
 
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.orm.data.model.recycler.RecyclerViewBasicItem
 import com.orm.data.model.recycler.RecyclerViewNumberItem
 import kotlinx.parcelize.Parcelize
-import java.time.LocalDateTime
-import java.util.Date
+import java.io.File
 
 @Parcelize
 @Entity
@@ -23,12 +23,13 @@ data class Trace(
     val mountainName: String?,
     val coordinates: List<Point>?,
     val trailId: Int? = -1,
+    val imgPath: String? = null,
 ) : Parcelable {
     companion object {
         fun toRecyclerViewNumberItem(trace: Trace): RecyclerViewNumberItem {
             return RecyclerViewNumberItem(
                 id = trace.localId,
-                imageSrc = "",
+                imageSrc = trace.imgPath ?: "",
                 title = trace.title,
                 subTitle = trace.mountainName ?: "",
                 date = trace.hikingDate.toString(),
