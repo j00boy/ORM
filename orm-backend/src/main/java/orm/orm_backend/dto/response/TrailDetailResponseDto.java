@@ -7,14 +7,14 @@ import orm.orm_backend.entity.TrailDetail;
 @Data
 public class TrailDetailResponseDto {
 
-    private String latitude;
-    private String longitude;
+    private String x; // latitude
+    private String y; // longitude
     private Integer difficulty;
 
     @Builder
     public TrailDetailResponseDto(TrailDetail trailDetail) {
-        this.latitude = trailDetail.getLatitude();
-        this.longitude = trailDetail.getLongitude();
+        this.x = trailDetail.getLatitude();
+        this.y = trailDetail.getLongitude();
         this.difficulty = trailDetail.getDifficulty();
     }
 

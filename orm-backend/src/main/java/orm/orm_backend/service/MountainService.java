@@ -31,17 +31,10 @@ public class MountainService {
      * @return mountainId로 조회된 Mountain룰 변환한 MountainResponseDto
      */
     public MountainResponseDto getMountainDtoById(Integer mountainId) {
-        Mountain mountain = mountainRepository.findById(mountainId)
-                .orElseThrow(() -> new CustomException(MOUNTAIN_NOT_FOUND));
-
-        List<TrailResponseDto> trailResponseDtos = mountain.getTrails().stream().map(trail -> {
-            List<TrailDetailResponseDto> trailDetailResponseDtos = trail.getTrailDetails().stream()
-                    .map(TrailDetailResponseDto::new)
-                    .collect(Collectors.toList());
-            return new TrailResponseDto(trail, trailDetailResponseDtos);
-        }).collect(Collectors.toList());
-
-        return new MountainResponseDto(mountain, trailResponseDtos);
+        Mountain mountain = mountainRepository.findById(mountainId).orElseThrow(() -> new CustomException(MOUNTAIN_NOT_FOUND));
+//        List<TrailResponseDto> trails = trailService.getTrailsByMountainId(mountain.getId());
+        List<TrailResponseDto> trails = trailService.getAllTrailsByMountainId(mountain);
+        return new MountainResponseDto(mountain, trails);
     }
 
 
