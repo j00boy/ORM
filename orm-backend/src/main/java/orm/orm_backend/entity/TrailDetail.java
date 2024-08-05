@@ -14,9 +14,10 @@ public class TrailDetail {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trail_id")
     private Trail trail;
+
     @Column(columnDefinition = "TINYINT")
     private Integer difficulty;
     private String latitude;
