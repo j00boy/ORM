@@ -17,6 +17,9 @@ class RecordViewModel @Inject constructor(
     private val _record = MutableLiveData<Record>()
     val record: LiveData<Record> get() = _record
 
+    private val _recordId = MutableLiveData<Long>()
+    val recordId: LiveData<Long> get() = _recordId
+
     fun getRecord(id: Int) {
         viewModelScope.launch {
             val record = recordRepository.getRecord(id)
@@ -26,7 +29,8 @@ class RecordViewModel @Inject constructor(
 
     fun insertRecord(record: Record) {
         viewModelScope.launch {
-            recordRepository.insertRecord(record)
+            val createId : Long = recordRepository.insertRecord(record)
+            _recordId.postValue(createId)
         }
     }
 

@@ -32,10 +32,22 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.orm.viewmodel.RecordViewModel
 import com.orm.viewmodel.TrackViewModel
+import com.orm.data.model.Record
+import com.orm.data.model.Trace
+import com.orm.viewmodel.TraceViewModel
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 import android.content.BroadcastReceiver as LocalReceiver
 
 @AndroidEntryPoint
@@ -50,23 +62,30 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     }
 
     private val trackViewModel: TrackViewModel by viewModels()
+    private val recordViewModel: RecordViewModel by viewModels()
+    private val traceViewModel: TraceViewModel by viewModels()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var sensorManager: SensorManager
     private lateinit var pressureSensor: Sensor
+    private lateinit var updateTimeRunnable: Runnable
 
     private var googleMap: GoogleMap? = null
     private var points: List<Point> = emptyList()
     private var polyline: Polyline? = null
     private var userPolyline: Polyline? = null
+    private var currentHeight: Double? = null
+    private var traceId: Int? = null
 
-    private var cnt: Int = 0
+    private val handler = Handler(Looper.getMainLooper())
+    private val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.KOREA)
+    private val timeZone = TimeZone.getTimeZone("")
+    private var startTime: Long = 0
+    private var elapsedTime: Long = 0
+    private var running = false
 
     private val locationReceiver = object : LocalReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            cnt++
-            binding.tvTest.text = cnt.toString()
-
             val latitude = intent?.getDoubleExtra("latitude", 0.0) ?: 0.0
             val longitude = intent?.getDoubleExtra("longitude", 0.0) ?: 0.0
             Log.d("LocationReceiver", "Received location: $latitude, $longitude")
@@ -84,8 +103,16 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         }
 
         arguments?.let {
-            points = it.getParcelableArrayList(ARG_TRAIL) ?: emptyList()
-            Log.e("TraceGoogleMapFragment", points.toString())
+            points = it.getParcelableArrayList(ARG_POINT) ?: emptyList()
+            traceId = it.getInt(ARG_TRACE_ID)
+        }
+
+        dateFormat.timeZone = timeZone
+        updateTimeRunnable = object : Runnable {
+            override fun run() {
+                updateCurrentTime()
+                handler.postDelayed(this, 1000) // Update every second
+            }
         }
     }
 
@@ -102,14 +129,39 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
             binding.btnStart.visibility = View.GONE
             binding.btnStop.visibility = View.VISIBLE
             startLocationService()
+            startStopwatch()
         }
 
         binding.btnStop.setOnClickListener {
             Toast.makeText(requireContext(), "발자국 측정 종료", Toast.LENGTH_SHORT).show()
             stopLocationService()
+
+            trackViewModel.points.value?.let { points ->
+                insertRecordAndHandleTrace(points)
+            }
         }
 
         return binding.root
+    }
+
+    private fun insertRecordAndHandleTrace(points: List<Point>) {
+        recordViewModel.insertRecord(Record(coordinate = points))
+        recordViewModel.recordId.observe(requireActivity(), Observer { createdId ->
+            if (traceId != null && traceId != -1) {
+                traceViewModel.getTrace(traceId!!)
+                traceViewModel.trace.observe(requireActivity(), Observer { trace ->
+                    handleTraceUpdate(trace, createdId)
+                })
+            }
+        })
+    }
+
+    private fun handleTraceUpdate(trace: Trace?, createdId: Long) {
+        TODO("trace에 record field 삽입 및 coordinates 삭제")
+        trace?.let {
+//            trace.recordId = createdId
+            traceViewModel.createTrace(it)
+        }
     }
 
     private fun initializeServices() {
@@ -148,14 +200,33 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                 CameraUpdateFactory.newLatLngZoom(latlng, map.cameraPosition.zoom)
             )
 
-            trackViewModel.updateLanlngs(latlng)
-            trackViewModel.lanlngs.observe(requireActivity()) {
+            binding.altitude = String.format("%.0f", currentHeight) + "m"
+
+            trackViewModel.updatePoint(
+                Point(
+                    x = latlng.latitude,
+                    y = latlng.longitude,
+                    altitude = currentHeight,
+                    time = LocalDateTime.now()
+                )
+            )
+
+            trackViewModel.distance.observe(requireActivity()) {
+                binding.distance = String.format("%.0f", it) + "m"
+                Log.d(TAG, "Distance: $it")
+            }
+
+            trackViewModel.points.observe(requireActivity()) {
+                val positions = it.map { pos ->
+                    LatLng(pos.x, pos.y)
+                }
+
                 userPolyline?.remove()
                 userPolyline = map.addPolyline(
                     PolylineOptions()
                         .zIndex(10000000.0f)
                         .color(R.color.md_theme_inversePrimary)
-                        .addAll(it)
+                        .addAll(positions)
                 )
             }
         } ?: Log.e(TAG, "GoogleMap is not initialized")
@@ -193,9 +264,11 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-//        event?.let {
-//            Log.d(TAG, "Pressure sensor values: ${calculateAltitude(it.values[0].toDouble())}m")
-//        }
+        event?.let {
+            if (it.sensor.type == Sensor.TYPE_PRESSURE) {
+                currentHeight = calculateAltitude(it.values[0])
+            }
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -205,11 +278,30 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     override fun onDestroyView() {
         super.onDestroyView()
         localBroadcastManager.unregisterReceiver(locationReceiver)
+        trackViewModel.clearPoints()
+        handler.removeCallbacks(updateTimeRunnable)
         googleMap = null
+        _binding = null
     }
 
-    private fun calculateAltitude(pressure: Double) =
+    private fun calculateAltitude(pressure: Float): Double =
         44330 * (1 - (pressure / 1013.25).pow(1 / 5.255))
+
+    private fun updateCurrentTime() {
+        if (running) {
+            val currentTime = System.currentTimeMillis()
+            val timeInMillis = elapsedTime + (currentTime - startTime)
+            binding.time = dateFormat.format(Date(timeInMillis))
+        }
+    }
+
+    private fun startStopwatch() {
+        if (!running) {
+            running = true
+            startTime = System.currentTimeMillis()
+            updateTimeRunnable.run()
+        }
+    }
 
     private fun initializeMap(points: List<Point>) {
         Log.d(TAG, "Updating map with points: $points")
@@ -228,12 +320,14 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
 
     companion object {
         private const val TAG = "GoogleMapTraceFragment"
-        private const val ARG_TRAIL = "trail"
+        private const val ARG_POINT = "point"
+        private const val ARG_TRACE_ID = "trace_id"
 
-        fun newInstance(points: List<Point>): TraceGoogleMapFragment {
+        fun newInstance(points: List<Point>, traceId: Int? = null): TraceGoogleMapFragment {
             val fragment = TraceGoogleMapFragment()
             val args = Bundle().apply {
-                putParcelableArrayList(ARG_TRAIL, ArrayList(points))
+                putParcelableArrayList(ARG_POINT, ArrayList(points))
+                putInt(ARG_TRACE_ID, traceId ?: -1)
             }
             fragment.arguments = args
             return fragment

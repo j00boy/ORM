@@ -43,6 +43,7 @@ class LocationIntentService : Service() {
     private val notificationId = 1
     private val channelId = "location_channel"
     private val updateIntervalMillis = 20000L
+    private val range = 0.000f
 
     @SuppressLint("ForegroundServiceType")
     override fun onCreate() {
@@ -67,7 +68,7 @@ class LocationIntentService : Service() {
 
         locationRequest =
             LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, updateIntervalMillis).apply {
-                setMinUpdateDistanceMeters(5.000f)
+                setMinUpdateDistanceMeters(range)
             }.build()
 
         locationCallback = object : LocationCallback() {

@@ -35,8 +35,11 @@ class TraceMeasureActivity : AppCompatActivity() {
                 trailViewModel.getTrail(trailId)
 
                 trailViewModel.trail.observe(this) { trail ->
-                    val points = trail.trailDetails
-                    val fragment = TraceGoogleMapFragment.newInstance(points)
+                    val fragment = TraceGoogleMapFragment.newInstance(
+                        points = trail.trailDetails,
+                        traceId = trace?.id
+                    )
+
                     supportFragmentManager.beginTransaction()
                         .replace(binding.fcvMap.id, fragment)
                         .commit()
