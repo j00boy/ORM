@@ -20,6 +20,8 @@ public class Mountain {
     private String mountainName;
     private String mountainCode;
     private String address;
+    private String address_latitude;
+    private String address_longitude;
     private String imageSrc;
     private Float altitude;
     private String description;
@@ -28,10 +30,13 @@ public class Mountain {
     private List<Trail> trails;
 
     @Builder
-    public Mountain(String mountainName, String mountainCode, String address, String imageSrc, Float altitude, String description) {
+    public Mountain(String mountainName, String mountainCode, String address, String address_latitude,
+                    String address_longitude, String imageSrc, Float altitude, String description) {
         this.mountainName = mountainName;
         this.mountainCode = mountainCode;
         this.address = address;
+        this.address_latitude = address_latitude;
+        this.address_longitude = address_longitude;
         this.imageSrc = imageSrc;
         this.altitude = altitude;
         this.description = description;

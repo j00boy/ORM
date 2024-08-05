@@ -12,6 +12,8 @@ public class MountainResponseDto {
     private Integer id;
     private String name;
     private String address;
+    private String address_latitude;
+    private String address_longitude;
     private String code;
     private String imageSrc;
     private String desc;
@@ -24,6 +26,8 @@ public class MountainResponseDto {
         this.id = mountain.getId();
         this.name = mountain.getMountainName();
         this.address = mountain.getAddress();
+        this.address_latitude = mountain.getAddress_latitude();
+        this.address_longitude = mountain.getAddress_longitude();
         this.code = mountain.getMountainCode();
         this.imageSrc = mountain.getImageSrc();
         this.desc = mountain.getDescription();
