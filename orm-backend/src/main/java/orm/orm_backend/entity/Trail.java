@@ -29,7 +29,7 @@ public class Trail {
     private String peakLatitude;
     private String peakLongitude;
 
-    @OneToMany(mappedBy = "trail", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "trail", fetch = FetchType.LAZY)
     private List<TrailDetail> trailDetails;
 
     @Builder
