@@ -2,6 +2,7 @@ package orm.orm_backend.util;
 
 import com.jcraft.jsch.*;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @Component
 @Getter
+@Slf4j
 public class ImageUtil {
 
     private final String UPLOAD_DIR = "src/main/resources/static/uploads/image";
@@ -42,8 +44,7 @@ public class ImageUtil {
     public String saveImage(MultipartFile image, String directoryPath) {
         // 파일 이름 생성
         String fileName = UUID.randomUUID().toString().replace("-", "") + "_" + image.getOriginalFilename();
-
-        try (InputStream inputStream = image.getInputStream(); InputStream pemInputStream = new FileInputStream(PEM_FILE_PATH)) {
+        try (InputStream inputStream = image.getInputStream(); InputStream pemInputStream =ImageUtil.class.getResourceAsStream(PEM_FILE_PATH)) {
             // sftp를 지원하는 라이브러리
             JSch jsch = new JSch();
             // ssh 연결을 위해 클라이언트의 인증 정보를 추가하는 과정
