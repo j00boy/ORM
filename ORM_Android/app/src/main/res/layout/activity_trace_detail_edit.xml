@@ -145,15 +145,26 @@
                     android:layout_marginVertical="6dp" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_start"
+                    android:id="@+id/btn_sign"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="24dp"
-                    android:text="측정하기" />
+                    android:text="수정하기" />
 
             </LinearLayout>
 
         </ScrollView>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

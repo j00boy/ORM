@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -64,10 +65,13 @@ class TraceDetailActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.edit -> {
                     val intent: Intent
-                    if (traceViewModel.trace.value?.maxHeight == null) {
+                    Log.d("traceTest", trace.toString())
+                    if (trace?.maxHeight == 0.0) {
                         intent = Intent(this, TraceEditActivity::class.java)
+                        Log.d("traceTest", "Edit")
                     } else {
                         intent = Intent(this, TraceDetailEditActivity::class.java)
+                        Log.d("traceTest", "DetailEdit")
                     }
                     intent.putExtra("trace", trace)
                     createTraceLauncher.launch(intent)
