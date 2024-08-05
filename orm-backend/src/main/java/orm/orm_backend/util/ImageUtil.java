@@ -84,7 +84,8 @@ public class ImageUtil {
         fileName = fileName.replace(REMOTE_ACCESS_DIR, REMOTE_UPLOAD_DIR);
         try {
             JSch jsch = new JSch();
-            jsch.addIdentity(PEM_FILE_PATH);
+            InputStream pemInputStream =ImageUtil.class.getResourceAsStream(PEM_FILE_PATH);
+            jsch.addIdentity("I11A709T.pem", pemInputStream.readAllBytes(), null, null);
             Session session = jsch.getSession(SFTP_USER, SFTP_HOST, SFTP_PORT);
             session.setConfig("StrictHostKeyChecking", "no");
             session.connect();
@@ -98,6 +99,8 @@ public class ImageUtil {
             session.disconnect();
         } catch (JSchException | SftpException e) {
             throw new IllegalArgumentException(fileName + "의 이름으로 된 파일이 존재하지 않습니다.");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
