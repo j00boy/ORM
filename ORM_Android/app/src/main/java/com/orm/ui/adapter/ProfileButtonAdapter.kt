@@ -43,18 +43,16 @@ class ProfileButtonAdapter(private val items: List<RecyclerViewButtonItem>) :
         holder.tvSub.text = items[position].subTitle
 
         if (this.type == "member") {
-            if (items[position].id != managerId.toInt()) {
-                if (items[position].id != userId.toInt()) {
-                    holder.btnUp.visibility = View.GONE
-                }
+            val curId = items[position].id
+            if (curId == userId.toInt() && userId != managerId) {
                 holder.btnDown.visibility = View.GONE
                 holder.btnUp.text = "탈퇴"
-            } else {
-                if(items[position].id == userId.toInt()){
-                    holder.btnDown.visibility = View.GONE
-                }
+            } else if (curId != userId.toInt() && userId == managerId) {
                 holder.btnUp.visibility = View.GONE
                 holder.btnDown.text = "추방"
+            } else {
+                holder.btnUp.visibility = View.GONE
+                holder.btnDown.visibility = View.GONE
             }
             holder.tvSub.visibility = View.GONE
         }

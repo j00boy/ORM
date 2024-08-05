@@ -8,6 +8,10 @@
         <variable
             name="trace"
             type="com.orm.data.model.Trace" />
+
+        <variable
+            name="image"
+            type="String" />
     </data>
 
 
@@ -72,9 +76,9 @@
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/iv_thumbnail"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_baseline_photo_camera_back_24" />
+                        app:imageSrc="@{image}" />
 
                 </com.google.android.material.card.MaterialCardView>
 

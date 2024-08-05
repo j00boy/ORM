@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.data.model.Mountain
 import com.orm.data.model.club.Club
@@ -78,6 +79,11 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
         }
 
         val content = if (club == null) "생성" else "수정"
+        mountainId = club?.mountainId?.toInt() ?: 0
+        if(club?.imgSrc != null){
+            binding.image = club!!.imgSrc
+            binding.ivThumbnail.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+        }
         binding.btnSign.setOnClickListener {
             if (binding.tfClubName.editText!!.text.isEmpty() || mountainId == 0) {
                 MaterialAlertDialogBuilder(this)
@@ -131,6 +137,7 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
                     imageUri = it
                     binding.ivThumbnail.setImageURI(imageUri)
                     binding.ivThumbnail.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                    binding.image = imageUri.toString()
                     imageFile = imageUri?.let { uriToFile(it, contentResolver) }
                 }
             }

@@ -35,6 +35,7 @@ class TraceDetailEditActivity : AppCompatActivity() {
 
     private var imageUri: Uri? = null
     private var imagePath: String? = null
+    private var tempImagePath: String? = null
 
     private val trace: Trace? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -60,6 +61,16 @@ class TraceDetailEditActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        trace?.imgPath?.let {
+            val file = File(it)
+            if (file.exists()) {
+                imageUri = Uri.fromFile(file)
+                binding.image = imageUri.toString()
+                binding.ivThumbnail.setImageURI(imageUri)
+                binding.ivThumbnail.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+            }
+        }
+        Log.d("traceTest" , trace?.imgPath.toString())
         binding.btnSign.setOnClickListener {
             if (binding.tfTraceName.editText!!.text.isEmpty()) {
                 MaterialAlertDialogBuilder(this)
@@ -75,6 +86,23 @@ class TraceDetailEditActivity : AppCompatActivity() {
                 .setMessage("발자국을 수정하시겠습니까?")
                 .setNegativeButton("취소") { _, _ -> }
                 .setPositiveButton("확인") { dialog, which ->
+                    tempImagePath?.let { tempPath ->
+                        val tempFile = File(tempPath)
+                        val permFile = File(filesDir, "trace_image_${trace?.localId}.png")
+                        if (tempFile.exists()) {
+                            if (permFile.exists()) {
+                                Log.d("traceTest", "delete")
+                                permFile.delete()
+                            }
+                            tempFile.copyTo(permFile, overwrite = true)
+                            tempFile.delete()
+                            imagePath = permFile.absolutePath
+                        } else {
+                            imagePath = trace?.imgPath
+                            Log.d("traceTest", "imagePath ${imagePath}")
+                        }
+                    }
+
                     val traceModify = Trace(
                         id = trace?.id,
                         localId = trace?.localId ?: 0,
@@ -108,14 +136,16 @@ class TraceDetailEditActivity : AppCompatActivity() {
                 .show()
         }
 
-        if (trace!!.trailId == -1) {
-            binding.cvMap.visibility = View.GONE
-        } else {
-            trailViewModel.getTrail(trace!!.trailId!!)
-            trailViewModel.trail.observe(this@TraceDetailEditActivity) {
-                val fragment =
-                    supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
-                fragment?.updatePoints(it.trailDetails)
+        trace?.trailId?.let {
+            if (it == -1) {
+                binding.cvMap.visibility = View.GONE
+            } else {
+                trailViewModel.getTrail(it)
+                trailViewModel.trail.observe(this@TraceDetailEditActivity) {
+                    val fragment =
+                        supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
+                    fragment?.updatePoints(it.trailDetails)
+                }
             }
         }
 
@@ -133,20 +163,22 @@ class TraceDetailEditActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
                 val data: Intent? = result.data
-                data?.data?.let {uri ->
-                    val file = File(cacheDir, "selected_image.png")
+                data?.data?.let { uri ->
+                    val tempFile = File(cacheDir, "selected_image.png")
                     try {
                         contentResolver.openInputStream(uri)?.use { inputStream ->
-                            FileOutputStream(file).use { outputStream ->
+                            FileOutputStream(tempFile).use { outputStream ->
                                 inputStream.copyTo(outputStream)
                             }
                         }
-                        imagePath = file.absolutePath
+                        tempImagePath = tempFile.absolutePath
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
+                    imageUri = uri
                     binding.ivThumbnail.setImageURI(imageUri)
                     binding.ivThumbnail.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                    binding.image = imageUri.toString()
                 }
             }
         }
