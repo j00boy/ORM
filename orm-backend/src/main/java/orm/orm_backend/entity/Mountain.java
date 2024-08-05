@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -21,6 +23,9 @@ public class Mountain {
     private String imageSrc;
     private Float altitude;
     private String description;
+
+    @OneToMany(mappedBy = "mountain", fetch = FetchType.EAGER)
+    private List<Trail> trails;
 
     @Builder
     public Mountain(String mountainName, String mountainCode, String address, String imageSrc, Float altitude, String description) {

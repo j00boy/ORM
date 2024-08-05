@@ -5,12 +5,15 @@ import org.springframework.stereotype.Service;
 import orm.orm_backend.configuration.Mountain100Config;
 import orm.orm_backend.dto.response.MountainResponseDto;
 import orm.orm_backend.dto.response.MountainDto;
+import orm.orm_backend.dto.response.TrailDetailResponseDto;
 import orm.orm_backend.dto.response.TrailResponseDto;
 import orm.orm_backend.entity.Mountain;
+import orm.orm_backend.entity.Trail;
 import orm.orm_backend.exception.CustomException;
 import orm.orm_backend.repository.MountainRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static orm.orm_backend.exception.ErrorCode.*;
 
@@ -28,10 +31,19 @@ public class MountainService {
      * @return mountainId로 조회된 Mountain룰 변환한 MountainResponseDto
      */
     public MountainResponseDto getMountainDtoById(Integer mountainId) {
-        Mountain mountain = mountainRepository.findById(mountainId).orElseThrow(() -> new CustomException(MOUNTAIN_NOT_FOUND));
-        List<TrailResponseDto> trails = trailService.getTrailsByMountainId(mountain.getId());
-        return new MountainResponseDto(mountain, trails);
+        Mountain mountain = mountainRepository.findById(mountainId)
+                .orElseThrow(() -> new CustomException(MOUNTAIN_NOT_FOUND));
+
+        List<TrailResponseDto> trailResponseDtos = mountain.getTrails().stream().map(trail -> {
+            List<TrailDetailResponseDto> trailDetailResponseDtos = trail.getTrailDetails().stream()
+                    .map(TrailDetailResponseDto::new)
+                    .collect(Collectors.toList());
+            return new TrailResponseDto(trail, trailDetailResponseDtos);
+        }).collect(Collectors.toList());
+
+        return new MountainResponseDto(mountain, trailResponseDtos);
     }
+
 
     /**
      * id로 Mountain Entity를 조회한다.

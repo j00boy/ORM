@@ -12,6 +12,7 @@ public class TrailResponseDto {
     private Integer id;
     private Float distance;
     private Float heuristic;
+    private Integer time;
     private String startLatitude;
     private String startLongitude;
     private String peakLatitude;
@@ -23,6 +24,7 @@ public class TrailResponseDto {
         this.id = trail.getId();
         this.distance = trail.getDistance();
         this.heuristic = trail.getHeuristic();
+        this.time = trail.getTime();
         this.startLatitude = trail.getStartLatitude();
         this.startLongitude = trail.getStartLongitude();
         this.peakLatitude = trail.getPeakLatitude();

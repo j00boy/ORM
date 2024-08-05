@@ -30,7 +30,7 @@ public class TrailService {
     public List<TrailResponseDto> getTrailsByMountainId(int mountainId) {
         List<Trail> trails = trailRepository.findByMountainId(mountainId);
         return trails.stream()
-                .map(t -> new TrailResponseDto(t, getAllTrailDetailsByTrailId(t.getId()))).toList();
+                .map(trail -> new TrailResponseDto(trail, getAllTrailDetailsByTrailId(trail.getId()))).toList();
     }
 
     /**
@@ -41,9 +41,8 @@ public class TrailService {
      */
     public TrailResponseDto getTrailById(Integer trailId) {
         Trail trail = trailRepository.findById(trailId).orElseThrow(() -> new CustomException(TRAIL_NOT_FOUND));
-        List<TrailDetail> trailDetails = trailDetailRepository.findTrailDetailsByTrailId(trailId);
-        List<TrailDetailResponseDto> dtos = trailDetails.stream().map(TrailDetailResponseDto::new).toList();
-        return new TrailResponseDto(trail, dtos);
+        List<TrailDetailResponseDto> trailDetails = trail.getTrailDetails().stream().map(TrailDetailResponseDto::new).toList();
+        return new TrailResponseDto(trail, trailDetails);
     }
 
     /**
