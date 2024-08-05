@@ -33,7 +33,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.orm.viewmodel.TrackViewModel
 import android.content.BroadcastReceiver as LocalReceiver
 
 @AndroidEntryPoint
@@ -47,6 +49,8 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         LocalBroadcastManager.getInstance(requireContext())
     }
 
+    private val trackViewModel: TrackViewModel by viewModels()
+
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var sensorManager: SensorManager
     private lateinit var pressureSensor: Sensor
@@ -54,8 +58,9 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     private var googleMap: GoogleMap? = null
     private var points: List<Point> = emptyList()
     private var polyline: Polyline? = null
+    private var userPolyline: Polyline? = null
 
-    private var cnt : Int = 0
+    private var cnt: Int = 0
 
     private val locationReceiver = object : LocalReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -65,10 +70,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
             val latitude = intent?.getDoubleExtra("latitude", 0.0) ?: 0.0
             val longitude = intent?.getDoubleExtra("longitude", 0.0) ?: 0.0
             Log.d("LocationReceiver", "Received location: $latitude, $longitude")
-//            updateMapWithLocation(Location("").apply {
-//                this.latitude = latitude
-//                this.longitude = longitude
-//            })
+            updateMapWithLocation(LatLng(latitude, longitude))
         }
     }
 
@@ -120,7 +122,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
             .addOnSuccessListener { location: Location? ->
                 Log.d("gmap", "Location fetched: $location")
                 location?.let {
-                    updateMapWithLocation(it)
+                    updateMapWithLocation(LatLng(it.latitude, it.longitude))
                 } ?: run {
                     Log.e("gmap", "Location not available")
                 }
@@ -140,12 +142,22 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         requireContext().stopService(intent)
     }
 
-    private fun updateMapWithLocation(location: Location) {
+    private fun updateMapWithLocation(latlng: LatLng) {
         googleMap?.let { map ->
-            val currentLatLng = LatLng(location.latitude, location.longitude)
             map.moveCamera(
-                CameraUpdateFactory.newLatLngZoom(currentLatLng, 17f)
+                CameraUpdateFactory.newLatLngZoom(latlng, map.cameraPosition.zoom)
             )
+
+            trackViewModel.updateLanlngs(latlng)
+            trackViewModel.lanlngs.observe(requireActivity()) {
+                userPolyline?.remove()
+                userPolyline = map.addPolyline(
+                    PolylineOptions()
+                        .zIndex(10000000.0f)
+                        .color(R.color.md_theme_inversePrimary)
+                        .addAll(it)
+                )
+            }
         } ?: Log.e(TAG, "GoogleMap is not initialized")
     }
 
@@ -153,6 +165,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
         localBroadcastManager.registerReceiver(
             locationReceiver, IntentFilter("com.orm.LOCATION_UPDATE"),
         )
@@ -162,16 +175,16 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         googleMap = map
         googleMap?.isMyLocationEnabled = true
         googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
-        updateMap(points)
+        googleMap?.moveCamera(CameraUpdateFactory.zoomTo(17f))
+
         fetchLocation()
+        initializeMap(points)
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onResume() {
         super.onResume()
         sensorManager.registerListener(this, pressureSensor, SensorManager.SENSOR_DELAY_NORMAL)
-
-
     }
 
     override fun onPause() {
@@ -195,7 +208,10 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         googleMap = null
     }
 
-    private fun updateMap(points: List<Point>) {
+    private fun calculateAltitude(pressure: Double) =
+        44330 * (1 - (pressure / 1013.25).pow(1 / 5.255))
+
+    private fun initializeMap(points: List<Point>) {
         Log.d(TAG, "Updating map with points: $points")
 
         googleMap?.let { map ->
@@ -204,15 +220,11 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
             polyline?.remove()
             polyline = map.addPolyline(
                 PolylineOptions()
-                    .clickable(true)
                     .color(R.color.md_theme_errorContainer_mediumContrast)
                     .addAll(latLngPoints)
             )
         } ?: Log.e(TAG, "GoogleMap is not initialized")
     }
-
-    private fun calculateAltitude(pressure: Double) =
-        44330 * (1 - (pressure / 1013.25).pow(1 / 5.255))
 
     companion object {
         private const val TAG = "GoogleMapTraceFragment"
