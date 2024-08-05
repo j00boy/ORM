@@ -16,5 +16,5 @@ public interface TrailDetailRepository extends JpaRepository<TrailDetail, Intege
      * @return 같은 trailId를 갖는 TrailDetail List
      */
     List<TrailDetail> findTrailDetailsByTrailId(Integer trailId);
-
+    List<TrailDetail> findAllByTrailIdIn(List<Integer> trailIds);
 }
