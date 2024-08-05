@@ -64,7 +64,7 @@ class BasicGoogleMapFragment : Fragment(), OnMapReadyCallback {
 
     private fun updateMap(points: List<Point>) {
         googleMap?.let { map ->
-            val latLngPoints = points.map { LatLng(it.latitude, it.longitude) }
+            val latLngPoints = points.map { LatLng(it.x, it.y) }
 
             // 기존의 폴리라인 삭제
             polyline?.remove()
