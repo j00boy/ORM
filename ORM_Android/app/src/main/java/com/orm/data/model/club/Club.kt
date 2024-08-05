@@ -13,7 +13,7 @@ data class Club(
     @PrimaryKey val id: Int,
     val clubName: String,
     val description: String,
-    val imageSrc: String?,
+    val imgSrc: String?,
     val managerId: String,
     val managerName: String,
     val memberCount: String,
@@ -26,7 +26,7 @@ data class Club(
         fun toRecyclerViewBasicItem(club: Club): RecyclerViewBasicItem {
             return RecyclerViewBasicItem(
                 id = club.id,
-                imageSrc = club.imageSrc ?: "",
+                imageSrc = club.imgSrc ?: "",
                 title = club.clubName,
                 subTitle = club.description
             )

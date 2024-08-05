@@ -11,8 +11,8 @@ import java.time.LocalDateTime
 data class Point(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
     val trailId: Int? = null,
-    val latitude: Double,
-    val longitude: Double,
+    val x: Double,
+    val y: Double,
     val altitude: Double? = null,
     val time: LocalDateTime? = null,
     val difficulty: Int? = null,
