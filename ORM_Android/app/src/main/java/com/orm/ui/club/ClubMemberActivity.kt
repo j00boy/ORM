@@ -66,6 +66,7 @@ class ClubMemberActivity : AppCompatActivity() {
             this.membersMap = membersMap
             Log.d("ClubMemberActivity", membersMap["members"].toString())
             Log.d("ClubMemberActivity", membersMap["applicants"].toString())
+            checkIfDataReady()
         }
     }
 

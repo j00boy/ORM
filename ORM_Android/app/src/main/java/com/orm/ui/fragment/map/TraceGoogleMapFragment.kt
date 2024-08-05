@@ -69,7 +69,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
 
     private fun updateMap(points: List<Point>) {
         googleMap?.let { map ->
-            val latLngPoints = points.map { LatLng(it.latitude, it.longitude) }
+            val latLngPoints = points.map { LatLng(it.x, it.y) }
 
             // Polyline 추가
             val polyline = map.addPolyline(
