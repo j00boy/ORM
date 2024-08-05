@@ -32,7 +32,6 @@ public class MountainService {
      */
     public MountainResponseDto getMountainDtoById(Integer mountainId) {
         Mountain mountain = mountainRepository.findById(mountainId).orElseThrow(() -> new CustomException(MOUNTAIN_NOT_FOUND));
-//        List<TrailResponseDto> trails = trailService.getTrailsByMountainId(mountain.getId());
         List<TrailResponseDto> trails = trailService.getAllTrailsByMountainId(mountain);
         return new MountainResponseDto(mountain, trails);
     }
