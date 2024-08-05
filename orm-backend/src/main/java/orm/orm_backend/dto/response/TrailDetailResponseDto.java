@@ -9,13 +9,13 @@ public class TrailDetailResponseDto {
 
     private String x; // latitude
     private String y; // longitude
-    private Integer difficulty;
+    private Integer d; // difficulty
 
     @Builder
     public TrailDetailResponseDto(TrailDetail trailDetail) {
         this.x = trailDetail.getLatitude();
         this.y = trailDetail.getLongitude();
-        this.difficulty = trailDetail.getDifficulty();
+        this.d = trailDetail.getDifficulty();
     }
 
 }
