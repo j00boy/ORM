@@ -2,8 +2,6 @@ package orm.orm_backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +19,6 @@ import java.util.List;
 @RequestMapping("/mountains")
 @Slf4j
 @RequiredArgsConstructor
-@CacheConfig(cacheNames = "mountains")
 public class MountainController {
 
     private final MountainService mountainService;
@@ -33,7 +30,6 @@ public class MountainController {
         return ResponseEntity.ok().body(mountainDtos);
     }
 
-    @Cacheable(key = "#id")
     @GetMapping("/{mountainId}")
     public ResponseEntity<MountainResponseDto> getMountainById(@PathVariable("mountainId") Integer id) {
         log.info("not cached");
@@ -41,7 +37,6 @@ public class MountainController {
         return ResponseEntity.ok().body(mountainDto);
     }
 
-    @Cacheable(key = "#name")
     @GetMapping("/search")
     public ResponseEntity<List<MountainDto>> getMountainsBySearch(String name) {
         List<MountainDto> mountains = mountainService.getMountainsBySearch(name);
