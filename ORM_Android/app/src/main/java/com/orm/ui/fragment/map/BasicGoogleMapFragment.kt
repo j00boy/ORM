@@ -1,5 +1,6 @@
 package com.orm.ui.fragment.map
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -55,6 +56,7 @@ class BasicGoogleMapFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        Log.e(TAG, mapFragment.toString())
         mapFragment.getMapAsync(this)
     }
 
@@ -76,7 +78,7 @@ class BasicGoogleMapFragment : Fragment(), OnMapReadyCallback {
             polyline = map.addPolyline(
                 PolylineOptions()
                     .clickable(true)
-                    .color(R.color.md_theme_errorContainer_mediumContrast)
+                    .color(Color.RED)
                     .addAll(latLngPoints)
             )
         } ?: Log.e(TAG, "GoogleMap is not initialized")

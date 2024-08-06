@@ -18,7 +18,7 @@ import com.orm.data.model.Record
 import com.orm.data.model.Trace
 import com.orm.data.model.Trail
 
-@Database(entities = [Club::class, Trace::class, Member::class, Notification::class, Point::class, Trail::class, Record::class], version = 1, exportSchema = false)
+@Database(entities = [Club::class, Trace::class, Member::class, Notification::class, Point::class, Trail::class, Record::class], version = 2, exportSchema = false)
 
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

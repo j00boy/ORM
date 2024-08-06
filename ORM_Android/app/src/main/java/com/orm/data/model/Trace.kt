@@ -23,6 +23,7 @@ data class Trace(
     val mountainName: String?,
     val coordinates: List<Point>?,
     val trailId: Int? = -1,
+    var recordId: Long? = null,
     val imgPath: String? = null,
 ) : Parcelable {
     companion object {

@@ -157,9 +157,8 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     }
 
     private fun handleTraceUpdate(trace: Trace?, createdId: Long) {
-        TODO("trace에 record field 삽입 및 coordinates 삭제")
         trace?.let {
-//            trace.recordId = createdId
+            trace.recordId = createdId
             traceViewModel.createTrace(it)
         }
     }
