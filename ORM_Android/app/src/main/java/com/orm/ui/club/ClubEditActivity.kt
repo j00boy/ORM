@@ -8,6 +8,8 @@ import com.orm.ui.fragment.BottomSheetMountainList
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -50,6 +52,7 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
     private val clubViewModel: ClubViewModel by viewModels()
 
     private var imageFile: File? = null
+    private var isDuplicated: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +72,7 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
                 isDuplicate?.let {
                     Log.d("ClubEditActivity", "isDuplicate: $isDuplicate")
                     val message = if (isDuplicate) "생성 불가능한 이름입니다." else "생성 가능한 이름입니다."
+                    isDuplicated = isDuplicate
                     showDuplicateCheckDialog(message)
                 }
             }
@@ -85,14 +89,36 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
 
-        val content = if (club == null) "생성" else "수정"
+
         mountainId = club?.mountainId?.toInt() ?: 0
+        isDuplicated = if(club == null) true else false
         binding.image = club?.imgSrc.toString()
+
+        binding.tfClubName.editText?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                isDuplicated = true
+            }
+            override fun afterTextChanged(s: Editable?) {
+                isDuplicated = true
+                Log.d("clubTest", "changed")
+            }
+        })
+        val content = if (club == null) "생성" else "수정"
         binding.btnSign.setOnClickListener {
             if (binding.tfClubName.editText!!.text.isEmpty() || mountainId == 0) {
                 MaterialAlertDialogBuilder(this)
                     .setTitle(content)
                     .setMessage("필수 정보를 입력해주세요.")
+                    .setPositiveButton("확인") { _, _ ->
+                    }
+                    .show()
+                return@setOnClickListener
+            }
+            if (isDuplicated && binding.tfClubName.editText?.text.toString() != club?.clubName) {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(content)
+                    .setMessage("모임명을 확인해주세요")
                     .setPositiveButton("확인") { _, _ ->
                     }
                     .show()
