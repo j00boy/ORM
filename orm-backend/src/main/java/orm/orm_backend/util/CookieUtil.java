@@ -3,8 +3,6 @@ package orm.orm_backend.util;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.Arrays;
-
 public class CookieUtil {
 
     /**
@@ -26,10 +24,10 @@ public class CookieUtil {
         return true;
     }
 
-    public static void setCookie(String cookiePrefix, HttpServletResponse response, Integer boardId) {
+    public static void setCookie(String cookiePrefix, String cookiePath, HttpServletResponse response, Integer boardId) {
         Cookie cookie = new Cookie(cookiePrefix + "-" + boardId, "true");
-        cookie.setMaxAge(60);
-        cookie.setPath("/clubs/boards");
+        cookie.setMaxAge(60 * 5);   // 5분
+        cookie.setPath(cookiePath);    // 해당 경로에서만
         response.addCookie(cookie);
     }
 }

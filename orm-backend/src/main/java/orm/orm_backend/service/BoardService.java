@@ -1,18 +1,15 @@
 package orm.orm_backend.service;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import orm.orm_backend.dto.common.BoardImageDto;
 import orm.orm_backend.dto.request.BoardRequestDto;
 import orm.orm_backend.dto.response.BoardListResponseDto;
 import orm.orm_backend.dto.response.BoardResponseDto;
-import orm.orm_backend.dto.response.CommentResponseDto;
 import orm.orm_backend.entity.*;
 import orm.orm_backend.exception.CustomException;
 import orm.orm_backend.exception.ErrorCode;
@@ -30,6 +27,7 @@ public class BoardService {
     private final String IMAGE_PATH_POSTFIX = "/";
 
     private final String COOKIE_PREFIX = "board";
+    private final String COOKIE_PATH = "/clubs/boards";
 
     private final ImageUtil imageUtil;
 
@@ -116,7 +114,7 @@ public class BoardService {
         // 조회수 중복처리를 위한 쿠키 검증 및 설정
         if(CookieUtil.checkCookie(COOKIE_PREFIX, boardId, cookies)) {
             incrementHits(boardId);
-            CookieUtil.setCookie(COOKIE_PREFIX, response, boardId);
+            CookieUtil.setCookie(COOKIE_PREFIX, COOKIE_PATH, response, boardId);
         }
 
         User user = userService.findUserById(userId);
