@@ -113,6 +113,6 @@ public class TrailServiceTest {
         // then
         assertThat(allTrailDetailsByTrailId).hasSize(2);
         assertThat(allTrailDetailsByTrailId.size()).isNotEqualTo(3);
-        assertThat(allTrailDetailsByTrailId.get(0).getDifficulty()).isEqualTo(trailDetail1.getDifficulty());
+        assertThat(allTrailDetailsByTrailId.get(0).getD()).isEqualTo(trailDetail1.getDifficulty());
     }
 }
