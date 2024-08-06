@@ -87,10 +87,7 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
 
         val content = if (club == null) "생성" else "수정"
         mountainId = club?.mountainId?.toInt() ?: 0
-        if(club?.imgSrc != null){
-            binding.image = club!!.imgSrc
-            binding.ivThumbnail.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-        }
+        binding.image = club?.imgSrc.toString()
         binding.btnSign.setOnClickListener {
             if (binding.tfClubName.editText!!.text.isEmpty() || mountainId == 0) {
                 MaterialAlertDialogBuilder(this)

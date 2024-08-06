@@ -185,7 +185,7 @@ class TraceDetailEditActivity : AppCompatActivity() {
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
-                    binding.ivThumbnail.setImageURI(uri)
+                    binding.image = uri.toString()
                 }
             }
         }

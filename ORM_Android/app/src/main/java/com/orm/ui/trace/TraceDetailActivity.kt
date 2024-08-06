@@ -81,7 +81,7 @@ class TraceDetailActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.edit -> {
                     val intent: Intent
-                    if (trace?.recordId == null) {
+                    if (trace?.maxHeight == null) {
                         intent = Intent(this, TraceEditActivity::class.java)
                     } else {
                         intent = Intent(this, TraceDetailEditActivity::class.java)
