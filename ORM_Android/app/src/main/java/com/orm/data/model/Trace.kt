@@ -34,7 +34,7 @@ data class Trace(
                 title = trace.title,
                 subTitle = trace.mountainName ?: "",
                 date = trace.hikingDate.toString(),
-                btnText = if (trace.maxHeight != 0.0) "측정완료" else "측정전"
+                btnText = if (trace.recordId != null) "측정완료" else "측정전"
             )
         }
     }
