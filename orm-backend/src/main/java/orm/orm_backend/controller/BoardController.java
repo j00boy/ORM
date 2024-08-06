@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import orm.orm_backend.dto.request.BoardRequestDto;
-import orm.orm_backend.dto.response.BoardListResponseDto;
+import orm.orm_backend.dto.response.BoardSimpleResponseDto;
 import orm.orm_backend.dto.response.BoardResponseDto;
 import orm.orm_backend.service.BoardService;
 import orm.orm_backend.service.MemberService;
@@ -41,10 +41,10 @@ public class BoardController {
     }
 
     @GetMapping("/boards")
-    public ResponseEntity<List<BoardListResponseDto>> getAllBoards(Integer clubId, HttpServletRequest request) {
+    public ResponseEntity<List<BoardSimpleResponseDto>> getAllBoards(Integer clubId, HttpServletRequest request) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
-        List<BoardListResponseDto> allBoards = boardService.getAllBoards(userId, clubId);
+        List<BoardSimpleResponseDto> allBoards = boardService.getAllBoards(userId, clubId);
         return ResponseEntity.ok().body(allBoards);
     }
 

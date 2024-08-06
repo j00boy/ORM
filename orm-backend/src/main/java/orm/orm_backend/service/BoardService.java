@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import orm.orm_backend.dto.common.BoardImageDto;
 import orm.orm_backend.dto.request.BoardRequestDto;
-import orm.orm_backend.dto.response.BoardListResponseDto;
+import orm.orm_backend.dto.response.BoardSimpleResponseDto;
 import orm.orm_backend.dto.response.BoardResponseDto;
 import orm.orm_backend.entity.*;
 import orm.orm_backend.exception.CustomException;
@@ -86,14 +86,14 @@ public class BoardService {
      * @param clubId
      * @return
      */
-    public List<BoardListResponseDto> getAllBoards(Integer userId, Integer clubId) {
+    public List<BoardSimpleResponseDto> getAllBoards(Integer userId, Integer clubId) {
         // 클럼의 멤버인지 확인
         if(!memberService.isContained(userId, clubId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
         List<Board> allBoards = boardRepository.findByClubId(clubId);
-        return allBoards.stream().map(BoardListResponseDto::new).toList();
+        return allBoards.stream().map(BoardSimpleResponseDto::new).toList();
     }
 
     /**
