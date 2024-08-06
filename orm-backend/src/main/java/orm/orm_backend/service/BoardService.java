@@ -127,9 +127,7 @@ public class BoardService {
 
         boardRepository.delete(board);
     }
-
-
-    // TODO: Update 다시 한 번 체크 필요
+    
     @Transactional
     public BoardResponseDto updateBoard(BoardRequestDto boardRequestDto, List<MultipartFile> imgFiles, Integer userId, Integer boardId) {
         // 해당 게시글 찾아오기
