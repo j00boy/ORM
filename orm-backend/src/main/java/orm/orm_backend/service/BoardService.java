@@ -121,7 +121,7 @@ public class BoardService {
     public void deleteBoard(Integer boardId, Integer userId) {
         Board board = boardRepository.findById(boardId).orElseThrow();
 
-        if(!board.isOwner(userId) && !board.getClub().isManager(userId)) {
+        if(!board.hasRight(userId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
