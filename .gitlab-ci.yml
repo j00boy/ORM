@@ -52,7 +52,7 @@ package:
   # Docker Hub 로그인
   - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_NAME --password-stdin
   script:
-    - docker build -t $IMAGE_NAME orm-backend/.   # Dockerfile로 build
+    - docker build -t $DOCKER_HUB_NAME:$IMAGE_NAME orm-backend/.   # Dockerfile로 build
     - echo "build complete"
     - docker push $DOCKER_HUB_NAME:$IMAGE_NAME   # Container Registry에 image push
   # script가 실행된 후 수행 될 script
