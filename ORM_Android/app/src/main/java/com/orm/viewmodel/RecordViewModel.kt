@@ -1,5 +1,6 @@
 package com.orm.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import com.orm.data.model.Record
 import com.orm.data.repository.RecordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,16 +22,24 @@ class RecordViewModel @Inject constructor(
     private val _recordId = MutableLiveData<Long>()
     val recordId: LiveData<Long> get() = _recordId
 
-    fun getRecord(id: Int) {
+    fun getRecord(id: Long) {
         viewModelScope.launch {
             val record = recordRepository.getRecord(id)
+
+            record.coordinate!!.forEach { p ->
+                Log.e(
+                    "RecordViewModel", p.x.toString().plus(", ").plus(p.y.toString()).plus(
+                        ", "
+                    ).plus(p.time.toString())
+                )
+            }
             _record.postValue(record)
         }
     }
 
     fun insertRecord(record: Record) {
         viewModelScope.launch {
-            val createId : Long = recordRepository.insertRecord(record)
+            val createId: Long = recordRepository.insertRecord(record)
             _recordId.postValue(createId)
         }
     }

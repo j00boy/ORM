@@ -125,6 +125,20 @@
                         />
                 </com.google.android.material.card.MaterialCardView>
 
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cv_map_track"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="6dp"
+                    app:cardCornerRadius="8dp">
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fcv_map_track"
+                        android:layout_width="match_parent"
+                        android:layout_height="270dp"
+                        />
+                </com.google.android.material.card.MaterialCardView>
+
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/fcv_table"
                     android:name="com.orm.ui.fragment.table.TextTableFragment"

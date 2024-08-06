@@ -2,6 +2,7 @@ package com.orm.ui.trace
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.orm.data.model.Trace
@@ -31,13 +32,13 @@ class TraceMeasureActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (savedInstanceState == null) {
-            trace?.trailId?.let { trailId ->
-                trailViewModel.getTrail(trailId)
+            trace?.let { trace ->
+                trailViewModel.getTrail(trace.trailId!!)
 
                 trailViewModel.trail.observe(this) { trail ->
                     val fragment = TraceGoogleMapFragment.newInstance(
                         points = trail.trailDetails,
-                        traceId = trace?.id
+                        traceId = trace.localId
                     )
 
                     supportFragmentManager.beginTransaction()

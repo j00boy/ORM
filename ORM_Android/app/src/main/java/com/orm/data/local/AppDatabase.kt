@@ -18,15 +18,28 @@ import com.orm.data.model.Record
 import com.orm.data.model.Trace
 import com.orm.data.model.Trail
 
-@Database(entities = [Club::class, Trace::class, Member::class, Notification::class, Point::class, Trail::class, Record::class], version = 2, exportSchema = false)
+@Database(
+    version = 2,
+    exportSchema = false,
+    entities =
+    [
+        Club::class,
+        Trace::class,
+        Point::class,
+        Trail::class,
+        Member::class,
+        Record::class,
+        Notification::class,
+    ],
+)
 
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun clubDao(): ClubDao
-    abstract fun memberDao(): MemberDao
     abstract fun traceDao(): TraceDao
-    abstract fun notificationDao(): NotificationDao
     abstract fun pointDao(): PointDao
     abstract fun trailDao(): TrailDao
+    abstract fun memberDao(): MemberDao
     abstract fun recordDao(): RecordDao
+    abstract fun notificationDao(): NotificationDao
 }

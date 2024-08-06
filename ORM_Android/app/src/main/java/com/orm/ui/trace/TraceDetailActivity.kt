@@ -14,6 +14,7 @@ import com.orm.R
 import com.orm.data.model.Trace
 import com.orm.databinding.ActivityTraceDetailBinding
 import com.orm.ui.fragment.map.BasicGoogleMapFragment
+import com.orm.viewmodel.RecordViewModel
 import com.orm.viewmodel.TraceViewModel
 import com.orm.viewmodel.TrailViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +26,7 @@ class TraceDetailActivity : AppCompatActivity() {
     }
     private val traceViewModel: TraceViewModel by viewModels()
     private val trailViewModel: TrailViewModel by viewModels()
+    private val recordViewModel: RecordViewModel by viewModels()
 
     private val createTraceLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -49,10 +51,19 @@ class TraceDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        Log.e("TraceDetailActivity", trace!!.recordId.toString())
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(binding.fcvMap.id, BasicGoogleMapFragment())
                 .commit()
+
+            if (trace!!.recordId != null) {
+                supportFragmentManager.beginTransaction()
+                    .replace(binding.fcvMapTrack.id, BasicGoogleMapFragment())
+                    .commit()
+            } else {
+                binding.cvMapTrack.visibility = View.GONE
+            }
         }
 
         binding.trace = trace
@@ -65,13 +76,10 @@ class TraceDetailActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.edit -> {
                     val intent: Intent
-                    Log.d("traceTest", trace.toString())
-                    if (trace?.maxHeight == 0.0) {
+                    if (trace?.recordId == null) {
                         intent = Intent(this, TraceEditActivity::class.java)
-                        Log.d("traceTest", "Edit")
                     } else {
                         intent = Intent(this, TraceDetailEditActivity::class.java)
-                        Log.d("traceTest", "DetailEdit")
                     }
                     intent.putExtra("trace", trace)
                     createTraceLauncher.launch(intent)
@@ -80,6 +88,14 @@ class TraceDetailActivity : AppCompatActivity() {
 
                 else -> false
             }
+        }
+
+        // 측정 기록이 없는 경우 측정 테이블 안보임
+        // 측정 완료한 경우 측정 버튼 안보임
+        if (trace!!.recordId == null) {
+            binding.fcvTable.visibility = View.GONE
+        } else {
+            binding.btnStart.visibility = View.GONE
         }
 
         binding.btnStart.setOnClickListener {
@@ -98,13 +114,15 @@ class TraceDetailActivity : AppCompatActivity() {
                     supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
                 fragment?.updatePoints(it.trailDetails)
             }
-        }
 
-        // 측정 기록이 없는 경우 측정 테이블 안보임
-        if (trace!!.hikingStartedAt.isNullOrEmpty()) {
-            binding.fcvTable.visibility = View.GONE
-        } else {
-            binding.btnStart.visibility = View.GONE
+            if (trace!!.recordId != null) {
+                recordViewModel.getRecord(trace!!.recordId!!)
+                recordViewModel.record.observe(this@TraceDetailActivity) {
+                    val fragment =
+                        supportFragmentManager.findFragmentById(binding.fcvMapTrack.id) as? BasicGoogleMapFragment
+                    fragment?.updatePoints(it.coordinate ?: emptyList())
+                }
+            }
         }
     }
 }

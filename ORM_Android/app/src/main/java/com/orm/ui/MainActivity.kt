@@ -14,6 +14,9 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.orm.R
 import com.orm.databinding.ActivityMainBinding
 import com.orm.util.PermissionManager
+import com.orm.viewmodel.RecordViewModel
+import com.orm.viewmodel.TraceViewModel
+import com.orm.viewmodel.TrailViewModel
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,12 +40,30 @@ class MainActivity : AppCompatActivity() {
 //        Manifest.permission.READ_EXTERNAL_STORAGE,
     )
 
+    private val traceViewModel: TraceViewModel by viewModels()
+    private val trailViewModel: TrailViewModel by viewModels()
+    private val recordViewModel: RecordViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         checkPermissions()
         NavigationUI.setupWithNavController(binding.navView, navHostFragment.navController)
+
+
+//        traceViewModel.getTraces()
+//        var id = 0
+//        traceViewModel.traces.observe(this) {
+//            Log.e("MainActivity!!!", it[0].recordId.toString())
+//            id = it[0].recordId!!.toInt()
+//
+//        recordViewModel.getRecord(id.toLong())
+//        recordViewModel.record.observe(this) {
+//            Log.e("MainActivity!!!", it.toString())
+//        }
+
+
     }
 
     private fun checkPermissions() {

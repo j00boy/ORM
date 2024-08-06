@@ -38,10 +38,12 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.viewmodel.RecordViewModel
 import com.orm.viewmodel.TrackViewModel
 import com.orm.data.model.Record
 import com.orm.data.model.Trace
+import com.orm.util.localDateTimeToLong
 import com.orm.viewmodel.TraceViewModel
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -111,7 +113,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         updateTimeRunnable = object : Runnable {
             override fun run() {
                 updateCurrentTime()
-                handler.postDelayed(this, 1000) // Update every second
+                handler.postDelayed(this, 1000)
             }
         }
     }
@@ -133,35 +135,61 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         }
 
         binding.btnStop.setOnClickListener {
-            Toast.makeText(requireContext(), "발자국 측정 종료", Toast.LENGTH_SHORT).show()
-            stopLocationService()
-
             trackViewModel.points.value?.let { points ->
+                Log.e(TAG, "Points: $points")
                 insertRecordAndHandleTrace(points)
             }
+            stopLocationService()
         }
-
         return binding.root
     }
 
+    //    private fun insertRecordAndHandleTrace(points: List<Point>) {
+//        recordViewModel.insertRecord(Record(coordinate = points))
+//        recordViewModel.recordId.observe(requireActivity()) { createdId ->
+//            Log.e(TAG, "Record created with ID: $createdId")
+//            Log.e(TAG, "Trace ID: $traceId")
+//            if (traceId != null && traceId != -1) {
+//                traceViewModel.getTrace(traceId!!)
+//                traceViewModel.trace.observe(requireActivity()) { trace ->
+//                    Log.e(TAG, "Trace retrieved: $trace")
+//                    handleTraceUpdate(trace, createdId)
+//                }
+//            }
+//        }
+//    }
     private fun insertRecordAndHandleTrace(points: List<Point>) {
         recordViewModel.insertRecord(Record(coordinate = points))
-        recordViewModel.recordId.observe(requireActivity(), Observer { createdId ->
+        recordViewModel.recordId.observe(requireActivity()) { createdId ->
+            Log.e(TAG, "Record created with ID: $createdId")
             if (traceId != null && traceId != -1) {
                 traceViewModel.getTrace(traceId!!)
-                traceViewModel.trace.observe(requireActivity(), Observer { trace ->
-                    handleTraceUpdate(trace, createdId)
-                })
+                traceViewModel.trace.observe(requireActivity()) { trace ->
+                    Log.e(TAG, "Trace retrieved: $trace")
+                    trace?.let {
+                        it.recordId = createdId
+                        traceViewModel.createTrace(it)
+                        Log.e(TAG, "Trace updated: ${it.recordId}")
+                        traceViewModel.traceCreated.observe(requireActivity()) {
+                            if (it) {
+                                Toast.makeText(requireContext(), "발자국 측정 완료", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                    }
+                }
             }
-        })
-    }
-
-    private fun handleTraceUpdate(trace: Trace?, createdId: Long) {
-        trace?.let {
-            trace.recordId = createdId
-            traceViewModel.createTrace(it)
         }
     }
+
+
+//    private fun handleTraceUpdate(trace: Trace?, createdId: Long) {
+//        trace?.let {
+//            trace.recordId = createdId
+//            traceViewModel.createTrace(it)
+//            Log.e(TAG, "Trace updated: ${it.recordId}")
+//        }
+//    }
 
     private fun initializeServices() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -199,27 +227,36 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                 CameraUpdateFactory.newLatLngZoom(latlng, map.cameraPosition.zoom)
             )
 
-            binding.altitude = String.format("%.0f", currentHeight) + "m"
+            if (!running) return
+
+            Log.e(TAG, LocalDateTime.now().toString())
+            Log.e(
+                TAG, Point(
+                    x = latlng.latitude,
+                    y = latlng.longitude,
+                    altitude = currentHeight,
+                    time = localDateTimeToLong(LocalDateTime.now())
+                ).toString()
+            )
 
             trackViewModel.updatePoint(
                 Point(
                     x = latlng.latitude,
                     y = latlng.longitude,
                     altitude = currentHeight,
-                    time = LocalDateTime.now()
+                    time = localDateTimeToLong(LocalDateTime.now())
                 )
             )
-
             trackViewModel.distance.observe(requireActivity()) {
                 binding.distance = String.format("%.0f", it) + "m"
-                Log.d(TAG, "Distance: $it")
             }
+
+            binding.altitude = String.format("%.0f", currentHeight) + "m"
 
             trackViewModel.points.observe(requireActivity()) {
                 val positions = it.map { pos ->
                     LatLng(pos.x, pos.y)
                 }
-
                 userPolyline?.remove()
                 userPolyline = map.addPolyline(
                     PolylineOptions()
