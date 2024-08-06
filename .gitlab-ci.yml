@@ -9,13 +9,22 @@ build-job:
   stage: build
   script:
     - echo "application-dev.yml 파일을 orm-backend/src/main/resources 경로에 저장"
-    - cat $APPLICATION_YAML > orm-backend/src/main/resources/application-dev.yml
+    - |
+      cat <<EOF > orm-backend/src/main/resources/application-dev.yml
+      $APPLICATION_YAML
+      EOF
     
     - echo "pem 파일을 orm-backend/src/main/resources 경로 저장"
-    - cat $PEM > orm-backend/src/main/resources/I11A709T.pem
+    - |
+      cat <<EOF > orm-backend/src/main/resources/I11A709T.pem
+      $PEM
+      EOF
     
     - echo "json 파일을 orm-backend/src/main/resources 경로에 저장"
-    - cat $FIREBASE > orm-backend/src/main/resources/orm-ssafy-firebase-adminsdk-r5bcu-b5d1ad1ab6.json
+    - |
+      cat <<EOF > orm-backend/src/main/resources/orm-ssafy-firebase-adminsdk-r5bcu-b5d1ad1ab6.json
+      $FIREBASE
+      EOF
     
     - cd orm-backend
     - echo "Compiling 진행"
