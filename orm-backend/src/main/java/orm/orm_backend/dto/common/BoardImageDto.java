@@ -11,7 +11,6 @@ import orm.orm_backend.entity.BoardImage;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardImageDto {
-    private Integer boardId;
     private String imgSrc;
 
     public BoardImage toEntity(Board board, String imgSrc) {

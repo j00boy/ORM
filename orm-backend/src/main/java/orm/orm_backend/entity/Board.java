@@ -7,6 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import orm.orm_backend.dto.request.BoardRequestDto;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static jakarta.persistence.FetchType.*;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -15,11 +20,11 @@ public class Board extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn
     private Club club;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn
     private User user;
 
@@ -28,6 +33,9 @@ public class Board extends BaseEntity{
 
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    @OneToMany(mappedBy = "board")
+    private List<Comment> comments = new ArrayList<>();
 
     private Integer hit;
 
@@ -38,5 +46,15 @@ public class Board extends BaseEntity{
         this.title = title;
         this.content = content;
         this.hit = 0;
+    }
+
+    public boolean isOwner(Integer userId) {
+        Integer ownerId = user.getId();
+        return ownerId != null && userId.equals(ownerId);
+    }
+
+    public void update(BoardRequestDto boardRequestDto) {
+        this.title = boardRequestDto.getTitle();
+        this.content = boardRequestDto.getContent();
     }
 }
