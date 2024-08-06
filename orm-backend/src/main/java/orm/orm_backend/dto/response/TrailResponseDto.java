@@ -2,11 +2,13 @@ package orm.orm_backend.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import orm.orm_backend.entity.Trail;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class TrailResponseDto {
 
     private Integer id;
