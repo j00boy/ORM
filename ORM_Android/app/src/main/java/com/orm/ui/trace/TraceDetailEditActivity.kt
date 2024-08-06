@@ -23,6 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class TraceDetailEditActivity : AppCompatActivity() {
@@ -33,7 +34,6 @@ class TraceDetailEditActivity : AppCompatActivity() {
     private val traceViewModel: TraceViewModel by viewModels()
     private val trailViewModel: TrailViewModel by viewModels()
 
-    private var imageUri: Uri? = null
     private var imagePath: String? = null
     private var tempImagePath: String? = null
 
@@ -64,13 +64,11 @@ class TraceDetailEditActivity : AppCompatActivity() {
         trace?.imgPath?.let {
             val file = File(it)
             if (file.exists()) {
-                imageUri = Uri.fromFile(file)
-                binding.image = imageUri.toString()
-                binding.ivThumbnail.setImageURI(imageUri)
-                binding.ivThumbnail.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                binding.image = Uri.fromFile(file).toString()
             }
         }
-        Log.d("traceTest" , trace?.imgPath.toString())
+        Log.d("traceTest", trace?.imgPath.toString())
+
         binding.btnSign.setOnClickListener {
             if (binding.tfTraceName.editText!!.text.isEmpty()) {
                 MaterialAlertDialogBuilder(this)
@@ -85,21 +83,33 @@ class TraceDetailEditActivity : AppCompatActivity() {
                 .setTitle("수정하기")
                 .setMessage("발자국을 수정하시겠습니까?")
                 .setNegativeButton("취소") { _, _ -> }
-                .setPositiveButton("확인") { dialog, which ->
+                .setPositiveButton("확인") { dialog, _ ->
                     tempImagePath?.let { tempPath ->
                         val tempFile = File(tempPath)
-                        val permFile = File(filesDir, "trace_image_${trace?.localId}.png")
-                        if (tempFile.exists()) {
-                            if (permFile.exists()) {
-                                Log.d("traceTest", "delete")
-                                permFile.delete()
+                        Log.d("traceTest", "File ${trace?.localId}")
+
+                        val newImageFileName = "trace_image_${trace?.localId}_${System.currentTimeMillis()}.png"
+                        val permFile = File(filesDir, newImageFileName)
+
+                        try {
+                            tempFile.inputStream().use { input ->
+                                permFile.outputStream().use { output ->
+                                    input.copyTo(output)
+                                }
                             }
-                            tempFile.copyTo(permFile, overwrite = true)
                             tempFile.delete()
                             imagePath = permFile.absolutePath
-                        } else {
-                            imagePath = trace?.imgPath
-                            Log.d("traceTest", "imagePath ${imagePath}")
+                            Log.d("traceTest", "파일이 성공적으로 덮어쓰기 되었습니다: $imagePath")
+                        } catch (e: IOException) {
+                            Log.e("traceTest", "파일 복사 중 오류 발생", e)
+                        }
+
+                        trace?.imgPath?.let { oldImagePath ->
+                            val lastFile = File(oldImagePath)
+                            if (lastFile.exists()) {
+                                lastFile.delete()
+                                Log.d("traceTest", "이전 이미지 파일 삭제됨: $oldImagePath")
+                            }
                         }
                     }
 
@@ -131,7 +141,6 @@ class TraceDetailEditActivity : AppCompatActivity() {
                             finish()
                         }
                     }
-                    finish()
                 }
                 .show()
         }
@@ -172,14 +181,23 @@ class TraceDetailEditActivity : AppCompatActivity() {
                             }
                         }
                         tempImagePath = tempFile.absolutePath
+                        Log.d("traceTest", "tempPath ${tempImagePath.toString()}")
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
-                    imageUri = uri
-                    binding.ivThumbnail.setImageURI(imageUri)
-                    binding.ivThumbnail.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-                    binding.image = imageUri.toString()
+                    binding.ivThumbnail.setImageURI(uri)
                 }
             }
         }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 임시 파일 삭제
+        tempImagePath?.let {
+            val tempFile = File(it)
+            if (tempFile.exists()) {
+                tempFile.delete()
+            }
+        }
+    }
 }
