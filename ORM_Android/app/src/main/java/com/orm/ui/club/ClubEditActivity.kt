@@ -1,6 +1,8 @@
 package com.orm.ui.club
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import com.orm.ui.fragment.BottomSheetMountainList
 import android.os.Build
@@ -14,15 +16,21 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.data.model.Mountain
 import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubCreate
 import com.orm.databinding.ActivityClubEditBinding
+import com.orm.util.resizeImage
 import com.orm.util.uriToFile
 import com.orm.viewmodel.ClubViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
+import java.io.FileOutputStream
 
 @AndroidEntryPoint
 class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountainSelectedListener {
@@ -41,7 +49,6 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
     private var mountainId: Int = 0
     private val clubViewModel: ClubViewModel by viewModels()
 
-    private var imageUri: Uri? = null
     private var imageFile: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,11 +141,10 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
             if (result.resultCode == RESULT_OK) {
                 val data: Intent? = result.data
                 data?.data?.let {
-                    imageUri = it
-                    binding.ivThumbnail.setImageURI(imageUri)
-                    binding.ivThumbnail.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-                    binding.image = imageUri.toString()
-                    imageFile = imageUri?.let { uriToFile(it, contentResolver) }
+                    binding.image = it.toString()
+                    resizeImage(this, it) { resizedFile ->
+                        imageFile = resizedFile
+                    }
                 }
             }
         }

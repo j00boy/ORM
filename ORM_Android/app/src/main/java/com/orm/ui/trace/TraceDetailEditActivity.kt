@@ -136,7 +136,7 @@ class TraceDetailEditActivity : AppCompatActivity() {
                         if (traceCreated) {
                             binding.progressBar.visibility = View.GONE
                             setResult(Activity.RESULT_OK, Intent().apply {
-                                putExtra("traceCreated", true)
+                                putExtra("traceModified", true)
                             })
                             finish()
                         }
