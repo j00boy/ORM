@@ -58,12 +58,15 @@ public class ImageUtil {
             sftpChannel.connect();
 
             // 디렉토리 존재 여부 확인 및 생성
-            try {
-                sftpChannel.stat(REMOTE_UPLOAD_DIR + directoryPath);
-            } catch (SftpException e) {
-                StringBuilder directory = new StringBuilder(REMOTE_UPLOAD_DIR);
-                for (String path : directoryPath.split("/")) {
-                    directory.append("/").append(path);
+            StringBuilder directory = new StringBuilder(REMOTE_UPLOAD_DIR);
+            for (String path : directoryPath.split("/")) {
+                if (!directory.toString().endsWith("/")) {
+                    directory.append("/");
+                }
+                directory.append(path);
+                try {
+                    sftpChannel.stat(directory.toString());
+                } catch (SftpException e) {
                     sftpChannel.mkdir(directory.toString());
                 }
             }
@@ -75,11 +78,12 @@ public class ImageUtil {
         }
 
         // DB에 저장할 경로 문자열
-        return "http://" + SFTP_HOST + REMOTE_ACCESS_DIR + directoryPath + fileName;
+        return "https://" + SFTP_HOST + REMOTE_ACCESS_DIR + directoryPath + fileName;
     }
 
     public void deleteImage(String fileName) {
         fileName = fileName.replace("http://", "");
+        fileName = fileName.replace("https://", "");
         fileName = fileName.replace(SFTP_HOST, "");
         fileName = fileName.replace(REMOTE_ACCESS_DIR, REMOTE_UPLOAD_DIR);
         try {
