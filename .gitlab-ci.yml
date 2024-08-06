@@ -5,6 +5,7 @@ stages:
 build-job:
   tags: 
     - ci
+  image : gradle:8.8.0-jdk17
   stage: build
   script:
     - echo "application-dev.yml 파일을 orm-backend/src/main/resources 경로에 저장"
