@@ -1,6 +1,8 @@
 package orm.orm_backend.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import orm.orm_backend.configuration.Mountain100Config;
 import orm.orm_backend.dto.response.MountainResponseDto;
@@ -19,6 +21,7 @@ import static orm.orm_backend.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "mountains")
 public class MountainService {
 
     private final MountainRepository mountainRepository;
@@ -30,6 +33,7 @@ public class MountainService {
      * @param mountainId
      * @return mountainId로 조회된 Mountain룰 변환한 MountainResponseDto
      */
+    @Cacheable(key = "#mountainId")
     public MountainResponseDto getMountainDtoById(Integer mountainId) {
         Mountain mountain = mountainRepository.findById(mountainId).orElseThrow(() -> new CustomException(MOUNTAIN_NOT_FOUND));
         List<TrailResponseDto> trails = trailService.getAllTrailsByMountainId(mountain);
@@ -52,6 +56,7 @@ public class MountainService {
      * @param name
      * @return 'name'으로 조회된 Mountain List를 변환한 MountainDto List
      */
+    @Cacheable(key = "#name")
     public List<MountainDto> getMountainsBySearch(String name) {
         List<Mountain> mountains = mountainRepository.findByMountainNameContaining(name);
         return mountains.stream().map(MountainDto::new).toList();
