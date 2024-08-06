@@ -86,7 +86,7 @@ public class BoardService {
     public List<BoardListResponseDto> getAllBoards(Integer userId, Integer clubId) {
         // 클럼의 멤버인지 확인
         if(!memberService.isContained(userId, clubId)) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
         List<Board> allBoards = boardRepository.findByClubId(clubId);
@@ -103,13 +103,28 @@ public class BoardService {
 
         // 클럼의 멤버인지 확인
         if(!memberService.isContained(userId, board.getClub().getId())) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
         User user = userService.findUserById(userId);
         List<BoardImageDto> boardImages = boardImageService.getBoardImages(boardId);
 
         return new BoardResponseDto(board, user, boardImages);
+    }
+
+    /**
+     * boardId에 해당하는 게시글을 삭제한다.
+     * @param boardId
+     * @return
+     */
+    public void deleteBoard(Integer boardId, Integer userId) {
+        Board board = boardRepository.findById(boardId).orElseThrow();
+
+        if(board.isOwner(userId) && board.getClub().isManager(userId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        boardRepository.delete(board);
     }
 
 

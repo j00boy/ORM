@@ -47,4 +47,9 @@ public class Board extends BaseEntity{
         this.content = content;
         this.hit = 0;
     }
+
+    public Boolean isOwner(Integer userId) {
+        Integer ownerId = user.getId();
+        return ownerId != null && userId.equals(ownerId);
+    }
 }
