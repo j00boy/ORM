@@ -126,6 +126,7 @@ class TraceDetailEditActivity : AppCompatActivity() {
                         trailId = trace!!.trailId,
                         maxHeight = trace!!.maxHeight,
                         imgPath = imagePath,
+                        recordId = trace!!.recordId,
                     )
                     traceViewModel.createTrace(traceModify)
                     Log.d("traceTest", imagePath.toString())

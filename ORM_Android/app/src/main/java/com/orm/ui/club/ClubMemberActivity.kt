@@ -91,11 +91,24 @@ class ClubMemberActivity : AppCompatActivity() {
             }
 
             override fun onClickBtnUp(v: View, position: Int) {
-                clubViewModel.leaveClubs(club!!.id, clubMembers[position].id!!.toInt())
+                MaterialAlertDialogBuilder(this@ClubMemberActivity)
+                    .setTitle("클럽 탈퇴")
+                    .setMessage("정말로 ${club?.clubName} 클럽에서 탈퇴하시겠습니까?")
+                    .setNegativeButton("취소") { _, _ -> }
+                    .setPositiveButton("확인") { dialog, which ->
+                        clubViewModel.leaveClubs(club!!.id, clubMembers[position].id!!.toInt())
+                        finish()
+                    }.show()
             }
 
             override fun onClickBtnDown(v: View, position: Int) {
-                clubViewModel.dropMember(club!!.id, clubMembers[position].id!!.toInt())
+                MaterialAlertDialogBuilder(this@ClubMemberActivity)
+                    .setTitle("회원 추방")
+                    .setMessage("정말로 ${members!![position].nickname}님을 추방하시겠습니까?")
+                    .setNegativeButton("취소") { _, _ -> }
+                    .setPositiveButton("확인") { dialog, which ->
+                        clubViewModel.dropMember(club!!.id, clubMembers[position].id!!.toInt())
+                    }.show()
             }
         })
 
