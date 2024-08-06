@@ -1,6 +1,8 @@
 package orm.orm_backend.controller;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -47,10 +49,11 @@ public class BoardController {
     }
 
     @GetMapping("/boards/{boardId}")
-    public ResponseEntity<BoardResponseDto> getBoard(@PathVariable Integer boardId, HttpServletRequest request) {
+    public ResponseEntity<BoardResponseDto> getBoard(@PathVariable Integer boardId, HttpServletRequest request, HttpServletResponse response) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
-        BoardResponseDto board = boardService.getBoard(boardId, userId);
+        Cookie[] cookies = request.getCookies();
+        BoardResponseDto board = boardService.getBoard(boardId, userId, cookies, response);
         return ResponseEntity.ok().body(board);
     }
 

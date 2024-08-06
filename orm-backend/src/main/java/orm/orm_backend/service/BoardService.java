@@ -1,5 +1,8 @@
 package orm.orm_backend.service;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +17,7 @@ import orm.orm_backend.entity.*;
 import orm.orm_backend.exception.CustomException;
 import orm.orm_backend.exception.ErrorCode;
 import orm.orm_backend.repository.BoardRepository;
+import orm.orm_backend.util.CookieUtil;
 import orm.orm_backend.util.ImageUtil;
 
 import java.util.ArrayList;
@@ -25,6 +29,7 @@ public class BoardService {
     private final String IMAGE_PATH_PREFIX = "club/board/";
     private final String IMAGE_PATH_POSTFIX = "/";
 
+    private final String COOKIE_PREFIX = "board";
 
     private final ImageUtil imageUtil;
 
@@ -98,12 +103,20 @@ public class BoardService {
      * @param boardId
      * @param userId
      */
-    public BoardResponseDto getBoard(Integer boardId, Integer userId) {
+    @Transactional
+    public BoardResponseDto getBoard(Integer boardId, Integer userId, Cookie[] cookies, HttpServletResponse response) {
+
         Board board = boardRepository.findById(boardId).orElseThrow();
 
         // 클럼의 멤버인지 확인
         if(!memberService.isContained(userId, board.getClub().getId())) {
             throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        // 조회수 중복처리를 위한 쿠키 검증 및 설정
+        if(CookieUtil.checkCookie(COOKIE_PREFIX, boardId, cookies)) {
+            incrementHits(boardId);
+            CookieUtil.setCookie(COOKIE_PREFIX, response, boardId);
         }
 
         User user = userService.findUserById(userId);
@@ -160,6 +173,11 @@ public class BoardService {
         }
 
         return new BoardResponseDto(board, board.getUser(), boardImageDtos);
+    }
+
+    @Transactional
+    public void incrementHits(Integer boardId) {
+        boardRepository.updateHits(boardId);
     }
 
 }
