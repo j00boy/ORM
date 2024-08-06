@@ -93,6 +93,25 @@ public class BoardService {
         return allBoards.stream().map(BoardListResponseDto::new).toList();
     }
 
+    /**
+     * 게시글 상세 조회
+     * @param boardId
+     * @param userId
+     */
+    public BoardResponseDto getBoard(Integer boardId, Integer userId) {
+        Board board = boardRepository.findById(boardId).orElseThrow();
+
+        // 클럼의 멤버인지 확인
+        if(!memberService.isContained(userId, board.getClub().getId())) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+
+        User user = userService.findUserById(userId);
+        List<BoardImageDto> boardImages = boardImageService.getBoardImages(boardId);
+
+        return new BoardResponseDto(board, user, boardImages);
+    }
+
 
 //    // TODO: Update 다시 한 번 체크 필요
 //    @Transactional

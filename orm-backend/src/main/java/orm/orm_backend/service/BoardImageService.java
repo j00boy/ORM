@@ -16,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BoardImageService {
     private final ImageUtil imageUtil;
-    private BoardImageRepository boardImageRepository;
+    private final BoardImageRepository boardImageRepository;
 
     // 이미지 저장
     public void saveImage(List<BoardImageDto> boardImageDtos, Board board){
@@ -29,6 +29,12 @@ public class BoardImageService {
     public void deleteImages(Integer boardId){
         List<BoardImage> preImages = boardImageRepository.findByBoardId(boardId);
         imageUtil.deleteImages(preImages.stream().map(BoardImage::getImageSrc).toList());
+    }
+
+    // 이미지 조회
+    public List<BoardImageDto> getBoardImages(Integer boardId){
+        List<BoardImage> boardImages = boardImageRepository.findByBoardId(boardId);
+        return boardImages.stream().map(boardImage -> new BoardImageDto(boardImage.getImageSrc())).toList();
     }
 
 }

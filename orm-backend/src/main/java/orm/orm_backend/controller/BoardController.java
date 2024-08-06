@@ -45,5 +45,15 @@ public class BoardController {
         List<BoardListResponseDto> allBoards = boardService.getAllBoards(userId, clubId);
         return ResponseEntity.ok().body(allBoards);
     }
+
+    @GetMapping("/boards/{boardId}")
+    public ResponseEntity<BoardResponseDto> getBoard(@PathVariable Integer boardId, HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        BoardResponseDto board = boardService.getBoard(boardId, userId);
+        return ResponseEntity.ok().body(board);
+    }
+
+
 }
 
