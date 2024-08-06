@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.firebase.messaging.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.android)
     implementation(libs.play.services.location)
+    implementation(libs.play.services.pal)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

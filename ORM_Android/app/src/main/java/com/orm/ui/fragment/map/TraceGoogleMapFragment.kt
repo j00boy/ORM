@@ -77,6 +77,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     private var polyline: Polyline? = null
     private var userPolyline: Polyline? = null
     private var currentHeight: Double? = null
+    private var maxTrackHeight: Double? = null
     private var traceId: Int? = null
 
     private val handler = Handler(Looper.getMainLooper())
@@ -136,7 +137,6 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
 
         binding.btnStop.setOnClickListener {
             trackViewModel.points.value?.let { points ->
-                Log.e(TAG, "Points: $points")
                 insertRecordAndHandleTrace(points)
             }
             stopLocationService()
@@ -144,35 +144,27 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         return binding.root
     }
 
-    //    private fun insertRecordAndHandleTrace(points: List<Point>) {
-//        recordViewModel.insertRecord(Record(coordinate = points))
-//        recordViewModel.recordId.observe(requireActivity()) { createdId ->
-//            Log.e(TAG, "Record created with ID: $createdId")
-//            Log.e(TAG, "Trace ID: $traceId")
-//            if (traceId != null && traceId != -1) {
-//                traceViewModel.getTrace(traceId!!)
-//                traceViewModel.trace.observe(requireActivity()) { trace ->
-//                    Log.e(TAG, "Trace retrieved: $trace")
-//                    handleTraceUpdate(trace, createdId)
-//                }
-//            }
-//        }
-//    }
     private fun insertRecordAndHandleTrace(points: List<Point>) {
         recordViewModel.insertRecord(Record(coordinate = points))
         recordViewModel.recordId.observe(requireActivity()) { createdId ->
-            Log.e(TAG, "Record created with ID: $createdId")
+
             if (traceId != null && traceId != -1) {
                 traceViewModel.getTrace(traceId!!)
                 traceViewModel.trace.observe(requireActivity()) { trace ->
-                    Log.e(TAG, "Trace retrieved: $trace")
                     trace?.let {
-                        it.recordId = createdId
-                        traceViewModel.createTrace(it)
-                        Log.e(TAG, "Trace updated: ${it.recordId}")
-                        traceViewModel.traceCreated.observe(requireActivity()) {
-                            if (it) {
-                                Toast.makeText(requireContext(), "발자국 측정 완료", Toast.LENGTH_SHORT)
+                        traceViewModel.createTrace(it.apply {
+                            recordId = createdId
+                            hikingStartedAt = startTime
+                            hikingEndedAt = System.currentTimeMillis()
+                            maxHeight = maxTrackHeight
+                        })
+                        traceViewModel.traceCreated.observe(requireActivity()) { isCreated ->
+                            if (isCreated) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "발자국이 측정 완료되었습니다.",
+                                    Toast.LENGTH_SHORT
+                                )
                                     .show()
                             }
                         }
@@ -181,15 +173,6 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
             }
         }
     }
-
-
-//    private fun handleTraceUpdate(trace: Trace?, createdId: Long) {
-//        trace?.let {
-//            trace.recordId = createdId
-//            traceViewModel.createTrace(it)
-//            Log.e(TAG, "Trace updated: ${it.recordId}")
-//        }
-//    }
 
     private fun initializeServices() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -303,6 +286,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         event?.let {
             if (it.sensor.type == Sensor.TYPE_PRESSURE) {
                 currentHeight = calculateAltitude(it.values[0])
+                maxTrackHeight = maxOf(maxTrackHeight ?: 0.0, currentHeight ?: 0.0)
             }
         }
     }

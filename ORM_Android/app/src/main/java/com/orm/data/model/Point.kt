@@ -15,9 +15,9 @@ data class Point(
     val trailId: Int? = null,
     val x: Double,
     val y: Double,
-    val altitude: Double? = null,
-    val time: Long?,
     val d: Int? = null,
+    val time: Long?,
+    val altitude: Double? = null,
 ) : Parcelable {
     companion object {
         fun getDistance(p1: Point, p2: Point): Double {

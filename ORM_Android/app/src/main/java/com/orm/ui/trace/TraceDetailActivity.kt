@@ -14,6 +14,7 @@ import com.orm.R
 import com.orm.data.model.Trace
 import com.orm.databinding.ActivityTraceDetailBinding
 import com.orm.ui.fragment.map.BasicGoogleMapFragment
+import com.orm.ui.fragment.table.TextTableFragment
 import com.orm.viewmodel.RecordViewModel
 import com.orm.viewmodel.TraceViewModel
 import com.orm.viewmodel.TrailViewModel
@@ -60,6 +61,10 @@ class TraceDetailActivity : AppCompatActivity() {
             if (trace!!.recordId != null) {
                 supportFragmentManager.beginTransaction()
                     .replace(binding.fcvMapTrack.id, BasicGoogleMapFragment())
+                    .commit()
+
+                supportFragmentManager.beginTransaction()
+                    .replace(binding.fcvTable.id, TextTableFragment.newInstance(trace!!))
                     .commit()
             } else {
                 binding.cvMapTrack.visibility = View.GONE
