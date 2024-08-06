@@ -66,6 +66,7 @@ class TraceDetailActivity : AppCompatActivity() {
                 supportFragmentManager.beginTransaction()
                     .replace(binding.fcvTable.id, TextTableFragment.newInstance(trace!!))
                     .commit()
+
             } else {
                 binding.cvMapTrack.visibility = View.GONE
             }

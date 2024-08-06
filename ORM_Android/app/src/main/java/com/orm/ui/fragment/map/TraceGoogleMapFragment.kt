@@ -31,6 +31,7 @@ import kotlin.math.pow
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -126,6 +127,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         _binding = FragmentTraceGoogleMapBinding.inflate(inflater, container, false)
 
         binding.btnStop.visibility = View.GONE
+        binding.distance = "0m"
 
         binding.btnStart.setOnClickListener {
             Toast.makeText(requireContext(), "발자국 측정 시작", Toast.LENGTH_SHORT).show()
@@ -157,6 +159,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                             hikingStartedAt = startTime
                             hikingEndedAt = System.currentTimeMillis()
                             maxHeight = maxTrackHeight
+                            hikingDistance = trackViewModel.distance.value
                         })
                         traceViewModel.traceCreated.observe(requireActivity()) { isCreated ->
                             if (isCreated) {
@@ -286,6 +289,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         event?.let {
             if (it.sensor.type == Sensor.TYPE_PRESSURE) {
                 currentHeight = calculateAltitude(it.values[0])
+                binding.altitude = String.format("%.0f", currentHeight) + "m"
                 maxTrackHeight = maxOf(maxTrackHeight ?: 0.0, currentHeight ?: 0.0)
             }
         }
@@ -332,7 +336,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
             polyline?.remove()
             polyline = map.addPolyline(
                 PolylineOptions()
-                    .color(R.color.md_theme_errorContainer_mediumContrast)
+                    .color(Color.HSVToColor(floatArrayOf(16f, 1f, 1f)))
                     .addAll(latLngPoints)
             )
         } ?: Log.e(TAG, "GoogleMap is not initialized")

@@ -127,7 +127,9 @@ class TraceDetailEditActivity : AppCompatActivity() {
                         maxHeight = trace!!.maxHeight,
                         imgPath = imagePath,
                         recordId = trace!!.recordId,
+                        hikingDistance = trace!!.hikingDistance
                     )
+
                     traceViewModel.createTrace(traceModify)
                     Log.d("traceTest", imagePath.toString())
                     dialog.dismiss()

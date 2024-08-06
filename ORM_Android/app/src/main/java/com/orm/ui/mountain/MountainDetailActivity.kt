@@ -70,17 +70,13 @@ class MountainDetailActivity : AppCompatActivity() {
         binding.mountain = mountain
 
         mountainViewModel.fetchMountainById(mountain!!.id)
-        mountainViewModel.mountain.observe(this@MountainDetailActivity) { it ->
-            if (it == null) return@observe
-
-            if (it.trails.isNullOrEmpty()) {
-                return@observe
+        mountainViewModel.mountain.observe(this@MountainDetailActivity) {
+            if (it != null && !it.trails.isNullOrEmpty()) {
+                setupTrailSpinner(it.trails)
             }
-
-            setupTrailSpinner(it.trails)
-
         }
 
+        weatherViewModel.getWeather(mountain!!.addressLatitude, mountain!!.addressLongitude)
         weatherViewModel.weather.observe(this) { weather ->
             weather?.let { updateWeather(weather) }
         }
@@ -92,7 +88,7 @@ class MountainDetailActivity : AppCompatActivity() {
                 binding.recyclerView.visibility = View.GONE
                 return@observe
             }
-            setupAdapter(it!!)
+            setupAdapter(it)
         }
     }
 
@@ -104,11 +100,18 @@ class MountainDetailActivity : AppCompatActivity() {
         spinner.adapter = adapter
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val selectedTrail = trails[position]
-                Log.e("MountainDetailActivity", selectedTrail.trailDetails.toString())
                 updateMapFragment(selectedTrail.trailDetails)
-                weatherViewModel.getWeather(selectedTrail.startLatitude, selectedTrail.startLongitude)
+                weatherViewModel.getWeather(
+                    selectedTrail.startLatitude,
+                    selectedTrail.startLongitude
+                )
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -120,9 +123,10 @@ class MountainDetailActivity : AppCompatActivity() {
 
         adapter.setItemClickListener(object : ProfileBasicAdapter.OnItemClickListener {
             override fun onClick(v: View, position: Int) {
-                val intent = Intent(this@MountainDetailActivity, ClubDetailActivity::class.java).apply {
-                    putExtra("club", clubs[position])
-                }
+                val intent =
+                    Intent(this@MountainDetailActivity, ClubDetailActivity::class.java).apply {
+                        putExtra("club", clubs[position])
+                    }
                 startActivity(intent)
             }
         })
@@ -131,12 +135,14 @@ class MountainDetailActivity : AppCompatActivity() {
     }
 
     private fun updateMapFragment(points: List<Point>) {
-        val fragment = supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
+        val fragment =
+            supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
         fragment?.updatePoints(points)
     }
 
     private fun updateWeather(weather: Weather) {
-        val fragment = supportFragmentManager.findFragmentById(binding.fcvWeather.id) as? WeatherFragment
+        val fragment =
+            supportFragmentManager.findFragmentById(binding.fcvWeather.id) as? WeatherFragment
         fragment?.updateWeather(weather)
     }
 }

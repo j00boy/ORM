@@ -14,7 +14,7 @@ class TextTableFragment : Fragment() {
     private var _binding: FragmentTextTableBinding? = null
     private val binding get() = _binding!!
 
-    private var trace: Trace? = null // nullable로 변경
+    private var trace: Trace? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,14 +33,19 @@ class TextTableFragment : Fragment() {
         trace?.let {
             binding.tvStart.text = timestampToTimeString(it.hikingStartedAt ?: 0)
             binding.tvEnd.text = timestampToTimeString(it.hikingEndedAt ?: 0)
+            binding.tvMaxHeight.text = String.format("%.2f m", it.maxHeight)
+            binding.tvDistance.text = String.format("%.2f m", it.hikingDistance)
             binding.tvDuration.text = getTimeDifferenceFormatted(
                 it.hikingStartedAt ?: 0,
                 it.hikingEndedAt ?: 0
             )
+
         } ?: run {
             binding.tvStart.text = "N/A"
             binding.tvEnd.text = "N/A"
             binding.tvDuration.text = "N/A"
+            binding.tvMaxHeight.text = "N/A"
+            binding.tvDistance.text = "N/A"
         }
 
         return root

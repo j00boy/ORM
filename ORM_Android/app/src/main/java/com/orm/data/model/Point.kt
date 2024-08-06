@@ -16,7 +16,7 @@ data class Point(
     val x: Double,
     val y: Double,
     val d: Int? = null,
-    val time: Long?,
+    val time: Long? = null,
     val altitude: Double? = null,
 ) : Parcelable {
     companion object {
