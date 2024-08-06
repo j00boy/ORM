@@ -2,9 +2,11 @@ package orm.orm_backend.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import orm.orm_backend.entity.TrailDetail;
 
 @Data
+@NoArgsConstructor
 public class TrailDetailResponseDto {
 
     private String x; // latitude
