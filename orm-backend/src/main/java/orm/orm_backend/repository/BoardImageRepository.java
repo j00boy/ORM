@@ -7,5 +7,16 @@ import java.util.List;
 
 public interface BoardImageRepository extends JpaRepository<BoardImage, Integer> {
 
+    /**
+     * boardId를 가진 BoardImage를 List로 반환합니다.
+     * @param boardId
+     * @return
+     */
     List<BoardImage> findByBoardId(int boardId);
+
+    /**
+     * boardId를 가진 BoardImage들을 삭제합니다.
+     * @param boardId
+     */
+    void deleteByBoardId(Integer boardId);
 }

@@ -48,8 +48,13 @@ public class Board extends BaseEntity{
         this.hit = 0;
     }
 
-    public Boolean isOwner(Integer userId) {
+    public boolean isOwner(Integer userId) {
         Integer ownerId = user.getId();
         return ownerId != null && userId.equals(ownerId);
+    }
+
+    public void update(BoardRequestDto boardRequestDto) {
+        this.title = boardRequestDto.getTitle();
+        this.content = boardRequestDto.getContent();
     }
 }

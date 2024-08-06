@@ -30,11 +30,11 @@ public class BoardController {
 
     @PostMapping("/boards/create")
     public ResponseEntity<BoardResponseDto> createBoard(@RequestPart("createBoard") BoardRequestDto boardRequestDto,
-                                                        @RequestPart(value = "imgFile", required = false) List<MultipartFile> imgFile,
+                                                        @RequestPart(value = "imgFile", required = false) List<MultipartFile> imgFiles,
                                                         HttpServletRequest request) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
-        BoardResponseDto boardResponseDto = boardService.createBoard(boardRequestDto, imgFile, userId);
+        BoardResponseDto boardResponseDto = boardService.createBoard(boardRequestDto, imgFiles, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(boardResponseDto);
     }
 
@@ -60,6 +60,16 @@ public class BoardController {
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         boardService.deleteBoard(boardId, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/boards/update/{boardId}")
+    public ResponseEntity<BoardResponseDto> updateBoard(@RequestPart("updateBoard") BoardRequestDto boardRequestDto,
+                                                        @RequestPart(value = "imgFile", required = false) List<MultipartFile> imgFiles,
+                                                        @PathVariable Integer boardId, HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        BoardResponseDto boardResponseDto = boardService.updateBoard(boardRequestDto, imgFiles, userId, boardId);
+        return ResponseEntity.ok().body(boardResponseDto);
     }
 
 }

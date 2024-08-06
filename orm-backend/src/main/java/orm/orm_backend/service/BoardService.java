@@ -47,7 +47,7 @@ public class BoardService {
     public BoardResponseDto createBoard(BoardRequestDto boardRequestDto, List<MultipartFile> imgFiles, Integer userId) {
         // 클럼의 멤버인지 확인
         if(!memberService.isContained(userId, boardRequestDto.getClubId())) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
         // user 찾기
@@ -117,6 +117,7 @@ public class BoardService {
      * @param boardId
      * @return
      */
+    @Transactional
     public void deleteBoard(Integer boardId, Integer userId) {
         Board board = boardRepository.findById(boardId).orElseThrow();
 
@@ -128,43 +129,39 @@ public class BoardService {
     }
 
 
-//    // TODO: Update 다시 한 번 체크 필요
-//    @Transactional
-//    public BoardResponseDto updateBoard(BoardRequestDto boardRequestDto, List<MultipartFile> imgFiles, Integer userId, Integer boardId) {
-//        // 게시글 조회
-//        Board board = boardRepository.findById(boardId).orElseThrow();
-//
-//        // 게시판 작성자 != 접근자라면
-//        if(!board.getUser().getId().equals(userId)) {
-//            throw new CustomException(ErrorCode.FORBIDDEN);
-//        }
-//
-//        // 기존 경로에서 먼저 삭제
-//        List<String> fileNames = boardImageService.getBoardImages(boardId).stream().map(BoardImageDto::getImgSrc).toList();
-//        imageUtil.deleteImages(fileNames);
-//
-//        // 기존 사진들 DB에서 삭제
-//        List<BoardImageDto> preBoardImages = boardImageService.getBoardImages(boardId);
-//        boardImageService.deleteImages(boardId);
-//
-//        // 사진 업로드 (전부 삭제했다가, 다시 등록하는 메커니즘)
-//        String imgSrc = null;
-//
-//        String IMAGE_PATH = IMAGE_PATH_PREFIX + boardRequestDto.getClubId() + IMAGE_PATH_POSTFIX;
-//
-//        List<BoardImageDto> boardImageDtos = new ArrayList<>();
-//
-//        if (imgFiles != null && !imgFiles.isEmpty()) {
-//            for (MultipartFile imgFile : imgFiles) {
-//                imgSrc = imageUtil.saveImage(imgFile, IMAGE_PATH);
-//                boardImageDtos.add(BoardImageDto.builder().imgSrc(imgSrc).build());
-//            }
-//            boardImageService.saveImage(boardImageDtos, board);
-//        }
-//
-//        User user = userService.findUserById(userId);
-//
-//        return new BoardResponseDto(board, user, boardImageDtos);
-//    }
+    // TODO: Update 다시 한 번 체크 필요
+    @Transactional
+    public BoardResponseDto updateBoard(BoardRequestDto boardRequestDto, List<MultipartFile> imgFiles, Integer userId, Integer boardId) {
+        // 해당 게시글 찾아오기
+        Board board = boardRepository.findById(boardId).orElseThrow();
+
+        // 로그인 유저 == 작성자일 경우에만 수정 가능
+        if(!board.isOwner(userId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        // 기존 사진들을 '경로'에서 삭제 후, 'DB'에서 삭제
+        boardImageService.deleteImages(boardId);
+
+        // 엔티티 먼저 수정(DB 반영)
+        board.update(boardRequestDto);
+
+        // 사진 재업로드
+        String imgSrc = null;
+
+        String IMAGE_PATH = IMAGE_PATH_PREFIX + boardRequestDto.getClubId() + IMAGE_PATH_POSTFIX;
+
+        List<BoardImageDto> boardImageDtos = new ArrayList<>();
+
+        if (imgFiles != null && !imgFiles.isEmpty()) {
+            for (MultipartFile imgFile : imgFiles) {
+                imgSrc = imageUtil.saveImage(imgFile, IMAGE_PATH);
+                boardImageDtos.add(BoardImageDto.builder().imgSrc(imgSrc).build());
+            }
+            boardImageService.saveImage(boardImageDtos, board);
+        }
+
+        return new BoardResponseDto(board, board.getUser(), boardImageDtos);
+    }
 
 }

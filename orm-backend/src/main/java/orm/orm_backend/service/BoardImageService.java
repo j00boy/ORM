@@ -6,6 +6,7 @@ import orm.orm_backend.dto.common.BoardImageDto;
 import orm.orm_backend.entity.Board;
 import orm.orm_backend.entity.BoardImage;
 import orm.orm_backend.repository.BoardImageRepository;
+import orm.orm_backend.repository.BoardRepository;
 import orm.orm_backend.util.ImageUtil;
 
 import java.util.ArrayList;
@@ -29,9 +30,10 @@ public class BoardImageService {
     public void deleteImages(Integer boardId){
         List<BoardImage> preImages = boardImageRepository.findByBoardId(boardId);
         imageUtil.deleteImages(preImages.stream().map(BoardImage::getImageSrc).toList());
+        boardImageRepository.deleteByBoardId(boardId);
     }
 
-    // 이미지 조회
+    // DTO로 이미지 조회
     public List<BoardImageDto> getBoardImages(Integer boardId){
         List<BoardImage> boardImages = boardImageRepository.findByBoardId(boardId);
         return boardImages.stream().map(boardImage -> new BoardImageDto(boardImage.getImageSrc())).toList();
