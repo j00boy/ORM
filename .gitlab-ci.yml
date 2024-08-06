@@ -54,7 +54,7 @@ package:
   script:
     - docker build -t $IMAGE_NAME orm-backend/.   # Dockerfile로 build
     - echo "build complete"
-    - docker push $IMAGE_NAME   # Container Registry에 image push
+    - docker push $DOCKER_HUB_NAME:$IMAGE_NAME   # Container Registry에 image push
   # script가 실행된 후 수행 될 script
   after_script:
     - docker logout
