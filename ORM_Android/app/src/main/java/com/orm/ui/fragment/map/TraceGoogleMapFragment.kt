@@ -37,6 +37,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -45,6 +46,7 @@ import com.orm.viewmodel.RecordViewModel
 import com.orm.viewmodel.TrackViewModel
 import com.orm.data.model.Record
 import com.orm.data.model.Trace
+import com.orm.ui.trace.TraceActivity
 import com.orm.util.localDateTimeToLong
 import com.orm.viewmodel.TraceViewModel
 import java.text.SimpleDateFormat
@@ -131,11 +133,19 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         binding.distance = "0m"
 
         binding.btnStart.setOnClickListener {
-            Toast.makeText(requireContext(), "발자국 측정 시작", Toast.LENGTH_SHORT).show()
-            binding.btnStart.visibility = View.GONE
-            binding.btnStop.visibility = View.VISIBLE
-            startLocationService()
-            startStopwatch()
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("측정 시작")
+                .setMessage("발자국 측정을 시작하시겠습니까?")
+                .setPositiveButton("확인") { _, _ ->
+                    binding.btnStart.visibility = View.GONE
+                    binding.btnStop.visibility = View.VISIBLE
+                    startLocationService()
+                    startStopwatch()
+                    Toast.makeText(requireContext(), "발자국 측정을 시작합니다.", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("취소") { _, _ ->
+                }
+                .show()
         }
 
         binding.btnStop.setOnClickListener {
@@ -154,7 +164,14 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                     insertRecordAndHandleTrace(points)
                 }
                 stopLocationService()
-                requireActivity().finish()
+
+                traceViewModel.traceCreated.observe(requireActivity()) { isCreated ->
+                    if (isCreated) {
+                        startActivity(Intent(requireContext(), TraceActivity::class.java))
+                        requireActivity().finish()
+                    }
+                }
+
             }
             .setNegativeButton("취소") { _, _ ->
             }
@@ -180,7 +197,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                             if (isCreated) {
                                 Toast.makeText(
                                     requireContext(),
-                                    "발자국이 측정 완료되었습니다.",
+                                    "발자국 측정이 완료되었습니다.",
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
@@ -230,16 +247,6 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
 
             if (!running) return
 
-            Log.e(TAG, LocalDateTime.now().toString())
-            Log.e(
-                TAG, Point(
-                    x = latlng.latitude,
-                    y = latlng.longitude,
-                    altitude = currentHeight,
-                    time = localDateTimeToLong(LocalDateTime.now())
-                ).toString()
-            )
-
             trackViewModel.updatePoint(
                 Point(
                     x = latlng.latitude,
@@ -248,11 +255,12 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                     time = localDateTimeToLong(LocalDateTime.now())
                 )
             )
+
             trackViewModel.distance.observe(requireActivity()) {
-                binding.distance = String.format("%.0f", it) + "m"
+                binding.distance = String.format(Locale.KOREA, "%.0f", it) + "m"
             }
 
-            binding.altitude = String.format("%.0f", currentHeight) + "m"
+            binding.altitude = String.format(Locale.KOREA, "%.0f", currentHeight) + "m"
 
             trackViewModel.points.observe(requireActivity()) {
                 val positions = it.map { pos ->
@@ -316,7 +324,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         event?.let {
             if (it.sensor.type == Sensor.TYPE_PRESSURE) {
                 currentHeight = calculateAltitude(it.values[0])
-                binding.altitude = String.format("%.0f", currentHeight) + "m"
+                binding.altitude = String.format(Locale.KOREA, "%.0f", currentHeight) + "m"
                 maxTrackHeight = maxOf(maxTrackHeight ?: 0.0, currentHeight ?: 0.0)
             }
         }

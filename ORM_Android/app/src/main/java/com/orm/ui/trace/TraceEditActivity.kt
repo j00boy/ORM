@@ -69,6 +69,8 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
             trailViewModel.trail.observe(this@TraceEditActivity) {
                 updateMapFragment(it.trailDetails)
             }
+            mountainId = trace!!.mountainId
+            mountainName = trace!!.mountainName ?: ""
         }
 
         binding.trace = trace
@@ -100,8 +102,7 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                 return@setOnClickListener
             }
 
-            val isModify = trace != null
-            val content = if (isModify) "수정" else "생성"
+            val content = if (trace != null) "수정" else "생성"
             MaterialAlertDialogBuilder(this)
                 .setTitle("${content}하기")
                 .setMessage("발자국을 ${content} 하시겠습니까?")
@@ -109,22 +110,30 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                 .setPositiveButton("확인") { dialog, which ->
 
                     val selectedTrailIndex = binding.spinnerTrails.selectedItemPosition
-                    val selectedTrail = if (selectedTrailIndex != AdapterView.INVALID_POSITION) {
+                    var selectedTrail = if (selectedTrailIndex != AdapterView.INVALID_POSITION) {
                         trails[selectedTrailIndex]
                     } else {
                         null
                     }
 
+                    if (selectedTrail == null && trace!!.trailId != null) {
+                        trailViewModel.getTrail(trace!!.trailId!!)
+                        trailViewModel.trail.observe(this@TraceEditActivity) {
+                            selectedTrail = it
+                        }
+                    }
+
                     val traceCreate = Trace(
-                        id = trace?.id,
                         localId = trace?.localId ?: 0,
+                        id = trace?.id,
                         title = binding.tfTraceName.editText?.text.toString(),
                         hikingDate = binding.tfDate.editText?.text.toString(),
                         mountainId = mountainId,
                         mountainName = mountainName,
+                        trailId = selectedTrail?.id,
                         coordinates = selectedTrail?.trailDetails,
-                        trailId = selectedTrail?.id
                     )
+
                     traceViewModel.createTrace(traceCreate)
                     trailViewModel.createTrail(selectedTrail!!)
 

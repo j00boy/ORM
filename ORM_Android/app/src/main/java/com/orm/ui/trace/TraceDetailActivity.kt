@@ -1,15 +1,16 @@
 package com.orm.ui.trace
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.R
 import com.orm.data.model.Trace
 import com.orm.databinding.ActivityTraceDetailBinding
@@ -36,24 +37,40 @@ class TraceDetailActivity : AppCompatActivity() {
                 val data: Intent? = result.data
                 val traceCreated = data?.getBooleanExtra("traceCreated", false) ?: false
                 if (traceCreated) {
-                    traceViewModel.getTraces()
+                    traceViewModel.getTrace(trace!!.localId)
+                    traceViewModel.trace.observe(this@TraceDetailActivity) {
+                        trace = it
+                        binding.trace = trace
+                    }
+                }
+            }
+
+            if (result.resultCode == 1) {
+                val data: Intent? = result.data
+                val traceModified = data?.getBooleanExtra("traceModified", false) ?: false
+                if (traceModified) {
+                    traceViewModel.getTrace(trace!!.localId)
+                    traceViewModel.trace.observe(this@TraceDetailActivity) {
+                        trace = it
+                        binding.trace = trace
+                    }
                 }
             }
         }
 
-    private val trace: Trace? by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("trace", Trace::class.java)
-        } else {
-            intent.getParcelableExtra<Trace>("trace")
-        }
-    }
+    private var trace: Trace? = null
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        Log.e("TraceDetailActivity", trace!!.recordId.toString())
+        trace = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("trace", Trace::class.java)
+        } else {
+            intent.getParcelableExtra<Trace>("trace")
+        }
+
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(binding.fcvMap.id, BasicGoogleMapFragment())
@@ -93,26 +110,37 @@ class TraceDetailActivity : AppCompatActivity() {
         binding.trace = trace
 
         binding.topAppBar.setNavigationOnClickListener {
+            setResult(1)
             onBackPressedDispatcher.onBackPressed()
         }
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.edit -> {
-                    val intent: Intent
-                    if (trace?.recordId == null) {
-                        intent = Intent(this, TraceEditActivity::class.java)
+                    val intent: Intent = if (trace?.recordId == null) {
+                        Intent(this, TraceEditActivity::class.java)
                     } else {
-                        intent = Intent(this, TraceDetailEditActivity::class.java)
+                        Intent(this, TraceDetailEditActivity::class.java)
                     }
-                    intent.putExtra("trace", trace)
-                    createTraceLauncher.launch(intent)
+
+                    createTraceLauncher.launch(intent.apply {
+                        putExtra("trace", trace)
+                    })
                     true
                 }
 
                 else -> false
             }
         }
+
+        this.onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    setResult(1)
+                    finish()
+                }
+            })
 
         // 측정 기록이 없는 경우 측정 테이블 안보임
         // 측정 완료한 경우 측정 버튼 안보임
@@ -122,6 +150,7 @@ class TraceDetailActivity : AppCompatActivity() {
             binding.btnStart.visibility = View.GONE
         }
 
+        // 측정 시작 버튼
         binding.btnStart.setOnClickListener {
             val intent = Intent(this, TraceMeasureActivity::class.java)
             intent.putExtra("trace", trace)

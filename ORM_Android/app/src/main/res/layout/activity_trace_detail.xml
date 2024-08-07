@@ -60,9 +60,8 @@
                         android:id="@+id/iv_thumbnail"
                         imageUri="@{trace.imgPath}"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_baseline_photo_camera_back_24" />
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center" />
 
                 </com.google.android.material.card.MaterialCardView>
 
