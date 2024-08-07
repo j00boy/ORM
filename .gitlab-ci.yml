@@ -46,6 +46,7 @@ package:
     - ci
   image: docker:latest
   stage: package
+  # services 태그는 CI/CD 파이프라인에서 잡(job)을 실행할 때 필요한 추가적인 Docker 컨테이너를 정의
   services:
     - docker:dind
   before_script:
