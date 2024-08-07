@@ -1,12 +1,17 @@
 package com.orm.ui.fragment
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -23,12 +28,15 @@ import dagger.hilt.android.AndroidEntryPoint
 
 // TODO : 마커 이미지, 인포윈도우 UI 변경
 @AndroidEntryPoint
+@SuppressLint("MissingPermission")
 class MapMountainFragment : Fragment(), OnMapReadyCallback {
 
     private var _binding: FragmentMapMountainBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var clusterManager: ClusterManager<MyItem>
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
     private var googleMap: GoogleMap? = null
     private var mountains: List<Mountain>? = null
     private val mountainMap = mutableMapOf<Int, Mountain>()
@@ -37,6 +45,7 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,6 +65,7 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
+        googleMap?.isMyLocationEnabled = true
 
         val uiSettings = googleMap?.uiSettings
         uiSettings?.isCompassEnabled = true
@@ -63,6 +73,7 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
         uiSettings?.isMapToolbarEnabled = false
         uiSettings?.isMyLocationButtonEnabled = true
 
+        fetchLocation()
         setUpClusterer()
         observeMountains()
     }
@@ -127,6 +138,28 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
         clusterManager.cluster()
     }
 
+    private fun fetchLocation() {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                location?.let {
+                    googleMap?.let { map ->
+                        map.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                LatLng(it.latitude, it.longitude),
+                                map.cameraPosition.zoom
+                            )
+                        )
+                    }
+
+                } ?: run {
+                    Log.e(TAG, "Location not available")
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Failed to get location", e)
+            }
+    }
+
     inner class MyItem(
         private val id: Int,
         lat: Double,
@@ -141,5 +174,9 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
         override fun getTitle(): String = title
         override fun getSnippet(): String = snippet
         fun getId(): Int = id
+    }
+
+    companion object {
+        private const val TAG = "MapMountainFragment"
     }
 }
