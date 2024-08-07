@@ -63,6 +63,7 @@ package:
 deploy:
   tags:
     - ci
+  image: docker:latest
   stage: deploy
   script:
     #    - echo "Stopping and removing existing container if exists"
