@@ -73,7 +73,7 @@ deploy:
     - echo "Running the container"
     - docker run -d --name workflow-test -p 8081:8080 $DOCKER_HUB_NAME/$IMAGE_NAME
   needs:
-    - [build-job, package]
+    - ["build-job", "package"]
   # script가 실행된 후 수행 될 script
   after_script:
     - docker logout
