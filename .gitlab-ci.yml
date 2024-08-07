@@ -51,7 +51,7 @@ package:
   - unset DOCKER_HOST
   - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_NAME --password-stdin
   script:
-    - docker build --platform linux/amd64/v3 -t $DOCKER_HUB_NAME:$IMAGE_NAME orm-backend/.   # Dockerfile로 build
+    - docker build --platform linux/amd64/v3 -t $DOCKER_HUB_NAME/$IMAGE_NAME orm-backend/.   # Dockerfile로 build
     - echo "build complete"
     - docker push $DOCKER_HUB_NAME:$IMAGE_NAME
   # script가 실행된 후 수행 될 script
