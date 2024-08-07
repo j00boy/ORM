@@ -1,6 +1,7 @@
 stages:
   - build
   - package
+  - deploy
 
 build-job:
   tags: 
@@ -54,9 +55,27 @@ package:
     - docker build --platform linux/amd64/v3 -t $DOCKER_HUB_NAME/$IMAGE_NAME orm-backend/.   # Dockerfile로 build
     - echo "build complete"
     - docker push $DOCKER_HUB_NAME/$IMAGE_NAME
+
+  # JOB이 수행될 branch 설정 (설정된 branch에 push가 발생될 시 JOB 수행)
+  only:
+    - backend
+
+deploy:
+  tags:
+    - ci
+  stage: deploy
+  script:
+    #    - echo "Stopping and removing existing container if exists"
+    #    - docker stop $CONTAINER_NAME || true
+    #    - docker rm $CONTAINER_NAME || true
+    - echo "Pulling the latest image from Docker Hub"
+    - docker pull $DOCKER_HUB_NAME/$IMAGE_NAME
+    - echo "Running the container"
+    - docker run -d --name $DOCKER_HUB_NAME/$IMAGE_NAME -p 8081:8080 $DOCKER_IMAGE
+  needs:
+    - [build-job, package]
   # script가 실행된 후 수행 될 script
   after_script:
     - docker logout
-  # JOB이 수행될 branch 설정 (설정된 branch에 push가 발생될 시 JOB 수행)
   only:
     - backend
