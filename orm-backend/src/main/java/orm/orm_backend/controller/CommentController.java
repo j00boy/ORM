@@ -34,4 +34,25 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(commentResponseDto);
     }
 
+    @DeleteMapping("/{boardId}/comments/delete")
+    public ResponseEntity<Void> deleteComment(@PathVariable("boardId") Integer boardId,
+                                              Integer commentId,
+                                              HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        commentService.deleteComment(userId, boardId, commentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{boardId}/comments/update/{commentId}")
+    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable("boardId") Integer boardId,
+                                                            @PathVariable("commentId") Integer commentId,
+                                                            @RequestBody CommentRequestDto commentRequestDto,
+                                                            HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        CommentResponseDto commentResponseDto = commentService.updateComment(userId, boardId, commentId, commentRequestDto);
+        return ResponseEntity.ok().body(commentResponseDto);
+    }
+
 }

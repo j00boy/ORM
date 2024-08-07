@@ -57,7 +57,7 @@ public class BoardController {
     }
 
     @DeleteMapping("/boards/delete")
-    public ResponseEntity<BoardResponseDto> deleteBoard(Integer boardId, HttpServletRequest request) {
+    public ResponseEntity<Void> deleteBoard(Integer boardId, HttpServletRequest request) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
         boardService.deleteBoard(boardId, userId);

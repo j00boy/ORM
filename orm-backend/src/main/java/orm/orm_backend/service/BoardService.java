@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import orm.orm_backend.dto.common.BoardImageDto;
@@ -48,9 +49,9 @@ public class BoardService {
      */
     @Transactional
     public BoardResponseDto createBoard(BoardRequestDto boardRequestDto, List<MultipartFile> imgFiles, Integer userId) {
-        // 클럼의 멤버인지 확인
+        // 클럽의 멤버인지 확인
         if(!memberService.isContained(userId, boardRequestDto.getClubId())) {
-            throw new CustomException(ErrorCode.FORBIDDEN);
+            throw new CustomException(ErrorCode.BOARD_FORBIDDEN);
         }
 
         // user 찾기
@@ -87,9 +88,9 @@ public class BoardService {
      * @return
      */
     public List<BoardSimpleResponseDto> getAllBoards(Integer userId, Integer clubId) {
-        // 클럼의 멤버인지 확인
+        // 클럽의 멤버인지 확인
         if(!memberService.isContained(userId, clubId)) {
-            throw new CustomException(ErrorCode.FORBIDDEN);
+            throw new CustomException(ErrorCode.BOARD_FORBIDDEN);
         }
 
         List<Board> allBoards = boardRepository.findByClubId(clubId);
@@ -104,11 +105,11 @@ public class BoardService {
     @Transactional
     public BoardResponseDto getBoard(Integer boardId, Integer userId, Cookie[] cookies, HttpServletResponse response) {
 
-        Board board = boardRepository.findById(boardId).orElseThrow();
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
         // 클럼의 멤버인지 확인
         if(!memberService.isContained(userId, board.getClub().getId())) {
-            throw new CustomException(ErrorCode.FORBIDDEN);
+            throw new CustomException(ErrorCode.BOARD_FORBIDDEN);
         }
 
         // 조회수 중복처리를 위한 쿠키 검증 및 설정
@@ -129,11 +130,14 @@ public class BoardService {
      */
     @Transactional
     public void deleteBoard(Integer boardId, Integer userId) {
-        Board board = boardRepository.findById(boardId).orElseThrow();
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
         if(!board.hasRight(userId)) {
-            throw new CustomException(ErrorCode.FORBIDDEN);
+            throw new CustomException(ErrorCode.BOARD_FORBIDDEN);
         }
+
+        // 1. 실제 경로, 2. DB 순서대로 사진을 지움
+        boardImageService.deleteImages(boardId);
 
         boardRepository.delete(board);
     }
@@ -141,11 +145,11 @@ public class BoardService {
     @Transactional
     public BoardResponseDto updateBoard(BoardRequestDto boardRequestDto, List<MultipartFile> imgFiles, Integer userId, Integer boardId) {
         // 해당 게시글 찾아오기
-        Board board = boardRepository.findById(boardId).orElseThrow();
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
 
         // 로그인 유저 == 작성자일 경우에만 수정 가능
         if(!board.isOwner(userId)) {
-            throw new CustomException(ErrorCode.FORBIDDEN);
+            throw new CustomException(ErrorCode.BOARD_FORBIDDEN);
         }
 
         // 기존 사진들을 '경로'에서 삭제 후, 'DB'에서 삭제
@@ -180,6 +184,6 @@ public class BoardService {
 
     // Board Entity 조회하는 메서드
     public Board getBoardById(Integer boardId) {
-        return boardRepository.findById(boardId).orElseThrow();
+        return boardRepository.findById(boardId).orElseThrow(() -> new CustomException(ErrorCode.BOARD_NOT_FOUND));
     }
 }

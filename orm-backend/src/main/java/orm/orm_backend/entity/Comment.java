@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import orm.orm_backend.dto.request.CommentRequestDto;
 
 @Getter
 @Entity
@@ -30,6 +31,18 @@ public class Comment extends BaseEntity {
         this.board = board;
         this.user = user;
         this.content = content;
+    }
+
+    public boolean isOwnedByUser(Integer userId) {
+        return this.getUser() != null && this.getUser().getId().equals(userId);
+    }
+
+    public boolean isBoardIdMatching(Integer boardId) {
+        return this.getBoard() != null && this.getBoard().getId().equals(boardId);
+    }
+
+    public void update(CommentRequestDto commentRequestDto) {
+        this.content = commentRequestDto.getContent();
     }
 
 }
