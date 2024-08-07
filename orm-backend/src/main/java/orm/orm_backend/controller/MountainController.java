@@ -2,8 +2,6 @@ package orm.orm_backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +11,7 @@ import orm.orm_backend.dto.response.MountainResponseDto;
 import orm.orm_backend.dto.response.MountainDto;
 import orm.orm_backend.dto.response.TrailResponseDto;
 import orm.orm_backend.service.MountainService;
+import orm.orm_backend.service.RedisService;
 import orm.orm_backend.service.TrailService;
 
 import java.util.List;
@@ -21,30 +20,51 @@ import java.util.List;
 @RequestMapping("/mountains")
 @Slf4j
 @RequiredArgsConstructor
-@CacheConfig(cacheNames = "mountains")
 public class MountainController {
+
+    private final String REDIS_PREFIX = "mountains::";
 
     private final MountainService mountainService;
     private final TrailService trailService;
+    private final RedisService redisService;
 
     @GetMapping("/top")
     public ResponseEntity<List<MountainDto>> get100Mountains() {
-        List<MountainDto> mountainDtos = mountainService.get100Mountains();
+        String cacheKey = REDIS_PREFIX + "top100";
+
+        List<MountainDto> mountainDtos = redisService.getList(cacheKey);
+        if (mountainDtos == null) {
+            mountainDtos = mountainService.get100Mountains();
+
+            redisService.addAllList(cacheKey, mountainDtos);
+        }
         return ResponseEntity.ok().body(mountainDtos);
     }
 
-    @Cacheable(key = "#id")
     @GetMapping("/{mountainId}")
     public ResponseEntity<MountainResponseDto> getMountainById(@PathVariable("mountainId") Integer id) {
-        log.info("not cached");
-        MountainResponseDto mountainDto = mountainService.getMountainDtoById(id);
+        String cacheKey = REDIS_PREFIX + id;
+
+        MountainResponseDto mountainDto = redisService.getObject(cacheKey, MountainResponseDto.class);
+        if (mountainDto == null) {
+            mountainDto = mountainService.getMountainDtoById(id);
+
+            redisService.saveObject(cacheKey, mountainDto);
+        }
         return ResponseEntity.ok().body(mountainDto);
     }
 
-    @Cacheable(key = "#name")
     @GetMapping("/search")
     public ResponseEntity<List<MountainDto>> getMountainsBySearch(String name) {
-        List<MountainDto> mountains = mountainService.getMountainsBySearch(name);
+        String cacheKey = REDIS_PREFIX + name;
+
+        List<MountainDto> mountains = redisService.getList(cacheKey);
+        if (mountains == null) {
+            mountains = mountainService.getMountainsBySearch(name);
+
+            redisService.addAllList(cacheKey, mountains);
+        }
+
         return ResponseEntity.ok().body(mountains);
     }
 

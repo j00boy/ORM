@@ -1,24 +1,23 @@
 package orm.orm_backend.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import orm.orm_backend.configuration.Mountain100Config;
-import orm.orm_backend.dto.response.MountainResponseDto;
 import orm.orm_backend.dto.response.MountainDto;
-import orm.orm_backend.dto.response.TrailDetailResponseDto;
+import orm.orm_backend.dto.response.MountainResponseDto;
 import orm.orm_backend.dto.response.TrailResponseDto;
 import orm.orm_backend.entity.Mountain;
-import orm.orm_backend.entity.Trail;
 import orm.orm_backend.exception.CustomException;
 import orm.orm_backend.repository.MountainRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static orm.orm_backend.exception.ErrorCode.*;
+import static orm.orm_backend.exception.ErrorCode.MOUNTAIN_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
+@CacheConfig(cacheNames = "mountains")
 public class MountainService {
 
     private final MountainRepository mountainRepository;
