@@ -65,6 +65,10 @@ deploy:
     - ci
   image: docker:latest
   stage: deploy
+  before_script:
+    # Docker Hub 로그인
+    - unset DOCKER_HOST
+    - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_NAME --password-stdin
   script:
     #    - echo "Stopping and removing existing container if exists"
     #    - docker stop $CONTAINER_NAME || true
