@@ -193,7 +193,7 @@ public class ClubService {
             throw new UnAuthorizedException();
         }
         // 본인은 추방 불가능함
-        if (!club.getManager().getId().equals(userId)) {
+        if (club.getManager().getId().equals(userId)) {
             throw new UnAuthorizedException();
         }
         memberService.delete(userId, clubId);
