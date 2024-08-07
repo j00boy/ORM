@@ -71,7 +71,7 @@ deploy:
     - echo "Pulling the latest image from Docker Hub"
     - docker pull $DOCKER_HUB_NAME/$IMAGE_NAME
     - echo "Running the container"
-    - docker run -d --name $DOCKER_HUB_NAME/$IMAGE_NAME -p 8081:8080 $DOCKER_IMAGE
+    - docker run -d --name workflow-test -p 8081:8080 $DOCKER_HUB_NAME/$IMAGE_NAME
   needs:
     - [build-job, package]
   # script가 실행된 후 수행 될 script
