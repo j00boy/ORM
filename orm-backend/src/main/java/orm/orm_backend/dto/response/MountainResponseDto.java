@@ -1,5 +1,6 @@
 package orm.orm_backend.dto.response;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,7 @@ import orm.orm_backend.entity.Mountain;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MountainResponseDto {
 
     private Integer id;
