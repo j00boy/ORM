@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import orm.orm_backend.dto.request.CommentRequestDto;
-import orm.orm_backend.dto.response.CommentResponseDto;
 
 @Getter
 @Entity

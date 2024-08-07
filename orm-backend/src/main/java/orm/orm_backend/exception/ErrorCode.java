@@ -10,7 +10,8 @@ import java.util.function.Supplier;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
-    FORBIDDEN(HttpStatus.FORBIDDEN, "권한이 없습니다"),
+    // User
+    FORBIDDEN(HttpStatus.FORBIDDEN, "권한이 없습니다."),
     WITHDRAWN_USER_ID(HttpStatus.BAD_REQUEST, "이미 탈퇴한 회원입니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "계정 권한이 유효하지 않습니다.\n다시 로그인을 하세요."),
 
@@ -27,6 +28,14 @@ public enum ErrorCode {
 
     // Trail
     TRAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 등산로입니다."),
+
+    // Board
+    BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "삭제되었거나 존재하지 않는 게시글입니다."),
+    BOARD_FORBIDDEN(HttpStatus.FORBIDDEN, "게시글에 대한 접근 권한이 없습니다."),
+
+    // Comment
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "삭제되었거나 존재하지 않는 댓글입니다."),
+    COMMENT_FORBIDDEN(HttpStatus.FORBIDDEN, "해당 댓글에 대한 접근 권한이 없습니다."),
 
     // firebase alert service
     PUSH_ALERT_FAIL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "푸쉬 알림 전송 중 에러가 발생하였습니다.");
