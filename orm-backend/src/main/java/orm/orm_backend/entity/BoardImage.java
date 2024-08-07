@@ -15,7 +15,7 @@ public class BoardImage {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "board_id")
     private Board board;
 
     private String imageSrc;
