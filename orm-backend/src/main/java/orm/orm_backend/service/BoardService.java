@@ -136,6 +136,9 @@ public class BoardService {
             throw new CustomException(ErrorCode.BOARD_FORBIDDEN);
         }
 
+        // 1. 실제 경로, 2. DB 순서대로 사진을 지움
+        boardImageService.deleteImages(boardId);
+
         boardRepository.delete(board);
     }
     
