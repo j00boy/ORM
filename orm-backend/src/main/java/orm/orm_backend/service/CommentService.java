@@ -52,4 +52,19 @@ public class CommentService {
         }
         commentRepository.deleteById(commentId);
     }
+
+    @Transactional
+    public CommentResponseDto updateComment(Integer userId, Integer boardId, Integer commentId, CommentRequestDto commentRequestDto) {
+        // 해당 댓글 가져오기
+        Comment comment = commentRepository.findById(commentId).orElseThrow();
+
+        // 게시글에 속한 댓글이 아니거나, 작성자가 아니라면
+        if(!comment.isBoardIdMatching(boardId) || !comment.isOwnedByUser(userId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        comment.update(commentRequestDto);
+
+        return new CommentResponseDto(comment);
+    }
 }

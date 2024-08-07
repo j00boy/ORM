@@ -44,4 +44,15 @@ public class CommentController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/{boardId}/comments/update/{commentId}")
+    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable("boardId") Integer boardId,
+                                                            @PathVariable("commentId") Integer commentId,
+                                                            @RequestBody CommentRequestDto commentRequestDto,
+                                                            HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        CommentResponseDto commentResponseDto = commentService.updateComment(userId, boardId, commentId, commentRequestDto);
+        return ResponseEntity.ok().body(commentResponseDto);
+    }
+
 }

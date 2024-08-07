@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import orm.orm_backend.dto.request.CommentRequestDto;
+import orm.orm_backend.dto.response.CommentResponseDto;
 
 @Getter
 @Entity
@@ -38,6 +40,10 @@ public class Comment extends BaseEntity {
 
     public boolean isBoardIdMatching(Integer boardId) {
         return this.getBoard() != null && this.getBoard().getId().equals(boardId);
+    }
+
+    public void update(CommentRequestDto commentRequestDto) {
+        this.content = commentRequestDto.getContent();
     }
 
 }
