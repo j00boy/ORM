@@ -9,7 +9,6 @@ import orm.orm_backend.entity.Board;
 import orm.orm_backend.entity.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -27,13 +26,13 @@ public class BoardResponseDto {
     private List<BoardImageDto> imgSrc;
 
     @Builder
-    public BoardResponseDto(Board board, User user, List<BoardImageDto> imgSrc) {
+    public BoardResponseDto(Board board, User user, List<BoardImageDto> imgSrc, List<CommentResponseDto> comments) {
         this.boardId = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();
         this.userId = user.getId();
         this.userNickname = user.getNickname();
-        this.comments = new ArrayList<>();
+        this.comments = comments;
         this.hit = board.getHit();
         this.createdAt = board.getCreatedAt();
         this.imgSrc = imgSrc;

@@ -13,7 +13,6 @@ import orm.orm_backend.dto.request.BoardRequestDto;
 import orm.orm_backend.dto.response.BoardSimpleResponseDto;
 import orm.orm_backend.dto.response.BoardResponseDto;
 import orm.orm_backend.service.BoardService;
-import orm.orm_backend.service.MemberService;
 import orm.orm_backend.util.JwtUtil;
 
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/clubs")
 public class BoardController {
-    private final MemberService memberService;
+
     @Value("${orm.header.auth}")
     private String HEADER_AUTH;
 

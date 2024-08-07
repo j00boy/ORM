@@ -10,6 +10,7 @@ import orm.orm_backend.dto.common.BoardImageDto;
 import orm.orm_backend.dto.request.BoardRequestDto;
 import orm.orm_backend.dto.response.BoardSimpleResponseDto;
 import orm.orm_backend.dto.response.BoardResponseDto;
+import orm.orm_backend.dto.response.CommentResponseDto;
 import orm.orm_backend.entity.*;
 import orm.orm_backend.exception.CustomException;
 import orm.orm_backend.exception.ErrorCode;
@@ -33,7 +34,6 @@ public class BoardService {
 
     private final UserService userService;
     private final ClubService clubService;
-    private final CommentService commentService;
     private final BoardImageService boardImageService;
 
     private final BoardRepository boardRepository;
@@ -77,7 +77,7 @@ public class BoardService {
             boardImageService.saveImage(boardImageDtos, board);
         }
 
-        return new BoardResponseDto(board, user, boardImageDtos);
+        return new BoardResponseDto(board, user, boardImageDtos, new ArrayList<CommentResponseDto>());
     }
 
     /**
@@ -119,8 +119,7 @@ public class BoardService {
 
         User user = userService.findUserById(userId);
         List<BoardImageDto> boardImages = boardImageService.getBoardImages(boardId);
-
-        return new BoardResponseDto(board, user, boardImages);
+        return new BoardResponseDto(board, user, boardImages, board.getComments().stream().map(CommentResponseDto::new).toList());
     }
 
     /**
@@ -170,7 +169,8 @@ public class BoardService {
             boardImageService.saveImage(boardImageDtos, board);
         }
 
-        return new BoardResponseDto(board, board.getUser(), boardImageDtos);
+        return new BoardResponseDto(board, board.getUser(), boardImageDtos,
+                board.getComments().stream().map(CommentResponseDto::new).toList());
     }
 
     @Transactional
@@ -178,4 +178,8 @@ public class BoardService {
         boardRepository.updateHits(boardId);
     }
 
+    // Board Entity 조회하는 메서드
+    public Board getBoardById(Integer boardId) {
+        return boardRepository.findById(boardId).orElseThrow();
+    }
 }
