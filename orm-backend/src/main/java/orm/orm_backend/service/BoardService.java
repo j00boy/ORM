@@ -1,19 +1,21 @@
 package orm.orm_backend.service;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import orm.orm_backend.dto.common.BoardImageDto;
 import orm.orm_backend.dto.request.BoardRequestDto;
-import orm.orm_backend.dto.response.BoardListResponseDto;
+import orm.orm_backend.dto.response.BoardSimpleResponseDto;
 import orm.orm_backend.dto.response.BoardResponseDto;
 import orm.orm_backend.dto.response.CommentResponseDto;
 import orm.orm_backend.entity.*;
 import orm.orm_backend.exception.CustomException;
 import orm.orm_backend.exception.ErrorCode;
 import orm.orm_backend.repository.BoardRepository;
+import orm.orm_backend.util.CookieUtil;
 import orm.orm_backend.util.ImageUtil;
 
 import java.util.ArrayList;
@@ -25,12 +27,13 @@ public class BoardService {
     private final String IMAGE_PATH_PREFIX = "club/board/";
     private final String IMAGE_PATH_POSTFIX = "/";
 
+    private final String COOKIE_PREFIX = "board";
+    private final String COOKIE_PATH = "/clubs/boards";
 
     private final ImageUtil imageUtil;
 
     private final UserService userService;
     private final ClubService clubService;
-    private final CommentService commentService;
     private final BoardImageService boardImageService;
 
     private final BoardRepository boardRepository;
@@ -74,7 +77,7 @@ public class BoardService {
             boardImageService.saveImage(boardImageDtos, board);
         }
 
-        return new BoardResponseDto(board, user, boardImageDtos);
+        return new BoardResponseDto(board, user, boardImageDtos, new ArrayList<CommentResponseDto>());
     }
 
     /**
@@ -83,14 +86,14 @@ public class BoardService {
      * @param clubId
      * @return
      */
-    public List<BoardListResponseDto> getAllBoards(Integer userId, Integer clubId) {
+    public List<BoardSimpleResponseDto> getAllBoards(Integer userId, Integer clubId) {
         // 클럼의 멤버인지 확인
         if(!memberService.isContained(userId, clubId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
         List<Board> allBoards = boardRepository.findByClubId(clubId);
-        return allBoards.stream().map(BoardListResponseDto::new).toList();
+        return allBoards.stream().map(BoardSimpleResponseDto::new).toList();
     }
 
     /**
@@ -98,7 +101,9 @@ public class BoardService {
      * @param boardId
      * @param userId
      */
-    public BoardResponseDto getBoard(Integer boardId, Integer userId) {
+    @Transactional
+    public BoardResponseDto getBoard(Integer boardId, Integer userId, Cookie[] cookies, HttpServletResponse response) {
+
         Board board = boardRepository.findById(boardId).orElseThrow();
 
         // 클럼의 멤버인지 확인
@@ -106,10 +111,15 @@ public class BoardService {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
+        // 조회수 중복처리를 위한 쿠키 검증 및 설정
+        if(CookieUtil.checkCookie(COOKIE_PREFIX, boardId, cookies)) {
+            incrementHits(boardId);
+            CookieUtil.setCookie(COOKIE_PREFIX, COOKIE_PATH, response, boardId);
+        }
+
         User user = userService.findUserById(userId);
         List<BoardImageDto> boardImages = boardImageService.getBoardImages(boardId);
-
-        return new BoardResponseDto(board, user, boardImages);
+        return new BoardResponseDto(board, user, boardImages, board.getComments().stream().map(CommentResponseDto::new).toList());
     }
 
     /**
@@ -121,7 +131,7 @@ public class BoardService {
     public void deleteBoard(Integer boardId, Integer userId) {
         Board board = boardRepository.findById(boardId).orElseThrow();
 
-        if(!board.isOwner(userId) && !board.getClub().isManager(userId)) {
+        if(!board.hasRight(userId)) {
             throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
@@ -159,7 +169,17 @@ public class BoardService {
             boardImageService.saveImage(boardImageDtos, board);
         }
 
-        return new BoardResponseDto(board, board.getUser(), boardImageDtos);
+        return new BoardResponseDto(board, board.getUser(), boardImageDtos,
+                board.getComments().stream().map(CommentResponseDto::new).toList());
     }
 
+    @Transactional
+    public void incrementHits(Integer boardId) {
+        boardRepository.updateHits(boardId);
+    }
+
+    // Board Entity 조회하는 메서드
+    public Board getBoardById(Integer boardId) {
+        return boardRepository.findById(boardId).orElseThrow();
+    }
 }

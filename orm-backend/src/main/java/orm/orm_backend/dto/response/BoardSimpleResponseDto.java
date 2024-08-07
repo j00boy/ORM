@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BoardListResponseDto {
+public class BoardSimpleResponseDto {
     private Integer boardId;
     private String title;
     private Integer userId;
@@ -20,7 +20,7 @@ public class BoardListResponseDto {
     private LocalDateTime createdAt;
 
     @Builder
-    public BoardListResponseDto(Board board) {
+    public BoardSimpleResponseDto(Board board) {
         this.boardId = board.getId();
         this.title = board.getTitle();
         this.userId = board.getUser().getId();

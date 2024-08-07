@@ -53,6 +53,11 @@ public class Board extends BaseEntity{
         return ownerId != null && userId.equals(ownerId);
     }
 
+    public boolean hasRight(Integer userId) {
+        boolean isManager = club.isManager(userId);
+        return isOwner(userId) || isManager;
+    }
+
     public void update(BoardRequestDto boardRequestDto) {
         this.title = boardRequestDto.getTitle();
         this.content = boardRequestDto.getContent();

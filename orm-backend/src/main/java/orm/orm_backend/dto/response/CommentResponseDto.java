@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import orm.orm_backend.entity.Comment;
 import orm.orm_backend.entity.User;
-import orm.orm_backend.service.CommentService;
 
 import java.time.LocalDateTime;
 
@@ -18,8 +17,8 @@ public class CommentResponseDto {
 
     @Builder
     public CommentResponseDto(Comment comment) {
-        User user = comment.getUser();
         this.commentId = comment.getId();
+        User user = comment.getUser();
         this.userId = user.getId();
         this.userNickname = user.getNickname();
         this.content = comment.getContent();
