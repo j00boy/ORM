@@ -32,4 +32,12 @@ public class Comment extends BaseEntity {
         this.content = content;
     }
 
+    public boolean isOwnedByUser(Integer userId) {
+        return this.getUser() != null && this.getUser().getId().equals(userId);
+    }
+
+    public boolean isBoardIdMatching(Integer boardId) {
+        return this.getBoard() != null && this.getBoard().getId().equals(boardId);
+    }
+
 }

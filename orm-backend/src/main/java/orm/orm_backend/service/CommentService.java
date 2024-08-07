@@ -43,4 +43,13 @@ public class CommentService {
 
         return new CommentResponseDto(comment);
     }
+
+    public void deleteComment(Integer userId, Integer boardId, Integer commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow();
+
+        if(!comment.isBoardIdMatching(boardId) || !comment.isOwnedByUser(userId)) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+        commentRepository.deleteById(commentId);
+    }
 }

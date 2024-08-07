@@ -34,4 +34,14 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(commentResponseDto);
     }
 
+    @DeleteMapping("/{boardId}/comments/delete")
+    public ResponseEntity<Void> deleteComment(@PathVariable("boardId") Integer boardId,
+                                              Integer commentId,
+                                              HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        commentService.deleteComment(userId, boardId, commentId);
+        return ResponseEntity.noContent().build();
+    }
+
 }
