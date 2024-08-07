@@ -48,10 +48,9 @@ package:
   stage: package
   services:
     - docker:dind
-  variables:
-    DOCKER_HOST: tcp://localhost:2375
   before_script:
   # Docker Hub 로그인
+  - unset DOCKER_HOST
   - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_NAME --password-stdin
   script:
     - docker build --platform linux/amd64/v3 -t $DOCKER_HUB_NAME:$IMAGE_NAME orm-backend/.   # Dockerfile로 build
