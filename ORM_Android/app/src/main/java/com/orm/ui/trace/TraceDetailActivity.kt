@@ -13,6 +13,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.R
 import com.orm.data.model.Trace
 import com.orm.databinding.ActivityTraceDetailBinding
+import com.orm.ui.fragment.GraphFragment
 import com.orm.ui.fragment.map.BasicGoogleMapFragment
 import com.orm.ui.fragment.table.TextTableFragment
 import com.orm.viewmodel.RecordViewModel
@@ -67,8 +68,25 @@ class TraceDetailActivity : AppCompatActivity() {
                     .replace(binding.fcvTable.id, TextTableFragment.newInstance(trace!!))
                     .commit()
 
+                recordViewModel.getRecord(trace!!.recordId!!)
+                recordViewModel.record.observe(this@TraceDetailActivity) {
+                    val firstTime = it.coordinate!!.first().time!!.toFloat()
+                    val adjustedCoordinates = it.coordinate.map { pair ->
+                        Pair(
+                            (pair.time!!.toFloat() - firstTime) / 60000,
+                            pair.altitude!!.toFloat()
+                        )
+                    }
+                    supportFragmentManager.beginTransaction()
+                        .replace(
+                            binding.fragmentGraph.id,
+                            GraphFragment.newInstance(adjustedCoordinates)
+                        )
+                        .commit()
+                }
             } else {
                 binding.cvMapTrack.visibility = View.GONE
+                binding.cvGraph.visibility = View.GONE
             }
         }
 

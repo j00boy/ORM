@@ -41,7 +41,8 @@
             android:exported="false" />
         <activity
             android:name=".ui.trace.TraceMeasureActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTop" />
         <activity
             android:name=".ui.trace.TraceDetailActivity"
             android:exported="false" />

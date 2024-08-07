@@ -9,6 +9,7 @@ import com.orm.data.model.Trace
 import com.orm.databinding.FragmentTextTableBinding
 import com.orm.util.getTimeDifferenceFormatted
 import com.orm.util.timestampToTimeString
+import java.util.Locale
 
 class TextTableFragment : Fragment() {
     private var _binding: FragmentTextTableBinding? = null
@@ -31,10 +32,11 @@ class TextTableFragment : Fragment() {
         val root: View = binding.root
 
         trace?.let {
-            binding.tvStart.text = timestampToTimeString(it.hikingStartedAt ?: 0)
-            binding.tvEnd.text = timestampToTimeString(it.hikingEndedAt ?: 0)
-            binding.tvMaxHeight.text = String.format("%.2f m", it.maxHeight)
-            binding.tvDistance.text = String.format("%.2f m", it.hikingDistance)
+            binding.tvStart.text =
+                timestampToTimeString(it.hikingStartedAt ?: 0, "yy-MM-dd HH:mm")
+            binding.tvEnd.text = timestampToTimeString(it.hikingEndedAt ?: 0, "yy-MM-dd HH:mm")
+            binding.tvMaxHeight.text = String.format(Locale.KOREA, "%.1f m", it.maxHeight)
+            binding.tvDistance.text = String.format(Locale.KOREA, "%.0f m", it.hikingDistance)
             binding.tvDuration.text = getTimeDifferenceFormatted(
                 it.hikingStartedAt ?: 0,
                 it.hikingEndedAt ?: 0

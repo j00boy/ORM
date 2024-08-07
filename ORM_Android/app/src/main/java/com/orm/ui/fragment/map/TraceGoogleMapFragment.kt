@@ -35,6 +35,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -138,12 +139,26 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         }
 
         binding.btnStop.setOnClickListener {
-            trackViewModel.points.value?.let { points ->
-                insertRecordAndHandleTrace(points)
-            }
-            stopLocationService()
+            stopTrace()
         }
+
         return binding.root
+    }
+
+    private fun stopTrace() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("측정 종료")
+            .setMessage("정말로 종료하시겠습니까?")
+            .setPositiveButton("확인") { _, _ ->
+                trackViewModel.points.value?.let { points ->
+                    insertRecordAndHandleTrace(points)
+                }
+                stopLocationService()
+                requireActivity().finish()
+            }
+            .setNegativeButton("취소") { _, _ ->
+            }
+            .show()
     }
 
     private fun insertRecordAndHandleTrace(points: List<Point>) {
@@ -262,6 +277,18 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         localBroadcastManager.registerReceiver(
             locationReceiver, IntentFilter("com.orm.LOCATION_UPDATE"),
         )
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (!running) {
+                        requireActivity().finish()
+                    } else {
+                        stopTrace()
+                    }
+                }
+            })
     }
 
     override fun onMapReady(map: GoogleMap) {
