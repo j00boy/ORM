@@ -19,6 +19,11 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ClubService {
+    @GET("clubs/{clubId}")
+    fun getClubById(
+        @Path("clubId") clubId: Int
+    ): Call<Club>
+
     @GET("clubs")
     fun getClubs(
         @Query("pgno") pgno: Int = 0,

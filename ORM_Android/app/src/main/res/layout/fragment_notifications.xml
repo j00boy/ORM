@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="@{`총 ` + count + `건의 알림이 있습니다`}"
+            android:text="@{`총 ` + (count == null ? 0 : count) + `건의 알림이 있습니다`}"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 

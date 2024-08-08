@@ -22,6 +22,12 @@ class ClubActivity : AppCompatActivity() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = result.data
                 val clubCreated = data?.getBooleanExtra("clubCreated", false) ?: false
+                Log.d("ClubActivity", "clubCreated: $clubCreated")
+                Log.d("ClubActivity", "clubCreated: $clubCreated")
+                Log.d("ClubActivity", "clubCreated: $clubCreated")
+                Log.d("ClubActivity", "clubCreated: $clubCreated")
+                Log.d("ClubActivity", "clubCreated: $clubCreated")
+                Log.d("ClubActivity", "clubCreated: $clubCreated")
                 if (clubCreated) {
                     refreshTabLayoutFragment()
                 }
