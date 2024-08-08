@@ -1,6 +1,5 @@
 package com.orm.ui.trace
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -8,7 +7,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -23,7 +21,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.time.LocalDateTime
 
 @AndroidEntryPoint
 class TraceDetailEditActivity : AppCompatActivity() {
@@ -138,7 +135,7 @@ class TraceDetailEditActivity : AppCompatActivity() {
                     traceViewModel.traceCreated.observe(this) { traceCreated ->
                         if (traceCreated) {
                             binding.progressBar.visibility = View.GONE
-                            setResult(Activity.RESULT_OK, Intent().apply {
+                            setResult(1, Intent().apply {
                                 putExtra("traceModified", true)
                             })
                             finish()

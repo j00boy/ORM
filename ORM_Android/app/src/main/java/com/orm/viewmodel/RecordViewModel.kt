@@ -25,14 +25,6 @@ class RecordViewModel @Inject constructor(
     fun getRecord(id: Long) {
         viewModelScope.launch {
             val record = recordRepository.getRecord(id)
-
-            record.coordinate!!.forEach { p ->
-                Log.e(
-                    "RecordViewModel", p.x.toString().plus(", ").plus(p.y.toString()).plus(
-                        ", "
-                    ).plus(p.time.toString())
-                )
-            }
             _record.postValue(record)
         }
     }

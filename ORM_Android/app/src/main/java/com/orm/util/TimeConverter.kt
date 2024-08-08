@@ -10,11 +10,11 @@ fun localDateTimeToLong(dateTime: LocalDateTime): Long {
     return dateTime.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
 }
 
-fun timestampToTimeString(timestamp: Long): String {
+fun timestampToTimeString(timestamp: Long, type: String = "HH:mm:ss"): String {
     val dateTime = Instant.ofEpochMilli(timestamp)
         .atZone(ZoneId.of("Asia/Seoul"))
         .toLocalDateTime()
-    val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+    val formatter = DateTimeFormatter.ofPattern(type)
     return dateTime.format(formatter)
 }
 

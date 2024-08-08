@@ -7,9 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -20,7 +17,6 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.orm.R
 import com.orm.data.model.Point
 import com.orm.databinding.FragmentGoogleMapBinding
-import com.orm.viewmodel.MountainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

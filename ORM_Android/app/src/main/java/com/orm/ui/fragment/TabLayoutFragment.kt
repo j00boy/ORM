@@ -27,7 +27,8 @@ class TabLayoutFragment : Fragment() {
 
         // 처음 Fragment 설정
         if (savedInstanceState == null) {
-            childFragmentManager.beginTransaction().replace(R.id.main_view, ClubMeFragment()).commitNow()
+            childFragmentManager.beginTransaction().replace(R.id.main_view, ClubMeFragment())
+                .commitNow()
         }
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -37,6 +38,7 @@ class TabLayoutFragment : Fragment() {
                     0 -> {
                         replaceFragment(ClubMeFragment())
                     }
+
                     1 -> {
                         replaceFragment(ClubAllFragment())
                     }

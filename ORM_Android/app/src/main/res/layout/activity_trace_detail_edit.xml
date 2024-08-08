@@ -137,8 +137,7 @@
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/fcv_map"
                         android:layout_width="match_parent"
-                        android:layout_height="270dp"
-                        />
+                        android:layout_height="270dp" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <androidx.fragment.app.FragmentContainerView
@@ -159,7 +158,7 @@
 
         </ScrollView>
 
-        <ProgressBar
+        <androidx.core.widget.ContentLoadingProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"

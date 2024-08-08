@@ -37,6 +37,13 @@ class TraceActivity : AppCompatActivity() {
                     traceViewModel.getTraces()
                 }
             }
+
+            if (result.resultCode == 1) {
+                traceViewModel.getTraces()
+                traceViewModel.traces.observe(this@TraceActivity) {
+                    setupAdapter(it!!)
+                }
+            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +85,7 @@ class TraceActivity : AppCompatActivity() {
                 ).apply {
                     putExtra("trace", traces[position])
                 }
-                startActivity(intent)
+                createTraceLauncher.launch(intent)
             }
 
             override fun onLongClick(v: View, position: Int) {
