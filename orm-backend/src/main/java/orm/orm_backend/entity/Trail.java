@@ -28,6 +28,7 @@ public class Trail {
     private String startLongitude;
     private String peakLatitude;
     private String peakLongitude;
+    private String altitudinalDifference;
 
     @OneToMany(mappedBy = "trail", fetch = FetchType.LAZY)
     private List<TrailDetail> trailDetails;
@@ -42,5 +43,9 @@ public class Trail {
         this.startLongitude = startLongitude;
         this.peakLatitude = peakLatitude;
         this.peakLongitude = peakLongitude;
+    }
+
+    public void addaltitudinalDifference(String altitudinalDifference) {
+        this.altitudinalDifference = altitudinalDifference;
     }
 }

@@ -16,4 +16,5 @@ public interface TrailRepository extends JpaRepository<Trail, Integer> {
      * @return 같은 mountainId를 갖는 Trail List
      */
     List<Trail> findByMountainId(Integer mountainId);
+    List<Trail> findAllByAltitudinalDifferenceIsNull();
 }
