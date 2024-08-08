@@ -54,6 +54,7 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
 
     private var imageFile: File? = null
     private var isDuplicated: Boolean = true
+    private var toDefaultImage: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,8 +144,11 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
                         clubViewModel.createClubs(clubCreate, imageFile)
                     } else {
                         Log.d("ClubEditActivity edit", "club: $club")
-                        if (imageFile == null) clubViewModel.updateClubs(club!!.id, clubCreate)
-                        else clubViewModel.updateClubs(club!!.id, clubCreate, imageFile)
+                        Log.d("clubTest", "imageFile ${imageFile.toString()} Default ${toDefaultImage}")
+                        if (imageFile != null) clubViewModel.updateClubs(club!!.id, clubCreate, imageFile)
+                        // TODO create empty file bug
+                        else if(toDefaultImage) clubViewModel.updateClubs(club!!.id, clubCreate, imageFile)
+                        else clubViewModel.updateClubs(club!!.id, clubCreate)
                     }
                     dialog.dismiss()
 
@@ -176,8 +180,29 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
                 }
                 .show()
         }
+        var photoSelection: Int = 0
         binding.cvImageUpload.setOnClickListener {
-            openGallery()
+            if (binding.image == null) {
+                openGallery()
+            } else {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("사진 선택")
+                    .setSingleChoiceItems(
+                        arrayOf("갤러리에서 가져오기", "기본 이미지로 변경"), 0
+                    ) { _, which ->
+                        photoSelection = which
+                    }
+                    .setNegativeButton("취소") { _, _ -> }
+                    .setPositiveButton("확인") { dialog, _ ->
+                        if (photoSelection == 0) {
+                            openGallery()
+                        } else {
+                            imageFile = null
+                            binding.image = null
+                            toDefaultImage = true
+                        }
+                    }.show()
+            }
         }
     }
 

@@ -46,6 +46,22 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         }
     }
 
+    private val trailIndex: Int by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getIntExtra("trailIndex", 0)
+        } else {
+            intent.getIntExtra("trailIndex", 0)
+        }
+    }
+
+    private val mountain: Mountain? by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("mountain", Mountain::class.java)
+        } else {
+            intent.getParcelableExtra<Mountain>("mountain")
+        }
+    }
+
     private var mountainId: Int = 0
     private var mountainName: String = ""
     private var trails: List<Trail> = emptyList()
@@ -71,6 +87,7 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
             }
             mountainId = trace!!.mountainId
             mountainName = trace!!.mountainName ?: ""
+            binding.mountainName = mountainName
         }
 
         binding.trace = trace
@@ -80,8 +97,24 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         }
 
         if ((trace != null && trace!!.trailId == -1) || trace == null) {
-            binding.cvMap.visibility = View.GONE
-            binding.spinnerTrails.visibility = View.GONE
+            if (mountain == null) {
+                binding.cvMap.visibility = View.GONE
+                binding.spinnerTrails.visibility = View.GONE
+            }
+        }
+        if (mountain != null) {
+            mountainId = mountain!!.id
+            mountainName = mountain!!.name
+            binding.mountainName = mountainName
+            mountainViewModel.fetchMountainById(mountainId)
+            mountainViewModel.mountain.observe(this@TraceEditActivity) { it ->
+                it?.trails?.let { trails ->
+                    setupTrailSpinner(trails)
+                    this.trails = trails
+                    binding.spinnerTrails.setSelection(trailIndex)
+                }
+            }
+
         }
 
         binding.tfTraceMountain.setEndIconOnClickListener {
@@ -186,7 +219,7 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                 parent: AdapterView<*>,
                 view: View?,
                 position: Int,
-                id: Long
+                id: Long,
             ) {
                 val selectedTrail = trails[position]
                 Log.e("MountainDetailActivity", selectedTrail.trailDetails.toString())

@@ -15,7 +15,9 @@ import com.orm.data.model.RequestMember
 import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubCreate
 import com.orm.databinding.ActivityClubDetailBinding
+import com.orm.ui.mountain.MountainDetailActivity
 import com.orm.viewmodel.ClubViewModel
+import com.orm.viewmodel.MountainViewModel
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,6 +29,7 @@ class ClubDetailActivity : AppCompatActivity() {
 
     private val userViewModel: UserViewModel by viewModels()
     private val clubViewModel: ClubViewModel by viewModels()
+    private val mountainViewModel: MountainViewModel by viewModels()
 
     private var club: Club? = null
 
@@ -101,6 +104,14 @@ class ClubDetailActivity : AppCompatActivity() {
             )
         }
 
+        binding.tfClubMountain.setOnClickListener {
+            moveToMountainDetail()
+        }
+
+        binding.tfClubMountainField.setOnClickListener {
+            moveToMountainDetail()
+        }
+
         binding.btnSign.setOnClickListener {
             if (club?.isMember == true) {
                 // TODO : 채팅 서비스
@@ -133,5 +144,21 @@ class ClubDetailActivity : AppCompatActivity() {
         setResult(1, Intent().apply {
             putExtra("clubChanged", true)
         })
+    }
+
+    private fun moveToMountainDetail() {
+        Log.d("clubTest", "click")
+        mountainViewModel.fetchMountainById(club?.mountainId!!.toInt())
+        mountainViewModel.mountain.observe(this){
+            val intent = Intent(
+                this@ClubDetailActivity,
+                MountainDetailActivity::class.java
+            ).apply {
+                putExtra("mountain", it)
+            }
+            startActivity(intent)
+
+            mountainViewModel.mountain.removeObservers(this)
+        }
     }
 }
