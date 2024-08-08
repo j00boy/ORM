@@ -25,6 +25,7 @@ import com.orm.ui.adapter.ProfileBasicAdapter
 import com.orm.ui.club.ClubDetailActivity
 import com.orm.ui.fragment.WeatherFragment
 import com.orm.ui.fragment.map.BasicGoogleMapFragment
+import com.orm.ui.trace.TraceEditActivity
 import com.orm.viewmodel.ClubViewModel
 import com.orm.viewmodel.MountainViewModel
 import com.orm.viewmodel.WeatherViewModel
@@ -108,6 +109,13 @@ class MountainDetailActivity : AppCompatActivity() {
                 return@observe
             }
             setupAdapter(it)
+        }
+
+        binding.btnCreateTrail.setOnClickListener {
+            val intent = Intent(this, TraceEditActivity::class.java)
+            intent.putExtra("trailIndex", binding.spinnerTrails.selectedItemPosition)
+            intent.putExtra("mountain", mountain)
+            startActivity(intent)
         }
     }
 

@@ -8,6 +8,9 @@
         <variable
             name="trace"
             type="com.orm.data.model.Trace" />
+        <variable
+            name="mountainName"
+            type="String" />
     </data>
 
 
@@ -93,7 +96,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@{trace.mountainName}" />
+                        android:text="@{mountainName}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
