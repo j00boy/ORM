@@ -1,20 +1,32 @@
-package com.example.hikingtimepredictor
+package com.orm.util
 
 import android.content.Context
+import com.orm.data.model.Trail
+import com.orm.data.model.User
+import com.orm.data.repository.UserRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.tensorflow.lite.Interpreter
 import java.io.FileInputStream
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class HikingTimePredictor(context: Context, modelPath: String) {
-
+@Singleton
+class HikingTimePredictor @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val userRepository: UserRepository
+) {
     private var interpreter: Interpreter
     private var mean: FloatArray
     private var scale: FloatArray
 
     init {
+        val modelPath = "hiking_time_prediction_model.tflite"
         interpreter = Interpreter(loadModelFile(context, modelPath))
         mean = loadArrayFromTxt(context, "scaler_mean.txt")
         scale = loadArrayFromTxt(context, "scaler_scale.txt")
@@ -47,7 +59,7 @@ class HikingTimePredictor(context: Context, modelPath: String) {
         return normalized
     }
 
-    fun predict(input: FloatArray): Float {
+    private fun predict(input: FloatArray): Float {
         val normalizedInput = normalizeInput(input)
         val inputBuffer = ByteBuffer.allocateDirect(normalizedInput.size * 4).order(ByteOrder.nativeOrder())
         normalizedInput.forEach { inputBuffer.putFloat(it) }
@@ -57,5 +69,18 @@ class HikingTimePredictor(context: Context, modelPath: String) {
         interpreter.run(inputBuffer, output)
         output.rewind()
         return output.float
+    }
+
+    suspend fun predictTrail(trail: Trail): Float = withContext(Dispatchers.IO) {
+        val altitude = trail.height.toFloat()
+        val distance = trail.distance.toFloat()
+        val averageTime = trail.time.toFloat()
+        val user: User = userRepository.getUserInfo()!!
+        val gender = if (user.gender == "male") 0.9f else 1.1f
+        val level = user.level?.toFloat()
+        val age = user.age?.toFloat()
+
+        val input = floatArrayOf(altitude, gender, age!!, distance, level!!, averageTime)
+        predict(input)
     }
 }

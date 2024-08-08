@@ -10,8 +10,10 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.orm.util.HikingTimePredictor
 import com.orm.R
 import com.orm.data.model.Mountain
 import com.orm.data.model.Point
@@ -27,6 +29,8 @@ import com.orm.viewmodel.ClubViewModel
 import com.orm.viewmodel.MountainViewModel
 import com.orm.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MountainDetailActivity : AppCompatActivity() {
@@ -47,6 +51,10 @@ class MountainDetailActivity : AppCompatActivity() {
     private val weatherViewModel: WeatherViewModel by viewModels()
     private val rvBoard: RecyclerView by lazy { binding.recyclerView }
     private lateinit var adapter: ProfileBasicAdapter
+    private var predictTimeList: List<Float> = emptyList()
+
+    @Inject
+    lateinit var hikingTimePredictor: HikingTimePredictor
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +80,18 @@ class MountainDetailActivity : AppCompatActivity() {
         mountainViewModel.fetchMountainById(mountain!!.id)
         mountainViewModel.mountain.observe(this@MountainDetailActivity) {
             if (it != null && !it.trails.isNullOrEmpty()) {
-                setupTrailSpinner(it.trails)
+                lifecycleScope.launch {
+                    try {
+                        predictTimeList = it.trails.map { trail ->
+                            hikingTimePredictor.predictTrail(trail)
+                        }
+                        setupTrailSpinner(it.trails)
+                        Log.d("AITEST", predictTimeList.toString())
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Log.d("AITEST", "error", e)
+                    }
+                }
             }
         }
 
@@ -104,7 +123,7 @@ class MountainDetailActivity : AppCompatActivity() {
                 parent: AdapterView<*>,
                 view: View?,
                 position: Int,
-                id: Long
+                id: Long,
             ) {
                 val selectedTrail = trails[position]
                 updateMapFragment(selectedTrail.trailDetails)

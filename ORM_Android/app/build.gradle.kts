@@ -130,6 +130,7 @@ dependencies {
     // worker
     implementation(libs.androidx.work.runtime.ktx)
 
+    // AI model
     implementation(libs.tensorflow.lite)
     implementation(libs.tensorflow.lite.support)
 }

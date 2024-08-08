@@ -16,5 +16,6 @@ data class Trail(
     val trailDetails: List<Point>,
     val heuristic: Double,
     val distance: Double,
-    val time: Int
+    val time: Int,
+    val height: Double,
 ) : Parcelable
