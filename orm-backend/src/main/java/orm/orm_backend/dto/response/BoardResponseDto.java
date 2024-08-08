@@ -23,18 +23,19 @@ public class BoardResponseDto {
     private List<CommentResponseDto> comments;
     private Integer hit;
     private LocalDateTime createdAt;
-    private List<BoardImageDto> imgSrc;
+    private List<BoardImageDto> imgSrcs;
 
     @Builder
-    public BoardResponseDto(Board board, User user, List<BoardImageDto> imgSrc, List<CommentResponseDto> comments) {
+    public BoardResponseDto(Board board, User user, List<BoardImageDto> imgSrcs, List<CommentResponseDto> comments) {
         this.boardId = board.getId();
         this.title = board.getTitle();
         this.content = board.getContent();
         this.userId = user.getId();
         this.userNickname = user.getNickname();
+        this.commentCount = comments.size();
         this.comments = comments;
         this.hit = board.getHit();
         this.createdAt = board.getCreatedAt();
-        this.imgSrc = imgSrc;
+        this.imgSrcs = imgSrcs;
     }
 }

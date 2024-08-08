@@ -26,7 +26,13 @@ public class BoardImageService {
         }
     }
 
-    // 이미지 삭제
+    // 이미지 삭제(imageSrc로 단일 삭제)
+    public void deleteImage(String imageSrc){
+        imageUtil.deleteImage(imageSrc);
+        boardImageRepository.deleteByImageSrc(imageSrc);
+    }
+
+    // 이미지 삭제(boardId로 다중 삭제)
     public void deleteImages(Integer boardId){
         List<BoardImage> preImages = boardImageRepository.findByBoardId(boardId);
         imageUtil.deleteImages(preImages.stream().map(BoardImage::getImageSrc).toList());
