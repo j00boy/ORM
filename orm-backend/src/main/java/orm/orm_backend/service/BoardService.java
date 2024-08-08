@@ -19,7 +19,10 @@ import orm.orm_backend.util.CookieUtil;
 import orm.orm_backend.util.ImageUtil;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -164,7 +167,8 @@ public class BoardService {
         // 원본에 있던 파일들
         List<String> orgImgSrcs = boardImageService.getBoardImages(boardId).stream().map(BoardImageDto::getImgSrc).toList();
         // 수정했을 때 최종적으로 저장되는 파일들
-        List<String> newImgSrcs = boardRequestDto.getImgSrc();
+        Set<String> newImgSrcs = boardRequestDto.getImgSrc() != null ? new HashSet<>(boardRequestDto.getImgSrc()) : new HashSet<>();
+
 
         // 새로 들어온 파일을 먼저 저장
         String imgSrc = null;
