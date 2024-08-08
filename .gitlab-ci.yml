@@ -70,12 +70,12 @@ deploy:
     - unset DOCKER_HOST
     - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_NAME --password-stdin
   script:
-    - echo " ✨ 컨테이너 구동 중단 및 삭제 (해당 컨테이너가 이미 존재한다면) "
+    - echo "✨ 컨테이너 구동 중단 및 삭제 (해당 컨테이너가 이미 존재한다면) "
     - docker stop $CONTAINER_NAME || true
     - docker rm $CONTAINER_NAME || true
-    - echo " ✨ 도커 이미지를 도커 허브에서 pull "
+    - echo "✨ 도커 이미지를 도커 허브에서 pull "
     - docker pull $DOCKER_HUB_NAME/$IMAGE_NAME
-    - echo " ✨ 컨테이너 구동 진행 "
+    - echo "✨ 컨테이너 구동 진행 "
     - docker run -d --name $CONTAINER_NAME -p 8080:8080 -e SPRING_PROFILE=dev $DOCKER_HUB_NAME/$IMAGE_NAME
   needs:
     - ["build-job", "package"]
