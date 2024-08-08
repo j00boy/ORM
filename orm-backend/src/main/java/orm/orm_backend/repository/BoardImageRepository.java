@@ -19,4 +19,10 @@ public interface BoardImageRepository extends JpaRepository<BoardImage, Integer>
      * @param boardId
      */
     void deleteByBoardId(Integer boardId);
+
+    /**
+     * imageSrc를 가진 BoardImage를 삭제합니다.
+     * @param imageSrc
+     */
+    void deleteByImageSrc(String imageSrc);
 }
