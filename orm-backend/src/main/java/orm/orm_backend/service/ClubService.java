@@ -126,6 +126,11 @@ public class ClubService {
         return clubs;
     }
 
+    // 클럽 아이디를 기반으로 모임 찾기
+    public ClubResponseDto getClubById(Integer clubId) {
+        return new ClubResponseDto(clubRepository.findById(clubId).orElseThrow(() ->new CustomException(ErrorCode.INVALID_CLUB_ID)));
+    }
+
     // 회원 목록 조회
     public Map<String, Object> getMembers(Integer clubId, Integer userId) {
         Club club = clubRepository.findById(clubId).orElse(null);
