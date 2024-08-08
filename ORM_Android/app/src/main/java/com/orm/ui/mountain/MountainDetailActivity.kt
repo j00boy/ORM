@@ -28,6 +28,7 @@ import com.orm.ui.fragment.map.BasicGoogleMapFragment
 import com.orm.ui.trace.TraceEditActivity
 import com.orm.viewmodel.ClubViewModel
 import com.orm.viewmodel.MountainViewModel
+import com.orm.viewmodel.UserViewModel
 import com.orm.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -50,6 +51,7 @@ class MountainDetailActivity : AppCompatActivity() {
     private val mountainViewModel: MountainViewModel by viewModels()
     private val clubViewModel: ClubViewModel by viewModels()
     private val weatherViewModel: WeatherViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels()
     private val rvBoard: RecyclerView by lazy { binding.recyclerView }
     private lateinit var adapter: ProfileBasicAdapter
     private var predictTimeList: List<Float> = emptyList()
@@ -76,8 +78,12 @@ class MountainDetailActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        binding.mountain = mountain
+        userViewModel.getUserInfo()
+        userViewModel.user.observe(this@MountainDetailActivity) {
+            binding.user = userViewModel.user.value
+        }
 
+        binding.mountain = mountain
         mountainViewModel.fetchMountainById(mountain!!.id)
         mountainViewModel.mountain.observe(this@MountainDetailActivity) {
             if (it != null && !it.trails.isNullOrEmpty()) {
@@ -134,6 +140,7 @@ class MountainDetailActivity : AppCompatActivity() {
                 id: Long,
             ) {
                 val selectedTrail = trails[position]
+                binding.predictTime = "${predictTimeList[position]}분"
                 updateMapFragment(selectedTrail.trailDetails)
                 weatherViewModel.getWeather(
                     selectedTrail.startLatitude,
