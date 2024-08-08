@@ -73,6 +73,11 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
         uiSettings?.isMapToolbarEnabled = false
         uiSettings?.isMyLocationButtonEnabled = true
 
+        val southKoreaLatLng = LatLng(36.5, 127.5)
+        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(southKoreaLatLng, 7f))
+        googleMap?.setMinZoomPreference(5f)
+        googleMap?.setMaxZoomPreference(15f)
+
         fetchLocation()
         setUpClusterer()
         observeMountains()
@@ -99,8 +104,6 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun setUpClusterer() {
-        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(37.5665, 126.9780), 10f))
-
         clusterManager = ClusterManager(context, googleMap)
         googleMap?.setOnCameraIdleListener(clusterManager)
 
@@ -108,7 +111,7 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
             googleMap?.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     cluster.position,
-                    googleMap?.cameraPosition?.zoom?.plus(2) ?: 15f
+                    googleMap?.cameraPosition?.zoom?.plus(2) ?: 14f
                 )
             )
             true

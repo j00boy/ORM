@@ -18,6 +18,7 @@ class LauncherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         installSplashScreen()
+        navigateToActivity(MainActivity::class.java)
         userViewModel.isLoading.observe(this) { isLoading ->
             if (!isLoading) {
                 val token = userViewModel.token.value
