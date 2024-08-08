@@ -8,6 +8,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import orm.orm_backend.dto.fcmalert.FcmAlertData;
 import orm.orm_backend.dto.fcmalert.FcmAlertDto;
@@ -43,7 +44,10 @@ public class FirebaseUtil {
             headers.set("Authorization", "Bearer " + getAccessToken());
 
             HttpEntity<String> entity = new HttpEntity<>(message, headers);
-            ResponseEntity<String> response = restTemplate.exchange(firebaseApiUrl, HttpMethod.POST, entity, String.class);
+            try {
+                ResponseEntity<String> response = restTemplate.exchange(firebaseApiUrl, HttpMethod.POST, entity, String.class);
+            } catch (HttpClientErrorException e) {
+            }
         } catch (IOException e) {
             throw new CustomException(ErrorCode.PUSH_ALERT_FAIL_ERROR);
         }
