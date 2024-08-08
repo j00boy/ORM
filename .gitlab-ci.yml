@@ -9,19 +9,19 @@ build-job:
   image : gradle:8.8.0-jdk17
   stage: build
   script:
-    - echo " ✨ application-dev.yml 파일을 orm-backend/src/main/resources 경로에 저장 "
+    - echo "✨ application-dev.yml 파일을 orm-backend/src/main/resources 경로에 저장"
     - |
       cat <<EOF > orm-backend/src/main/resources/application-dev.yml
       $APPLICATION_YAML
       EOF
     
-    - echo  ✨ pem 파일을 orm-backend/src/main/resources 경로 저장 "
+    - echo "✨ pem 파일을 orm-backend/src/main/resources 경로 저장"
     - |
       cat <<EOF > orm-backend/src/main/resources/I11A709T.pem
       $PEM
       EOF
     
-    - echo " ✨ json 파일을 orm-backend/src/main/resources 경로에 저장 "
+    - echo "✨ json 파일을 orm-backend/src/main/resources 경로에 저장"
     - |
       cat <<EOF > orm-backend/src/main/resources/orm-ssafy-firebase-adminsdk-r5bcu-b5d1ad1ab6.json
       $FIREBASE
