@@ -145,6 +145,25 @@ class ClubRepository @Inject constructor(
         }
     }
 
+    suspend fun updateClubs(
+        clubId: Int,
+        createClub: RequestBody,
+    ): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = clubService.updateClubs(clubId, createClub).execute()
+                if (response.isSuccessful) {
+                    true
+                } else {
+                    false
+                }
+            } catch (e: Exception) {
+                Log.e("ClubRepository", "Error creating club", e)
+                false
+            }
+        }
+    }
+
     suspend fun checkDuplicateClubs(name: String): Boolean {
         return withContext(Dispatchers.IO) {
             try {

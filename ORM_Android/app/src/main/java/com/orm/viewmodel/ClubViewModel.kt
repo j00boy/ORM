@@ -147,6 +147,21 @@ class ClubViewModel @Inject constructor(
         }
     }
 
+    fun updateClubs(clubId: Int, clubCreate: ClubCreate) {
+        viewModelScope.launch {
+            _isCreated.postValue(null)
+            try {
+                val createClubRequestBody = createClubRequestBody(clubCreate)
+                val result = clubRepository.updateClubs(clubId, createClubRequestBody)
+                _isCreated.postValue(result)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _clubId.postValue(null)
+                _isCreated.postValue(false)
+            }
+        }
+    }
+
     fun checkDuplicateClubs(clubName: String) {
         viewModelScope.launch {
             try {

@@ -143,7 +143,8 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
                         clubViewModel.createClubs(clubCreate, imageFile)
                     } else {
                         Log.d("ClubEditActivity edit", "club: $club")
-                        clubViewModel.updateClubs(club!!.id, clubCreate, imageFile)
+                        if (imageFile == null) clubViewModel.updateClubs(club!!.id, clubCreate)
+                        else clubViewModel.updateClubs(club!!.id, clubCreate, imageFile)
                     }
                     dialog.dismiss()
 

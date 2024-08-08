@@ -69,6 +69,13 @@ interface ClubService {
         @Part imgFile: MultipartBody.Part?
     ): Call<Unit>
 
+    @Multipart
+    @PATCH("clubs/{clubId}")
+    fun updateClubs(
+        @Path("clubId") clubId: Int,
+        @Part("updateClub") createClub: RequestBody,
+    ): Call<Unit>
+
 
     @GET("clubs/name/check-duplicate")
     fun checkDuplicateClubs(
