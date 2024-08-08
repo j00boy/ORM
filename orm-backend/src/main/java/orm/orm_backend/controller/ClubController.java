@@ -60,6 +60,12 @@ public class ClubController {
         return ResponseEntity.ok().body(clubs);
     }
 
+    @GetMapping("/{clubId}")
+    public ResponseEntity<ClubResponseDto> findClubById(@PathVariable Integer clubId) {
+        ClubResponseDto result = clubService.getClubById(clubId);
+        return ResponseEntity.ok(result);
+    }
+
     @GetMapping("/members")
     public ResponseEntity<Map<String, Object>> findMembers(@RequestParam("clubId") Integer clubId, HttpServletRequest request) {
         String accessToken = request.getHeader(HEADER_AUTH);
