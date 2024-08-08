@@ -19,6 +19,7 @@ public class TrailResponseDto {
     private String startLongitude;
     private String peakLatitude;
     private String peakLongitude;
+    private String height;
     private List<TrailDetailResponseDto> trailDetails;
 
     @Builder
@@ -31,6 +32,7 @@ public class TrailResponseDto {
         this.startLongitude = trail.getStartLongitude();
         this.peakLatitude = trail.getPeakLatitude();
         this.peakLongitude = trail.getPeakLongitude();
+        this.height = trail.getAltitudinalDifference();
         this.trailDetails = trailDetails;
     }
 }
