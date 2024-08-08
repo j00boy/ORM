@@ -65,7 +65,8 @@ public class ImageUtil {
                 }
                 directory.append(path);
                 try {
-                    sftpChannel.stat(directory.toString());
+                    // change directory -> 실패시 exception 발생
+                    sftpChannel.cd(directory.toString());
                 } catch (SftpException e) {
                     sftpChannel.mkdir(directory.toString());
                 }

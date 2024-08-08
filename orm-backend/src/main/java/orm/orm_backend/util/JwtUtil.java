@@ -79,12 +79,11 @@ public class JwtUtil {
     }
 
     private byte[] generateKey() {
-        byte[] key = null;
         try {
 //            charset 설정 안하면 사용자 플랫폼의 기본 인코딩 설정으로 인코딩 됨.
-            key = salt.getBytes("UTF-8");
+            return salt.getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
         }
-        return key;
+        return null;
     }
 }
