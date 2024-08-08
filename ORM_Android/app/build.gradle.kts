@@ -128,4 +128,7 @@ dependencies {
 
     // worker
     implementation(libs.androidx.work.runtime.ktx)
+
+    implementation(libs.tensorflow.lite)
+    implementation(libs.tensorflow.lite.support)
 }
