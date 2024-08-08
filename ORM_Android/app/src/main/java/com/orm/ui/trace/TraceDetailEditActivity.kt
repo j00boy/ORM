@@ -33,6 +33,7 @@ class TraceDetailEditActivity : AppCompatActivity() {
 
     private var imagePath: String? = null
     private var tempImagePath: String? = null
+    private var toDefaultImage: Boolean = false;
 
     private val trace: Trace? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -128,12 +129,12 @@ class TraceDetailEditActivity : AppCompatActivity() {
                         recordId = trace!!.recordId,
                         hikingDistance = trace!!.hikingDistance
                     )
-
                     traceViewModel.createTrace(traceModify)
                     Log.d("traceTest", imagePath.toString())
                     dialog.dismiss()
 
                     binding.progressBar.visibility = View.VISIBLE
+                    // TODO 기본이미지 변경시 바로 반영 안됨
                     traceViewModel.traceCreated.observe(this) { traceCreated ->
                         if (traceCreated) {
                             binding.progressBar.visibility = View.GONE
@@ -159,9 +160,30 @@ class TraceDetailEditActivity : AppCompatActivity() {
                 }
             }
         }
-
+        var photoSelection: Int = 0
         binding.cvImageUpload.setOnClickListener {
-            openGallery()
+            if (binding.image == null) {
+                openGallery()
+            } else {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("사진 선택")
+                    .setSingleChoiceItems(
+                        arrayOf("갤러리에서 가져오기", "기본 이미지로 변경"), 0
+                    ) { _, which ->
+                        photoSelection = which
+                    }
+                    .setNegativeButton("취소") { _, _ -> }
+                    .setPositiveButton("확인") { dialog, _ ->
+                        if (photoSelection == 0) {
+                            openGallery()
+                        } else {
+                            tempImagePath = null
+                            binding.image = null
+                            imagePath = null
+                            toDefaultImage = true
+                        }
+                    }.show()
+            }
         }
     }
 
