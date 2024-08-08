@@ -9,19 +9,19 @@ build-job:
   image : gradle:8.8.0-jdk17
   stage: build
   script:
-    - echo "application-dev.yml 파일을 orm-backend/src/main/resources 경로에 저장"
+    - echo "✨ application-dev.yml 파일을 orm-backend/src/main/resources 경로에 저장"
     - |
       cat <<EOF > orm-backend/src/main/resources/application-dev.yml
       $APPLICATION_YAML
       EOF
     
-    - echo "pem 파일을 orm-backend/src/main/resources 경로 저장"
+    - echo "✨ pem 파일을 orm-backend/src/main/resources 경로 저장"
     - |
       cat <<EOF > orm-backend/src/main/resources/I11A709T.pem
       $PEM
       EOF
     
-    - echo "json 파일을 orm-backend/src/main/resources 경로에 저장"
+    - echo "✨ json 파일을 orm-backend/src/main/resources 경로에 저장"
     - |
       cat <<EOF > orm-backend/src/main/resources/orm-ssafy-firebase-adminsdk-r5bcu-b5d1ad1ab6.json
       $FIREBASE
@@ -70,13 +70,13 @@ deploy:
     - unset DOCKER_HOST
     - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_NAME --password-stdin
   script:
-    #    - echo "Stopping and removing existing container if exists"
-    #    - docker stop $CONTAINER_NAME || true
-    #    - docker rm $CONTAINER_NAME || true
-    - echo "Pulling the latest image from Docker Hub"
+    - echo "✨ 컨테이너 구동 중단 및 삭제 (해당 컨테이너가 이미 존재한다면)"
+    - docker stop $CONTAINER_NAME || true
+    - docker rm $CONTAINER_NAME || true
+    - echo "✨ 도커 이미지를 도커 허브에서 pull"
     - docker pull $DOCKER_HUB_NAME/$IMAGE_NAME
-    - echo "Running the container"
-    - docker run -d --name workflow-test -p 8081:8080 -e SPRING_PROFILE=dev $DOCKER_HUB_NAME/$IMAGE_NAME
+    - echo "✨ 컨테이너 구동 진행"
+    - docker run -d --name $CONTAINER_NAME -p 8080:8080 -e SPRING_PROFILE=dev $DOCKER_HUB_NAME/$IMAGE_NAME
   needs:
     - ["build-job", "package"]
   # script가 실행된 후 수행 될 script
