@@ -1,5 +1,6 @@
 package com.orm.ui.club
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -65,9 +66,9 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
 
         binding.tfClubName.setEndIconOnClickListener {
             clubViewModel.isOperationSuccessful.removeObservers(this)
-
             clubViewModel.resetOperationStatus()
 
+            clubViewModel.checkDuplicateClubs(binding.tfClubName.editText?.text.toString())
             clubViewModel.isOperationSuccessful.observe(this) { isDuplicate ->
                 isDuplicate?.let {
                     Log.d("ClubEditActivity", "isDuplicate: $isDuplicate")
@@ -77,7 +78,6 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
                 }
             }
 
-            clubViewModel.checkDuplicateClubs(binding.tfClubName.editText?.text.toString())
         }
 
         binding.tfClubMountain.setEndIconOnClickListener {
@@ -91,7 +91,7 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
 
 
         mountainId = club?.mountainId?.toInt() ?: 0
-        isDuplicated = if(club == null) true else false
+        isDuplicated = if (club == null) true else false
         binding.image = club?.imgSrc.toString()
 
         binding.tfClubName.editText?.addTextChangedListener(object : TextWatcher {
@@ -99,6 +99,7 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 isDuplicated = true
             }
+
             override fun afterTextChanged(s: Editable?) {
                 isDuplicated = true
                 Log.d("clubTest", "changed")
@@ -128,7 +129,7 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
                 .setTitle(content)
                 .setMessage("모임을 $content 하시겠습니까?")
                 .setNegativeButton("취소") { _, _ -> }
-                .setPositiveButton("확인") { dialog, which ->
+                .setPositiveButton("확인") { dialog, _ ->
 
                     val clubCreate = ClubCreate(
                         clubName = binding.tfClubName.editText?.text.toString(),
@@ -136,7 +137,7 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
                         mountainId = mountainId
                     )
 
-                    // TODO : image upload
+
                     if (club == null) {
                         Log.d("ClubEditActivity create", "club: $club")
                         clubViewModel.createClubs(clubCreate, imageFile)
@@ -145,7 +146,32 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
                         clubViewModel.updateClubs(club!!.id, clubCreate, imageFile)
                     }
                     dialog.dismiss()
-                    finish()
+
+                    binding.progressBar.visibility = View.VISIBLE
+                    clubViewModel.isCreated.observe(this) { clubCreated ->
+                        if (clubCreated != null && clubCreated) {
+                            binding.progressBar.visibility = View.GONE
+                            setResult(Activity.RESULT_OK, Intent().apply {
+                                putExtra("clubCreated", true)
+                            })
+                            finish()
+                        }
+
+                        if (clubCreated != null && !clubCreated) {
+                            binding.progressBar.visibility = View.GONE
+
+                            MaterialAlertDialogBuilder(this)
+                                .setTitle("오류")
+                                .setMessage("모임 생성에 실패했습니다.")
+                                .setPositiveButton("확인") { _, _ -> }
+                                .show()
+
+                            setResult(Activity.RESULT_OK, Intent().apply {
+                                putExtra("clubCreated", false)
+                            })
+                            finish()
+                        }
+                    }
                 }
                 .show()
         }

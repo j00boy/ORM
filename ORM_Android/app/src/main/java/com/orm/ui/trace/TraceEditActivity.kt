@@ -85,8 +85,6 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         }
 
         binding.tfTraceMountain.setEndIconOnClickListener {
-            Log.d("TraceEditActivity", binding.tfTraceMountain.editText?.text.toString())
-
             val mountainName = binding.tfTraceMountain.editText?.text.toString()
             val bottomSheetFragment = BottomSheetMountainList.newInstance(mountainName)
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
@@ -105,7 +103,7 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
             val content = if (trace != null) "수정" else "생성"
             MaterialAlertDialogBuilder(this)
                 .setTitle("${content}하기")
-                .setMessage("발자국을 ${content} 하시겠습니까?")
+                .setMessage("발자국을 $content 하시겠습니까?")
                 .setNegativeButton("취소") { _, _ -> }
                 .setPositiveButton("확인") { dialog, which ->
 
