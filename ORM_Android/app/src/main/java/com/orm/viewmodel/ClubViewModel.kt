@@ -32,6 +32,9 @@ class ClubViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
+    private val _club = MutableLiveData<Club?>()
+    val club: LiveData<Club?> get() = _club
+
     private val _clubs = MutableLiveData<List<Club>>()
     val clubs: LiveData<List<Club>> get() = _clubs
 
@@ -47,12 +50,23 @@ class ClubViewModel @Inject constructor(
     private val _clubId = MutableLiveData<Int?>()
     val clubId: LiveData<Int?> get() = _clubId
 
+    private val _isReady = MutableLiveData<Boolean>()
+    val isReady: LiveData<Boolean> get() = _isReady
+
+    fun getClubById(clubId: Int) {
+        viewModelScope.launch {
+            val club = clubRepository.getClubById(clubId)
+            _club.postValue(club)
+        }
+    }
+
     fun getClubs(keyword: String = "", isMyClub: Boolean = false) {
         viewModelScope.launch {
+            _isReady.postValue(false)
             _clubs.postValue(emptyList())
             val clubs = clubRepository.getClubs(keyword, isMyClub)
-            Log.e("getClubs", clubs.toString())
             _clubs.postValue(clubs)
+            _isReady.postValue(true)
         }
     }
 

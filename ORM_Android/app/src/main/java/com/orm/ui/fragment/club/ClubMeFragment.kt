@@ -1,11 +1,12 @@
 package com.orm.ui.fragment.club
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +28,20 @@ class ClubMeFragment : Fragment() {
     private val rvBoard: RecyclerView by lazy { binding.recyclerView }
     private lateinit var adapter: ProfileBasicAdapter
 
+    private val createClubLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val clubChanged = data?.getBooleanExtra("clubChanged", false) ?: false
+                if (clubChanged) {
+                    clubViewModel.getClubs(isMyClub = true)
+                    clubViewModel.clubs.observe(viewLifecycleOwner) { clubs ->
+                        setupAdapter(clubs)
+                    }
+                }
+            }
+        }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,10 +52,12 @@ class ClubMeFragment : Fragment() {
 
         clubViewModel.getClubs(isMyClub = true)
         clubViewModel.clubs.observe(viewLifecycleOwner) { clubs ->
-            Log.e("clubMeFragment", clubs.toString())
             setupAdapter(clubs)
         }
 
+        clubViewModel.isReady.observe(viewLifecycleOwner) {
+            binding.progressBar.visibility = if (it) View.GONE else View.VISIBLE
+        }
         return root
     }
 
@@ -61,8 +78,7 @@ class ClubMeFragment : Fragment() {
                 ).apply {
                     putExtra("club", clubs[position])
                 }
-                Log.e("clubMeFragment", "club: ${clubs[position]}")
-                startActivity(intent)
+                createClubLauncher.launch(intent)
             }
         })
         rvBoard.adapter = adapter
