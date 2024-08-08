@@ -62,7 +62,9 @@ class TraceDetailEditActivity : AppCompatActivity() {
             val file = File(it)
             if (file.exists()) {
                 binding.image = Uri.fromFile(file).toString()
+                imagePath = it
             }
+
         }
         Log.d("traceTest", trace?.imgPath.toString())
 
