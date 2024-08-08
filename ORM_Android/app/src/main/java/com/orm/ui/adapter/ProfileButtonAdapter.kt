@@ -13,7 +13,7 @@ import com.orm.R
 import com.orm.data.model.recycler.RecyclerViewButtonItem
 import com.orm.viewmodel.UserViewModel
 
-class ProfileButtonAdapter(private val items: List<RecyclerViewButtonItem>) :
+class ProfileButtonAdapter(private var items: List<RecyclerViewButtonItem>) :
     RecyclerView.Adapter<ProfileButtonAdapter.ProfileButtonViewHolder>() {
     private lateinit var itemClickListener: OnItemClickListener
     private lateinit var type: String
@@ -93,6 +93,20 @@ class ProfileButtonAdapter(private val items: List<RecyclerViewButtonItem>) :
 
     fun setManagerId(managerId: String) {
         this.managerId = managerId
+    }
+
+    fun removeItem(position: Int) {
+        val mutableItems = items.toMutableList()
+        mutableItems.removeAt(position)
+        items = mutableItems
+        notifyItemRemoved(position)
+    }
+
+    fun addItem(item: RecyclerViewButtonItem, position: Int) {
+        val mutableItems = items.toMutableList()
+        mutableItems.add(position, item)
+        items = mutableItems
+        notifyItemInserted(position)
     }
 
     private fun String.getNetworkImage(context: Context, view: ImageView) {

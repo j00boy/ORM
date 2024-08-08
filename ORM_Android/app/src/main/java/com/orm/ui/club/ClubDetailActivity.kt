@@ -47,6 +47,18 @@ class ClubDetailActivity : AppCompatActivity() {
                     })
                 }
             }
+
+            if (result.resultCode == 1) {
+                val data: Intent? = result.data
+                val clubMember = data?.getBooleanExtra("clubMember", false) ?: false
+                if (clubMember) {
+                    clubViewModel.getClubById(club!!.id)
+                    clubViewModel.club.observe(this) {
+                        club = it
+                        binding.club = it
+                    }
+                }
+            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +79,7 @@ class ClubDetailActivity : AppCompatActivity() {
 
         binding.btnMember.setOnClickListener {
             if (club?.isMember == true) {
-                startActivity(Intent(this, ClubMemberActivity::class.java).apply {
+                createClubLauncher.launch(Intent(this, ClubMemberActivity::class.java).apply {
                     putExtra("club", club)
                 })
             }

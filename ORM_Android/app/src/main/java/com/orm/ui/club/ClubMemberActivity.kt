@@ -1,5 +1,6 @@
 package com.orm.ui.club
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -43,6 +44,8 @@ class ClubMemberActivity : AppCompatActivity() {
 
     private var userId: String? = null
     private var membersMap: Map<String, List<ClubMember>?>? = null
+    private var clubMembers: List<ClubMember>? = null
+    private var applMembers: List<ClubMember>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,16 +67,21 @@ class ClubMemberActivity : AppCompatActivity() {
         clubViewModel.getMembers(club!!.id)
         clubViewModel.members.observe(this@ClubMemberActivity) { membersMap ->
             this.membersMap = membersMap
-            Log.d("ClubMemberActivity", membersMap["members"].toString())
-            Log.d("ClubMemberActivity", membersMap["applicants"].toString())
             checkIfDataReady()
         }
+
+        setResult(1, Intent().apply {
+            putExtra("clubMember", true)
+        }
+        )
     }
 
     private fun checkIfDataReady() {
         if (userId != null && membersMap != null) {
-            setupAdapterMemberList(membersMap!!["members"])
-            setupAdapterApplicant(membersMap!!["applicants"])
+            clubMembers = membersMap!!["members"] ?: emptyList()
+            applMembers = membersMap!!["applicants"] ?: emptyList()
+            setupAdapterMemberList(clubMembers)
+            setupAdapterApplicant(applMembers)
         }
     }
 
@@ -106,8 +114,9 @@ class ClubMemberActivity : AppCompatActivity() {
                     .setTitle("회원 추방")
                     .setMessage("정말로 ${members!![position].nickname}님을 추방하시겠습니까?")
                     .setNegativeButton("취소") { _, _ -> }
-                    .setPositiveButton("확인") { dialog, which ->
+                    .setPositiveButton("확인") { _, _ ->
                         clubViewModel.dropMember(club!!.id, clubMembers[position].id!!.toInt())
+                        adapterMemberList.removeItem(position)
                     }.show()
             }
         })
@@ -141,8 +150,11 @@ class ClubMemberActivity : AppCompatActivity() {
                                 true
                             )
                         )
+                        TODO("수락 시 멤버 리스트에 해당 수락 멤버 객체 저장해야함 -> 리사이클러 뷰 업데이트")
+                        adapterApplicant.removeItem(position)
+                        adapterMemberList.addItem(applicants[position], adapterMemberList.itemCount)
+
                         dialog.dismiss()
-                        finish()
                     }
                     .show()
             }
@@ -160,6 +172,7 @@ class ClubMemberActivity : AppCompatActivity() {
                                 false
                             )
                         )
+                        adapterApplicant.removeItem(position)
                         dialog.dismiss()
                         finish()
                     }
