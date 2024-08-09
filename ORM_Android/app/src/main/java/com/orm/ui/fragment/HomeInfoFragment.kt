@@ -40,5 +40,4 @@ class HomeInfoFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

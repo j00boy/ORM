@@ -90,7 +90,7 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun observeMountains() {
-        mountainViewModel.fetchMountainByName("")
+        mountainViewModel.fetchMountainsAll()
         mountainViewModel.mountains.observe(viewLifecycleOwner) { mountainList ->
             if (mountainList != null) {
                 mountains = mountainList
