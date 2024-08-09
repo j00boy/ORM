@@ -54,6 +54,6 @@ public class Club extends BaseEntity {
         this.clubName = clubRequestDto.getClubName();
         this.description = clubRequestDto.getDescription();
         this.mountain = mountain;
-        this.imageSrc = imageSrc;
+        this.imageSrc = imageSrc == null ? this.imageSrc : imageSrc;
     }
 }
