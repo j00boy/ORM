@@ -144,10 +144,21 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
                         clubViewModel.createClubs(clubCreate, imageFile)
                     } else {
                         Log.d("ClubEditActivity edit", "club: $club")
-                        Log.d("clubTest", "imageFile ${imageFile.toString()} Default ${toDefaultImage}")
-                        if (imageFile != null) clubViewModel.updateClubs(club!!.id, clubCreate, imageFile)
+                        Log.d(
+                            "clubTest",
+                            "imageFile ${imageFile.toString()} Default ${toDefaultImage}"
+                        )
+                        if (imageFile != null) clubViewModel.updateClubs(
+                            club!!.id,
+                            clubCreate,
+                            imageFile
+                        )
                         // TODO create empty file bug
-                        else if(toDefaultImage) clubViewModel.updateClubs(club!!.id, clubCreate, imageFile)
+                        else if (toDefaultImage) clubViewModel.updateClubs(
+                            club!!.id,
+                            clubCreate,
+                            imageFile
+                        )
                         else clubViewModel.updateClubs(club!!.id, clubCreate)
                     }
                     dialog.dismiss()
@@ -161,21 +172,6 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
                             })
                             finish()
                         }
-                        TODO("실패 시 처리")
-//                        if (clubCreated != null && !clubCreated) {
-//                            binding.progressBar.visibility = View.GONE
-//
-//                            MaterialAlertDialogBuilder(this)
-//                                .setTitle("오류")
-//                                .setMessage("모임 생성에 실패했습니다.")
-//                                .setPositiveButton("확인") { _, _ -> }
-//                                .show()
-//
-//                            setResult(Activity.RESULT_OK, Intent().apply {
-//                                putExtra("clubCreated", false)
-//                            })
-//                            finish()
-//                        }
                     }
                 }
                 .show()

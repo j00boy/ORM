@@ -59,6 +59,10 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMapMountainBinding.inflate(inflater, container, false)
+
+        mountainViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
         return binding.root
     }
 
@@ -73,7 +77,7 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
         uiSettings?.isMapToolbarEnabled = false
         uiSettings?.isMyLocationButtonEnabled = true
 
-        val southKoreaLatLng = LatLng(36.5, 127.5)
+        val southKoreaLatLng = LatLng(36.38, 127.51)
         googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(southKoreaLatLng, 7f))
         googleMap?.setMinZoomPreference(5f)
         googleMap?.setMaxZoomPreference(15f)
@@ -152,7 +156,7 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
                         map.moveCamera(
                             CameraUpdateFactory.newLatLngZoom(
                                 LatLng(it.latitude, it.longitude),
-                                map.cameraPosition.zoom
+                                9.0f
                             )
                         )
                     }

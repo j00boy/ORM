@@ -6,10 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.databinding.FragmentHomeBinding
 import com.orm.ui.club.ClubActivity
 import com.orm.ui.mountain.MountainSearchActivity
 import com.orm.ui.trace.TraceActivity
+import com.orm.util.NetworkUtils
+import java.io.IOException
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -29,13 +32,15 @@ class HomeFragment : Fragment() {
 
     private fun setupCardClickListeners() {
         binding.cardSearch.setOnClickListener {
+            if (NetworkUtils.isNetworkError(requireContext())) return@setOnClickListener
             startActivity(MountainSearchActivity::class.java)
+        }
+        binding.cardClub.setOnClickListener {
+            if (NetworkUtils.isNetworkError(requireContext())) return@setOnClickListener
+            startActivity(ClubActivity::class.java)
         }
         binding.cardTrace.setOnClickListener {
             startActivity(TraceActivity::class.java)
-        }
-        binding.cardClub.setOnClickListener {
-            startActivity(ClubActivity::class.java)
         }
     }
 
@@ -56,6 +61,7 @@ class HomeFragment : Fragment() {
             .replace(containerId, fragment)
             .commit()
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

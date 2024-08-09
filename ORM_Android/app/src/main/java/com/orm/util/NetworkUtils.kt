@@ -3,6 +3,7 @@ package com.orm.util
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 object NetworkUtils {
     fun isNetworkAvailable(context: Context): Boolean {
@@ -16,5 +17,19 @@ object NetworkUtils {
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
             else -> false
         }
+    }
+
+    fun isNetworkError(context: Context): Boolean {
+        if (!NetworkUtils.isNetworkAvailable(context)) {
+            MaterialAlertDialogBuilder(context)
+                .setTitle("네트워크 확인 불가")
+                .setMessage("네트워크를 확인해주세요.")
+                .setPositiveButton("확인") { dialog, _ ->
+                    dialog.dismiss()
+                }.show()
+
+            return true
+        }
+        return false
     }
 }
