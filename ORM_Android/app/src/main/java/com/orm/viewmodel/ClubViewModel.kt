@@ -63,7 +63,6 @@ class ClubViewModel @Inject constructor(
     fun getClubs(keyword: String = "", isMyClub: Boolean = false) {
         viewModelScope.launch {
             _isReady.postValue(false)
-            _clubs.postValue(emptyList())
             val clubs = clubRepository.getClubs(keyword, isMyClub)
             _clubs.postValue(clubs)
             _isReady.postValue(true)
@@ -203,7 +202,6 @@ class ClubViewModel @Inject constructor(
 
     fun findClubsByMountain(mountainId: Int) {
         viewModelScope.launch {
-            _clubs.postValue(emptyList())
             val clubs = clubRepository.findClubsByMountain(mountainId)
             Log.e("findClubsByMountain", clubs.toString())
             _clubs.postValue(clubs)
