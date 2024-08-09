@@ -3,11 +3,14 @@ package orm.orm_backend.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import orm.orm_backend.dto.fcmalert.*;
+import orm.orm_backend.entity.Board;
 import orm.orm_backend.entity.Club;
+import orm.orm_backend.entity.Comment;
 import orm.orm_backend.entity.User;
 import orm.orm_backend.util.FirebaseUtil;
 
-import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +68,39 @@ public class FirebasePushAlertService {
                 .body(data.getMessage())
                 .build();
         firebaseUtil.pushAlert(data, expelMemberToken, notification);
+    }
+
+    public void pushNewBoardAlert(List<String> clubUserTokens, Board board) {
+        FcmAlertData data = FcmBoardDto.builder()
+                .boardId(String.valueOf(board.getId()))
+                .title(board.getTitle())
+                .clubName(board.getClub().getClubName())
+                .userName(board.getUser().getNickname())
+                .userId(String.valueOf(board.getUser().getId()))
+                .build();
+        FcmNotification notification = FcmNotification.builder()
+                .body(data.getMessage())
+                .build();
+
+        for(String clubUserToken : clubUserTokens) {
+            firebaseUtil.pushAlert(data, clubUserToken, notification);
+        }
+    }
+
+    public void pushNewCommentAlert(Set<String> boardRelatedUsers, Comment comment) {
+        FcmAlertData data = FcmCommentDto.builder()
+                .commentId(String.valueOf(comment.getId()))
+                .boardId(String.valueOf(comment.getBoard().getId()))
+                .title(comment.getBoard().getTitle())
+                .userId(String.valueOf(comment.getUser().getId()))
+                .userName(comment.getUser().getNickname())
+                .build();
+        FcmNotification notification = FcmNotification.builder()
+                .body(data.getMessage())
+                .build();
+
+        for(String relatedUserToken : boardRelatedUsers) {
+            firebaseUtil.pushAlert(data, relatedUserToken, notification);
+        }
     }
 }
