@@ -78,11 +78,6 @@ class MountainDetailActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        userViewModel.getUserInfo()
-        userViewModel.user.observe(this@MountainDetailActivity) {
-            binding.user = userViewModel.user.value
-        }
-
         binding.mountain = mountain
         mountainViewModel.fetchMountainById(mountain!!.id)
         mountainViewModel.mountain.observe(this@MountainDetailActivity) {
@@ -99,6 +94,14 @@ class MountainDetailActivity : AppCompatActivity() {
                         Log.d("AITEST", "error", e)
                     }
                 }
+                userViewModel.getUserInfo()
+                userViewModel.user.observe(this@MountainDetailActivity) {
+                    binding.trailHint = userViewModel.user.value?.nickname + "님의 예상 등반 시간입니다."
+                }
+            } else {
+                binding.fcvMap.visibility = View.GONE
+                binding.spinnerTrails.visibility = View.GONE
+                binding.trailHint = "등산로 정보가 제공되지 않았습니다."
             }
         }
 
@@ -140,7 +143,11 @@ class MountainDetailActivity : AppCompatActivity() {
                 id: Long,
             ) {
                 val selectedTrail = trails[position]
-                binding.predictTime = "${predictTimeList[position]}분"
+                val totalSeconds = (predictTimeList[position] * 60).toInt()
+                val hours = totalSeconds / 3600
+                val minutes = (totalSeconds % 3600) / 60
+                val seconds = totalSeconds % 60
+                binding.predictTime = "${hours}시간 ${minutes}분 ${seconds}초"
                 updateMapFragment(selectedTrail.trailDetails)
                 weatherViewModel.getWeather(
                     selectedTrail.startLatitude,

@@ -108,10 +108,13 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
             binding.mountainName = mountainName
             mountainViewModel.fetchMountainById(mountainId)
             mountainViewModel.mountain.observe(this@TraceEditActivity) { it ->
-                it?.trails?.let { trails ->
-                    setupTrailSpinner(trails)
-                    this.trails = trails
+                if(it?.trails?.size != 0) {
+                    setupTrailSpinner(it?.trails!!)
+                    this.trails = it.trails
                     binding.spinnerTrails.setSelection(trailIndex)
+                } else {
+                    binding.cvMap.visibility = View.GONE
+                    binding.spinnerTrails.visibility = View.GONE
                 }
             }
 
