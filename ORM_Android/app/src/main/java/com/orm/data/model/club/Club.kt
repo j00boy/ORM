@@ -28,7 +28,7 @@ data class Club(
                 id = club.id,
                 imageSrc = club.imgSrc ?: "",
                 title = club.clubName,
-                subTitle = club.description
+                subTitle = club.mountainName
             )
         }
     }
