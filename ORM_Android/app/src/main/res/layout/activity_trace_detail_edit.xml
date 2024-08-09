@@ -57,11 +57,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="발자국 이름을 입력하세요"
-                    android:scrollbars="none">
+                    android:scrollbars="none"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="16">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:maxLength="16"
+                        android:singleLine="true"
                         android:text="@{trace.title}" />
 
                 </com.google.android.material.textfield.TextInputLayout>

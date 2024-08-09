@@ -56,11 +56,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="발자국 이름을 입력하세요"
-                    android:scrollbars="none">
+                    android:scrollbars="none"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="16">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:maxLength="16"
+                        android:singleLine="true"
                         android:text="@{trace.title}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -92,6 +96,8 @@
                     android:layout_marginTop="12dp"
                     android:hint="등반할 산을 지정하세요"
                     android:scrollbars="none"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="8"
                     app:endIconContentDescription="산 검색"
                     app:endIconDrawable="@drawable/ic_search"
                     app:endIconMode="custom">
@@ -99,6 +105,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:maxLength="8"
+                        android:singleLine="true"
                         android:text="@{mountainName}" />
 
                 </com.google.android.material.textfield.TextInputLayout>
