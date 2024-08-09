@@ -40,6 +40,9 @@ public class FirebasePushAlertTest {
     private Integer userId = 1;
     private String userName = "백승헌222";
 
+    private Integer boardId = 1;
+    private String boardTitle = "백승헌게시판";
+
     @BeforeEach
     void init() {
         ReflectionTestUtils.setField(firebaseUtil, "firebaseApiUrl", firebaseApiUrl);
@@ -98,6 +101,22 @@ public class FirebasePushAlertTest {
                 .clubId(String.valueOf(clubId))
                 .clubName(clubName)
                 .clubImageSrc(testImageSrc)
+                .build();
+        notificationBody = fcmAlertData.getMessage();
+        notification = FcmNotification.builder()
+                .body(notificationBody)
+                .build();
+        firebaseUtil.pushAlert(fcmAlertData, testFirebaseToken, notification);
+    }
+
+    @Test
+    void newBoardAlertTest() throws IOException {
+        fcmAlertData = FcmBoardDto.builder()
+                .boardId(String.valueOf(boardId))
+                .clubName(clubName)
+                .userName(userName)
+                .userId(String.valueOf(userId))
+                .title(boardTitle)
                 .build();
         notificationBody = fcmAlertData.getMessage();
         notification = FcmNotification.builder()
