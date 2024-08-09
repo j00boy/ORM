@@ -133,4 +133,7 @@ dependencies {
     // AI model
     implementation(libs.tensorflow.lite)
     implementation(libs.tensorflow.lite.support)
+
+    //board
+    implementation(libs.wasabeef.richeditor.android)
 }

@@ -16,6 +16,8 @@ import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubCreate
 import com.orm.databinding.ActivityClubDetailBinding
 import com.orm.ui.mountain.MountainDetailActivity
+import com.orm.ui.board.BoardActivity
+import com.orm.ui.board.BoardEditActivity
 import com.orm.viewmodel.ClubViewModel
 import com.orm.viewmodel.MountainViewModel
 import com.orm.viewmodel.UserViewModel
@@ -115,7 +117,9 @@ class ClubDetailActivity : AppCompatActivity() {
         binding.btnSign.setOnClickListener {
             if (club?.isMember == true) {
                 // TODO : 채팅 서비스
-//                startActivity(Intent(this, ChatActivity::class.java))
+                val intent = Intent(this, BoardActivity::class.java)
+                intent.putExtra("club", club)
+                startActivity(intent)
             } else {
                 val input = EditText(this).apply {
                     hint = "자기소개를 입력해주세요."

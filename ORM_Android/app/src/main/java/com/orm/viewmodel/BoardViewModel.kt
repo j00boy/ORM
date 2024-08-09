@@ -1,0 +1,233 @@
+package com.orm.viewmodel
+
+import android.content.Context
+import android.database.Cursor
+import android.net.Uri
+import android.provider.MediaStore
+import android.util.Log
+import android.webkit.WebView
+import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.orm.R
+import com.orm.data.model.board.Board
+import com.orm.data.model.board.BoardCreate
+import com.orm.data.model.board.BoardList
+import com.orm.data.model.board.Comment
+import com.orm.data.model.board.CreateComment
+import com.orm.data.model.club.Club
+import com.orm.data.repository.BoardRepository
+import com.orm.util.resizeImage
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
+import java.util.regex.Pattern
+import javax.inject.Inject
+
+@HiltViewModel
+class BoardViewModel @Inject constructor(
+    private val boardRepository: BoardRepository,
+    @ApplicationContext private val context: Context
+) : ViewModel() {
+
+    private val _boardList = MutableLiveData<List<BoardList>>()
+    val boardList: LiveData<List<BoardList>> get() = _boardList
+
+    private val _board = MutableLiveData<Board?>()
+    val board: LiveData<Board?> get() = _board
+
+    private val _isOperationSuccessful = MutableLiveData<Boolean?>()
+    val isOperationSuccessful: LiveData<Boolean?> get() = _isOperationSuccessful
+
+    private val _comment = MutableLiveData<Comment?>()
+    val comment: LiveData<Comment?> get() = _comment
+
+
+    private val imageFileParts = mutableListOf<MultipartBody.Part>()
+    private val imgSrc = mutableListOf<String>()
+
+    fun getBoardList(clubId: Int) {
+        viewModelScope.launch {
+            _boardList.postValue(emptyList())
+            val boardList = boardRepository.getBoardList(clubId)
+            Log.d("getboards", "response1 : $boardList")
+            _boardList.postValue(boardList)
+        }
+    }
+
+    fun getBoards(boardId: Int) {
+        viewModelScope.launch {
+            val board = boardRepository.getBoards(boardId)
+            Log.d("getboards", "response1 : $board")
+            _board.postValue(board)
+        }
+    }
+
+    fun createBoards(clubId: Int, title: String, content: String) {
+        viewModelScope.launch {
+            try {
+                matchContent(content)
+                val boardCreate = BoardCreate(clubId, title, content, imgSrc)
+                val createBoardRequestBody = createBoardRequestBody(boardCreate)
+                val success = boardRepository.createBoards(createBoardRequestBody, imageFileParts)
+                _isOperationSuccessful.postValue(success)
+                Log.d("BoardViewModel1", "success : $success")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _isOperationSuccessful.postValue(false)
+            }
+        }
+    }
+
+    fun updateBoards(clubId: Int, title: String, content: String, boardId: Int) {
+        viewModelScope.launch {
+            try {
+                matchContent(content)
+                val boardCreate = BoardCreate(clubId, title, content, imgSrc)
+                val createBoardRequestBody = createBoardRequestBody(boardCreate)
+                val success =
+                    boardRepository.updateBoards(boardId, createBoardRequestBody, imageFileParts)
+                _isOperationSuccessful.postValue(success)
+                Log.d("BoardViewModel1", "success : $success")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _isOperationSuccessful.postValue(false)
+            }
+        }
+    }
+
+    fun deleteBoards(boardId: Int) {
+        viewModelScope.launch {
+            try {
+                val success = boardRepository.deleteBoards(boardId)
+                _isOperationSuccessful.postValue(success)
+                Log.d("BoardViewModel1", "success : $success")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _isOperationSuccessful.postValue(false)
+            }
+        }
+    }
+
+    fun createComments(boardId: Int, content: String) {
+        viewModelScope.launch {
+            try {
+                val createComment = CreateComment(content)
+                val newComment = boardRepository.createComments(boardId, createComment)
+                _comment.postValue(newComment)
+                _isOperationSuccessful.postValue(newComment != null)
+                Log.d("BoardViewModel1", "New comment created: $newComment")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _isOperationSuccessful.postValue(false)
+            }
+        }
+    }
+
+    fun updateComments(boardId: Int, commentId: Int, content: String) {
+        viewModelScope.launch {
+            try {
+                val createComment = CreateComment(content)
+                val updatedComment =
+                    boardRepository.updateComments(boardId, commentId, createComment)
+                _comment.postValue(updatedComment)
+                _isOperationSuccessful.postValue(updatedComment != null)
+                Log.d("BoardViewModel1", "Comment updated: $updatedComment")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _isOperationSuccessful.postValue(false)
+            }
+        }
+    }
+
+    fun deleteComments(boardId: Int, commentId: Int) {
+        viewModelScope.launch {
+            try {
+                Log.d("BoardViewModel1", "deleteComments :")
+                val success = boardRepository.deleteComments(boardId, commentId)
+                _isOperationSuccessful.postValue(success)
+                Log.d("BoardViewModel1", "success : $success")
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _isOperationSuccessful.postValue(false)
+            }
+        }
+    }
+
+
+    private fun createBoardRequestBody(clubCreate: BoardCreate): RequestBody {
+        val gson = Gson()
+        val clubJson = gson.toJson(clubCreate)
+        return clubJson.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+    }
+
+    private fun matchContent(content: String) {
+        val pattern = Pattern.compile("<img src=\"(.*?)\"")
+        val matcher = pattern.matcher(content)
+
+        Log.d("vm", "detail22 vm : $content")
+        while (matcher.find()) {
+            val contentUrl = matcher.group(1) // content:// 경로
+            if (contentUrl != null) {
+                if (contentUrl.startsWith("https://")) {
+                    imgSrc.add(contentUrl)
+                } else if (contentUrl.startsWith("content://")) {
+//                    Log.d("vm", "detail22 vm : $contentUrl")
+                    handleImageSelection(Uri.parse(contentUrl))
+                }
+            }
+        }
+    }
+
+    private fun handleImageSelection(uri: Uri) {
+        val filePath = getRealPathFromURI(uri)
+        if (filePath != null) {
+            val file = File(filePath)
+            addImageToUploadList(file)
+        } else {
+//            Toast.makeText(this, "이미지 경로를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+//    private fun handleImageSelection(uri: Uri) {
+//        resizeImage(context, uri) { resizedFile ->
+//            if (resizedFile != null) {
+//                addImageToUploadList(resizedFile)
+//            } else {
+//                Log.e("handleImageSelection", "Image resizing failed.")
+//                // Optionally, show an error message to the user
+//            }
+//        }
+//    }
+
+    private fun getRealPathFromURI(uri: Uri): String? {
+        var path: String? = null
+        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor: Cursor? = context.contentResolver.query(uri, projection, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val columnIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                path = it.getString(columnIndex)
+            }
+        }
+        return path
+    }
+
+    private fun addImageToUploadList(file: File) {
+        val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("imgFile", file.name, requestFile)
+        imageFileParts.add(body)
+
+        Log.d("BoardEditActivity", "Added image file part: ${file.name}")
+    }
+
+}
