@@ -32,8 +32,6 @@
                 android:id="@+id/tv_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
                 android:text="게시판 댓글입니다."
                 android:textColor="@color/md_theme_onSurface"
                 android:textSize="18sp"
@@ -49,8 +47,6 @@
                     android:id="@+id/tv_userNickname"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
                     android:text="작성자"
                     android:textColor="@color/md_theme_onSurfaceVariant"
                     android:textSize="14sp" />
@@ -68,8 +64,6 @@
                     android:id="@+id/tv_createdAt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
                     android:text="작성시간"
                     android:textColor="@color/md_theme_onSurfaceVariant"
                     android:textSize="14sp" />
@@ -87,8 +81,6 @@
                     android:id="@+id/tv_edit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
                     android:text="수정"
                     android:textColor="@color/md_theme_onSurfaceVariant"
                     android:textSize="14sp" />
@@ -106,8 +98,6 @@
                     android:id="@+id/tv_delete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
                     android:text="삭제"
                     android:textColor="@color/md_theme_onSurfaceVariant"
                     android:textSize="14sp" />

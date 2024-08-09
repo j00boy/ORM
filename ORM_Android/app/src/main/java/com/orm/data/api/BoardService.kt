@@ -2,6 +2,7 @@ package com.orm.data.api
 
 import com.orm.data.model.board.Board
 import com.orm.data.model.board.BoardList
+import com.orm.data.model.board.Comment
 import com.orm.data.model.board.CreateComment
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -52,14 +53,14 @@ interface BoardService {
     fun createComments(
         @Path("boardId") boardId : Int,
         @Body content : CreateComment,
-    ): Call<Unit>
+    ): Call<Comment>
 
     @PATCH("clubs/boards/{boardId}/comments/update/{commentId}")
     fun updateComments(
         @Path("boardId") boardId : Int,
         @Path("commentId") commentId : Int,
         @Body content : CreateComment
-    ): Call<Unit>
+    ): Call<Comment>
 
     @DELETE("clubs/boards/{boardId}/comments/delete")
     fun deleteComments(

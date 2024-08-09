@@ -3,12 +3,12 @@ package com.orm.ui.fragment.board
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -19,6 +19,7 @@ import com.orm.data.model.recycler.RecyclerViewCommentItem
 import com.orm.databinding.FragmentCommentAllBinding
 import com.orm.ui.adapter.ProfileCommentAdapter
 import com.orm.viewmodel.BoardViewModel
+import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,8 +28,8 @@ class CommentAllFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val boardViewModel: BoardViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels()
 
-//    private val rvBoard: RecyclerView by lazy { binding.recyclerView }
     private lateinit var adapter: ProfileCommentAdapter
 
     private val boardId: Int? by lazy {
@@ -43,8 +44,12 @@ class CommentAllFragment : Fragment() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             arguments?.getParcelable("board", Board::class.java)
         } else {
-            arguments?.getParcelable<Board>("Board")
+            arguments?.getParcelable<Board>("board")
         }
+    }
+
+    private val userId: String? by lazy {
+        arguments?.getString("userId")
     }
 
     override fun onCreateView(
@@ -56,7 +61,29 @@ class CommentAllFragment : Fragment() {
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        board?.let { setupAdapter(it.comments) }
+        board?.let {
+            setupAdapter(it.comments, userId)
+        }
+
+        boardViewModel.comment.observe(viewLifecycleOwner) { updatedComment ->
+            updatedComment?.let {
+                val updatedList = adapter.getItems().toMutableList() // 변경된 부분
+                val index = updatedList.indexOfFirst { it.commentId == updatedComment.commentId }
+                if (index != -1) {
+                    updatedList[index] = Comment.toRecyclerViewCommentItem(updatedComment)
+                    adapter.submitList(updatedList)
+                }
+            }
+        }
+
+        // 삭제나 수정이 성공했는지 확인하여 UI 갱신
+        boardViewModel.isOperationSuccessful.observe(viewLifecycleOwner) { success ->
+            Log.d("success123" , "success123 : $success")
+            if (success == true) {
+                boardId?.let { boardViewModel.getBoards(it) }
+            }
+        }
+
         return root
     }
 
@@ -64,21 +91,23 @@ class CommentAllFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-    private fun setupAdapter(comments: List<Comment>) {
+
+    private fun setupAdapter(comments: List<Comment>, currentUserId: String?) {
         adapter = ProfileCommentAdapter(comments.map { Comment.toRecyclerViewCommentItem(it) },
             onEditClick = { comment ->
-                showEditBottomSheet(comment)
+                if (comment.userId.toString() == currentUserId) {
+                    showEditBottomSheet(comment)
+                }
             },
             onDeleteClick = { comment ->
-                boardId?.let { boardViewModel.deleteComments(it, comment.commentId) }
-                Log.d("CommentAllFragment", "Delete clicked for comment: ${comment.commentId}")
-
+                if (comment.userId.toString() == currentUserId) {
+                    boardId?.let { boardViewModel.deleteComments(it, comment.commentId) }
+                    Log.d("CommentAllFragment", "Delete clicked for comment: ${comment.commentId}")
+                }
             }
         )
 
         binding.recyclerView.adapter = adapter
-//        rvBoard.adapter = adapter
-//        rvBoard.layoutManager = LinearLayoutManager(requireContext())
     }
 
     private fun showEditBottomSheet(comment: RecyclerViewCommentItem) {

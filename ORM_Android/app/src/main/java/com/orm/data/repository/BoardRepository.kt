@@ -4,6 +4,7 @@ import android.util.Log
 import com.orm.data.api.BoardService
 import com.orm.data.model.board.Board
 import com.orm.data.model.board.BoardList
+import com.orm.data.model.board.Comment
 import com.orm.data.model.board.CreateComment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -89,28 +90,36 @@ class BoardRepository @Inject constructor(
         }
     }
 
-    suspend fun createComments(boardId: Int, content: CreateComment): Boolean{
-        return withContext(Dispatchers.IO){
-            try{
+    suspend fun createComments(boardId: Int, content: CreateComment): Comment? {
+        return withContext(Dispatchers.IO) {
+            try {
                 val response = boardService.createComments(boardId, content).execute()
-                Log.d("BoardRepository", " BoardViewModel1 : createComments $response ")
-                response.isSuccessful
-            }catch (e: Exception) {
-                Log.e("BoardRepository", "Error deleteBoards", e)
-                false
+                Log.d("BoardRepository", "BoardViewModel1 : createComments $response")
+                if (response.isSuccessful) {
+                    response.body()
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("BoardRepository", "Error creating comment", e)
+                null
             }
         }
     }
 
-    suspend fun updateComments(boardId: Int,commentId: Int, content: CreateComment): Boolean{
+    suspend fun updateComments(boardId: Int,commentId: Int, content: CreateComment): Comment? {
         return  withContext(Dispatchers.IO){
-            try{
+            try {
                 val response = boardService.updateComments(boardId, commentId, content).execute()
-                Log.d("BoardRepository", " BoardViewModel1 : updateComments $response ")
-                response.isSuccessful
-            }catch (e: Exception) {
-                Log.e("BoardRepository", "Error updateComments", e)
-                false
+                Log.d("BoardRepository", "BoardViewModel1 : createComments $response")
+                if (response.isSuccessful) {
+                    response.body()
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("BoardRepository", "Error creating comment", e)
+                null
             }
         }
     }

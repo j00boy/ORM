@@ -1,6 +1,7 @@
 package com.orm.ui.fragment.board
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.orm.data.model.board.BoardList
+import com.orm.data.model.club.Club
 import com.orm.databinding.FragmentBoardAllBinding
 import com.orm.ui.adapter.ProfileBoardAdapter
 import com.orm.ui.board.BoardDetailActivity
@@ -27,6 +29,14 @@ class BoardAllFragment : Fragment() {
     private val rvBoard: RecyclerView by lazy { binding.recyclerView }
     private lateinit var adapter: ProfileBoardAdapter
 
+    private val club: Club? by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable("club", Club::class.java)
+        } else {
+            arguments?.getParcelable<Club>("club")
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -34,7 +44,9 @@ class BoardAllFragment : Fragment() {
         _binding = FragmentBoardAllBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val clubId = arguments?.getInt("clubId", -1) ?: -1
+        val clubId = club?.id ?: -1
+
+        // Fetch board list using clubId
         boardViewModel.getBoardList(clubId)
         boardViewModel.boardList.observe(viewLifecycleOwner) { boardList ->
             Log.e("BoardAllFragment", boardList.toString())
@@ -62,8 +74,8 @@ class BoardAllFragment : Fragment() {
                     requireContext(),
                     BoardDetailActivity::class.java
                 ).apply {
-                    putExtra("boardId", reversedList[position].boardId)
-                    putExtra("clubId", clubId)
+                    putExtra("boardList", reversedList[position])
+                    putExtra("club", club)
                 }
                 Log.e("boardAllFragment", "board: ${reversedList[position]}")
                 startActivity(intent)
@@ -75,7 +87,7 @@ class BoardAllFragment : Fragment() {
     }
 
     fun refreshData() {
-        val clubId = arguments?.getInt("clubId", -1) ?: return
+        val clubId = club?.id ?: -1
         Log.d("update123", "update123 : $clubId")
         boardViewModel.getBoardList(clubId)
     }

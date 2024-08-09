@@ -1,59 +1,84 @@
 package com.orm.ui.board
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.util.Log
+import android.view.View
 import android.webkit.WebView
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.orm.R
 import com.orm.data.model.board.Board
-import com.orm.data.model.board.CreateComment
+import com.orm.data.model.board.BoardList
+import com.orm.data.model.club.Club
 import com.orm.databinding.ActivityBoardDetailBinding
-import com.orm.ui.club.ClubEditActivity
-import com.orm.ui.club.ClubMemberActivity
 import com.orm.ui.fragment.board.CommentAllFragment
 import com.orm.viewmodel.BoardViewModel
+import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import jp.wasabeef.richeditor.RichEditor
 import java.util.regex.Pattern
 
 @AndroidEntryPoint
 class BoardDetailActivity : AppCompatActivity() {
     private val binding by lazy { ActivityBoardDetailBinding.inflate(layoutInflater) }
     private val boardViewModel: BoardViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels() // Added UserViewModel
+
     private var currentBoard: Board? = null
     private var processedContent: String = ""
+
+    private val club: Club? by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("club", Club::class.java)
+        } else {
+            intent.getParcelableExtra<Club>("club")
+        }
+    }
+
+    private val boardList: BoardList? by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("boardList", BoardList::class.java)
+        } else {
+            intent.getParcelableExtra<BoardList>("boardList")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        val boardId = intent.getIntExtra("boardId", -1)
-        val clubId = intent.getIntExtra("clubId", -1)
-        boardViewModel.getBoards(boardId)
+        val boardId = boardList?.boardId ?: -1
+        val clubId = club?.id ?: -1
 
-        boardViewModel.board.observe(this, Observer { board ->
-            if (board != null) {
-                currentBoard = board
-                binding.board = board
-                displayContent(board.content, board)
+        // Observe user info
+        userViewModel.user.observe(this, Observer { user ->
+            val userId = user?.userId
+            checkPermissions(userId)
 
+            // Fetch board details
+            boardViewModel.getBoards(boardId)
 
-                val commentFragment = CommentAllFragment().apply {
-                    arguments = Bundle().apply {
-                        putParcelable("board", board)
-                        putInt("boardId", boardId)
-                        putInt("clubId", clubId)
+            boardViewModel.board.observe(this, Observer { board ->
+                if (board != null) {
+                    currentBoard = board
+                    binding.board = board
+                    displayContent(board.content, board)
+
+                    val commentFragment = CommentAllFragment().apply {
+                        arguments = Bundle().apply {
+                            putParcelable("board", board)
+                            putInt("boardId", boardId)
+                            putInt("clubId", clubId)
+                            userId?.let { putString("userId", it) } // Pass userId as a string
+                        }
                     }
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.info, commentFragment)
+                        .commit()
                 }
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.info, commentFragment)
-                    .commit()
-            }
+            })
         })
 
         binding.topAppBar.setNavigationOnClickListener {
@@ -81,8 +106,8 @@ class BoardDetailActivity : AppCompatActivity() {
                 currentBoard?.let { board ->
                     boardViewModel.createComments(board.boardId, binding.tfComment.text.toString())
                     val intent = Intent(this, BoardDetailActivity::class.java)
-                    intent.putExtra("clubId", clubId)
-                    intent.putExtra("boardId", board.boardId)
+                    intent.putExtra("club", club)
+                    intent.putExtra("boardList", boardList)
                     startActivity(intent)
                     finish()
                 }
@@ -112,5 +137,18 @@ class BoardDetailActivity : AppCompatActivity() {
         Log.d("detail", "detail22 :result $result")
         processedContent = result
         webView.loadData(result, "text/html", "UTF-8")
+    }
+
+    private fun checkPermissions(userId: String?) {
+        val boardUserId = boardList?.userId
+        val clubManagerId = club?.managerId
+
+        if (userId == boardUserId.toString() || userId == clubManagerId) {
+            binding.btnDelete.visibility = View.VISIBLE
+            binding.btnEdit.visibility = View.VISIBLE
+        } else {
+            binding.btnDelete.visibility = View.GONE
+            binding.btnEdit.visibility = View.GONE
+        }
     }
 }

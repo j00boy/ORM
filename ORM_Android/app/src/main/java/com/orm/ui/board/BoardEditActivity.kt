@@ -123,13 +123,8 @@ class BoardEditActivity : AppCompatActivity() {
     private fun insertImageToEditor(imageUri: Uri) {
         val imageUrl = imageUri.toString()
 
-        // 이미지 크기를 조정하는 HTML 태그를 생성합니다.
         val imageHtml = "<img src=\"$imageUrl\" style=\"max-width:80%; height:auto;\" />"
-
-        // 에디터의 현재 HTML 내용을 확인하고, null인 경우 빈 문자열로 처리합니다.
         val currentHtml = editor.html ?: ""
-
-        // 이미지를 에디터에 삽입합니다.
         editor.html = currentHtml + imageHtml
     }
 

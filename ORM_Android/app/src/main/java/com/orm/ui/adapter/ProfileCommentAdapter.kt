@@ -9,31 +9,30 @@ import com.orm.R
 import com.orm.data.model.recycler.RecyclerViewCommentItem
 
 class ProfileCommentAdapter(
-    private val items: List<RecyclerViewCommentItem>,
+    private var items: List<RecyclerViewCommentItem>,
     private val onEditClick: (RecyclerViewCommentItem) -> Unit,
     private val onDeleteClick: (RecyclerViewCommentItem) -> Unit
-) :RecyclerView.Adapter<ProfileCommentAdapter.ProfileCommentViewHolder>() {
-    private lateinit var itemClickListener: OnItemClickListener
+) : RecyclerView.Adapter<ProfileCommentAdapter.ProfileCommentViewHolder>() {
 
     inner class ProfileCommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvContent = itemView.findViewById<TextView>(R.id.tv_content)
-        val tvUserNickname = itemView.findViewById<TextView>(R.id.tv_userNickname)
-        val tvCreatdAt = itemView.findViewById<TextView>(R.id.tv_createdAt)
+        val tvContent: TextView = itemView.findViewById(R.id.tv_content)
+        val tvUserNickname: TextView = itemView.findViewById(R.id.tv_userNickname)
+        val tvCreatedAt: TextView = itemView.findViewById(R.id.tv_createdAt)
         val tvEdit: TextView = itemView.findViewById(R.id.tv_edit)
         val tvDelete: TextView = itemView.findViewById(R.id.tv_delete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileCommentViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.profile_comment, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.profile_comment, parent, false)
         return ProfileCommentViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ProfileCommentViewHolder, position: Int) {
         val item = items[position]
-        holder.tvContent.text = items[position].content
-        holder.tvUserNickname.text = items[position].userNickname
-        holder.tvCreatdAt.text = items[position].createdAt
+        holder.tvContent.text = item.content
+        holder.tvUserNickname.text = item.userNickname
+        holder.tvCreatedAt.text = item.createdAt
+
         holder.tvEdit.setOnClickListener {
             onEditClick(item)
         }
@@ -41,18 +40,18 @@ class ProfileCommentAdapter(
         holder.tvDelete.setOnClickListener {
             onDeleteClick(item)
         }
-
     }
 
     override fun getItemCount(): Int {
-        return items.count()
+        return items.size
     }
 
-    interface OnItemClickListener {
-        fun onClick(v: View, position: Int)
+    fun submitList(updatedItems: List<RecyclerViewCommentItem>) {
+        items = updatedItems
+        notifyDataSetChanged()
     }
 
-    fun setItemClickListener(onItemClickListener: OnItemClickListener) {
-        this.itemClickListener = onItemClickListener
+    fun getItems(): List<RecyclerViewCommentItem> {
+        return items
     }
 }
