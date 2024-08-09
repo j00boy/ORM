@@ -12,6 +12,9 @@ import orm.orm_backend.exception.CustomException;
 import orm.orm_backend.exception.ErrorCode;
 import orm.orm_backend.repository.CommentRepository;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class CommentService {
@@ -21,6 +24,7 @@ public class CommentService {
     private final MemberService memberService;
     private final BoardService boardService;
     private final UserService userService;
+    private final FirebasePushAlertService firebasePushAlertService;
 
     /**
      * boardId에 해당하는 게시판에 userId를 가진 사용자가 댓글을 생성합니다.
@@ -42,7 +46,18 @@ public class CommentService {
         User user = userService.findUserById(userId);
 
         Comment comment = commentRequestDto.toEntity(board, user, commentRequestDto);
-        commentRepository.save(comment);
+        commentRepository.saveAndFlush(comment);
+
+        // 게시판에 댓글을 단 사람들의 Firebase 토큰을 조회
+        Set<String> tokensRelatedWithBoard = board.getComments().stream().map(com -> com.getUser().getFirebaseToken()).collect(Collectors.toSet());
+
+        // 게시판 작성자의 Firebase 토큰을 추가
+        tokensRelatedWithBoard.add(comment.getBoard().getUser().getFirebaseToken());
+
+        // 방금 작성자는 알림 제외
+        tokensRelatedWithBoard.remove(comment.getUser().getFirebaseToken());
+
+        firebasePushAlertService.pushNewCommentAlert(tokensRelatedWithBoard, comment);
 
         return new CommentResponseDto(comment);
     }

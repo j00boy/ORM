@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 import orm.orm_backend.dto.fcmalert.*;
 import orm.orm_backend.entity.Board;
 import orm.orm_backend.entity.Club;
+import orm.orm_backend.entity.Comment;
 import orm.orm_backend.entity.User;
 import orm.orm_backend.util.FirebaseUtil;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +84,23 @@ public class FirebasePushAlertService {
 
         for(String clubUserToken : clubUserTokens) {
             firebaseUtil.pushAlert(data, clubUserToken, notification);
+        }
+    }
+
+    public void pushNewCommentAlert(Set<String> boardRelatedUsers, Comment comment) {
+        FcmAlertData data = FcmCommentDto.builder()
+                .commentId(String.valueOf(comment.getId()))
+                .boardId(String.valueOf(comment.getBoard().getId()))
+                .title(comment.getBoard().getTitle())
+                .userId(String.valueOf(comment.getUser().getId()))
+                .userName(comment.getUser().getNickname())
+                .build();
+        FcmNotification notification = FcmNotification.builder()
+                .body(data.getMessage())
+                .build();
+
+        for(String relatedUserToken : boardRelatedUsers) {
+            firebaseUtil.pushAlert(data, relatedUserToken, notification);
         }
     }
 }
