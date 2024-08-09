@@ -103,7 +103,7 @@ public class ImageUtil {
             sftpChannel.disconnect();
             session.disconnect();
         } catch (JSchException | SftpException e) {
-            throw new IllegalArgumentException(fileName + "의 이름으로 된 파일이 존재하지 않습니다.");
+            log.info("{}의 이름으로 된 파일이 존재하지 않습니다.", fileName);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
