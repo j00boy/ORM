@@ -150,7 +150,7 @@ public class ClubService {
 
     // 중복 체크
     public Boolean isDuplicated(String clubName) {
-        return clubRepository.existsByClubName(clubName);
+        return clubName.isBlank() || clubRepository.existsByClubName(clubName);
     }
 
     // 가입 신청
