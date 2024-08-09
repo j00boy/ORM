@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import orm.orm_backend.dto.response.MountainResponseDto;
 import orm.orm_backend.dto.response.MountainDto;
+import orm.orm_backend.dto.response.MountainSimpleResponseDto;
 import orm.orm_backend.dto.response.TrailResponseDto;
 import orm.orm_backend.service.MountainService;
 import orm.orm_backend.service.RedisService;
@@ -27,6 +28,20 @@ public class MountainController {
     private final MountainService mountainService;
     private final TrailService trailService;
     private final RedisService redisService;
+
+    @GetMapping("/all")
+    public ResponseEntity<List<MountainSimpleResponseDto>> getAllMountains() {
+        String cacheKey = REDIS_PREFIX + "all";
+
+        List<MountainSimpleResponseDto> mountainDtos = redisService.getList(cacheKey);
+        if (mountainDtos == null) {
+            mountainDtos = mountainService.getAllMountains();
+
+            redisService.addAllList(cacheKey, mountainDtos);
+        }
+        return ResponseEntity.ok().body(mountainDtos);
+
+    }
 
     @GetMapping("/top")
     public ResponseEntity<List<MountainDto>> get100Mountains() {

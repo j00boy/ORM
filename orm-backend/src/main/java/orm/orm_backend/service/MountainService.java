@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import orm.orm_backend.configuration.Mountain100Config;
 import orm.orm_backend.dto.response.MountainDto;
 import orm.orm_backend.dto.response.MountainResponseDto;
+import orm.orm_backend.dto.response.MountainSimpleResponseDto;
 import orm.orm_backend.dto.response.TrailResponseDto;
 import orm.orm_backend.entity.Mountain;
 import orm.orm_backend.exception.CustomException;
@@ -66,4 +67,8 @@ public class MountainService {
         return mountains.stream().map(MountainDto::new).toList();
     }
 
+    public List<MountainSimpleResponseDto> getAllMountains() {
+        List<Mountain> all = mountainRepository.findAll();
+        return all.stream().map(MountainSimpleResponseDto::new).toList();
+    }
 }

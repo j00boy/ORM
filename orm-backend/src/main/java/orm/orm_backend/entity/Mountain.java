@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+import static jakarta.persistence.FetchType.*;
+
 
 @Entity
 @Getter
@@ -26,7 +28,7 @@ public class Mountain {
     private Float altitude;
     private String description;
 
-    @OneToMany(mappedBy = "mountain", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "mountain", fetch = LAZY)
     private List<Trail> trails;
 
     @Builder
