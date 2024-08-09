@@ -14,7 +14,10 @@ interface MountainService {
 
     // 산 ID로 불러오기
     @GET("mountains/{mountainID}")
-    fun getMountainById(@Path("mountainID") mountainID: Int): Call<Mountain>
+    fun getMountainById(
+        @Path("mountainID") mountainID: Int,
+        @Query("trailContaining") trailContaining: Boolean
+    ): Call<Mountain>
 
     // 산 이름으로 검색
     @GET("mountains/search")
