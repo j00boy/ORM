@@ -67,7 +67,7 @@ public class MountainServiceTest {
         when(mountainRepository.findById(id)).thenReturn(Optional.ofNullable(mountain1));
 
         // when
-        MountainResponseDto mountainDto = mountainService.getMountainDtoById(id);
+        MountainResponseDto mountainDto = mountainService.getMountainDtoById(id, true);
 
         assertThat(mountainDto.getName()).isEqualTo(mountain1.getMountainName());
         assertThat(mountainDto.getCode()).isNotEqualTo(mountain2.getMountainCode());

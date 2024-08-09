@@ -111,7 +111,7 @@ public class MountainControllerTest {
     void getMountainById() throws Exception {
         Integer id = 1;
         String api = "/" + id;
-        given(mountainService.getMountainDtoById(id)).willReturn(mountain1);
+        given(mountainService.getMountainDtoById(id, true)).willReturn(mountain1);
 
         mockMvc.perform(get(url + api))
                 .andExpect(status().isOk())
