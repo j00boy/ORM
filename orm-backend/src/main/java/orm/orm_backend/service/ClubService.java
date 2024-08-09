@@ -71,10 +71,10 @@ public class ClubService {
 
         if (imgFile != null) {
             imageSrc = imageUtil.saveImage(imgFile, IMAGE_PATH);
-        }
-
-        if (club.getImageSrc() != null) {
-            imageUtil.deleteImage(club.getImageSrc());
+            // 새로운 사진 파일이 왔으니 기존에 이미지가 있다면 삭제한다.
+            if (club.getImageSrc() != null) {
+                imageUtil.deleteImage(club.getImageSrc());
+            }
         }
 
         Mountain mountain = mountainService.getMountainById(clubRequestDto.getMountainId());
