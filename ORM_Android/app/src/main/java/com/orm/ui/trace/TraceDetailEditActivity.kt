@@ -49,7 +49,6 @@ class TraceDetailEditActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(binding.fcvMap.id, BasicGoogleMapFragment())
                 .commit()
         }
 
@@ -148,18 +147,6 @@ class TraceDetailEditActivity : AppCompatActivity() {
                 .show()
         }
 
-        trace?.trailId?.let {
-            if (it == -1) {
-                binding.cvMap.visibility = View.GONE
-            } else {
-                trailViewModel.getTrail(it)
-                trailViewModel.trail.observe(this@TraceDetailEditActivity) {
-                    val fragment =
-                        supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
-                    fragment?.updatePoints(it.trailDetails)
-                }
-            }
-        }
         var photoSelection: Int = 0
         binding.cvImageUpload.setOnClickListener {
             if (binding.image == null) {

@@ -104,6 +104,7 @@ class TraceDetailActivity : AppCompatActivity() {
             } else {
                 binding.cvMapTrack.visibility = View.GONE
                 binding.cvGraph.visibility = View.GONE
+                binding.cvImageUpload.visibility = View.GONE
             }
         }
 

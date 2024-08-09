@@ -62,8 +62,8 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         }
     }
 
-    private var mountainId: Int = 0
-    private var mountainName: String = ""
+    private var mountainId: Int = -1
+    private var mountainName: String = "선택된 산 없음"
     private var trails: List<Trail> = emptyList()
 
     private val traceViewModel: TraceViewModel by viewModels()
@@ -81,12 +81,14 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         }
 
         if (trace != null) {
-            trailViewModel.getTrail(trace!!.trailId!!)
+            if(trace!!.trailId != null) {
+                trailViewModel.getTrail(trace!!.trailId!!)
+            }
             trailViewModel.trail.observe(this@TraceEditActivity) {
                 updateMapFragment(it.trailDetails)
             }
             mountainId = trace!!.mountainId
-            mountainName = trace!!.mountainName ?: ""
+            mountainName = if(mountainId == -1) "" else trace!!.mountainName!!
             binding.mountainName = mountainName
         }
 
@@ -150,7 +152,8 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                         null
                     }
 
-                    if (selectedTrail == null && trace!!.trailId != null) {
+                    if (selectedTrail == null && trace?.trailId != null) {
+
                         trailViewModel.getTrail(trace!!.trailId!!)
                         trailViewModel.trail.observe(this@TraceEditActivity) {
                             selectedTrail = it
@@ -169,7 +172,9 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                     )
 
                     traceViewModel.createTrace(traceCreate)
-                    trailViewModel.createTrail(selectedTrail!!)
+                    if(selectedTrail != null) {
+                        trailViewModel.createTrail(selectedTrail!!)
+                    }
 
                     dialog.dismiss()
 

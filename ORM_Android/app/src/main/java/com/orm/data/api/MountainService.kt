@@ -26,4 +26,7 @@ interface MountainService {
     // 100대 명산 불러오기
     @GET("mountains/top")
     fun getMountainsTop(): Call<List<Mountain>>
+
+    @GET("mountains/all")
+    fun getMountainsAll(): Call<List<Mountain>>
 }

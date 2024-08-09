@@ -74,4 +74,20 @@ class MountainRepository @Inject constructor(
             }
         }
     }
+
+    suspend fun getMountainsAll(): List<Mountain>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = mountainService.getMountainsAll().execute()
+                if (response.isSuccessful) {
+                    response.body() ?: emptyList()
+                } else {
+                    emptyList()
+                }
+            } catch (e: Exception) {
+                Log.e("MountainRepository", "Error getting all mountains", e)
+                emptyList()
+            }
+        }
+    }
 }
