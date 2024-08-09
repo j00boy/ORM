@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,7 +25,7 @@ public class Mountain {
     private Float altitude;
     private String description;
 
-    @OneToMany(mappedBy = "mountain", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "mountain", fetch = FetchType.LAZY)
     private List<Trail> trails;
 
     @Builder
