@@ -49,13 +49,12 @@ public class CommentService {
         commentRepository.saveAndFlush(comment);
 
         // 게시판에 댓글을 단 사람들의 Firebase 토큰을 조회
-        Set<String> tokensRelatedWithBoard = board.getComments().stream().map(com -> com.getUser().getFirebaseToken()).collect(Collectors.toSet());
+        Set<String> tokensRelatedWithBoard = board.getComments().stream().map(com -> com.getUser().getFirebaseToken())
+                .filter(firebaseToken -> firebaseToken != null && !firebaseToken.isBlank() && !firebaseToken.equals(user.getFirebaseToken()))
+                .collect(Collectors.toSet());
 
         // 게시판 작성자의 Firebase 토큰을 추가
         tokensRelatedWithBoard.add(comment.getBoard().getUser().getFirebaseToken());
-
-        // 방금 작성자는 알림 제외
-        tokensRelatedWithBoard.remove(comment.getUser().getFirebaseToken());
 
         firebasePushAlertService.pushNewCommentAlert(tokensRelatedWithBoard, comment);
 

@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import orm.orm_backend.dto.common.BoardImageDto;
@@ -82,10 +83,10 @@ public class BoardService {
         }
 
         // 클럽 멤버의 FirebaseToken 확인
-        List<String> clubMembertokens = club.getMembers().stream().map(member -> member.getUser().getFirebaseToken()).toList();
+        List<String> clubMembertokens = club.getMembers().stream().map(member -> member.getUser().getFirebaseToken())
+                .filter(firebaseToken -> firebaseToken != null && !firebaseToken.isBlank() && !firebaseToken.equals(user.getFirebaseToken()))
+                .toList();
 
-        // 작성자꺼만 지우기
-        clubMembertokens.remove(user.getFirebaseToken());
 
         // 푸쉬알람
         firebasePushAlertService.pushNewBoardAlert(clubMembertokens, board);
