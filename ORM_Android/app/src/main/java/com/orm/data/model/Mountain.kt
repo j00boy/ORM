@@ -12,7 +12,7 @@ data class Mountain(
     @PrimaryKey val id: Int,
     val name: String,
     val code: Int,
-    val address: String,
+    val address: String?,
     val imageSrc: String?,
     val desc: String?,
     val height: Double,
@@ -26,7 +26,7 @@ data class Mountain(
                 id = mountain.id,
                 imageSrc = mountain.imageSrc ?: "",
                 title = mountain.name,
-                subTitle = mountain.address
+                subTitle = mountain.address ?: "",
             )
         }
     }

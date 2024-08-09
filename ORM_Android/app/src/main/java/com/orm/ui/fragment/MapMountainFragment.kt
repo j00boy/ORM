@@ -118,11 +118,14 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
         }
 
         clusterManager.setOnClusterItemInfoWindowClickListener { item ->
-            val mountain = mountainMap[item.getId()]
-            mountain?.let {
-                val intent = Intent(requireContext(), MountainDetailActivity::class.java)
-                intent.putExtra("mountain", it)
-                startActivity(intent)
+            mountainViewModel.fetchMountainById(item.getId(), false)
+            mountainViewModel.mountain.observe(viewLifecycleOwner) { mountain ->
+                mountain?.let {
+                    val intent = Intent(requireContext(), MountainDetailActivity::class.java)
+                    intent.putExtra("mountain", it)
+                    startActivity(intent)
+                    mountainViewModel.clearMountainData()
+                }
             }
         }
     }

@@ -77,4 +77,8 @@ class MountainViewModel @Inject constructor(
             }
         }
     }
+
+    fun clearMountainData() {
+        _mountain.value = null
+    }
 }

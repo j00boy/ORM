@@ -40,13 +40,7 @@ class MountainDetailActivity : AppCompatActivity() {
         ActivityMountainDetailBinding.inflate(layoutInflater)
     }
 
-    private val mountain: Mountain? by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("mountain", Mountain::class.java)
-        } else {
-            intent.getParcelableExtra<Mountain>("mountain")
-        }
-    }
+    private var mountain: Mountain? = null
 
     private val mountainViewModel: MountainViewModel by viewModels()
     private val clubViewModel: ClubViewModel by viewModels()
@@ -59,10 +53,15 @@ class MountainDetailActivity : AppCompatActivity() {
     @Inject
     lateinit var hikingTimePredictor: HikingTimePredictor
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        mountain = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("mountain", Mountain::class.java)
+        } else {
+            intent.getParcelableExtra<Mountain>("mountain")
+        }
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
