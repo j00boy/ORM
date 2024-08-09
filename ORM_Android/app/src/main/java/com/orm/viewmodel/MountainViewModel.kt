@@ -32,6 +32,9 @@ class MountainViewModel @Inject constructor(
     private val _trail = MutableLiveData<Trail?>()
     val trail: LiveData<Trail?> get() = _trail
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
+
     fun fetchMountainByName(name: String) {
         viewModelScope.launch {
             val mountains = mountainRepository.getMountainByName(name)
@@ -62,8 +65,10 @@ class MountainViewModel @Inject constructor(
 
     fun fetchMountainsAll() {
         viewModelScope.launch {
+            _isLoading.postValue(true)
             val mountains = mountainRepository.getMountainsAll()
             _mountains.postValue(mountains)
+            _isLoading.postValue(false)
         }
     }
 
