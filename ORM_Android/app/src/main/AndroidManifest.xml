@@ -47,6 +47,15 @@
             android:name=".ui.trace.TraceDetailActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.board.BoardEditActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.board.BoardDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.board.BoardActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.club.ClubMemberActivity"
             android:exported="false" />
         <activity

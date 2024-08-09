@@ -2,6 +2,7 @@ package com.orm.di
 
 import android.content.Context
 import com.orm.BuildConfig
+import com.orm.data.api.BoardService
 import com.orm.data.api.ClubService
 import com.orm.data.api.MountainService
 import com.orm.data.api.TraceService
@@ -106,6 +107,12 @@ object NetworkModule {
     @Singleton
     fun provideUserService(retrofit: Retrofit): UserService {
         return retrofit.create(UserService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBoardService(retrofit: Retrofit): BoardService {
+        return retrofit.create(BoardService::class.java)
     }
 
     @Provides

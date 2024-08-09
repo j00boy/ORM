@@ -127,4 +127,7 @@ dependencies {
 
     // worker
     implementation(libs.androidx.work.runtime.ktx)
+
+    //board
+    implementation(libs.richeditor.android)
 }

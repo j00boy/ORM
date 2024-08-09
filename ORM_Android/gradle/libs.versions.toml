@@ -19,6 +19,7 @@ mpandroidchart = "v3.1.0"
 okhttp = "4.9.1"
 playServicesLocationVersion = "21.0.1"
 playServicesMaps = "19.0.0"
+richeditorAndroid = "2.0.0"
 roomCompiler = "2.6.1"
 roomKtx = "2.6.1"
 navigationFragmentKtx = "2.7.7"
@@ -62,6 +63,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version = "2.11.0" }
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
+richeditor-android = { module = "jp.wasabeef:richeditor-android", version.ref = "richeditorAndroid" }
 v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "v2User" }
 androidx-lifecycle-viewmodel-android = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-android", version.ref = "lifecycleViewmodelAndroid" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
