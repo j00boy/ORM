@@ -161,21 +161,21 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
                             })
                             finish()
                         }
-
-                        if (clubCreated != null && !clubCreated) {
-                            binding.progressBar.visibility = View.GONE
-
-                            MaterialAlertDialogBuilder(this)
-                                .setTitle("오류")
-                                .setMessage("모임 생성에 실패했습니다.")
-                                .setPositiveButton("확인") { _, _ -> }
-                                .show()
-
-                            setResult(Activity.RESULT_OK, Intent().apply {
-                                putExtra("clubCreated", false)
-                            })
-                            finish()
-                        }
+                        TODO("실패 시 처리")
+//                        if (clubCreated != null && !clubCreated) {
+//                            binding.progressBar.visibility = View.GONE
+//
+//                            MaterialAlertDialogBuilder(this)
+//                                .setTitle("오류")
+//                                .setMessage("모임 생성에 실패했습니다.")
+//                                .setPositiveButton("확인") { _, _ -> }
+//                                .show()
+//
+//                            setResult(Activity.RESULT_OK, Intent().apply {
+//                                putExtra("clubCreated", false)
+//                            })
+//                            finish()
+//                        }
                     }
                 }
                 .show()

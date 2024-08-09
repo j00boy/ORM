@@ -101,7 +101,7 @@ class MountainDetailActivity : AppCompatActivity() {
             } else {
                 binding.fcvMap.visibility = View.GONE
                 binding.spinnerTrails.visibility = View.GONE
-                binding.trailHint = "등산로 정보가 제공되지 않았습니다."
+                binding.trailHint = "등산로 정보가 존재하지 않습니다."
             }
         }
 

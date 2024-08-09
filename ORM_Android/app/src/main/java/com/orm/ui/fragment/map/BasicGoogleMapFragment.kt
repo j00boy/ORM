@@ -46,6 +46,8 @@ class BasicGoogleMapFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
+        val southKoreaLatLng = LatLng(36.5, 127.5)
+        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(southKoreaLatLng, 7f))
         updateMap(points)
     }
 
