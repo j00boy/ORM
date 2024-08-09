@@ -2,10 +2,6 @@ package com.orm.ui.club
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
-import android.net.Uri
-import com.orm.ui.fragment.BottomSheetMountainList
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -13,27 +9,20 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.data.model.Mountain
 import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubCreate
 import com.orm.databinding.ActivityClubEditBinding
+import com.orm.ui.fragment.BottomSheetMountainList
 import com.orm.util.resizeImage
-import com.orm.util.uriToFile
 import com.orm.viewmodel.ClubViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
-import java.io.FileOutputStream
 
 @AndroidEntryPoint
 class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountainSelectedListener {
