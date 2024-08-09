@@ -3,11 +3,12 @@ package orm.orm_backend.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import orm.orm_backend.dto.fcmalert.*;
+import orm.orm_backend.entity.Board;
 import orm.orm_backend.entity.Club;
 import orm.orm_backend.entity.User;
 import orm.orm_backend.util.FirebaseUtil;
 
-import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +66,22 @@ public class FirebasePushAlertService {
                 .body(data.getMessage())
                 .build();
         firebaseUtil.pushAlert(data, expelMemberToken, notification);
+    }
+
+    public void pushNewBoardAlert(List<String> clubUserTokens, Board board) {
+        FcmAlertData data = FcmBoardDto.builder()
+                .boardId(String.valueOf(board.getId()))
+                .title(board.getTitle())
+                .clubName(board.getClub().getClubName())
+                .userName(board.getUser().getNickname())
+                .userId(String.valueOf(board.getUser().getId()))
+                .build();
+        FcmNotification notification = FcmNotification.builder()
+                .body(data.getMessage())
+                .build();
+
+        for(String clubUserToken : clubUserTokens) {
+            firebaseUtil.pushAlert(data, clubUserToken, notification);
+        }
     }
 }

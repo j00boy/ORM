@@ -41,6 +41,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberService memberService;
+    private final FirebasePushAlertService firebasePushAlertService;
 
     /**
      * 게시글 작성
@@ -68,7 +69,7 @@ public class BoardService {
         String IMAGE_PATH = IMAGE_PATH_PREFIX + boardRequestDto.getClubId() + IMAGE_PATH_POSTFIX;
 
         // board 생성
-        Board board = boardRepository.save(boardRequestDto.toEntity(club, user, boardRequestDto));
+        Board board = boardRepository.saveAndFlush(boardRequestDto.toEntity(club, user, boardRequestDto));
 
         List<BoardImageDto> boardImageDtos = new ArrayList<>();
 
@@ -79,6 +80,15 @@ public class BoardService {
             }
             boardImageService.saveImage(boardImageDtos, board);
         }
+
+        // 클럽 멤버의 FirebaseToken 확인
+        List<String> clubMembertokens = club.getMembers().stream().map(member -> member.getUser().getFirebaseToken()).toList();
+
+        // 작성자꺼만 지우기
+        clubMembertokens.remove(user.getFirebaseToken());
+
+        // 푸쉬알람
+        firebasePushAlertService.pushNewBoardAlert(clubMembertokens, board);
 
         return new BoardResponseDto(board, user, boardImageDtos, new ArrayList<CommentResponseDto>());
     }
