@@ -1,12 +1,16 @@
 package com.orm.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.orm.data.model.Point
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class TrackViewModel : ViewModel() {
+@HiltViewModel
+class TrackViewModel @Inject constructor() : ViewModel() {
     private val _points = MutableLiveData<List<Point>>()
     val points: LiveData<List<Point>> get() = _points
 
@@ -19,23 +23,25 @@ class TrackViewModel : ViewModel() {
     }
 
     fun updatePoint(point: Point) {
-        Log.d("TrackViewModel", "Updating point: $point")
+        viewModelScope.launch {
+            val currentPoints = _points.value?.toMutableList() ?: mutableListOf()
+            currentPoints.add(point)
+            _points.value = currentPoints
 
-        val currentPoints = _points.value?.toMutableList() ?: mutableListOf()
-        currentPoints.add(point)
-        _points.value = currentPoints
+            if (currentPoints.size >= 2) {
+                val lastPoint = currentPoints.last()
+                val secondLastPoint = currentPoints[currentPoints.size - 2]
+                val distance = Point.getDistance(lastPoint, secondLastPoint)
 
-        if (currentPoints.size >= 2) {
-            val lastPoint = currentPoints.last()
-            val secondLastPoint = currentPoints[currentPoints.size - 2]
-            val distance = Point.getDistance(lastPoint, secondLastPoint)
-
-            val currentDistance = _distance.value ?: 0.0
-            _distance.value = currentDistance + distance
+                val currentDistance = _distance.value ?: 0.0
+                _distance.value = currentDistance + distance
+            }
         }
     }
 
     fun clearPoints() {
-        _points.value = emptyList()
+        viewModelScope.launch {
+            _points.value = emptyList()
+        }
     }
 }

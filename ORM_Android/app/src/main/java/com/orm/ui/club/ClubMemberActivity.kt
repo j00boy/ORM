@@ -1,5 +1,6 @@
 package com.orm.ui.club
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.data.model.ClubMember
 import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubApprove
+import com.orm.data.model.recycler.RecyclerViewButtonItem
 import com.orm.databinding.ActivityClubMemberBinding
 import com.orm.ui.adapter.ProfileButtonAdapter
 import com.orm.viewmodel.ClubViewModel
@@ -44,6 +46,12 @@ class ClubMemberActivity : AppCompatActivity() {
     private var userId: String? = null
     private var membersMap: Map<String, List<ClubMember>?>? = null
 
+    private var clubMembers: List<ClubMember>? = null
+    private var applMembers: List<ClubMember>? = null
+
+    private var memberItem: List<RecyclerViewButtonItem>? = null
+    private var applItem: List<RecyclerViewButtonItem>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -64,23 +72,28 @@ class ClubMemberActivity : AppCompatActivity() {
         clubViewModel.getMembers(club!!.id)
         clubViewModel.members.observe(this@ClubMemberActivity) { membersMap ->
             this.membersMap = membersMap
-            Log.d("ClubMemberActivity", membersMap["members"].toString())
-            Log.d("ClubMemberActivity", membersMap["applicants"].toString())
             checkIfDataReady()
         }
+
+        setResult(1, Intent().apply {
+            putExtra("clubMember", true)
+        }
+        )
     }
 
     private fun checkIfDataReady() {
         if (userId != null && membersMap != null) {
-            setupAdapterMemberList(membersMap!!["members"])
-            setupAdapterApplicant(membersMap!!["applicants"])
+            clubMembers = membersMap!!["members"] ?: emptyList()
+            applMembers = membersMap!!["applicants"] ?: emptyList()
+            setupAdapterMemberList()
+            setupAdapterApplicant()
         }
     }
 
-    private fun setupAdapterMemberList(members: List<ClubMember>?) {
-        val clubMembers = members?.map { ClubMember.toRecyclerViewButtonItem(it) } ?: emptyList()
+    private fun setupAdapterMemberList() {
+        memberItem = clubMembers?.map { ClubMember.toRecyclerViewButtonItem(it) } ?: emptyList()
 
-        adapterMemberList = ProfileButtonAdapter(clubMembers)
+        adapterMemberList = ProfileButtonAdapter(memberItem!!)
 
         adapterMemberList.setType("member")
         adapterMemberList.setUserId(userId.toString())
@@ -91,11 +104,31 @@ class ClubMemberActivity : AppCompatActivity() {
             }
 
             override fun onClickBtnUp(v: View, position: Int) {
-                clubViewModel.leaveClubs(club!!.id, clubMembers[position].id!!.toInt())
+                MaterialAlertDialogBuilder(this@ClubMemberActivity)
+                    .setTitle("클럽 탈퇴")
+                    .setMessage("정말로 ${club?.clubName} 클럽에서 탈퇴하시겠습니까?")
+                    .setNegativeButton("취소") { _, _ -> }
+                    .setPositiveButton("확인") { dialog, which ->
+                        clubViewModel.leaveClubs(club!!.id, memberItem!![position].id!!.toInt())
+                        finish()
+                    }.show()
             }
 
             override fun onClickBtnDown(v: View, position: Int) {
-                clubViewModel.dropMember(club!!.id, clubMembers[position].id!!.toInt())
+                MaterialAlertDialogBuilder(this@ClubMemberActivity)
+                    .setTitle("회원 추방")
+                    .setMessage("정말로 ${memberItem!![position].nickName}님을 추방하시겠습니까?")
+                    .setNegativeButton("취소") { _, _ -> }
+                    .setPositiveButton("확인") { _, _ ->
+                        clubViewModel.dropMember(club!!.id, memberItem!![position].id!!.toInt())
+                        adapterMemberList.removeItem(position)
+                        memberItem = memberItem?.toMutableList()?.apply {
+                            removeAt(position)
+                        }
+                        clubMembers = clubMembers?.toMutableList()?.apply {
+                            removeAt(position)
+                        }
+                    }.show()
             }
         })
 
@@ -103,10 +136,10 @@ class ClubMemberActivity : AppCompatActivity() {
         rvMemberList.layoutManager = LinearLayoutManager(this@ClubMemberActivity)
     }
 
-    private fun setupAdapterApplicant(applicant: List<ClubMember>?) {
-        val applicants = applicant?.map { ClubMember.toRecyclerViewButtonItem(it) } ?: emptyList()
+    private fun setupAdapterApplicant() {
+        applItem = applMembers?.map { ClubMember.toRecyclerViewButtonItem(it) } ?: emptyList()
 
-        adapterApplicant = ProfileButtonAdapter(applicants)
+        adapterApplicant = ProfileButtonAdapter(applItem!!)
 
         adapterApplicant.setType("applicant")
 
@@ -120,16 +153,37 @@ class ClubMemberActivity : AppCompatActivity() {
                     .setTitle("가입 수락")
                     .setMessage("가입을 수락하시겠습니까?")
                     .setNegativeButton("취소") { _, _ -> }
-                    .setPositiveButton("확인") { dialog, which ->
+                    .setPositiveButton("확인") { dialog, _ ->
+                        val acceptedMember = applMembers!![position]
+
+                        adapterMemberList.addItem(applItem!![position], clubMembers!!.size)
+                        adapterApplicant.removeItem(position)
+
                         clubViewModel.approveClubs(
                             ClubApprove(
                                 club!!.id,
-                                applicants[position].id!!,
+                                applItem!![position].id!!,
                                 true
                             )
                         )
+
+                        clubMembers = clubMembers?.toMutableList()?.apply {
+                            add(acceptedMember)
+                        }
+
+                        memberItem = memberItem?.toMutableList()?.apply {
+                            add(ClubMember.toRecyclerViewButtonItem(acceptedMember))
+                        }
+
+                        applMembers = applMembers?.toMutableList()?.apply {
+                            removeAt(position)
+                        }
+
+                        applItem = applItem?.toMutableList()?.apply {
+                            removeAt(position)
+                        }
+
                         dialog.dismiss()
-                        finish()
                     }
                     .show()
             }
@@ -143,10 +197,17 @@ class ClubMemberActivity : AppCompatActivity() {
                         clubViewModel.approveClubs(
                             ClubApprove(
                                 club!!.id,
-                                applicants[position].id!!,
+                                applItem!![position].id!!,
                                 false
                             )
                         )
+                        adapterApplicant.removeItem(position)
+                        applMembers = applMembers?.toMutableList()?.apply {
+                            removeAt(position)
+                        }
+                        applItem = applItem?.toMutableList()?.apply {
+                            removeAt(position)
+                        }
                         dialog.dismiss()
                         finish()
                     }

@@ -36,6 +36,7 @@
                     android:textColor="@color/md_theme_onSurface" />
 
                 <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -66,6 +67,7 @@
                     android:textColor="@color/md_theme_onSurface" />
 
                 <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_end"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -96,6 +98,7 @@
                     android:textColor="@color/md_theme_onSurface" />
 
                 <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -122,10 +125,42 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="8dp"
+                    android:text="최고높이"
+                    android:textColor="@color/md_theme_onSurface" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_maxHeight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:text="Text"
+                    android:textColor="@color/md_theme_onSurface" />
+            </TableRow>
+
+            <!-- 점선 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="8dp"
+                android:background="@color/md_theme_outline"
+                android:layerType="software" />
+
+            <!-- 다섯 번째 행 -->
+            <TableRow
+                android:background="@color/md_theme_surfaceVariant"
+                android:paddingVertical="8dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="8dp"
                     android:text="총 산행거리"
                     android:textColor="@color/md_theme_onSurface" />
 
                 <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tv_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"

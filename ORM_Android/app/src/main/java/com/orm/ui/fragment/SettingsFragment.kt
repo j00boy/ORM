@@ -27,15 +27,6 @@ class SettingsFragment : Fragment() {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        binding.btnDelete.setOnClickListener {
-            lifecycleScope.launch {
-                userViewModel.deleteUser()
-                startActivity(Intent(requireContext(), LauncherActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                })
-            }
-        }
-
         return root
     }
 

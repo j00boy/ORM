@@ -15,6 +15,22 @@ import javax.inject.Inject
 class ClubRepository @Inject constructor(
     private val clubService: ClubService,
 ) {
+    suspend fun getClubById(clubId: Int): Club? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = clubService.getClubById(clubId).execute()
+                if (response.isSuccessful) {
+                    response.body()
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("ClubRepository", "Error getting club by id", e)
+                null
+            }
+        }
+    }
+    
     suspend fun getClubs(keyword: String, isMyClub: Boolean): List<Club> {
         return withContext(Dispatchers.IO) {
             try {
@@ -117,6 +133,25 @@ class ClubRepository @Inject constructor(
         return withContext(Dispatchers.IO) {
             try {
                 val response = clubService.updateClubs(clubId, createClub, imgFile).execute()
+                if (response.isSuccessful) {
+                    true
+                } else {
+                    false
+                }
+            } catch (e: Exception) {
+                Log.e("ClubRepository", "Error creating club", e)
+                false
+            }
+        }
+    }
+
+    suspend fun updateClubs(
+        clubId: Int,
+        createClub: RequestBody,
+    ): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = clubService.updateClubs(clubId, createClub).execute()
                 if (response.isSuccessful) {
                     true
                 } else {

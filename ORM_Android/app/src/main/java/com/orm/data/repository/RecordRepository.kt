@@ -9,7 +9,7 @@ import javax.inject.Inject
 class RecordRepository @Inject constructor(
     private val recordDao: RecordDao,
 ) {
-    suspend fun getRecord(id: Int): Record {
+    suspend fun getRecord(id: Long): Record {
         return withContext(Dispatchers.IO) {
             recordDao.getRecord(id)
         }

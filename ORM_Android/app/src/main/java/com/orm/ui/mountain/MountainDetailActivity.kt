@@ -10,8 +10,10 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.orm.util.HikingTimePredictor
 import com.orm.R
 import com.orm.data.model.Mountain
 import com.orm.data.model.Point
@@ -23,10 +25,14 @@ import com.orm.ui.adapter.ProfileBasicAdapter
 import com.orm.ui.club.ClubDetailActivity
 import com.orm.ui.fragment.WeatherFragment
 import com.orm.ui.fragment.map.BasicGoogleMapFragment
+import com.orm.ui.trace.TraceEditActivity
 import com.orm.viewmodel.ClubViewModel
 import com.orm.viewmodel.MountainViewModel
+import com.orm.viewmodel.UserViewModel
 import com.orm.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MountainDetailActivity : AppCompatActivity() {
@@ -45,8 +51,13 @@ class MountainDetailActivity : AppCompatActivity() {
     private val mountainViewModel: MountainViewModel by viewModels()
     private val clubViewModel: ClubViewModel by viewModels()
     private val weatherViewModel: WeatherViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels()
     private val rvBoard: RecyclerView by lazy { binding.recyclerView }
     private lateinit var adapter: ProfileBasicAdapter
+    private var predictTimeList: List<Float> = emptyList()
+
+    @Inject
+    lateinit var hikingTimePredictor: HikingTimePredictor
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,19 +79,33 @@ class MountainDetailActivity : AppCompatActivity() {
         }
 
         binding.mountain = mountain
-
         mountainViewModel.fetchMountainById(mountain!!.id)
-        mountainViewModel.mountain.observe(this@MountainDetailActivity) { it ->
-            if (it == null) return@observe
-
-            if (it.trails.isNullOrEmpty()) {
-                return@observe
+        mountainViewModel.mountain.observe(this@MountainDetailActivity) {
+            if (it != null && !it.trails.isNullOrEmpty()) {
+                lifecycleScope.launch {
+                    try {
+                        predictTimeList = it.trails.map { trail ->
+                            hikingTimePredictor.predictTrail(trail)
+                        }
+                        setupTrailSpinner(it.trails)
+                        Log.d("AITEST", predictTimeList.toString())
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Log.d("AITEST", "error", e)
+                    }
+                }
+                userViewModel.getUserInfo()
+                userViewModel.user.observe(this@MountainDetailActivity) {
+                    binding.trailHint = userViewModel.user.value?.nickname + "님의 예상 등반 시간입니다."
+                }
+            } else {
+                binding.fcvMap.visibility = View.GONE
+                binding.spinnerTrails.visibility = View.GONE
+                binding.trailHint = "등산로 정보가 제공되지 않았습니다."
             }
-
-            setupTrailSpinner(it.trails)
-
         }
 
+        weatherViewModel.getWeather(mountain!!.addressLatitude, mountain!!.addressLongitude)
         weatherViewModel.weather.observe(this) { weather ->
             weather?.let { updateWeather(weather) }
         }
@@ -92,7 +117,14 @@ class MountainDetailActivity : AppCompatActivity() {
                 binding.recyclerView.visibility = View.GONE
                 return@observe
             }
-            setupAdapter(it!!)
+            setupAdapter(it)
+        }
+
+        binding.btnCreateTrail.setOnClickListener {
+            val intent = Intent(this, TraceEditActivity::class.java)
+            intent.putExtra("trailIndex", binding.spinnerTrails.selectedItemPosition)
+            intent.putExtra("mountain", mountain)
+            startActivity(intent)
         }
     }
 
@@ -104,11 +136,23 @@ class MountainDetailActivity : AppCompatActivity() {
         spinner.adapter = adapter
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long,
+            ) {
                 val selectedTrail = trails[position]
-                Log.e("MountainDetailActivity", selectedTrail.trailDetails.toString())
+                val totalSeconds = (predictTimeList[position] * 60).toInt()
+                val hours = totalSeconds / 3600
+                val minutes = (totalSeconds % 3600) / 60
+                val seconds = totalSeconds % 60
+                binding.predictTime = "${hours}시간 ${minutes}분 ${seconds}초"
                 updateMapFragment(selectedTrail.trailDetails)
-                weatherViewModel.getWeather(selectedTrail.startLatitude, selectedTrail.startLongitude)
+                weatherViewModel.getWeather(
+                    selectedTrail.startLatitude,
+                    selectedTrail.startLongitude
+                )
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -120,9 +164,10 @@ class MountainDetailActivity : AppCompatActivity() {
 
         adapter.setItemClickListener(object : ProfileBasicAdapter.OnItemClickListener {
             override fun onClick(v: View, position: Int) {
-                val intent = Intent(this@MountainDetailActivity, ClubDetailActivity::class.java).apply {
-                    putExtra("club", clubs[position])
-                }
+                val intent =
+                    Intent(this@MountainDetailActivity, ClubDetailActivity::class.java).apply {
+                        putExtra("club", clubs[position])
+                    }
                 startActivity(intent)
             }
         })
@@ -131,12 +176,14 @@ class MountainDetailActivity : AppCompatActivity() {
     }
 
     private fun updateMapFragment(points: List<Point>) {
-        val fragment = supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
+        val fragment =
+            supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
         fragment?.updatePoints(points)
     }
 
     private fun updateWeather(weather: Weather) {
-        val fragment = supportFragmentManager.findFragmentById(binding.fcvWeather.id) as? WeatherFragment
+        val fragment =
+            supportFragmentManager.findFragmentById(binding.fcvWeather.id) as? WeatherFragment
         fragment?.updateWeather(weather)
     }
 }

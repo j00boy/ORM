@@ -54,15 +54,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="240dp"
                     android:layout_marginVertical="6dp"
-                    app:cardCornerRadius="8dp" >
+                    app:cardCornerRadius="8dp">
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/iv_thumbnail"
+                        imageUri="@{trace.imgPath}"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_baseline_photo_camera_back_24"
-                        imageUri="@{trace.imgPath}"/>
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -71,7 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="6dp"
-                    android:hint="등반할 산"
+                    android:hint="산 이름"
                     android:scrollbars="none">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -79,6 +78,7 @@
                         android:layout_height="wrap_content"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
+                        android:cursorVisible="false"
                         android:inputType="none"
                         android:text="@{trace.mountainName}" />
 
@@ -105,6 +105,7 @@
                         android:layout_height="wrap_content"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
+                        android:cursorVisible="false"
                         android:inputType="none"
                         android:paddingStart="48dp"
                         android:text="@{trace.hikingDate}" />
@@ -121,8 +122,34 @@
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/fcv_map"
                         android:layout_width="match_parent"
-                        android:layout_height="270dp"
-                        />
+                        android:layout_height="270dp" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cv_map_track"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="6dp"
+                    app:cardCornerRadius="8dp">
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fcv_map_track"
+                        android:layout_width="match_parent"
+                        android:layout_height="270dp" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cv_graph"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="6dp"
+                    app:cardCornerRadius="8dp">
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/fragment_graph"
+                        android:layout_width="match_parent"
+                        android:layout_height="360dp"
+                        android:padding="8dp" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <androidx.fragment.app.FragmentContainerView

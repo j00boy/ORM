@@ -12,10 +12,10 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_chat_list"
-        android:name="com.orm.ui.fragment.ChatListFragment"
-        android:label="@string/title_chat_list"
-        tools:layout="@layout/fragment_chat_list" />
+        android:id="@+id/navigation_map"
+        android:name="com.orm.ui.fragment.MapMountainFragment"
+        android:label="@string/map"
+        tools:layout="@layout/fragment_map_mountain" />
 
     <fragment
         android:id="@+id/navigation_notifications"

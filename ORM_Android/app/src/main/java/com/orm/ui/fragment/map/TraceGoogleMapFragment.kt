@@ -31,17 +31,23 @@ import kotlin.math.pow
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.viewmodel.RecordViewModel
 import com.orm.viewmodel.TrackViewModel
 import com.orm.data.model.Record
 import com.orm.data.model.Trace
+import com.orm.ui.trace.TraceActivity
+import com.orm.util.localDateTimeToLong
 import com.orm.viewmodel.TraceViewModel
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -75,6 +81,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     private var polyline: Polyline? = null
     private var userPolyline: Polyline? = null
     private var currentHeight: Double? = null
+    private var maxTrackHeight: Double? = null
     private var traceId: Int? = null
 
     private val handler = Handler(Looper.getMainLooper())
@@ -111,7 +118,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         updateTimeRunnable = object : Runnable {
             override fun run() {
                 updateCurrentTime()
-                handler.postDelayed(this, 1000) // Update every second
+                handler.postDelayed(this, 1000)
             }
         }
     }
@@ -123,44 +130,82 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         _binding = FragmentTraceGoogleMapBinding.inflate(inflater, container, false)
 
         binding.btnStop.visibility = View.GONE
+        binding.distance = "0m"
 
         binding.btnStart.setOnClickListener {
-            Toast.makeText(requireContext(), "발자국 측정 시작", Toast.LENGTH_SHORT).show()
-            binding.btnStart.visibility = View.GONE
-            binding.btnStop.visibility = View.VISIBLE
-            startLocationService()
-            startStopwatch()
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("측정 시작")
+                .setMessage("발자국 측정을 시작하시겠습니까?")
+                .setPositiveButton("확인") { _, _ ->
+                    binding.btnStart.visibility = View.GONE
+                    binding.btnStop.visibility = View.VISIBLE
+                    startLocationService()
+                    startStopwatch()
+                    Toast.makeText(requireContext(), "발자국 측정을 시작합니다.", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("취소") { _, _ ->
+                }
+                .show()
         }
 
         binding.btnStop.setOnClickListener {
-            Toast.makeText(requireContext(), "발자국 측정 종료", Toast.LENGTH_SHORT).show()
-            stopLocationService()
-
-            trackViewModel.points.value?.let { points ->
-                insertRecordAndHandleTrace(points)
-            }
+            stopTrace()
         }
 
         return binding.root
     }
 
-    private fun insertRecordAndHandleTrace(points: List<Point>) {
-        recordViewModel.insertRecord(Record(coordinate = points))
-        recordViewModel.recordId.observe(requireActivity(), Observer { createdId ->
-            if (traceId != null && traceId != -1) {
-                traceViewModel.getTrace(traceId!!)
-                traceViewModel.trace.observe(requireActivity(), Observer { trace ->
-                    handleTraceUpdate(trace, createdId)
-                })
+    private fun stopTrace() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("측정 종료")
+            .setMessage("정말로 종료하시겠습니까?")
+            .setPositiveButton("확인") { _, _ ->
+                trackViewModel.points.value?.let { points ->
+                    insertRecordAndHandleTrace(points)
+                }
+                stopLocationService()
+
+                traceViewModel.traceCreated.observe(requireActivity()) { isCreated ->
+                    if (isCreated) {
+                        startActivity(Intent(requireContext(), TraceActivity::class.java))
+                        requireActivity().finish()
+                    }
+                }
+
             }
-        })
+            .setNegativeButton("취소") { _, _ ->
+            }
+            .show()
     }
 
-    private fun handleTraceUpdate(trace: Trace?, createdId: Long) {
-        TODO("trace에 record field 삽입 및 coordinates 삭제")
-        trace?.let {
-//            trace.recordId = createdId
-            traceViewModel.createTrace(it)
+    private fun insertRecordAndHandleTrace(points: List<Point>) {
+        recordViewModel.insertRecord(Record(coordinate = points))
+        recordViewModel.recordId.observe(requireActivity()) { createdId ->
+
+            if (traceId != null && traceId != -1) {
+                traceViewModel.getTrace(traceId!!)
+                traceViewModel.trace.observe(requireActivity()) { trace ->
+                    trace?.let {
+                        traceViewModel.createTrace(it.apply {
+                            recordId = createdId
+                            hikingStartedAt = startTime
+                            hikingEndedAt = System.currentTimeMillis()
+                            maxHeight = maxTrackHeight
+                            hikingDistance = trackViewModel.distance.value
+                        })
+                        traceViewModel.traceCreated.observe(requireActivity()) { isCreated ->
+                            if (isCreated) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "발자국 측정이 완료되었습니다.",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -200,27 +245,27 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                 CameraUpdateFactory.newLatLngZoom(latlng, map.cameraPosition.zoom)
             )
 
-            binding.altitude = String.format("%.0f", currentHeight) + "m"
+            if (!running) return
 
             trackViewModel.updatePoint(
                 Point(
                     x = latlng.latitude,
                     y = latlng.longitude,
                     altitude = currentHeight,
-                    time = LocalDateTime.now()
+                    time = localDateTimeToLong(LocalDateTime.now())
                 )
             )
 
             trackViewModel.distance.observe(requireActivity()) {
-                binding.distance = String.format("%.0f", it) + "m"
-                Log.d(TAG, "Distance: $it")
+                binding.distance = String.format(Locale.KOREA, "%.0f", it) + "m"
             }
+
+            binding.altitude = String.format(Locale.KOREA, "%.0f", currentHeight) + "m"
 
             trackViewModel.points.observe(requireActivity()) {
                 val positions = it.map { pos ->
                     LatLng(pos.x, pos.y)
                 }
-
                 userPolyline?.remove()
                 userPolyline = map.addPolyline(
                     PolylineOptions()
@@ -240,6 +285,18 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         localBroadcastManager.registerReceiver(
             locationReceiver, IntentFilter("com.orm.LOCATION_UPDATE"),
         )
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (!running) {
+                        requireActivity().finish()
+                    } else {
+                        stopTrace()
+                    }
+                }
+            })
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -267,6 +324,8 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         event?.let {
             if (it.sensor.type == Sensor.TYPE_PRESSURE) {
                 currentHeight = calculateAltitude(it.values[0])
+                binding.altitude = String.format(Locale.KOREA, "%.0f", currentHeight) + "m"
+                maxTrackHeight = maxOf(maxTrackHeight ?: 0.0, currentHeight ?: 0.0)
             }
         }
     }
@@ -312,7 +371,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
             polyline?.remove()
             polyline = map.addPolyline(
                 PolylineOptions()
-                    .color(R.color.md_theme_errorContainer_mediumContrast)
+                    .color(Color.HSVToColor(floatArrayOf(16f, 1f, 1f)))
                     .addAll(latLngPoints)
             )
         } ?: Log.e(TAG, "GoogleMap is not initialized")

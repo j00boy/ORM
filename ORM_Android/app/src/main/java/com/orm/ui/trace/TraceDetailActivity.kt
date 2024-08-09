@@ -1,19 +1,23 @@
 package com.orm.ui.trace
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.R
 import com.orm.data.model.Trace
 import com.orm.databinding.ActivityTraceDetailBinding
+import com.orm.ui.fragment.GraphFragment
 import com.orm.ui.fragment.map.BasicGoogleMapFragment
+import com.orm.ui.fragment.table.TextTableFragment
+import com.orm.viewmodel.RecordViewModel
 import com.orm.viewmodel.TraceViewModel
 import com.orm.viewmodel.TrailViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +29,7 @@ class TraceDetailActivity : AppCompatActivity() {
     }
     private val traceViewModel: TraceViewModel by viewModels()
     private val trailViewModel: TrailViewModel by viewModels()
+    private val recordViewModel: RecordViewModel by viewModels()
 
     private val createTraceLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -32,49 +37,95 @@ class TraceDetailActivity : AppCompatActivity() {
                 val data: Intent? = result.data
                 val traceCreated = data?.getBooleanExtra("traceCreated", false) ?: false
                 if (traceCreated) {
-                    traceViewModel.getTraces()
+                    traceViewModel.getTrace(trace!!.localId)
+                    traceViewModel.trace.observe(this@TraceDetailActivity) {
+                        trace = it
+                        binding.trace = trace
+                    }
+                }
+            }
+
+            if (result.resultCode == 1) {
+                val data: Intent? = result.data
+                val traceModified = data?.getBooleanExtra("traceModified", false) ?: false
+                if (traceModified) {
+                    traceViewModel.getTrace(trace!!.localId)
+                    traceViewModel.trace.observe(this@TraceDetailActivity) {
+                        trace = it
+                        binding.trace = trace
+                    }
                 }
             }
         }
 
-    private val trace: Trace? by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    private var trace: Trace? = null
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+
+        trace = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("trace", Trace::class.java)
         } else {
             intent.getParcelableExtra<Trace>("trace")
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(binding.fcvMap.id, BasicGoogleMapFragment())
                 .commit()
+
+            if (trace!!.recordId != null) {
+                supportFragmentManager.beginTransaction()
+                    .replace(binding.fcvMapTrack.id, BasicGoogleMapFragment())
+                    .commit()
+
+                supportFragmentManager.beginTransaction()
+                    .replace(binding.fcvTable.id, TextTableFragment.newInstance(trace!!))
+                    .commit()
+
+                recordViewModel.getRecord(trace!!.recordId!!)
+                recordViewModel.record.observe(this@TraceDetailActivity) {
+                    val firstTime = it.coordinate!!.first().time!!.toFloat()
+                    val adjustedCoordinates = it.coordinate.map { pair ->
+                        Pair(
+                            (pair.time!!.toFloat() - firstTime) / 60000,
+                            pair.altitude!!.toFloat()
+                        )
+                    }
+                    supportFragmentManager.beginTransaction()
+                        .replace(
+                            binding.fragmentGraph.id,
+                            GraphFragment.newInstance(adjustedCoordinates)
+                        )
+                        .commit()
+                }
+            } else {
+                binding.cvMapTrack.visibility = View.GONE
+                binding.cvGraph.visibility = View.GONE
+            }
         }
 
         binding.trace = trace
 
         binding.topAppBar.setNavigationOnClickListener {
+            setResult(1)
             onBackPressedDispatcher.onBackPressed()
         }
 
         binding.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.edit -> {
-                    val intent: Intent
-                    Log.d("traceTest", trace.toString())
-                    if (trace?.maxHeight == 0.0) {
-                        intent = Intent(this, TraceEditActivity::class.java)
-                        Log.d("traceTest", "Edit")
+                    val intent: Intent = if (trace?.recordId == null) {
+                        Intent(this, TraceEditActivity::class.java)
                     } else {
-                        intent = Intent(this, TraceDetailEditActivity::class.java)
-                        Log.d("traceTest", "DetailEdit")
+                        Intent(this, TraceDetailEditActivity::class.java)
                     }
-                    intent.putExtra("trace", trace)
-                    createTraceLauncher.launch(intent)
+
+                    createTraceLauncher.launch(intent.apply {
+                        putExtra("trace", trace)
+                    })
                     true
                 }
 
@@ -82,6 +133,24 @@ class TraceDetailActivity : AppCompatActivity() {
             }
         }
 
+        this.onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    setResult(1)
+                    finish()
+                }
+            })
+
+        // 측정 기록이 없는 경우 측정 테이블 안보임
+        // 측정 완료한 경우 측정 버튼 안보임
+        if (trace!!.recordId == null) {
+            binding.fcvTable.visibility = View.GONE
+        } else {
+            binding.btnStart.visibility = View.GONE
+        }
+
+        // 측정 시작 버튼
         binding.btnStart.setOnClickListener {
             val intent = Intent(this, TraceMeasureActivity::class.java)
             intent.putExtra("trace", trace)
@@ -98,13 +167,15 @@ class TraceDetailActivity : AppCompatActivity() {
                     supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
                 fragment?.updatePoints(it.trailDetails)
             }
-        }
 
-        // 측정 기록이 없는 경우 측정 테이블 안보임
-        if (trace!!.hikingStartedAt.isNullOrEmpty()) {
-            binding.fcvTable.visibility = View.GONE
-        } else {
-            binding.btnStart.visibility = View.GONE
+            if (trace!!.recordId != null) {
+                recordViewModel.getRecord(trace!!.recordId!!)
+                recordViewModel.record.observe(this@TraceDetailActivity) {
+                    val fragment =
+                        supportFragmentManager.findFragmentById(binding.fcvMapTrack.id) as? BasicGoogleMapFragment
+                    fragment?.updatePoints(it.coordinate ?: emptyList())
+                }
+            }
         }
     }
 }

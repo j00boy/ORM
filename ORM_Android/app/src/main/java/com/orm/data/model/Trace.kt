@@ -16,13 +16,15 @@ data class Trace(
     val id: Int?,
     val title: String,
     val hikingDate: String?,
-    val hikingEndedAt: String? = null,
-    val hikingStartedAt: String? = null,
-    val maxHeight: Double? = 0.0,
     val mountainId: Int,
     val mountainName: String?,
-    val coordinates: List<Point>?,
     val trailId: Int? = -1,
+    var hikingStartedAt: Long? = null,
+    var hikingEndedAt: Long? = null,
+    var hikingDistance: Double? = 0.0,
+    var maxHeight: Double? = 0.0,
+    val coordinates: List<Point>?,
+    var recordId: Long? = null,
     val imgPath: String? = null,
 ) : Parcelable {
     companion object {
@@ -33,7 +35,7 @@ data class Trace(
                 title = trace.title,
                 subTitle = trace.mountainName ?: "",
                 date = trace.hikingDate.toString(),
-                btnText = if (trace.maxHeight != 0.0) "측정완료" else "측정전"
+                btnText = if (trace.recordId != null) "측정완료" else "측정전"
             )
         }
     }

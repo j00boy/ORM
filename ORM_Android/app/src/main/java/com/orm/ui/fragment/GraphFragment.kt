@@ -1,21 +1,22 @@
 package com.orm.ui.fragment
 
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.orm.R
 import com.orm.databinding.FragmentGraphBinding
 
-class  GraphFragment : Fragment() {
+class GraphFragment : Fragment() {
     private var _binding: FragmentGraphBinding? = null
     private val binding get() = _binding!!
     private var data: List<Pair<Float, Float>>? = emptyList()
@@ -25,8 +26,7 @@ class  GraphFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentGraphBinding.inflate(inflater, container, false)
-        val root = binding.root
-        return root
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -38,23 +38,23 @@ class  GraphFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val lineChart: LineChart = view.findViewById(R.id.graph)
-
-        // 전달된 데이터가 없으면 예외 처리
         val chartData = data ?: emptyList()
-
-        // 데이터 설정
         setDataToChart(lineChart, chartData)
     }
 
-    // 데이터를 차트에 설정하는 함수
     private fun setDataToChart(lineChart: LineChart, data: List<Pair<Float, Float>>) {
         val entries = data.map { Entry(it.first, it.second) }
 
         val dataSet = LineDataSet(entries, "").apply {
-            color = Color.BLUE
+            color = Color.parseColor("#3c9b70")
             valueTextColor = Color.BLACK
             setDrawCircles(false)
             setDrawValues(false)
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+            lineWidth = 2f
+            setDrawFilled(true)
+            fillDrawable =
+                ResourcesCompat.getDrawable(resources, R.drawable.gradient_fill, null)
         }
 
         val lineData = LineData(dataSet)
@@ -67,25 +67,32 @@ class  GraphFragment : Fragment() {
         xAxis.setDrawGridLines(false)
         xAxis.setDrawAxisLine(true)
         xAxis.setLabelCount(10, true)
+        xAxis.valueFormatter = object : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                return "${value.toInt()}분"
+            }
+        }
 
         // y축 설정
         val yAxisLeft = lineChart.axisLeft
-        yAxisLeft.axisMinimum = 0f
-//        yAxisLeft.axisMaximum = 750f
+        yAxisLeft.axisMinimum = data.minOfOrNull { it.second } ?: 0f
         yAxisLeft.setDrawGridLines(false)
         yAxisLeft.setDrawAxisLine(true)
         yAxisLeft.setLabelCount(10, true)
+        yAxisLeft.valueFormatter = object : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                return "${value.toInt()}m"
+            }
+        }
 
-        // 오른쪽 y축 비활성화
         lineChart.axisRight.isEnabled = false
 
-        // 차트에 선 및 기타 설정
         lineChart.legend.isEnabled = false
         lineChart.setTouchEnabled(false)
         lineChart.description.isEnabled = false
         lineChart.setDrawGridBackground(false)
         lineChart.setBackgroundColor(Color.TRANSPARENT)
-        lineChart.invalidate()  // 차트 업데이트
+        lineChart.invalidate()
     }
 
     companion object {

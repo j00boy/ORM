@@ -1,11 +1,13 @@
 package com.orm.ui.club
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -13,9 +15,11 @@ import com.orm.data.model.RequestMember
 import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubCreate
 import com.orm.databinding.ActivityClubDetailBinding
+import com.orm.ui.mountain.MountainDetailActivity
 import com.orm.ui.board.BoardActivity
 import com.orm.ui.board.BoardEditActivity
 import com.orm.viewmodel.ClubViewModel
+import com.orm.viewmodel.MountainViewModel
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,19 +31,50 @@ class ClubDetailActivity : AppCompatActivity() {
 
     private val userViewModel: UserViewModel by viewModels()
     private val clubViewModel: ClubViewModel by viewModels()
+    private val mountainViewModel: MountainViewModel by viewModels()
 
-    private val club: Club? by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("club", Club::class.java)
-        } else {
-            intent.getParcelableExtra<Club>("club")
+    private var club: Club? = null
+
+    private val createClubLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val clubCreated = data?.getBooleanExtra("clubCreated", false) ?: false
+                if (clubCreated && club != null) {
+                    clubViewModel.getClubById(club!!.id)
+                    clubViewModel.club.observe(this) {
+                        club = it
+                        binding.club = it
+                    }
+
+                    setResult(Activity.RESULT_OK, Intent().apply {
+                        putExtra("clubChanged", true)
+                    })
+                }
+            }
+
+            if (result.resultCode == 1) {
+                val data: Intent? = result.data
+                val clubMember = data?.getBooleanExtra("clubMember", false) ?: false
+                if (clubMember) {
+                    clubViewModel.getClubById(club!!.id)
+                    clubViewModel.club.observe(this) {
+                        club = it
+                        binding.club = it
+                    }
+                }
+            }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        Log.d("ClubDetailActivity", "club: $club")
+
+        club = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("club", Club::class.java)
+        } else {
+            intent.getParcelableExtra<Club>("club")
+        }
 
         binding.club = club
 
@@ -49,9 +84,9 @@ class ClubDetailActivity : AppCompatActivity() {
 
         binding.btnMember.setOnClickListener {
             if (club?.isMember == true) {
-                val intent = Intent(this, ClubMemberActivity::class.java)
-                intent.putExtra("club", club)
-                startActivity(intent)
+                createClubLauncher.launch(Intent(this, ClubMemberActivity::class.java).apply {
+                    putExtra("club", club)
+                })
             }
         }
 
@@ -64,9 +99,19 @@ class ClubDetailActivity : AppCompatActivity() {
         }
 
         binding.btnEdit.setOnClickListener {
-            val intent = Intent(this, ClubEditActivity::class.java)
-            intent.putExtra("club", club)
-            startActivity(intent)
+            createClubLauncher.launch(
+                Intent(this, ClubEditActivity::class.java).apply {
+                    putExtra("club", club)
+                }
+            )
+        }
+
+        binding.tfClubMountain.setOnClickListener {
+            moveToMountainDetail()
+        }
+
+        binding.tfClubMountainField.setOnClickListener {
+            moveToMountainDetail()
         }
 
         binding.btnSign.setOnClickListener {
@@ -100,5 +145,24 @@ class ClubDetailActivity : AppCompatActivity() {
             }
         }
 
+        setResult(1, Intent().apply {
+            putExtra("clubChanged", true)
+        })
+    }
+
+    private fun moveToMountainDetail() {
+        Log.d("clubTest", "click")
+        mountainViewModel.fetchMountainById(club?.mountainId!!.toInt(), false)
+        mountainViewModel.mountain.observe(this){
+            val intent = Intent(
+                this@ClubDetailActivity,
+                MountainDetailActivity::class.java
+            ).apply {
+                putExtra("mountain", it)
+            }
+            startActivity(intent)
+
+            mountainViewModel.mountain.removeObservers(this)
+        }
     }
 }

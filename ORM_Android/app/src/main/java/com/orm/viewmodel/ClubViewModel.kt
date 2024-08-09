@@ -32,6 +32,9 @@ class ClubViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
+    private val _club = MutableLiveData<Club?>()
+    val club: LiveData<Club?> get() = _club
+
     private val _clubs = MutableLiveData<List<Club>>()
     val clubs: LiveData<List<Club>> get() = _clubs
 
@@ -41,15 +44,29 @@ class ClubViewModel @Inject constructor(
     private val _isOperationSuccessful = MutableLiveData<Boolean?>()
     val isOperationSuccessful: LiveData<Boolean?> get() = _isOperationSuccessful
 
+    private val _isCreated = MutableLiveData<Boolean?>()
+    val isCreated: LiveData<Boolean?> get() = _isCreated
+
     private val _clubId = MutableLiveData<Int?>()
     val clubId: LiveData<Int?> get() = _clubId
 
+    private val _isReady = MutableLiveData<Boolean>()
+    val isReady: LiveData<Boolean> get() = _isReady
+
+    fun getClubById(clubId: Int) {
+        viewModelScope.launch {
+            val club = clubRepository.getClubById(clubId)
+            _club.postValue(club)
+        }
+    }
+
     fun getClubs(keyword: String = "", isMyClub: Boolean = false) {
         viewModelScope.launch {
+            _isReady.postValue(false)
             _clubs.postValue(emptyList())
             val clubs = clubRepository.getClubs(keyword, isMyClub)
-            Log.e("getClubs", clubs.toString())
             _clubs.postValue(clubs)
+            _isReady.postValue(true)
         }
     }
 
@@ -99,33 +116,48 @@ class ClubViewModel @Inject constructor(
 
     fun createClubs(clubCreate: ClubCreate, imgFile: File?) {
         viewModelScope.launch {
+            _isCreated.postValue(false)
             try {
                 val createClubRequestBody = createClubRequestBody(clubCreate)
                 val imgFilePart = createImagePart(imgFile)
 
                 val clubId = clubRepository.createClubs(createClubRequestBody, imgFilePart)
                 _clubId.postValue(clubId)
-                _isOperationSuccessful.postValue(clubId != null)
+                _isCreated.postValue(true)
             } catch (e: Exception) {
                 e.printStackTrace()
                 _clubId.postValue(null)
-                _isOperationSuccessful.postValue(false)
             }
         }
     }
 
     fun updateClubs(clubId: Int, clubCreate: ClubCreate, imgFile: File?) {
         viewModelScope.launch {
+            _isCreated.postValue(null)
             try {
                 val createClubRequestBody = createClubRequestBody(clubCreate)
                 val imgFilePart = createImagePart(imgFile)
-
                 val result = clubRepository.updateClubs(clubId, createClubRequestBody, imgFilePart)
-                _isOperationSuccessful.postValue(result)
+                _isCreated.postValue(result)
             } catch (e: Exception) {
                 e.printStackTrace()
                 _clubId.postValue(null)
-                _isOperationSuccessful.postValue(false)
+                _isCreated.postValue(false)
+            }
+        }
+    }
+
+    fun updateClubs(clubId: Int, clubCreate: ClubCreate) {
+        viewModelScope.launch {
+            _isCreated.postValue(null)
+            try {
+                val createClubRequestBody = createClubRequestBody(clubCreate)
+                val result = clubRepository.updateClubs(clubId, createClubRequestBody)
+                _isCreated.postValue(result)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _clubId.postValue(null)
+                _isCreated.postValue(false)
             }
         }
     }

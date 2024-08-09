@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.firebase.messaging.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.android)
     implementation(libs.play.services.location)
+    implementation(libs.play.services.pal)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -117,6 +118,7 @@ dependencies {
     // google map
     implementation(libs.play.services.maps)
     implementation (libs.play.services.location.v2101)
+    implementation(libs.android.maps.utils)
 
     // okhttp
     implementation (libs.okhttp)
@@ -128,6 +130,10 @@ dependencies {
     // worker
     implementation(libs.androidx.work.runtime.ktx)
 
+    // AI model
+    implementation(libs.tensorflow.lite)
+    implementation(libs.tensorflow.lite.support)
+
     //board
-    implementation(libs.richeditor.android)
+    implementation(libs.wasabeef.richeditor.android)
 }

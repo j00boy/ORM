@@ -31,12 +31,14 @@ class ClubSearchActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        clubViewModel.isReady.observe(this@ClubSearchActivity) {
+            binding.progressBar.visibility = if (it) View.GONE else View.VISIBLE
+        }
+
         binding.svClub.isSubmitButtonEnabled = true
         binding.svClub.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(name: String?): Boolean {
-
-                Log.e("onQueryTextSubmit", name.toString())
                 clubViewModel.getClubs(name.toString())
                 clubViewModel.clubs.observe(this@ClubSearchActivity) { it ->
                     adapter =

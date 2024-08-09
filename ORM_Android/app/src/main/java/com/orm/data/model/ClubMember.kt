@@ -20,6 +20,7 @@ data class ClubMember(
                 imageSrc = clubMember.imgSrc!!,
                 title = clubMember.nickname,
                 subTitle = clubMember.introduction,
+                nickName = clubMember.nickname,
             )
         }
     }

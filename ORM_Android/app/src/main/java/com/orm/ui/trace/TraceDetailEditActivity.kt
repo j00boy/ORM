@@ -1,6 +1,5 @@
 package com.orm.ui.trace
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -8,7 +7,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -33,9 +31,9 @@ class TraceDetailEditActivity : AppCompatActivity() {
     private val traceViewModel: TraceViewModel by viewModels()
     private val trailViewModel: TrailViewModel by viewModels()
 
-    private var imageUri: Uri? = null
     private var imagePath: String? = null
     private var tempImagePath: String? = null
+    private var toDefaultImage: Boolean = false;
 
     private val trace: Trace? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -64,13 +62,13 @@ class TraceDetailEditActivity : AppCompatActivity() {
         trace?.imgPath?.let {
             val file = File(it)
             if (file.exists()) {
-                imageUri = Uri.fromFile(file)
-                binding.image = imageUri.toString()
-                binding.ivThumbnail.setImageURI(imageUri)
-                binding.ivThumbnail.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
+                binding.image = Uri.fromFile(file).toString()
+                imagePath = it
             }
+
         }
-        Log.d("traceTest" , trace?.imgPath.toString())
+        Log.d("traceTest", trace?.imgPath.toString())
+
         binding.btnSign.setOnClickListener {
             if (binding.tfTraceName.editText!!.text.isEmpty()) {
                 MaterialAlertDialogBuilder(this)
@@ -85,21 +83,33 @@ class TraceDetailEditActivity : AppCompatActivity() {
                 .setTitle("수정하기")
                 .setMessage("발자국을 수정하시겠습니까?")
                 .setNegativeButton("취소") { _, _ -> }
-                .setPositiveButton("확인") { dialog, which ->
+                .setPositiveButton("확인") { dialog, _ ->
                     tempImagePath?.let { tempPath ->
                         val tempFile = File(tempPath)
-                        val permFile = File(filesDir, "trace_image_${trace?.localId}.png")
-                        if (tempFile.exists()) {
-                            if (permFile.exists()) {
-                                Log.d("traceTest", "delete")
-                                permFile.delete()
+                        Log.d("traceTest", "File ${trace?.localId}")
+
+                        val newImageFileName = "trace_image_${trace?.localId}_${System.currentTimeMillis()}.png"
+                        val permFile = File(filesDir, newImageFileName)
+
+                        try {
+                            tempFile.inputStream().use { input ->
+                                permFile.outputStream().use { output ->
+                                    input.copyTo(output)
+                                }
                             }
-                            tempFile.copyTo(permFile, overwrite = true)
                             tempFile.delete()
                             imagePath = permFile.absolutePath
-                        } else {
-                            imagePath = trace?.imgPath
-                            Log.d("traceTest", "imagePath ${imagePath}")
+                            Log.d("traceTest", "파일이 성공적으로 덮어쓰기 되었습니다: $imagePath")
+                        } catch (e: IOException) {
+                            Log.e("traceTest", "파일 복사 중 오류 발생", e)
+                        }
+
+                        trace?.imgPath?.let { oldImagePath ->
+                            val lastFile = File(oldImagePath)
+                            if (lastFile.exists()) {
+                                lastFile.delete()
+                                Log.d("traceTest", "이전 이미지 파일 삭제됨: $oldImagePath")
+                            }
                         }
                     }
 
@@ -116,22 +126,24 @@ class TraceDetailEditActivity : AppCompatActivity() {
                         trailId = trace!!.trailId,
                         maxHeight = trace!!.maxHeight,
                         imgPath = imagePath,
+                        recordId = trace!!.recordId,
+                        hikingDistance = trace!!.hikingDistance
                     )
                     traceViewModel.createTrace(traceModify)
                     Log.d("traceTest", imagePath.toString())
                     dialog.dismiss()
 
                     binding.progressBar.visibility = View.VISIBLE
+                    // TODO 기본이미지 변경시 바로 반영 안됨
                     traceViewModel.traceCreated.observe(this) { traceCreated ->
                         if (traceCreated) {
                             binding.progressBar.visibility = View.GONE
-                            setResult(Activity.RESULT_OK, Intent().apply {
-                                putExtra("traceCreated", true)
+                            setResult(1, Intent().apply {
+                                putExtra("traceModified", true)
                             })
                             finish()
                         }
                     }
-                    finish()
                 }
                 .show()
         }
@@ -148,9 +160,30 @@ class TraceDetailEditActivity : AppCompatActivity() {
                 }
             }
         }
-
+        var photoSelection: Int = 0
         binding.cvImageUpload.setOnClickListener {
-            openGallery()
+            if (binding.image == null) {
+                openGallery()
+            } else {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("사진 선택")
+                    .setSingleChoiceItems(
+                        arrayOf("갤러리에서 가져오기", "기본 이미지로 변경"), 0
+                    ) { _, which ->
+                        photoSelection = which
+                    }
+                    .setNegativeButton("취소") { _, _ -> }
+                    .setPositiveButton("확인") { dialog, _ ->
+                        if (photoSelection == 0) {
+                            openGallery()
+                        } else {
+                            tempImagePath = null
+                            binding.image = null
+                            imagePath = null
+                            toDefaultImage = true
+                        }
+                    }.show()
+            }
         }
     }
 
@@ -172,14 +205,23 @@ class TraceDetailEditActivity : AppCompatActivity() {
                             }
                         }
                         tempImagePath = tempFile.absolutePath
+                        Log.d("traceTest", "tempPath ${tempImagePath.toString()}")
                     } catch (e: IOException) {
                         e.printStackTrace()
                     }
-                    imageUri = uri
-                    binding.ivThumbnail.setImageURI(imageUri)
-                    binding.ivThumbnail.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
-                    binding.image = imageUri.toString()
+                    binding.image = uri.toString()
                 }
             }
         }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 임시 파일 삭제
+        tempImagePath?.let {
+            val tempFile = File(it)
+            if (tempFile.exists()) {
+                tempFile.delete()
+            }
+        }
+    }
 }

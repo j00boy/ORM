@@ -8,7 +8,9 @@ import com.google.gson.reflect.TypeToken
 import com.orm.data.model.Point
 import com.orm.data.model.Trace
 import java.io.ByteArrayOutputStream
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 class Converters {
@@ -100,5 +102,17 @@ class Converters {
     @TypeConverter
     fun toBitmap(bytes: ByteArray): Bitmap {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+    }
+
+    @TypeConverter
+    fun fromLocalDateTimeToLong(dateTime: LocalDateTime?): Long? {
+        return dateTime?.atZone(ZoneId.of("Asia/Seoul"))?.toInstant()?.toEpochMilli()
+    }
+
+    @TypeConverter
+    fun fromLongToLocalDateTime(timestamp: Long?): LocalDateTime? {
+        return timestamp?.let {
+            Instant.ofEpochMilli(it).atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime()
+        }
     }
 }

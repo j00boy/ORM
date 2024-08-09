@@ -30,15 +30,13 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cv_thumbnail"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     app:cardCornerRadius="8dp">
 
                     <com.google.android.material.imageview.ShapeableImageView
@@ -54,9 +52,9 @@
                     android:id="@+id/tv_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginStart="16dp"
                     android:gravity="center"
-                    android:text="@{user.nickname}"
+                    android:text="@{(user.nickname.isEmpty() ? `사용자` : user.nickname) + `님 안녕하세요.`}"
                     android:textColor="@color/md_theme_primary"
                     android:textSize="24sp"
                     android:textStyle="bold" />
