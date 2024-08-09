@@ -27,10 +27,10 @@ class MountainRepository @Inject constructor(
         }
     }
 
-    suspend fun getMountainById(id: Int): Mountain? {
+    suspend fun getMountainById(id: Int, trailContaining: Boolean): Mountain? {
         return withContext(Dispatchers.IO) {
             try {
-                val response = mountainService.getMountainById(id).execute()
+                val response = mountainService.getMountainById(id, trailContaining).execute()
                 if (response.isSuccessful) {
                     response.body()
                 } else {

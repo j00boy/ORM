@@ -148,7 +148,7 @@ class ClubDetailActivity : AppCompatActivity() {
 
     private fun moveToMountainDetail() {
         Log.d("clubTest", "click")
-        mountainViewModel.fetchMountainById(club?.mountainId!!.toInt())
+        mountainViewModel.fetchMountainById(club?.mountainId!!.toInt(), false)
         mountainViewModel.mountain.observe(this){
             val intent = Intent(
                 this@ClubDetailActivity,
