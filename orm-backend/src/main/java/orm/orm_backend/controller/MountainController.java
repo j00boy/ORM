@@ -57,12 +57,15 @@ public class MountainController {
     }
 
     @GetMapping("/{mountainId}")
-    public ResponseEntity<MountainResponseDto> getMountainById(@PathVariable("mountainId") Integer id) {
+    public ResponseEntity<MountainResponseDto> getMountainById(@PathVariable("mountainId") Integer id, boolean trailContaining) {
         String cacheKey = REDIS_PREFIX + id;
+        if (!trailContaining) {
+            cacheKey = REDIS_PREFIX + "::trailX";
+        }
 
         MountainResponseDto mountainDto = redisService.getObject(cacheKey, MountainResponseDto.class);
         if (mountainDto == null) {
-            mountainDto = mountainService.getMountainDtoById(id);
+            mountainDto = mountainService.getMountainDtoById(id, trailContaining);
 
             redisService.saveObject(cacheKey, mountainDto);
         }

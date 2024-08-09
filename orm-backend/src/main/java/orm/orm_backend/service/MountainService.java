@@ -30,9 +30,12 @@ public class MountainService {
      * @param mountainId
      * @return mountainId로 조회된 Mountain룰 변환한 MountainResponseDto
      */
-    public MountainResponseDto getMountainDtoById(Integer mountainId) {
+    public MountainResponseDto getMountainDtoById(Integer mountainId, boolean trailContaining) {
         Mountain mountain = mountainRepository.findById(mountainId).orElseThrow(() -> new CustomException(MOUNTAIN_NOT_FOUND));
-        List<TrailResponseDto> trails = trailService.getAllTrailsByMountainId(mountain);
+        List<TrailResponseDto> trails = null;
+        if (trailContaining) {
+            trails = trailService.getAllTrailsByMountainId(mountain);
+        }
         return new MountainResponseDto(mountain, trails);
     }
 
