@@ -26,12 +26,9 @@ class HomeInfoFragment : Fragment() {
         _binding = FragmentHomeInfoBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        /** Data Binding Example**/
         userViewModel.user.observe(viewLifecycleOwner) {
             binding.user = it
         }
-        binding.lifecycleOwner = viewLifecycleOwner
-        /*************************/
 
         return root
     }

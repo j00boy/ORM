@@ -41,11 +41,16 @@ class UserRepository @Inject constructor(
             try {
                 val response = userService.loginAuto().execute()
                 if (response.isSuccessful) {
-                    Log.d("test", response.headers()["accessToken"].toString())
-                    saveAccessToken(response.headers()["accessToken"].toString())
-
                     val body = response.body() ?: throw Exception("Login failed")
-                    saveUserInfo(body)
+
+                    saveAccessToken(response.headers()["accessToken"].toString())
+                    saveUserInfo(
+                        User(
+                            userId = body.userId,
+                            imageSrc = body.imageSrc,
+                            nickname = body.nickname,
+                        )
+                    )
                     body
                 } else {
                     throw Exception(response.errorBody()?.string())
@@ -106,12 +111,21 @@ class UserRepository @Inject constructor(
         }
     }
 
-    private suspend fun saveUserInfo(user: User) {
+    suspend fun saveUserInfo(user: User) {
         try {
+            Log.d("UserRepository", "saveUserInfo: $user")
             context.dataStore.edit { preferences ->
                 preferences[PreferencesKeys.userId] = user.userId
                 preferences[PreferencesKeys.imageSrc] = user.imageSrc
                 preferences[PreferencesKeys.nickname] = user.nickname
+
+                if (!(user.gender == "male" && user.age == 23 && user.level == 1 && user.pushNotificationsEnabled)) {
+                    preferences[PreferencesKeys.gender] = user.gender
+                    preferences[PreferencesKeys.age] = user.age
+                    preferences[PreferencesKeys.level] = user.level
+                    preferences[PreferencesKeys.pushNotificationsEnabled] =
+                        user.pushNotificationsEnabled
+                }
             }
         } catch (e: Exception) {
             Log.e("UserRepository", "Error saving user info", e)
@@ -133,11 +147,31 @@ class UserRepository @Inject constructor(
 
             }
 
-            Log.d(
-                "UserRepository",
-                "userInfo: ${userId.first() + imageSrc.first() + nickname.first()}"
+            val gender: Flow<String> = context.dataStore.data.map { preferences ->
+                preferences[PreferencesKeys.gender] ?: "male"
+            }
+
+            val age: Flow<Int> = context.dataStore.data.map { preferences ->
+                preferences[PreferencesKeys.age] ?: 23
+            }
+
+            val level: Flow<Int> = context.dataStore.data.map { preferences ->
+                preferences[PreferencesKeys.level] ?: 1
+            }
+
+            val pushNotificationsEnabled: Flow<Boolean> = context.dataStore.data.map { preferences ->
+                preferences[PreferencesKeys.pushNotificationsEnabled] ?: true
+            }
+
+            User(
+                userId.first(),
+                imageSrc.first(),
+                nickname.first(),
+                gender.first(),
+                age.first(),
+                level.first(),
+                pushNotificationsEnabled.first()
             )
-            User(userId.first(), imageSrc.first(), nickname.first())
         } catch (e: Exception) {
             Log.e("UserRepository", "Error getting user info", e)
             null
@@ -150,6 +184,10 @@ class UserRepository @Inject constructor(
                 preferences.remove(PreferencesKeys.userId)
                 preferences.remove(PreferencesKeys.imageSrc)
                 preferences.remove(PreferencesKeys.nickname)
+                preferences.remove(PreferencesKeys.gender)
+                preferences.remove(PreferencesKeys.age)
+                preferences.remove(PreferencesKeys.level)
+                preferences.remove(PreferencesKeys.pushNotificationsEnabled)
             }
         } catch (e: Exception) {
             Log.e("UserRepository", "Error deleting user info", e)

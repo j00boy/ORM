@@ -17,6 +17,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.orm.R
 import com.orm.data.model.Notification
 import com.orm.data.repository.NotificationRepository
+import com.orm.data.repository.UserRepository
 import com.orm.ui.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -34,25 +35,35 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
         Log.d("Firebase", "fcm token...... $token")
     }
+
     @Inject
     lateinit var notificationRepository: NotificationRepository
+
+    @Inject
+    lateinit var userRepository: UserRepository
+
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         Log.d("Firebase", "message received...... ${remoteMessage.notification.toString()}")
 
-        remoteMessage.notification?.let {
-            showNotification(it)
-        }
-        Log.d("notiTest", remoteMessage.data.toString())
         CoroutineScope(Dispatchers.IO).launch {
-            val a: Notification
-            try{
-                a = Notification.toNotificationData(remoteMessage)
-                Log.d("notiTest", a.toString())
-                notificationRepository.insertNotification(a)
-            } catch(e: Exception){
+            try {
+                val user = userRepository.getUserInfo()
+
+                if (user?.pushNotificationsEnabled == true) {
+                    remoteMessage.notification?.let {
+                        showNotification(it)
+                    }
+                } else {
+                    Log.d("Firebase", "Push notifications are disabled for this user.")
+                }
+
+                val notification = Notification.toNotificationData(remoteMessage)
+                notificationRepository.insertNotification(notification)
+
+            } catch (e: Exception) {
                 e.printStackTrace()
-                Log.e("notiTest", "error", e)
+                Log.e("MyFirebaseMessagingService", "Error handling message", e)
             }
         }
     }

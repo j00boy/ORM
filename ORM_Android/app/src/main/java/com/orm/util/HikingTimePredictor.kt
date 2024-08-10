@@ -61,7 +61,8 @@ class HikingTimePredictor @Inject constructor(
 
     private fun predict(input: FloatArray): Float {
         val normalizedInput = normalizeInput(input)
-        val inputBuffer = ByteBuffer.allocateDirect(normalizedInput.size * 4).order(ByteOrder.nativeOrder())
+        val inputBuffer =
+            ByteBuffer.allocateDirect(normalizedInput.size * 4).order(ByteOrder.nativeOrder())
         normalizedInput.forEach { inputBuffer.putFloat(it) }
         inputBuffer.rewind()
 
@@ -75,12 +76,13 @@ class HikingTimePredictor @Inject constructor(
         val altitude = trail.height.toFloat()
         val distance = trail.distance.toFloat()
         val averageTime = trail.time.toFloat()
+
         val user: User = userRepository.getUserInfo()!!
         val gender = if (user.gender == "male") 0.9f else 1.1f
-        val level = user.level?.toFloat()
-        val age = user.age?.toFloat()
+        val level = user.level.toFloat()
+        val age = user.age.toFloat()
 
-        val input = floatArrayOf(altitude, gender, age!!, distance, level!!, averageTime)
+        val input = floatArrayOf(altitude, gender, age, distance, level, averageTime)
         predict(input)
     }
 }

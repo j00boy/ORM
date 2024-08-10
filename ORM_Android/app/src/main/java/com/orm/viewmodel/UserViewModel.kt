@@ -77,9 +77,17 @@ class UserViewModel @Inject constructor(
     }
 
     fun getUserInfo() {
-        Log.d("UserViewModel", "getUserInfo")
         viewModelScope.launch {
+            _isLoading.postValue(true)
             val user = userRepository.getUserInfo()
+            _user.postValue(user)
+            _isLoading.postValue(false)
+        }
+    }
+
+    fun updateUserInfo(user: User) {
+        viewModelScope.launch {
+            userRepository.saveUserInfo(user)
             _user.postValue(user)
         }
     }
