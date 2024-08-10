@@ -23,6 +23,8 @@ class UserViewModel @Inject constructor(
     private val _token = MutableLiveData<String>()
     val token: LiveData<String> get() = _token
 
+    private val _isTokenLoading = MutableLiveData<Boolean>()
+    val isTokenLoading: LiveData<Boolean> get() = _isTokenLoading
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
@@ -62,16 +64,15 @@ class UserViewModel @Inject constructor(
 
     fun getAccessToken() {
         Log.d("UserViewModel", "getAccessToken")
-        _isLoading.value = true
         viewModelScope.launch {
             try {
+                _isTokenLoading.postValue(true)
                 val token: String = userRepository.getAccessToken()
                 _token.postValue(token)
+                _isTokenLoading.postValue(false)
             } catch (e: Exception) {
                 Log.e("UserViewModel", "getAccessToken failed: ${e.message}", e)
                 _token.postValue("")
-            } finally {
-                _isLoading.postValue(false)
             }
         }
     }
