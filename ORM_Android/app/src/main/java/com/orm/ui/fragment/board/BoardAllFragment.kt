@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.orm.data.model.board.BoardList
 import com.orm.data.model.club.Club
 import com.orm.databinding.FragmentBoardAllBinding
@@ -23,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class BoardAllFragment : Fragment() {
     private var _binding: FragmentBoardAllBinding? = null
     private val binding get() = _binding!!
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private val boardViewModel: BoardViewModel by viewModels()
 
@@ -51,6 +53,11 @@ class BoardAllFragment : Fragment() {
         boardViewModel.boardList.observe(viewLifecycleOwner) { boardList ->
             Log.e("BoardAllFragment", boardList.toString())
             setupAdapter(boardList, clubId)
+        }
+
+        swipeRefreshLayout = binding.swipeRefreshLayout
+        swipeRefreshLayout.setOnRefreshListener {
+            refreshData()
         }
 
         return root
@@ -87,8 +94,9 @@ class BoardAllFragment : Fragment() {
     }
 
     fun refreshData() {
+        Log.d("refresh", "refresh123 frag")
         val clubId = club?.id ?: -1
-        Log.d("update123", "update123 : $clubId")
         boardViewModel.getBoardList(clubId)
+        swipeRefreshLayout.isRefreshing = false
     }
 }

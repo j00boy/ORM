@@ -24,6 +24,7 @@ import com.orm.util.resizeImage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -57,10 +58,10 @@ class BoardViewModel @Inject constructor(
 
     fun getBoardList(clubId: Int) {
         viewModelScope.launch {
-            _boardList.postValue(emptyList())
+            _boardList.value = emptyList()
             val boardList = boardRepository.getBoardList(clubId)
             Log.d("getboards", "response1 : $boardList")
-            _boardList.postValue(boardList)
+            _boardList.value = boardList
         }
     }
 
@@ -72,35 +73,56 @@ class BoardViewModel @Inject constructor(
         }
     }
 
-    fun createBoards(clubId: Int, title: String, content: String) {
+    fun createBoards(
+        clubId: Int,
+        title: String,
+        content: String,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
         viewModelScope.launch {
             try {
-                matchContent(content)
-                val boardCreate = BoardCreate(clubId, title, content, imgSrc)
+                val processedContent = processContent(content)
+                val boardCreate = BoardCreate(clubId, title, processedContent, imgSrc)
                 val createBoardRequestBody = createBoardRequestBody(boardCreate)
                 val success = boardRepository.createBoards(createBoardRequestBody, imageFileParts)
-                _isOperationSuccessful.postValue(success)
-                Log.d("BoardViewModel1", "success : $success")
+
+                if (success) {
+                    onSuccess()
+                    _isOperationSuccessful.value = success
+                } else {
+                    onFailure(Exception("create fail"))
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _isOperationSuccessful.postValue(false)
+                onFailure(e)
             }
         }
     }
 
-    fun updateBoards(clubId: Int, title: String, content: String, boardId: Int) {
+    fun updateBoards(
+        clubId: Int,
+        title: String,
+        content: String,
+        boardId: Int,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
         viewModelScope.launch {
             try {
-                matchContent(content)
-                val boardCreate = BoardCreate(clubId, title, content, imgSrc)
+                val processedContent = processContent(content)
+                val boardCreate = BoardCreate(clubId, title, processedContent, imgSrc)
                 val createBoardRequestBody = createBoardRequestBody(boardCreate)
-                val success =
-                    boardRepository.updateBoards(boardId, createBoardRequestBody, imageFileParts)
-                _isOperationSuccessful.postValue(success)
-                Log.d("BoardViewModel1", "success : $success")
+                val board = boardRepository.updateBoards(boardId, createBoardRequestBody, imageFileParts)
+                _board.postValue(board)
+                if (board != null) {
+                    onSuccess()
+                } else {
+                    onFailure(Exception("update fail"))
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _isOperationSuccessful.postValue(false)
+                onFailure(e)
             }
         }
     }
@@ -170,44 +192,65 @@ class BoardViewModel @Inject constructor(
         return clubJson.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
     }
 
-    private fun matchContent(content: String) {
+//    private suspend fun matchContent(content: String) {
+//        val pattern = Pattern.compile("<img src=\"(.*?)\"")
+//        val matcher = pattern.matcher(content)
+//
+//        Log.d("vm", "detail22 vm : $content")
+//        while (matcher.find()) {
+//            val contentUrl = matcher.group(1) // content:// 경로
+//            if (contentUrl != null) {
+//                if (contentUrl.startsWith("https://")) {
+//                    imgSrc.add(contentUrl)
+//                } else if (contentUrl.startsWith("content://")) {
+//                    handleImageSelection(Uri.parse(contentUrl))
+//                }
+//            }
+//        }
+//    }
+
+    private suspend fun processContent(content: String): String {
         val pattern = Pattern.compile("<img src=\"(.*?)\"")
         val matcher = pattern.matcher(content)
+        var processedContent = content
 
-        Log.d("vm", "detail22 vm : $content")
         while (matcher.find()) {
-            val contentUrl = matcher.group(1) // content:// 경로
+            val contentUrl = matcher.group(1)
             if (contentUrl != null) {
                 if (contentUrl.startsWith("https://")) {
                     imgSrc.add(contentUrl)
                 } else if (contentUrl.startsWith("content://")) {
-//                    Log.d("vm", "detail22 vm : $contentUrl")
                     handleImageSelection(Uri.parse(contentUrl))
                 }
             }
         }
+        return processedContent
     }
 
-    private fun handleImageSelection(uri: Uri) {
-        val filePath = getRealPathFromURI(uri)
-        if (filePath != null) {
-            val file = File(filePath)
-            addImageToUploadList(file)
+    private suspend fun handleImageSelection(uri: Uri) {
+        val resizedFile = resizeImageSuspend(context, uri)
+        if (resizedFile != null) {
+            addImageToUploadList(resizedFile)
         } else {
-//            Toast.makeText(this, "이미지 경로를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+            Log.e("handleImageSelection", "Image resizing failed.")
         }
     }
 
-//    private fun handleImageSelection(uri: Uri) {
-//        resizeImage(context, uri) { resizedFile ->
-//            if (resizedFile != null) {
-//                addImageToUploadList(resizedFile)
-//            } else {
-//                Log.e("handleImageSelection", "Image resizing failed.")
-//                // Optionally, show an error message to the user
-//            }
-//        }
-//    }
+    private suspend fun resizeImageSuspend(context: Context, uri: Uri): File? {
+        return suspendCancellableCoroutine { continuation ->
+            resizeImage(context, uri) { resizedFile ->
+                if (resizedFile != null) {
+                    val uriString = uri.toString()
+                    val imageId = uriString.substringAfterLast("/")
+                    val newFile = File(resizedFile.parent, "$imageId.jpg")
+                    resizedFile.renameTo(newFile)
+                    continuation.resume(newFile) {}
+                } else {
+                    continuation.resume(null) {}
+                }
+            }
+        }
+    }
 
     private fun getRealPathFromURI(uri: Uri): String? {
         var path: String? = null
@@ -223,7 +266,9 @@ class BoardViewModel @Inject constructor(
     }
 
     private fun addImageToUploadList(file: File) {
+        Log.d("img", "img123 name : ${file.name}")
         val requestFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+        Log.d("img", "img123 name : $requestFile")
         val body = MultipartBody.Part.createFormData("imgFile", file.name, requestFile)
         imageFileParts.add(body)
 
