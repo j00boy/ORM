@@ -136,4 +136,5 @@ dependencies {
 
     //board
     implementation(libs.wasabeef.richeditor.android)
+    implementation(libs.androidx.swiperefreshlayout)
 }

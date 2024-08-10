@@ -1,5 +1,7 @@
 package com.orm.ui.board
 
+import android.app.ProgressDialog
+import android.content.Intent
 import android.database.Cursor
 import android.graphics.Color
 import android.net.Uri
@@ -130,9 +132,8 @@ class BoardEditActivity : AppCompatActivity() {
 
     private fun savePost() {
         val title = titleEditText.text.toString()
-
-        Log.d("BoardEditActivity Content", "Content1 : ${editor.html}")
         val content = editor.html
+
         if (title.isBlank() || content.isBlank()) {
             Toast.makeText(this, "제목과 내용을 모두 입력해주세요.", Toast.LENGTH_SHORT).show()
             return
@@ -143,18 +144,46 @@ class BoardEditActivity : AppCompatActivity() {
             return
         }
 
+        // 프로그레스 다이얼로그 표시
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("게시글을 저장 중입니다...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
         if (boardId != null) {
-            // 기존 게시글 수정
-            boardViewModel.updateBoards(clubId!!, title, content, boardId!!)
-            Log.d("update", "update : $boardId")
-            Toast.makeText(this, "게시글이 수정되었습니다.", Toast.LENGTH_SHORT).show()
+            boardViewModel.updateBoards(
+                clubId!!,
+                title,
+                content,
+                boardId!!,
+                onSuccess = {
+                    progressDialog.dismiss()
+                    Toast.makeText(this, "게시글이 수정되었습니다.", Toast.LENGTH_SHORT).show()
+                    setResult(RESULT_OK, Intent().putExtra("refresh", true))
+                    finish()
+                },
+                onFailure = { exception ->
+                    progressDialog.dismiss()
+                    Toast.makeText(this, "수정 실패: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+            )
         } else {
             // 새 게시글 작성
-            boardViewModel.createBoards(clubId!!, title, content)
-            Toast.makeText(this, "새 게시글이 작성되었습니다.", Toast.LENGTH_SHORT).show()
+            boardViewModel.createBoards(
+                clubId!!,
+                title,
+                content,
+                onSuccess = {
+                    progressDialog.dismiss()
+                    Toast.makeText(this, "게시글이 작성되었습니다.", Toast.LENGTH_SHORT).show()
+                    setResult(RESULT_OK, Intent().putExtra("refresh", true))
+                    finish()
+                },
+                onFailure = { exception ->
+                    progressDialog.dismiss()
+                    Toast.makeText(this, "작성 실패: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+            )
         }
-
-        setResult(RESULT_OK)
-        finish()
     }
 }

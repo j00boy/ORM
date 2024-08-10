@@ -63,16 +63,16 @@ class BoardRepository @Inject constructor(
         }
     }
 
-    suspend fun updateBoards(boardId:Int, createBoard: RequestBody, imgFile: List<MultipartBody.Part>): Boolean  {
+    suspend fun updateBoards(boardId:Int, createBoard: RequestBody, imgFile: List<MultipartBody.Part>): Board?  {
         return withContext(Dispatchers.IO) {
 
             try {
                 val response = boardService.updateBoards(boardId, createBoard, imgFile).execute()
                 Log.d("BoardRepository", " BoardViewModel1 : $response ")
-                response.isSuccessful
+                response.body()
             } catch (e: Exception) {
                 Log.e("BoardRepository", "Error createBoards", e)
-                false
+                null
             }
         }
     }

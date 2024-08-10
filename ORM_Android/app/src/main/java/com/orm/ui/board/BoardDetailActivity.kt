@@ -1,14 +1,18 @@
 package com.orm.ui.board
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.webkit.WebView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.orm.R
 import com.orm.data.model.board.Board
 import com.orm.data.model.board.BoardList
@@ -22,12 +26,17 @@ import java.util.regex.Pattern
 
 @AndroidEntryPoint
 class BoardDetailActivity : AppCompatActivity() {
-    private val binding by lazy { ActivityBoardDetailBinding.inflate(layoutInflater) }
+    private val binding: ActivityBoardDetailBinding by lazy {
+        ActivityBoardDetailBinding.inflate(layoutInflater)
+    }
     private val boardViewModel: BoardViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels() // Added UserViewModel
 
     private var currentBoard: Board? = null
     private var processedContent: String = ""
+    private lateinit var editActivityResultLauncher: ActivityResultLauncher<Intent>
+//    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
 
     private val club: Club? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -45,12 +54,16 @@ class BoardDetailActivity : AppCompatActivity() {
         }
     }
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
         val boardId = boardList?.boardId ?: -1
         val clubId = club?.id ?: -1
+
+
 
         // Observe user info
         userViewModel.user.observe(this, Observer { user ->
@@ -113,6 +126,20 @@ class BoardDetailActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // ActivityResultLauncher 초기화
+        editActivityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                refreshData()
+            }
+        }
+
+//        swipeRefreshLayout = binding.swipeRefreshLayout
+//        swipeRefreshLayout.setOnRefreshListener {
+//            refreshData()
+//        }
     }
 
     private fun displayContent(content: String, board: Board) {
@@ -151,4 +178,13 @@ class BoardDetailActivity : AppCompatActivity() {
             binding.btnEdit.visibility = View.GONE
         }
     }
+
+    fun refreshData() {
+        Log.d("refresh", "refresh1234 frag")
+        val clubId = club?.id ?: -1
+        boardViewModel.getBoardList(clubId)
+//        swipeRefreshLayout.isRefreshing = false
+    }
+
+
 }

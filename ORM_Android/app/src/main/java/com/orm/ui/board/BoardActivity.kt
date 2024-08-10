@@ -81,4 +81,11 @@ class BoardActivity : AppCompatActivity() {
         val fragment = supportFragmentManager.findFragmentById(R.id.info) as? BoardAllFragment
         fragment?.refreshData()
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && data?.getBooleanExtra("refresh", false) == true) {
+            refreshBoardList()
+        }
+    }
 }
