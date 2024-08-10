@@ -8,36 +8,33 @@ import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class PermissionManager(private val activity: AppCompatActivity) {
 
-    private lateinit var multiplePermissionsLauncher: ActivityResultLauncher<Array<String>>
+    private lateinit var permissionsLauncher: ActivityResultLauncher<Array<String>>
 
     fun initializeLauncher() {
-        multiplePermissionsLauncher = activity.registerForActivityResult(
+        Log.d("PermissionManager", "initializeLauncher called")
+        permissionsLauncher = activity.registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
-            permissions.entries.forEach { (permission, isGranted) ->
-                when {
-                    isGranted -> {
-                        Log.d("PermissionManager", "$permission granted")
-                    }
+            handlePermissionsResult(permissions)
+        }
+    }
 
-                    else -> {
-                        Log.d("PermissionManager", "$permission denied")
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(
-                                activity,
-                                permission
-                            )
-                        ) {
-                            showPermissionRationale(permission)
-                        } else {
-                            showPermissionSettings(permission)
-                        }
-                    }
+    private fun handlePermissionsResult(permissions: Map<String, Boolean>) {
+        Log.d("PermissionManager", "handlePermissionsResult: $permissions")
+        permissions.forEach { (permission, isGranted) ->
+            if (isGranted) {
+                Log.d("PermissionManager", "$permission granted")
+            } else {
+                Log.d("PermissionManager", "$permission denied")
+                if (activity.shouldShowRequestPermissionRationale(permission)) {
+                    showPermissionRationale(permission)
+                } else {
+                    showPermissionSettings(permission)
                 }
             }
         }
@@ -48,11 +45,9 @@ class PermissionManager(private val activity: AppCompatActivity) {
             .setTitle("권한 요청")
             .setMessage("해당 권한이 필요합니다: $permission")
             .setPositiveButton("확인") { _, _ ->
-                multiplePermissionsLauncher.launch(arrayOf(permission))
+                permissionsLauncher.launch(arrayOf(permission))
             }
-            .setNegativeButton("취소") { _, _ ->
-                // 취소 버튼을 누른 경우의 코드
-            }
+            .setNegativeButton("취소", null)
             .show()
     }
 
@@ -66,27 +61,26 @@ class PermissionManager(private val activity: AppCompatActivity) {
                 }
                 activity.startActivity(intent)
             }
-            .setNegativeButton("취소") { _, _ ->
-                // 취소 버튼을 누른 경우의 코드
-            }
+            .setNegativeButton("취소", null)
             .show()
     }
 
     fun checkAndRequestPermissions(permissions: Array<String>) {
-        if (!hasPermissions(permissions)) {
-            Log.d("PermissionManager", "모든 권한이 부여되지 않았습니다")
-            multiplePermissionsLauncher.launch(permissions)
+        val permissionsToRequest = getUngrantedPermissions(permissions)
+        if (permissionsToRequest.isNotEmpty()) {
+            Log.d("PermissionManager", "권한 요청: ${permissionsToRequest.contentToString()}")
+            permissionsLauncher.launch(permissionsToRequest)
         } else {
             Log.d("PermissionManager", "모든 권한이 부여되었습니다")
         }
     }
 
-    fun hasPermissions(permissions: Array<String>): Boolean {
-        return permissions.all { permission ->
+    private fun getUngrantedPermissions(permissions: Array<String>): Array<String> {
+        return permissions.filter { permission ->
             ContextCompat.checkSelfPermission(
                 activity,
                 permission
-            ) == PackageManager.PERMISSION_GRANTED
-        }
+            ) != PackageManager.PERMISSION_GRANTED
+        }.toTypedArray()
     }
 }

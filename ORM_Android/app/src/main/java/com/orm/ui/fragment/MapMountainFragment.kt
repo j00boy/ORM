@@ -17,6 +17,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.ClusterManager
 import com.orm.R
@@ -26,7 +27,6 @@ import com.orm.ui.mountain.MountainDetailActivity
 import com.orm.viewmodel.MountainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
-// TODO : 마커 이미지, 인포윈도우 UI 변경
 @AndroidEntryPoint
 @SuppressLint("MissingPermission")
 class MapMountainFragment : Fragment(), OnMapReadyCallback {
@@ -56,7 +56,7 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentMapMountainBinding.inflate(inflater, container, false)
 
@@ -162,6 +162,13 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
                     }
 
                 } ?: run {
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("위치 정보 불러오기 실패")
+                        .setMessage("위치 정보를 불러올 수 없습니다.")
+                        .setPositiveButton("확인") { dialog, _ ->
+                            dialog.dismiss()
+                        }.show()
+
                     Log.e(TAG, "Location not available")
                 }
             }
