@@ -37,12 +37,19 @@ class MountainSearchActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        mountainViewModel.isLoading.observe(this) {
+            if (it) {
+                binding.progressBar.visibility = View.VISIBLE
+            } else {
+                binding.progressBar.visibility = View.GONE
+            }
+        }
+
         binding.svMountain.isSubmitButtonEnabled = true
         binding.svMountain.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(name: String?): Boolean {
 
-                Log.e("onQueryTextSubmit", name.toString())
                 mountainViewModel.fetchMountainByName(name.toString())
                 mountainViewModel.mountains.observe(this@MountainSearchActivity) {
                     setupAdapter(it!!)
