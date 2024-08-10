@@ -37,15 +37,19 @@ class MountainViewModel @Inject constructor(
 
     fun fetchMountainByName(name: String) {
         viewModelScope.launch {
+            _isLoading.postValue(true)
             val mountains = mountainRepository.getMountainByName(name)
             _mountains.postValue(mountains)
+            _isLoading.postValue(false)
         }
     }
 
     fun fetchMountainById(id: Int) {
         viewModelScope.launch {
+            _isLoading.postValue(true)
             val mountain = mountainRepository.getMountainById(id, true)
             _mountain.postValue(mountain)
+            _isLoading.postValue(false)
         }
     }
 
@@ -58,8 +62,10 @@ class MountainViewModel @Inject constructor(
 
     fun fetchMountainsTop() {
         viewModelScope.launch {
+            _isLoading.postValue(true)
             val mountains = mountainRepository.getMountainsTop()
             _mountains.postValue(mountains)
+            _isLoading.postValue(false)
         }
     }
 

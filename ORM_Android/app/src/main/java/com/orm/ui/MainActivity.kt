@@ -3,6 +3,7 @@ package com.orm.ui
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
@@ -26,21 +27,33 @@ class MainActivity : AppCompatActivity() {
         Manifest.permission.CAMERA,
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_NETWORK_STATE,
-        Manifest.permission.POST_NOTIFICATIONS,
+        Manifest.permission.ACCESS_NETWORK_STATE
     )
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-
-        checkPermissions()
-        NavigationUI.setupWithNavController(binding.navView, navHostFragment.navController)
+    private val notificationsPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        arrayOf(Manifest.permission.POST_NOTIFICATIONS)
+    } else {
+        emptyArray()
     }
 
-    private fun checkPermissions() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("MainActivity", "onCreate")
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+        NavigationUI.setupWithNavController(binding.navView, navHostFragment.navController)
+
         permissionManager = PermissionManager(this)
         permissionManager.initializeLauncher()
-        permissionManager.checkAndRequestPermissions(permissions)
+
+        binding.root.post {
+            requestPermissions()
+        }
+    }
+
+    private fun requestPermissions() {
+        val allPermissions = permissions + notificationsPermission
+        if (!permissionManager.hasPermissions(allPermissions)) {
+            permissionManager.checkAndRequestPermissions(allPermissions)
+        }
     }
 }

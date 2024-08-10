@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.data.model.club.Club
 import com.orm.databinding.ActivityClubSearchBinding
 import com.orm.ui.adapter.ProfileBasicAdapter
@@ -35,29 +36,21 @@ class ClubSearchActivity : AppCompatActivity() {
             binding.progressBar.visibility = if (it) View.GONE else View.VISIBLE
         }
 
+        // 클럽 데이터를 관찰하는 관찰자 등록
+        clubViewModel.clubs.observe(this@ClubSearchActivity) { clubs ->
+            if (clubs.isEmpty()) {
+                showDialog()
+            } else {
+                setupRecyclerView(clubs)
+            }
+        }
+
         binding.svClub.isSubmitButtonEnabled = true
         binding.svClub.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(name: String?): Boolean {
+                // 검색 요청을 보냄
                 clubViewModel.getClubs(name.toString())
-                clubViewModel.clubs.observe(this@ClubSearchActivity) { it ->
-                    adapter =
-                        ProfileBasicAdapter(it.map { Club.toRecyclerViewBasicItem(it) })
-
-                    adapter.setItemClickListener(object : ProfileBasicAdapter.OnItemClickListener {
-                        override fun onClick(v: View, position: Int) {
-                            val intent = Intent(
-                                this@ClubSearchActivity,
-                                ClubDetailActivity::class.java
-                            ).apply {
-                                putExtra("club", it[position])
-                            }
-                            startActivity(intent)
-                        }
-                    })
-                    rvBoard.adapter = adapter
-                    rvBoard.layoutManager = LinearLayoutManager(this@ClubSearchActivity)
-                }
                 return false
             }
 
@@ -66,6 +59,27 @@ class ClubSearchActivity : AppCompatActivity() {
             }
 
         })
+    }
 
+    private fun setupRecyclerView(clubs: List<Club>) {
+        adapter = ProfileBasicAdapter(clubs.map { Club.toRecyclerViewBasicItem(it) })
+        adapter.setItemClickListener(object : ProfileBasicAdapter.OnItemClickListener {
+            override fun onClick(v: View, position: Int) {
+                val intent = Intent(this@ClubSearchActivity, ClubDetailActivity::class.java).apply {
+                    putExtra("club", clubs[position])
+                }
+                startActivity(intent)
+            }
+        })
+        rvBoard.adapter = adapter
+        rvBoard.layoutManager = LinearLayoutManager(this@ClubSearchActivity)
+    }
+
+    private fun showDialog() {
+        MaterialAlertDialogBuilder(this@ClubSearchActivity)
+            .setTitle("검색 결과")
+            .setMessage("검색 결과가 없습니다.")
+            .setPositiveButton("확인") { _, _ -> }
+            .show()
     }
 }

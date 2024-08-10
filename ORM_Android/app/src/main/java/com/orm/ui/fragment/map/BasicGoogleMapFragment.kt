@@ -1,9 +1,11 @@
 package com.orm.ui.fragment.map
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -11,9 +13,17 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.Dash
+import com.google.android.gms.maps.model.Dot
+import com.google.android.gms.maps.model.Gap
+import com.google.android.gms.maps.model.JointType
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.RoundCap
 import com.orm.R
 import com.orm.data.model.Point
 import com.orm.databinding.FragmentGoogleMapBinding
@@ -45,40 +55,77 @@ class BasicGoogleMapFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
-        val southKoreaLatLng = LatLng(36.38, 127.51)
-        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(southKoreaLatLng, 7f))
+        googleMap?.apply {
+            mapType = GoogleMap.MAP_TYPE_NORMAL
+            uiSettings.isMapToolbarEnabled = false
+        }
+        googleMap?.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                LatLng(36.38, 127.51), 7f
+            )
+        )
+        googleMap?.setOnCameraMoveListener {
+            binding.root.parent.requestDisallowInterceptTouchEvent(true)
+        }
+
         updateMap(points)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        Log.e(TAG, mapFragment.toString())
         mapFragment.getMapAsync(this)
     }
 
     private fun updateMap(points: List<Point>) {
+        googleMap?.clear()
         googleMap?.let { map ->
-            val latLngPoints = points.map { LatLng(it.x, it.y) }
-
-            if (latLngPoints.isNotEmpty()) {
-                val startPoint = latLngPoints.first()
-                val endPoint = latLngPoints.last()
-                val centerPoint = LatLng(
-                    (startPoint.latitude + endPoint.latitude) / 2,
-                    (startPoint.longitude + endPoint.longitude) / 2
-                )
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(centerPoint, 12.0f))
-            }
-
+            val polylinePoints = points.map { LatLng(it.x, it.y) }
             polyline?.remove()
             polyline = map.addPolyline(
                 PolylineOptions()
-                    .clickable(true)
+                    .addAll(polylinePoints)
                     .color(Color.RED)
-                    .addAll(latLngPoints)
+                    .startCap(RoundCap())
+                    .endCap(RoundCap())
+                    .jointType(JointType.ROUND)
+                    .pattern(
+                        listOf(
+                            Dot(),
+                            Gap(10f),
+                            Dash(30f),
+                            Gap(10f)
+                        )
+                    )
+                    .clickable(true)
             )
+
+            if (polylinePoints.isNotEmpty()) {
+                val startMarker = MarkerOptions()
+                    .position(polylinePoints.first())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                    .title("시점")
+
+                val endMarker = MarkerOptions()
+                    .position(polylinePoints.last())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                    .title("종점")
+
+                map.addMarker(startMarker)
+                map.addMarker(endMarker)
+
+                val boundsBuilder = LatLngBounds.Builder()
+                polylinePoints.map {
+                    boundsBuilder.include(it)
+                }
+
+                map.animateCamera(
+                    CameraUpdateFactory.newLatLngBounds(
+                        boundsBuilder.build(),
+                        100
+                    )
+                )
+            }
         } ?: Log.e(TAG, "GoogleMap is not initialized")
     }
 

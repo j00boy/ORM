@@ -1,9 +1,11 @@
 package com.orm.ui.mountain
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -53,6 +55,7 @@ class MountainDetailActivity : AppCompatActivity() {
     @Inject
     lateinit var hikingTimePredictor: HikingTimePredictor
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)

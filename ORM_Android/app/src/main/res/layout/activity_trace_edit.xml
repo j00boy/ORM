@@ -124,18 +124,26 @@
                         android:layout_height="270dp" />
                 </com.google.android.material.card.MaterialCardView>
 
-                <Spinner
-                    android:id="@+id/spinner_trails"
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="72dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="12dp"
+                    android:background="?attr/selectableItemBackground"
+                    app:cardCornerRadius="8dp">
+
+                    <Spinner
+                        android:id="@+id/spinner_trails"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="12dp" />
+                </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_sign"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="24dp"
+                    android:layout_marginTop="12dp"
                     android:text="@{trace == null ? `생성하기` : `수정하기`}" />
             </LinearLayout>
 

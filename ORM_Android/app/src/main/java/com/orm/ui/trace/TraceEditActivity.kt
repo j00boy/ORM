@@ -122,6 +122,14 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
 
         }
 
+        mountainViewModel.isLoading.observe(this) {
+            if (it) {
+                binding.progressBar.visibility = View.VISIBLE
+            } else {
+                binding.progressBar.visibility = View.GONE
+            }
+        }
+
         binding.tfTraceMountain.setEndIconOnClickListener {
             val mountainName = binding.tfTraceMountain.editText?.text.toString()
             val bottomSheetFragment = BottomSheetMountainList.newInstance(mountainName)

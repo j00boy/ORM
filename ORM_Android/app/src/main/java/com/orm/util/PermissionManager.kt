@@ -1,6 +1,5 @@
 package com.orm.util
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -11,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class PermissionManager(private val activity: AppCompatActivity) {
 
@@ -23,39 +23,19 @@ class PermissionManager(private val activity: AppCompatActivity) {
             permissions.entries.forEach { (permission, isGranted) ->
                 when {
                     isGranted -> {
-                        // 권한이 승인된 경우 처리할 작업
-                        Log.d("Permissions", "$permission granted")
+                        Log.d("PermissionManager", "$permission granted")
                     }
+
                     else -> {
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
-                            // 권한 요청에 대한 이유를 사용자에게 설명하는 Dialog를 표시
-                            AlertDialog.Builder(activity)
-                                .setTitle("권한 요청")
-                                .setMessage("해당 권한이 필요합니다: $permission")
-                                .setPositiveButton("확인") { _, _ ->
-                                    multiplePermissionsLauncher.launch(arrayOf(permission))
-                                }
-                                .setNegativeButton("취소") { _, _ ->
-                                    // Dialog에서 취소 버튼을 누른 경우에 실행할 코드
-                                }
-                                .show()
+                        Log.d("PermissionManager", "$permission denied")
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                                activity,
+                                permission
+                            )
+                        ) {
+                            showPermissionRationale(permission)
                         } else {
-                            // 사용자가 권한 요청 다이얼로그에서 "다시 묻지 않음" 옵션을 선택한 경우에 실행할 코드
-                            AlertDialog.Builder(activity)
-                                .setTitle("권한 필요")
-                                .setMessage("해당 권한이 필요합니다. 설정에서 권한을 허용해 주세요: $permission")
-                                .setPositiveButton("설정으로 이동") { _, _ ->
-                                    // 설정 화면으로 이동하도록 사용자에게 안내
-                                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                        data = Uri.fromParts("package", activity.packageName, null)
-                                    }
-                                    activity.startActivity(intent)
-                                }
-                                .setNegativeButton("취소") { _, _ ->
-                                    // Dialog에서 취소 버튼을 누른 경우 실행할 코드
-                                    activity.finish()
-                                }
-                                .show()
+                            showPermissionSettings(permission)
                         }
                     }
                 }
@@ -63,15 +43,50 @@ class PermissionManager(private val activity: AppCompatActivity) {
         }
     }
 
+    private fun showPermissionRationale(permission: String) {
+        MaterialAlertDialogBuilder(activity)
+            .setTitle("권한 요청")
+            .setMessage("해당 권한이 필요합니다: $permission")
+            .setPositiveButton("확인") { _, _ ->
+                multiplePermissionsLauncher.launch(arrayOf(permission))
+            }
+            .setNegativeButton("취소") { _, _ ->
+                // 취소 버튼을 누른 경우의 코드
+            }
+            .show()
+    }
+
+    private fun showPermissionSettings(permission: String) {
+        MaterialAlertDialogBuilder(activity)
+            .setTitle("권한 필요")
+            .setMessage("해당 권한이 필요합니다. 설정에서 권한을 허용해 주세요: $permission")
+            .setPositiveButton("설정으로 이동") { _, _ ->
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", activity.packageName, null)
+                }
+                activity.startActivity(intent)
+            }
+            .setNegativeButton("취소") { _, _ ->
+                // 취소 버튼을 누른 경우의 코드
+            }
+            .show()
+    }
+
     fun checkAndRequestPermissions(permissions: Array<String>) {
         if (!hasPermissions(permissions)) {
+            Log.d("PermissionManager", "모든 권한이 부여되지 않았습니다")
             multiplePermissionsLauncher.launch(permissions)
+        } else {
+            Log.d("PermissionManager", "모든 권한이 부여되었습니다")
         }
     }
 
-    private fun hasPermissions(permissions: Array<String>): Boolean {
+    fun hasPermissions(permissions: Array<String>): Boolean {
         return permissions.all { permission ->
-            ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                activity,
+                permission
+            ) == PackageManager.PERMISSION_GRANTED
         }
     }
 }
