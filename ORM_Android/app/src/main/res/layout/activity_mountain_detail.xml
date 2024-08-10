@@ -41,6 +41,7 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <ScrollView
+            android:id="@+id/scroll_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginHorizontal="12dp"
@@ -119,6 +120,7 @@
 
 
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cv_map"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cardCornerRadius="8dp">
@@ -129,12 +131,20 @@
                         android:layout_height="270dp" />
                 </com.google.android.material.card.MaterialCardView>
 
-                <Spinner
-                    android:id="@+id/spinner_trails"
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="72dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="12dp"
+                    android:background="?attr/selectableItemBackground"
+                    app:cardCornerRadius="8dp">
+
+                    <Spinner
+                        android:id="@+id/spinner_trails"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="12dp" />
+                </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tf_predict_time"

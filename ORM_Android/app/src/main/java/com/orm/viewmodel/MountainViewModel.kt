@@ -44,8 +44,10 @@ class MountainViewModel @Inject constructor(
 
     fun fetchMountainById(id: Int) {
         viewModelScope.launch {
+            _isLoading.postValue(true)
             val mountain = mountainRepository.getMountainById(id, true)
             _mountain.postValue(mountain)
+            _isLoading.postValue(false)
         }
     }
 
