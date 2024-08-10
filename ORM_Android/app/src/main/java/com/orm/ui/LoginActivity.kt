@@ -33,16 +33,25 @@ class LoginActivity : AppCompatActivity() {
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d("LoginActivity", "onCreate")
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setupWebView()
         setupLoginButton()
 
-        userViewModel.token.observe(this) { token ->
-            Log.d("LoginActivity", "token: $token")
-            if (!token.isNullOrEmpty()) {
-                navigateToMainActivity()
+//        userViewModel.token.observe(this) { token ->
+//            Log.d("LoginActivity", "token: $token")
+//            if (!token.isNullOrEmpty()) {
+//                navigateToMainActivity()
+//            }
+//        }
+        userViewModel.getAccessToken()
+        userViewModel.isTokenLoading.observe(this) { isLoading ->
+            if (!isLoading) {
+                userViewModel.token.observe(this) { token ->
+                    if (!token.isNullOrEmpty()) {
+                        navigateToMainActivity()
+                    }
+                }
             }
         }
     }
@@ -70,7 +79,7 @@ class LoginActivity : AppCompatActivity() {
         override fun onReceivedSslError(
             view: WebView?,
             handler: SslErrorHandler?,
-            error: SslError?
+            error: SslError?,
         ) {
             handler?.proceed()
         }
@@ -89,7 +98,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun navigateToMainActivity() {
         userViewModel.getFirebaseToken()
-        startActivity(Intent(this, MainActivity::class.java).apply {
+        startActivity(Intent(this, LauncherActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         })
         finish()

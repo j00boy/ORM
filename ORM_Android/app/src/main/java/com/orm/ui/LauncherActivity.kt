@@ -18,10 +18,9 @@ class LauncherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         installSplashScreen()
-        userViewModel.isLoading.observe(this) { isLoading ->
-            if (!isLoading) {
-                val token = userViewModel.token.value
-                handleToken(token)
+        userViewModel.isTokenLoading.observe(this) { isTokenLoading ->
+            if (!isTokenLoading) {
+                handleToken(userViewModel.token.value)
             }
         }
     }
@@ -30,10 +29,8 @@ class LauncherActivity : AppCompatActivity() {
         val isNetworkAvailable = NetworkUtils.isNetworkAvailable(this)
 
         if (token.isNullOrEmpty()) {
-            Log.e("LauncherActivity", "checkAccessToken: false")
             navigateToActivity(LoginActivity::class.java)
         } else {
-            Log.e("LauncherActivity", "checkAccessToken: true, token: $token")
             if (isNetworkAvailable) {
                 userViewModel.loginAuto()
             }

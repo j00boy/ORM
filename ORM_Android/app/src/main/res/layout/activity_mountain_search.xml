@@ -19,9 +19,9 @@
                 android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/md_theme_primary"
                 android:minHeight="?attr/actionBarSize"
                 app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
-                android:background="@color/md_theme_primary"
                 app:title="산 검색" />
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -48,5 +48,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sv_mountain"
             tools:listitem="@layout/profile_basic" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

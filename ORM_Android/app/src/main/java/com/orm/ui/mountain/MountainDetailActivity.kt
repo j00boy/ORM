@@ -1,27 +1,20 @@
 package com.orm.ui.mountain
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.PopupWindow
 import android.widget.Spinner
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.orm.util.HikingTimePredictor
 import com.orm.R
 import com.orm.data.model.Mountain
@@ -42,7 +35,6 @@ import com.orm.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import android.view.ViewGroup.LayoutParams
 
 @AndroidEntryPoint
 class MountainDetailActivity : AppCompatActivity() {
@@ -63,6 +55,7 @@ class MountainDetailActivity : AppCompatActivity() {
     @Inject
     lateinit var hikingTimePredictor: HikingTimePredictor
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -107,26 +100,6 @@ class MountainDetailActivity : AppCompatActivity() {
                 userViewModel.user.observe(this@MountainDetailActivity) {
                     binding.trailHint = userViewModel.user.value?.nickname + "님의 예상 등반 시간입니다."
                 }
-                Glide.with(this)
-                    .asDrawable()
-                    .load("file:///android_asset/robot_icon.gif")
-                    .into(object : CustomTarget<Drawable>() {
-                        override fun onResourceReady(
-                            resource: Drawable,
-                            transition: Transition<in Drawable>?
-                        ) {
-                            binding.tfPredictTime.endIconDrawable = resource
-
-                            // Set click listener on the end icon
-                            binding.tfPredictTime.setEndIconOnClickListener {
-                                showTooltip(it, "AI를 통해 예측한 결과입니다.")
-                            }
-                        }
-
-                        override fun onLoadCleared(placeholder: Drawable?) {}
-                    })
-
-
             } else {
                 binding.fcvMap.visibility = View.GONE
                 binding.spinnerTrails.visibility = View.GONE
@@ -214,29 +187,5 @@ class MountainDetailActivity : AppCompatActivity() {
         val fragment =
             supportFragmentManager.findFragmentById(binding.fcvWeather.id) as? WeatherFragment
         fragment?.updateWeather(weather)
-    }
-
-    private fun showTooltip(anchor: View, message: String) {
-        val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val tooltipView = inflater.inflate(R.layout.tooltip_layout, null)
-        val tooltipText = tooltipView.findViewById<TextView>(R.id.tv_tooltip)
-        tooltipText.text = message
-
-        val popupWindow = PopupWindow(
-            tooltipView,
-            LayoutParams.WRAP_CONTENT,
-            LayoutParams.WRAP_CONTENT
-        ).apply {
-            isFocusable = true
-            isOutsideTouchable = true
-        }
-
-        // Calculate position to show popup above the anchor view
-        val location = IntArray(2)
-        anchor.getLocationOnScreen(location)
-        val xOffset = anchor.width / 2
-        val yOffset = -(tooltipView.height + anchor.height / 2)
-
-        popupWindow.showAtLocation(anchor, Gravity.NO_GRAVITY, location[0] + xOffset, location[1] + yOffset)
     }
 }
