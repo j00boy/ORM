@@ -1,6 +1,7 @@
 package com.orm.util
 
 import android.content.Context
+import android.util.Log
 import com.orm.data.model.Trail
 import com.orm.data.model.User
 import com.orm.data.repository.UserRepository
@@ -74,15 +75,16 @@ class HikingTimePredictor @Inject constructor(
 
     suspend fun predictTrail(trail: Trail): Float = withContext(Dispatchers.IO) {
         val altitude = trail.height.toFloat()
-        val distance = trail.distance.toFloat()
+        val distance = trail.distance.toFloat() * 1000
         val averageTime = trail.time.toFloat()
 
         val user: User = userRepository.getUserInfo()!!
-        val gender = if (user.gender == "male") 0.9f else 1.1f
-        val level = user.level.toFloat()
+        val gender = if (user.gender == "male") 1f else 0f
+        val level = (3 - user.level.toFloat()) % 3
         val age = user.age.toFloat()
 
         val input = floatArrayOf(altitude, gender, age, distance, level, averageTime)
+        Log.d("AITEST", "${altitude} ${gender} ${age} ${distance} ${level} ${averageTime}")
         predict(input)
     }
 }
