@@ -104,12 +104,12 @@ class BasicGoogleMapFragment : Fragment(), OnMapReadyCallback {
                 val startMarker = MarkerOptions()
                     .position(polylinePoints.first())
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                    .title("시작")
+                    .title("시점")
 
                 val endMarker = MarkerOptions()
                     .position(polylinePoints.last())
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
-                    .title("정상")
+                    .title("종점")
 
                 map.addMarker(startMarker)
                 map.addMarker(endMarker)

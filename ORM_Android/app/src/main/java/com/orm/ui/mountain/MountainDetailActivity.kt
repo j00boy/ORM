@@ -71,7 +71,7 @@ class MountainDetailActivity : AppCompatActivity() {
                 .replace(R.id.fcv_weather, WeatherFragment())
                 .commit()
 
-            supportFragmentManager.beginTransaction()
+            supportFragmentManager.beginTransactiong()
                 .replace(binding.fcvMap.id, BasicGoogleMapFragment())
                 .commit()
         }

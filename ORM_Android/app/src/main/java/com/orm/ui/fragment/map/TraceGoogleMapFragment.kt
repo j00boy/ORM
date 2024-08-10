@@ -91,6 +91,8 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     private var elapsedTime: Long = 0
     private var running = false
 
+    private var polylineOptions: PolylineOptions = PolylineOptions().color(Color.BLUE)
+
     private val locationReceiver = object : LocalReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val latitude = intent?.getDoubleExtra("latitude", 0.0) ?: 0.0
@@ -268,11 +270,11 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                 val positions = it.map { pos ->
                     LatLng(pos.x, pos.y)
                 }
+
                 userPolyline?.remove()
                 userPolyline = map.addPolyline(
                     PolylineOptions()
-                        .zIndex(10000000.0f)
-                        .color(R.color.md_theme_inversePrimary)
+                        .color(Color.BLUE)
                         .addAll(positions)
                 )
             }
@@ -395,3 +397,4 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         }
     }
 }
+
