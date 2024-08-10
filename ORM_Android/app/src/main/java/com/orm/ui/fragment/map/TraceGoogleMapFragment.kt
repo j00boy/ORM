@@ -165,13 +165,15 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                 }
                 stopLocationService()
 
-                traceViewModel.traceCreated.observe(requireActivity()) { isCreated ->
+                traceViewModel.traceCreated.observe(viewLifecycleOwner) { isCreated ->
                     if (isCreated) {
-                        startActivity(Intent(requireContext(), TraceActivity::class.java))
+                        val intent = Intent(requireContext(), TraceActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                        startActivity(intent)
                         requireActivity().finish()
                     }
                 }
-
             }
             .setNegativeButton("취소") { _, _ ->
             }
