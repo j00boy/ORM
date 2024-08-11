@@ -35,6 +35,8 @@ class MountainViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
+    private var isDataLoaded = false
+
     fun fetchMountainByName(name: String) {
         viewModelScope.launch {
             _isLoading.postValue(true)
@@ -70,11 +72,19 @@ class MountainViewModel @Inject constructor(
     }
 
     fun fetchMountainsAll() {
-        viewModelScope.launch {
+        if (!isDataLoaded) {
             _isLoading.postValue(true)
-            val mountains = mountainRepository.getMountainsAll()
-            _mountains.postValue(mountains)
-            _isLoading.postValue(false)
+            viewModelScope.launch {
+                try {
+                    val result = mountainRepository.getMountainsAll()
+                    _mountains.postValue(result)
+                    isDataLoaded = true
+                } catch (e: Exception) {
+                    Log.e("MountainViewModel", "Error fetching mountains", e)
+                } finally {
+                    _isLoading.postValue(false)
+                }
+            }
         }
     }
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">orm</string>
+    <string name="app_name">오름</string>
     <string name="title_home">홈</string>
     <string name="title_chat_list">채팅</string>
     <string name="title_notifications">알림</string>

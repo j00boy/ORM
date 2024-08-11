@@ -1,14 +1,18 @@
 package com.orm.ui.fragment
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -28,7 +32,6 @@ import com.orm.viewmodel.MountainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-@SuppressLint("MissingPermission")
 class MapMountainFragment : Fragment(), OnMapReadyCallback {
 
     private var _binding: FragmentMapMountainBinding? = null
@@ -42,6 +45,16 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
     private val mountainMap = mutableMapOf<Int, Mountain>()
 
     private val mountainViewModel: MountainViewModel by viewModels()
+
+    private val requestLocationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            googleMap?.let { setupMap() }
+        } else {
+            showPermissionDeniedDialog()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,29 +81,47 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
-        googleMap?.isMyLocationEnabled = true
-
-        val uiSettings = googleMap?.uiSettings
-        uiSettings?.isCompassEnabled = true
-        uiSettings?.isZoomControlsEnabled = true
-        uiSettings?.isMapToolbarEnabled = false
-        uiSettings?.isMyLocationButtonEnabled = true
-
-        val southKoreaLatLng = LatLng(36.38, 127.51)
-        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(southKoreaLatLng, 7f))
-        googleMap?.setMinZoomPreference(5f)
-        googleMap?.setMaxZoomPreference(15f)
-
-        fetchLocation()
-        setUpClusterer()
-        observeMountains()
+        setupMap()
+        if (!isLocationPermissionGranted()) {
+            requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         googleMap = null
         _binding = null
+    }
+
+    private fun isLocationPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun setupMap() {
+        googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
+
+        val uiSettings = googleMap?.uiSettings
+        uiSettings?.isCompassEnabled = true
+        uiSettings?.isZoomControlsEnabled = true
+        uiSettings?.isMapToolbarEnabled = false
+        uiSettings?.isMyLocationButtonEnabled = isLocationPermissionGranted()
+
+        googleMap?.isMyLocationEnabled = isLocationPermissionGranted()
+
+        val southKoreaLatLng = LatLng(36.38, 127.51)
+        googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(southKoreaLatLng, 7f))
+        googleMap?.setMinZoomPreference(5f)
+        googleMap?.setMaxZoomPreference(15f)
+
+        if (isLocationPermissionGranted()) {
+            fetchLocation()
+        }
+        setUpClusterer()
+        observeMountains()
     }
 
     private fun observeMountains() {
@@ -148,6 +179,7 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
         clusterManager.cluster()
     }
 
+    @SuppressLint("MissingPermission")
     private fun fetchLocation() {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
@@ -160,7 +192,6 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
                             )
                         )
                     }
-
                 } ?: run {
                     MaterialAlertDialogBuilder(requireContext())
                         .setTitle("위치 정보 불러오기 실패")
@@ -175,6 +206,22 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
             .addOnFailureListener { e ->
                 Log.e(TAG, "Failed to get location", e)
             }
+    }
+
+    private fun showPermissionDeniedDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("위치 권한 필요")
+            .setMessage("현재 위치를 파악하기 위해서는 권한이 필요합니다. 설정에서 권한을 허용해 주세요.")
+            .setPositiveButton("설정으로 이동") { dialog, _ ->
+                dialog.dismiss()
+                val intent =
+                    Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                        data =
+                            android.net.Uri.fromParts("package", requireContext().packageName, null)
+                    }
+                startActivity(intent)
+            }
+            .show() // Removed the cancel button
     }
 
     inner class MyItem(
