@@ -19,8 +19,8 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/tv_thumbnail"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -44,7 +44,7 @@
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_thumbnail"
+            app:layout_constraintStart_toEndOf="@+id/tv_thumbnail"
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textview.MaterialTextView
@@ -55,7 +55,7 @@
                 android:maxLines="1"
                 android:text="Main Text"
                 android:textColor="@color/md_theme_onSurface"
-                android:textSize="24sp"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -67,7 +67,7 @@
                 android:maxLines="1"
                 android:text="Sub Text"
                 android:textColor="@color/md_theme_onSurfaceVariant"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

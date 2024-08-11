@@ -150,6 +150,8 @@ class TraceDetailActivity : AppCompatActivity() {
         // 측정 완료한 경우 측정 버튼 안보임
         if (trace!!.recordId == null) {
             binding.fcvTable.visibility = View.GONE
+            binding.divider.visibility = View.GONE
+            binding.cvTraceResult.visibility = View.GONE
         } else {
             binding.btnStart.visibility = View.GONE
         }
@@ -177,7 +179,9 @@ class TraceDetailActivity : AppCompatActivity() {
                 recordViewModel.record.observe(this@TraceDetailActivity) {
                     val fragment =
                         supportFragmentManager.findFragmentById(binding.fcvMapTrack.id) as? BasicGoogleMapFragment
-                    fragment?.updatePoints(it.coordinate ?: emptyList())
+
+                    val points = it.coordinate ?: emptyList()
+                    fragment?.updatePoints(points.reversed())
                 }
             }
         }

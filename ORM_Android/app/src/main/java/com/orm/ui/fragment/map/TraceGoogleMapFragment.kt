@@ -185,7 +185,6 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     private fun insertRecordAndHandleTrace(points: List<Point>) {
         recordViewModel.insertRecord(Record(coordinate = points))
         recordViewModel.recordId.observe(requireActivity()) { createdId ->
-
             if (traceId != null && traceId != -1) {
                 traceViewModel.getTrace(traceId!!)
                 traceViewModel.trace.observe(requireActivity()) { trace ->

@@ -14,7 +14,6 @@ import android.location.Location
 import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -25,8 +24,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.orm.R
 import com.orm.ui.trace.TraceMeasureActivity
-import android.os.IBinder as IBinder1
 import android.content.Intent as BroadcastIntent
+import android.os.IBinder as IBinder1
 
 @SuppressLint("MissingPermission")
 class LocationIntentService : Service() {
@@ -42,8 +41,8 @@ class LocationIntentService : Service() {
     }
     private val notificationId = 1
     private val channelId = "location_channel"
-    private val updateIntervalMillis = 20000L
-    private val range = 0.000f
+    private val updateIntervalMillis = 10000L
+    private val range = 7.000f
 
     @SuppressLint("ForegroundServiceType")
     override fun onCreate() {
@@ -74,7 +73,6 @@ class LocationIntentService : Service() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 locationResult.lastLocation?.let {
-                    Log.d("LocationService", "Location: ${it.latitude}, ${it.longitude}")
                     updateLocation(it)
                 }
             }
@@ -138,6 +136,6 @@ class LocationIntentService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         stopLocationUpdates()
-        handlerThread.quitSafely() // Ensure to quit the HandlerThread
+        handlerThread.quitSafely()
     }
 }

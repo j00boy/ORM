@@ -122,7 +122,7 @@ class BasicGoogleMapFragment : Fragment(), OnMapReadyCallback {
                 map.animateCamera(
                     CameraUpdateFactory.newLatLngBounds(
                         boundsBuilder.build(),
-                        100
+                        150
                     )
                 )
             }

@@ -2,7 +2,6 @@ package com.orm.ui.trace
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.orm.data.model.Trace
@@ -13,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class TraceMeasureActivity : AppCompatActivity() {
+
     private val binding: ActivityTraceMeasureBinding by lazy {
         ActivityTraceMeasureBinding.inflate(layoutInflater)
     }
@@ -32,25 +32,29 @@ class TraceMeasureActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (savedInstanceState == null) {
-            trace?.let { trace ->
-                trailViewModel.getTrail(trace.trailId!!)
-
-                trailViewModel.trail.observe(this) { trail ->
-                    val fragment = TraceGoogleMapFragment.newInstance(
-                        points = trail.trailDetails,
-                        traceId = trace.localId
-                    )
-
-                    supportFragmentManager.beginTransaction()
-                        .replace(binding.fcvMap.id, fragment)
-                        .commit()
-
-                    trailViewModel.trail.removeObservers(this)
+            val fragment = trace?.let { trace ->
+                if (trace.trailId != null) {
+                    trailViewModel.getTrail(trace.trailId)
+                    var trailFragment: TraceGoogleMapFragment? = null
+                    trailViewModel.trail.observe(this) { trail ->
+                        trailFragment = TraceGoogleMapFragment.newInstance(
+                            points = trail.trailDetails,
+                            traceId = trace.localId
+                        )
+                        supportFragmentManager.beginTransaction()
+                            .replace(binding.fcvMap.id, trailFragment!!)
+                            .commit()
+                        trailViewModel.trail.removeObservers(this)
+                    }
+                    return
+                } else {
+                    TraceGoogleMapFragment.newInstance(emptyList(), trace.localId)
                 }
-            } ?: run {
-                val fragment = TraceGoogleMapFragment.newInstance(emptyList())
+            } ?: TraceGoogleMapFragment.newInstance(emptyList())
+
+            fragment.let {
                 supportFragmentManager.beginTransaction()
-                    .replace(binding.fcvMap.id, fragment)
+                    .replace(binding.fcvMap.id, it)
                     .commit()
             }
         }

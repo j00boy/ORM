@@ -45,16 +45,17 @@ class GraphFragment : Fragment() {
     private fun setDataToChart(lineChart: LineChart, data: List<Pair<Float, Float>>) {
         val entries = data.map { Entry(it.first, it.second) }
 
-        val dataSet = LineDataSet(entries, "").apply {
-            color = Color.parseColor("#3c9b70")
-            valueTextColor = Color.BLACK
-            setDrawCircles(false)
+        val dataSet = LineDataSet(entries, "Data").apply {
+            color = Color.parseColor("#6200EE")  // Purple 500
+            valueTextColor = Color.parseColor("#6200EE")  // Match value color to line color
+            setDrawCircles(true)
+            circleColors = listOf(Color.parseColor("#BB86FC"))  // Light purple for circles
+            circleRadius = 4f
             setDrawValues(false)
             mode = LineDataSet.Mode.CUBIC_BEZIER
             lineWidth = 2f
             setDrawFilled(true)
-            fillDrawable =
-                ResourcesCompat.getDrawable(resources, R.drawable.gradient_fill, null)
+            fillDrawable = ResourcesCompat.getDrawable(resources, R.drawable.gradient_fill, null)
         }
 
         val lineData = LineData(dataSet)
@@ -66,7 +67,8 @@ class GraphFragment : Fragment() {
         xAxis.granularity = 1f
         xAxis.setDrawGridLines(false)
         xAxis.setDrawAxisLine(true)
-        xAxis.setLabelCount(10, true)
+        xAxis.setLabelCount(5, true)
+        xAxis.textColor = Color.parseColor("#B0BEC5")  // Light gray
         xAxis.valueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {
                 return "${value.toInt()}분"
@@ -76,9 +78,12 @@ class GraphFragment : Fragment() {
         // y축 설정
         val yAxisLeft = lineChart.axisLeft
         yAxisLeft.axisMinimum = data.minOfOrNull { it.second } ?: 0f
-        yAxisLeft.setDrawGridLines(false)
+        yAxisLeft.setDrawGridLines(true)
+        yAxisLeft.gridColor = Color.parseColor("#E0E0E0")  // Light gray for grid lines
+        yAxisLeft.gridLineWidth = 1f
         yAxisLeft.setDrawAxisLine(true)
-        yAxisLeft.setLabelCount(10, true)
+        yAxisLeft.setLabelCount(5, true)
+        yAxisLeft.textColor = Color.parseColor("#B0BEC5")  // Light gray
         yAxisLeft.valueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {
                 return "${value.toInt()}m"
