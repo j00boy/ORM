@@ -115,6 +115,9 @@ class ClubMemberActivity : AppCompatActivity() {
             }
 
             override fun onClickBtnDown(v: View, position: Int) {
+                if(memberItem!![position].id == club!!.managerId.toInt()){
+                    return
+                }
                 MaterialAlertDialogBuilder(this@ClubMemberActivity)
                     .setTitle("회원 추방")
                     .setMessage("정말로 ${memberItem!![position].nickName}님을 추방하시겠습니까?")

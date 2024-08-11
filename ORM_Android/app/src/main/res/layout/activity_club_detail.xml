@@ -126,6 +126,28 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tf_club_manager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="6dp"
+                    android:hint="모임장"
+                    android:scrollbars="none"
+                    app:layout_constraintTop_toBottomOf="@+id/tf_club_mountain">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tf_club_manager_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:inputType="none"
+                        android:text="@{club.managerName}" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_sign"
                     android:layout_width="match_parent"
@@ -135,7 +157,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tf_club_mountain" />
+                    app:layout_constraintTop_toBottomOf="@+id/tf_club_manager" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

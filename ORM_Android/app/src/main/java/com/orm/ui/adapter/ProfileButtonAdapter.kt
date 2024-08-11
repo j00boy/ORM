@@ -50,6 +50,9 @@ class ProfileButtonAdapter(private var items: List<RecyclerViewButtonItem>) :
             } else if (curId != userId.toInt() && userId == managerId) {
                 holder.btnUp.visibility = View.GONE
                 holder.btnDown.text = "추방"
+            } else if (curId == managerId.toInt()) {
+                holder.btnUp.visibility = View.GONE
+                holder.btnDown.text = "모임장"
             } else {
                 holder.btnUp.visibility = View.GONE
                 holder.btnDown.visibility = View.GONE
