@@ -21,6 +21,7 @@ import com.orm.data.model.Trail
 import com.orm.databinding.ActivityTraceEditBinding
 import com.orm.ui.fragment.BottomSheetMountainList
 import com.orm.ui.fragment.map.BasicGoogleMapFragment
+import com.orm.util.NetworkUtils
 import com.orm.viewmodel.MountainViewModel
 import com.orm.viewmodel.TraceViewModel
 import com.orm.viewmodel.TrailViewModel
@@ -81,14 +82,14 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         }
 
         if (trace != null) {
-            if(trace!!.trailId != null) {
+            if (trace!!.trailId != null) {
                 trailViewModel.getTrail(trace!!.trailId!!)
             }
             trailViewModel.trail.observe(this@TraceEditActivity) {
                 updateMapFragment(it.trailDetails)
             }
             mountainId = trace!!.mountainId
-            mountainName = if(mountainId == -1) "" else trace!!.mountainName!!
+            mountainName = if (mountainId == -1) "" else trace!!.mountainName!!
             binding.mountainName = mountainName
         }
 
@@ -102,24 +103,21 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
             if (mountain == null) {
                 binding.cvMap.visibility = View.GONE
                 binding.spinnerTrails.visibility = View.GONE
+            } else if (mountain != null) {
+                binding.mountainName = mountain!!.name
+                loadMountainTrails(mountain!!.id)
             }
-        }
-        if (mountain != null) {
-            mountainId = mountain!!.id
-            mountainName = mountain!!.name
-            binding.mountainName = mountainName
-            mountainViewModel.fetchMountainById(mountainId)
-            mountainViewModel.mountain.observe(this@TraceEditActivity) { it ->
-                if(it?.trails?.size != 0) {
-                    setupTrailSpinner(it?.trails!!)
-                    this.trails = it.trails
-                    binding.spinnerTrails.setSelection(trailIndex)
+        } else {
+            if (trace!!.mountainId != -1) {
+                if (NetworkUtils.isNetworkAvailable(this)) {
+                    loadMountainTrails(trace!!.mountainId)
                 } else {
                     binding.cvMap.visibility = View.GONE
-                    binding.spinnerTrails.visibility = View.GONE
                 }
+            } else {
+                binding.cvMap.visibility = View.GONE
+                binding.spinnerTrails.visibility = View.GONE
             }
-
         }
 
         mountainViewModel.isLoading.observe(this) {
@@ -161,10 +159,11 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                     }
 
                     if (selectedTrail == null && trace?.trailId != null) {
-
-                        trailViewModel.getTrail(trace!!.trailId!!)
-                        trailViewModel.trail.observe(this@TraceEditActivity) {
-                            selectedTrail = it
+                        if (trace?.mountainId == mountainId) {
+                            trailViewModel.getTrail(trace!!.trailId!!)
+                            trailViewModel.trail.observe(this@TraceEditActivity) {
+                                selectedTrail = it
+                            }
                         }
                     }
 
@@ -180,7 +179,7 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                     )
 
                     traceViewModel.createTrace(traceCreate)
-                    if(selectedTrail != null) {
+                    if (selectedTrail != null) {
                         trailViewModel.createTrail(selectedTrail!!)
                     }
 
@@ -244,6 +243,35 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
         }
+    }
+
+    private fun loadMountainTrails(mountainKey: Int) {
+//        mountainId = mountain.id
+//        mountainName = mountain.name
+//        binding.mountainName = mountainName
+        mountainViewModel.fetchMountainById(mountainKey)
+        mountainViewModel.mountain.observe(this@TraceEditActivity) { it ->
+            mountainId = it!!.id
+            mountainName = it.name
+            binding.mountainName = mountainName
+            if (it.trails?.size != 0) {
+                setupTrailSpinner(it.trails!!)
+                this.trails = it.trails
+                if (trace != null && trace!!.trailId != null) {
+                    val index = findTrailIndex(it.trails, trace!!.trailId!!)
+                    binding.spinnerTrails.setSelection(index)
+                } else {
+                    binding.spinnerTrails.setSelection(trailIndex)
+                }
+            } else {
+                binding.cvMap.visibility = View.GONE
+                binding.spinnerTrails.visibility = View.GONE
+            }
+        }
+    }
+
+    fun findTrailIndex(trails: List<Trail>, key: Int): Int {
+        return trails.indexOfFirst { it.id == key }
     }
 
     override fun onMountainSelected(mountain: Mountain) {
