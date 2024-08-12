@@ -10,6 +10,7 @@ import com.google.android.material.tabs.TabLayout
 import com.orm.R
 import com.orm.databinding.FragmentTabLayoutBinding
 import com.orm.ui.fragment.club.ClubAllFragment
+import com.orm.ui.fragment.club.ClubApplyFragment
 import com.orm.ui.fragment.club.ClubMeFragment
 
 class TabLayoutFragment : Fragment() {
@@ -41,6 +42,10 @@ class TabLayoutFragment : Fragment() {
 
                     1 -> {
                         replaceFragment(ClubAllFragment())
+                    }
+
+                    2 -> {
+                        replaceFragment(ClubApplyFragment())
                     }
                 }
             }
