@@ -81,4 +81,8 @@ public class User extends BaseEntity {
         this.isActive = UserStatus.N;
         this.clubs.clear();
     }
+
+    public void join() {
+        this.isActive = UserStatus.Y;
+    }
 }

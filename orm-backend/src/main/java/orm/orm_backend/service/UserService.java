@@ -24,6 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    @Transactional
     public LoginResponseDto kakaoLogin(String kakaoTokens) throws JsonProcessingException {
         KakaoInfoVo kakaoInfo = kakaoUtil.getKakaoUserInfo(kakaoTokens);
 
@@ -33,6 +34,7 @@ public class UserService {
 
         // 가입 절차를 밟았기 때문에 nullPointerException이 발생하지 않음이 보장됨
         User user = userRepository.findByKakaoId(kakaoInfo.getKakaoId()).orElseThrow();
+        user.join();
         return new LoginResponseDto(user);
     }
 
