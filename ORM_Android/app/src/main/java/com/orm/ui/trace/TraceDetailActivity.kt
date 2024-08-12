@@ -56,7 +56,7 @@ class TraceDetailActivity : AppCompatActivity() {
                             }
                             binding.cvMap.visibility = View.VISIBLE
                         }
-                        if(trace!!.mountainId == -1) {
+                        if (trace!!.mountainId == -1) {
                             binding.cvMap.visibility = View.GONE
                         }
                     }
@@ -105,7 +105,13 @@ class TraceDetailActivity : AppCompatActivity() {
 
                 recordViewModel.getRecord(trace!!.recordId!!)
                 recordViewModel.record.observe(this@TraceDetailActivity) {
-                    val firstTime = it.coordinate!!.first().time!!.toFloat()
+                    if (it.coordinate.isNullOrEmpty()) {
+                        binding.cvMapTrack.visibility = View.GONE
+                        binding.cvGraph.visibility = View.GONE
+                        return@observe
+                    }
+
+                    val firstTime = it.coordinate.first().time!!.toFloat()
                     val adjustedCoordinates = it.coordinate.map { pair ->
                         Pair(
                             (pair.time!!.toFloat() - firstTime) / 60000,
