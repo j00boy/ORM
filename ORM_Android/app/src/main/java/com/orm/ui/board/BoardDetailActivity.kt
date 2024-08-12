@@ -1,6 +1,7 @@
 package com.orm.ui.board
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -30,13 +31,12 @@ class BoardDetailActivity : AppCompatActivity() {
         ActivityBoardDetailBinding.inflate(layoutInflater)
     }
     private val boardViewModel: BoardViewModel by viewModels()
-    private val userViewModel: UserViewModel by viewModels() // Added UserViewModel
+    private val userViewModel: UserViewModel by viewModels()
 
+    private var isContentModified = false
     private var currentBoard: Board? = null
     private var processedContent: String = ""
     private lateinit var editActivityResultLauncher: ActivityResultLauncher<Intent>
-//    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-
 
     private val club: Club? by lazy {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -54,8 +54,6 @@ class BoardDetailActivity : AppCompatActivity() {
         }
     }
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -63,7 +61,18 @@ class BoardDetailActivity : AppCompatActivity() {
         val boardId = boardList?.boardId ?: -1
         val clubId = club?.id ?: -1
 
-
+        // Initialize ActivityResultLauncher for editing
+        editActivityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val refresh = result.data?.getBooleanExtra("refresh", false) ?: false
+                if (refresh) {
+                    isContentModified = true
+                    refreshData()
+                }
+            }
+        }
 
         // Observe user info
         userViewModel.user.observe(this, Observer { user ->
@@ -84,6 +93,8 @@ class BoardDetailActivity : AppCompatActivity() {
                             putParcelable("board", board)
                             putInt("boardId", boardId)
                             putInt("clubId", clubId)
+                            putParcelable("boardList", boardList)
+                            putParcelable("club", club)
                             userId?.let { putString("userId", it) } // Pass userId as a string
                         }
                     }
@@ -95,22 +106,42 @@ class BoardDetailActivity : AppCompatActivity() {
         })
 
         binding.topAppBar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            if (isContentModified) {
+                setResult(RESULT_OK, Intent().putExtra("refresh", true))
+            }
+            finish()
         }
 
         binding.btnDelete.setOnClickListener {
-            boardViewModel.deleteBoards(boardId)
-            onBackPressedDispatcher.onBackPressed()
+            val progressDialog = ProgressDialog(this)
+            progressDialog.setMessage("게시글을 삭제 중입니다...")
+            progressDialog.setCancelable(false)
+            progressDialog.show()
+            boardId.let {
+                boardViewModel.deleteBoards(it)
+                progressDialog.dismiss()
+            }
         }
+
+        boardViewModel.isOperationSuccessful.observe(this, Observer { isSuccess ->
+            if (isSuccess == true) {
+                // 삭제가 성공적으로 완료된 후에 setResult와 finish를 호출
+                setResult(RESULT_OK, Intent().putExtra("refresh", true))
+                finish()
+            }
+        })
+
+
 
         binding.btnEdit.setOnClickListener {
             currentBoard?.let { board ->
-                val intent = Intent(this, BoardEditActivity::class.java)
-                intent.putExtra("clubId", clubId)
-                intent.putExtra("title", board.title)
-                intent.putExtra("content", processedContent)
-                intent.putExtra("boardId", board.boardId)
-                startActivity(intent)
+                val intent = Intent(this, BoardEditActivity::class.java).apply {
+                    putExtra("clubId", clubId)
+                    putExtra("title", board.title)
+                    putExtra("content", processedContent)
+                    putExtra("boardId", board.boardId)
+                }
+                editActivityResultLauncher.launch(intent)
             }
         }
 
@@ -118,33 +149,24 @@ class BoardDetailActivity : AppCompatActivity() {
             if (binding.tfComment.text.toString().isNotEmpty()) {
                 currentBoard?.let { board ->
                     boardViewModel.createComments(board.boardId, binding.tfComment.text.toString())
-                    val intent = Intent(this, BoardDetailActivity::class.java)
-                    intent.putExtra("club", club)
-                    intent.putExtra("boardList", boardList)
-                    startActivity(intent)
-                    finish()
+                    binding.tfComment.text?.clear()
                 }
             }
         }
 
-        // ActivityResultLauncher 초기화
-        editActivityResultLauncher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
-            if (result.resultCode == RESULT_OK) {
-                refreshData()
+        boardViewModel.comment.observe(this, Observer { newComment ->
+            newComment?.let {
+                // 새 댓글을 CommentAllFragment에 추가
+                val commentFragment = supportFragmentManager.findFragmentById(R.id.info) as? CommentAllFragment
+                commentFragment?.addNewComment(it)
             }
-        }
+        })
 
-//        swipeRefreshLayout = binding.swipeRefreshLayout
-//        swipeRefreshLayout.setOnRefreshListener {
-//            refreshData()
-//        }
     }
 
     private fun displayContent(content: String, board: Board) {
         val webView = findViewById<WebView>(R.id.webView)
-
+        Log.d("detail", "detail22 :CONTENT $content")
         val pattern = Pattern.compile("<img src=\"(.*?)\"")
         val matcher = pattern.matcher(content)
 
@@ -179,12 +201,8 @@ class BoardDetailActivity : AppCompatActivity() {
         }
     }
 
-    fun refreshData() {
-        Log.d("refresh", "refresh1234 frag")
-        val clubId = club?.id ?: -1
-        boardViewModel.getBoardList(clubId)
-//        swipeRefreshLayout.isRefreshing = false
+    private fun refreshData() {
+        val boardId = boardList?.boardId ?: -1
+        boardViewModel.getBoards(boardId)
     }
-
-
 }

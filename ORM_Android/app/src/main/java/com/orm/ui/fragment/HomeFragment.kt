@@ -52,9 +52,9 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupCardFragments() {
-        setupCardFragment(binding.cardSearch.id, "검색", "산을\n찾으세요")
-        setupCardFragment(binding.cardTrace.id, "발자국", "발자국을 추적하세요")
-        setupCardFragment(binding.cardClub.id, "모임", "모임을\n찾으세요")
+        setupCardFragment(binding.cardSearch.id, "검색", SUB_MOUNTAIN)
+        setupCardFragment(binding.cardTrace.id, "발자국", SUB_TRACE)
+        setupCardFragment(binding.cardClub.id, "모임", SUB_CLUB)
     }
 
     private fun setupCardFragment(containerId: Int, title: String, subtitle: String) {
@@ -68,5 +68,11 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        val SUB_MOUNTAIN: String = "산을\n찾으세요"
+        val SUB_TRACE: String = "발자국을 추적하세요"
+        val SUB_CLUB: String = "모임을\n찾으세요"
     }
 }

@@ -1,5 +1,6 @@
 package com.orm.ui.fragment.board
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -14,10 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.orm.R
 import com.orm.data.model.board.Board
+import com.orm.data.model.board.BoardList
 import com.orm.data.model.board.Comment
+import com.orm.data.model.club.Club
 import com.orm.data.model.recycler.RecyclerViewCommentItem
 import com.orm.databinding.FragmentCommentAllBinding
 import com.orm.ui.adapter.ProfileCommentAdapter
+import com.orm.ui.board.BoardDetailActivity
 import com.orm.viewmodel.BoardViewModel
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,6 +56,22 @@ class CommentAllFragment : Fragment() {
         arguments?.getString("userId")
     }
 
+    private val boardList: BoardList? by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable("boardList", BoardList::class.java)
+        } else {
+            arguments?.getParcelable<BoardList>("boardList")
+        }
+    }
+
+    private val club: Club? by lazy {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable("club", Club::class.java)
+        } else {
+            arguments?.getParcelable<Club>("club")
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -84,6 +104,8 @@ class CommentAllFragment : Fragment() {
             }
         }
 
+
+
         return root
     }
 
@@ -101,8 +123,15 @@ class CommentAllFragment : Fragment() {
             },
             onDeleteClick = { comment ->
                 if (comment.userId.toString() == currentUserId) {
-                    boardId?.let { boardViewModel.deleteComments(it, comment.commentId) }
-                    Log.d("CommentAllFragment", "Delete clicked for comment: ${comment.commentId}")
+                    boardId?.let { boardId ->
+                        // 댓글 삭제 요청
+                        boardViewModel.deleteComments(boardId, comment.commentId)
+
+                        // 삭제된 댓글을 어댑터에서 제거
+                        val updatedList = adapter.getItems().toMutableList()
+                        updatedList.removeAll { it.commentId == comment.commentId }
+                        adapter.submitList(updatedList)
+                    }
                 }
             }
         )
@@ -131,4 +160,14 @@ class CommentAllFragment : Fragment() {
 
         bottomSheetDialog.show()
     }
+
+    fun addNewComment(newComment: Comment) {
+        val newItem = Comment.toRecyclerViewCommentItem(newComment)
+        val currentList = adapter.getItems().toMutableList()
+        currentList.add(newItem)
+        adapter.submitList(currentList)
+        binding.recyclerView.scrollToPosition(currentList.size - 1) // 새 댓글로 스크롤
+    }
+
+
 }

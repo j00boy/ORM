@@ -20,6 +20,7 @@ import com.orm.data.model.board.Comment
 import com.orm.data.model.board.CreateComment
 import com.orm.data.model.club.Club
 import com.orm.data.repository.BoardRepository
+import com.orm.ui.board.BoardDetailActivity
 import com.orm.util.resizeImage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -82,6 +83,7 @@ class BoardViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             try {
+                imageFileParts.clear()
                 val processedContent = processContent(content)
                 val boardCreate = BoardCreate(clubId, title, processedContent, imgSrc)
                 val createBoardRequestBody = createBoardRequestBody(boardCreate)
@@ -146,7 +148,7 @@ class BoardViewModel @Inject constructor(
                 val createComment = CreateComment(content)
                 val newComment = boardRepository.createComments(boardId, createComment)
                 _comment.postValue(newComment)
-                _isOperationSuccessful.postValue(newComment != null)
+//                _isOperationSuccessful.postValue(newComment != null)
                 Log.d("BoardViewModel1", "New comment created: $newComment")
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -272,7 +274,7 @@ class BoardViewModel @Inject constructor(
         val body = MultipartBody.Part.createFormData("imgFile", file.name, requestFile)
         imageFileParts.add(body)
 
-        Log.d("BoardEditActivity", "Added image file part: ${file.name}")
+        Log.d("BoardEditActivity", "Added image file part: ${file.length()}")
     }
 
 }

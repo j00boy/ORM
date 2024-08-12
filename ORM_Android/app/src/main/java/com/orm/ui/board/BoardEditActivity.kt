@@ -144,6 +144,12 @@ class BoardEditActivity : AppCompatActivity() {
             return
         }
 
+        val imageCount = countImageTags(content)
+        if (imageCount > 3) {
+            Toast.makeText(this, "이미지는 3개를 초과할 수 없습니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         // 프로그레스 다이얼로그 표시
         val progressDialog = ProgressDialog(this)
         progressDialog.setMessage("게시글을 저장 중입니다...")
@@ -185,5 +191,9 @@ class BoardEditActivity : AppCompatActivity() {
                 }
             )
         }
+    }
+    private fun countImageTags(html: String): Int {
+        val imgTagPattern = "<img[^>]*src=\"[^\"]*\"[^>]*>".toRegex()
+        return imgTagPattern.findAll(html).count()
     }
 }
