@@ -10,7 +10,7 @@ import com.orm.data.model.Record
 @Dao
 interface RecordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRecord(record: Record) : Long
+    suspend fun insertRecord(record: Record): Long
 
     @Delete
     suspend fun deleteRecord(record: Record): Int
@@ -21,4 +21,9 @@ interface RecordDao {
     @Query("DELETE FROM record")
     suspend fun deleteAllRecords()
 
+    @Query("SELECT COUNT(id) FROM record")
+    suspend fun getRecordCount(): Int
+
+    @Query("SELECT * FROM record")
+    suspend fun getAllRecords(): List<Record>
 }

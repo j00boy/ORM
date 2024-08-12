@@ -200,16 +200,16 @@ class TraceDetailActivity : AppCompatActivity() {
                     supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
                 fragment?.updatePoints(it.trailDetails)
             }
+        }
 
-            if (trace!!.recordId != null) {
-                recordViewModel.getRecord(trace!!.recordId!!)
-                recordViewModel.record.observe(this@TraceDetailActivity) {
-                    val fragment =
-                        supportFragmentManager.findFragmentById(binding.fcvMapTrack.id) as? BasicGoogleMapFragment
+        if (trace!!.recordId != null) {
+            recordViewModel.getRecord(trace!!.recordId!!)
+            recordViewModel.record.observe(this@TraceDetailActivity) {
+                val fragment =
+                    supportFragmentManager.findFragmentById(binding.fcvMapTrack.id) as? BasicGoogleMapFragment
 
-                    val points = it.coordinate ?: emptyList()
-                    fragment?.updatePoints(points.reversed())
-                }
+                val points = it.coordinate ?: emptyList()
+                fragment?.updatePoints(points.reversed())
             }
         }
     }

@@ -9,12 +9,15 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
 import android.location.Location
 import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -48,6 +51,11 @@ class LocationIntentService : Service() {
     override fun onCreate() {
         super.onCreate()
 
+        if (!isLocationPermissionGranted()) {
+            stopSelf()
+            return
+        }
+
         handlerThread = HandlerThread("LocationWorkerThread").apply { start() }
         handler = Handler(handlerThread.looper)
 
@@ -78,15 +86,25 @@ class LocationIntentService : Service() {
             }
         }
 
-        startLocationUpdates()
+        try {
+            startLocationUpdates()
+        } catch (e: SecurityException) {
+            Log.e("LocationIntentService", "Location permission missing", e)
+            handleLocationPermissionDenied()
+        }
     }
 
     private fun startLocationUpdates() {
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            handler.looper
-        )
+        try {
+            fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                handler.looper
+            )
+        } catch (e: SecurityException) {
+            Log.e("LocationIntentService", "Failed to request location updates", e)
+            handleLocationPermissionDenied()
+        }
     }
 
     private fun updateLocation(location: Location) {
@@ -99,6 +117,24 @@ class LocationIntentService : Service() {
 
     private fun stopLocationUpdates() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
+    private fun isLocationPermissionGranted(): Boolean {
+        val fineLocationPermission = ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        val coarseLocationPermission = ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        return fineLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                coarseLocationPermission == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun handleLocationPermissionDenied() {
+        stopLocationUpdates()
+        stopSelf()
     }
 
     private fun createNotification(): Notification {
@@ -135,7 +171,15 @@ class LocationIntentService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        stopLocationUpdates()
+        try {
+            stopLocationUpdates()
+        } catch (e: SecurityException) {
+            Log.e("LocationIntentService", "Failed to stop location updates", e)
+        }
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(notificationId)
+
         handlerThread.quitSafely()
     }
 }

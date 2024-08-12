@@ -3,6 +3,7 @@ package com.orm.ui.trace
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,13 +34,11 @@ class TraceMeasureActivity : AppCompatActivity() {
 
     private val trailViewModel: TrailViewModel by viewModels()
 
-    private var savedInstanceState: Bundle? = null
-
     private val requestLocationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            setupFragment(savedInstanceState)
+            setupFragment()
         } else {
             showPermissionDeniedDialog()
         }
@@ -47,14 +46,14 @@ class TraceMeasureActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+        if (savedInstanceState == null) {
+            setContentView(binding.root)
 
-        this.savedInstanceState = savedInstanceState
-
-        if (isLocationPermissionGranted()) {
-            setupFragment(savedInstanceState)
-        } else {
-            requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            if (isLocationPermissionGranted()) {
+                setupFragment()
+            } else {
+                requestLocationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
         }
     }
 
@@ -65,8 +64,8 @@ class TraceMeasureActivity : AppCompatActivity() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun setupFragment(savedInstanceState: Bundle?) {
-        if (savedInstanceState == null) {
+    private fun setupFragment() {
+        if (supportFragmentManager.findFragmentById(binding.fcvMap.id) == null) {
             val fragment = trace?.let { trace ->
                 if (trace.trailId != null) {
                     trailViewModel.getTrail(trace.trailId)
@@ -76,9 +75,11 @@ class TraceMeasureActivity : AppCompatActivity() {
                             points = trail.trailDetails,
                             traceId = trace.localId
                         )
-                        supportFragmentManager.beginTransaction()
-                            .replace(binding.fcvMap.id, trailFragment!!)
-                            .commit()
+                        trailFragment?.let {
+                            supportFragmentManager.beginTransaction()
+                                .replace(binding.fcvMap.id, it)
+                                .commit()
+                        }
                         trailViewModel.trail.removeObservers(this)
                     }
                     return
@@ -103,7 +104,7 @@ class TraceMeasureActivity : AppCompatActivity() {
                 dialog.dismiss()
                 val intent =
                     Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data = android.net.Uri.fromParts("package", packageName, null)
+                        data = Uri.fromParts("package", packageName, null)
                     }
                 startActivity(intent)
             }
@@ -114,7 +115,5 @@ class TraceMeasureActivity : AppCompatActivity() {
                 onBackPressedDispatcher.onBackPressed()
             }
             .show()
-
     }
-
 }
