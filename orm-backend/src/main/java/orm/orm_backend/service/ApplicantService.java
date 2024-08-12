@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import orm.orm_backend.dto.request.MemberRequestDto;
 import orm.orm_backend.entity.Applicant;
+import orm.orm_backend.entity.Club;
 import orm.orm_backend.repository.ApplicantRepository;
 
 import java.util.HashSet;
@@ -24,6 +25,13 @@ public class ApplicantService {
                 .filter(applicant -> applicant.getClub() != null)
                 .map(applicant -> applicant.getClub().getId()).forEach(result::add);
         return result;
+    }
+
+    // UserId에 해당하는 클럽 반환
+    public List<Club> getApplicantsById(Integer userId) {
+        return applicantRepository.findByUserId(userId).stream()
+                .filter(applicant -> applicant.getClub() != null)
+                .map(Applicant::getClub).toList();
     }
 
     // Club에 가입 신청한 인원

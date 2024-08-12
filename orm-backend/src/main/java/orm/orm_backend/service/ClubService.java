@@ -228,4 +228,18 @@ public class ClubService {
     public Club getByClubId(Integer clubId) {
         return clubRepository.findById(clubId).orElseThrow(() -> new CustomException(ErrorCode.INVALID_CLUB_ID));
     }
+
+    // 신청한 모임 불러오기
+    public List<ClubResponseDto> getAppliedClubs(Integer userId) {
+        // 신청한 클럽 List
+        List<Club> applicantsClub = applicantService.getApplicantsById(userId);
+
+        List<ClubResponseDto> clubs = new ArrayList<>();
+
+        for (Club c : applicantsClub) {
+            clubs.add(new ClubResponseDto(c, false, true));
+        }
+
+        return clubs;
+    }
 }

@@ -60,6 +60,14 @@ public class ClubController {
         return ResponseEntity.ok().body(clubs);
     }
 
+    @GetMapping
+    public ResponseEntity<List<ClubResponseDto>> findappliedClubs(HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        List<ClubResponseDto> clubs = clubService.getAppliedClubs(userId);
+        return ResponseEntity.ok().body(clubs);
+    }
+
     @GetMapping("/{clubId}")
     public ResponseEntity<ClubResponseDto> findClubById(@PathVariable Integer clubId) {
         ClubResponseDto result = clubService.getClubById(clubId);
