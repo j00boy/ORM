@@ -36,39 +36,156 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.fragment.app.FragmentContainerView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_trace"
-        android:name="com.orm.ui.fragment.HomeCardFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="10dp"
+        android:layout_margin="6dp"
+        app:cardBackgroundColor="@color/md_theme_primary"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guideline_horizontal_center" />
+        app:layout_constraintTop_toBottomOf="@+id/guideline_horizontal_center"
+        app:strokeColor="@color/md_theme_onPrimary">
 
-    <androidx.fragment.app.FragmentContainerView
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/img_main_trace" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_title_trace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|top"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:text="발자국"
+                android:textColor="@color/md_theme_primary"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_sub_title_trace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|top"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="60dp"
+                android:text="발자국을 추적하세요"
+                android:textColor="@color/md_theme_secondary"
+                android:textSize="18sp" />
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 세 번째 카드뷰 -->
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_search"
-        android:name="com.orm.ui.fragment.HomeCardFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="5dp"
+        android:layout_margin="6dp"
+        app:cardBackgroundColor="@color/md_theme_primary"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_center"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_bottom" />
+        app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_bottom"
+        app:strokeColor="@color/md_theme_onPrimary">
 
-    <androidx.fragment.app.FragmentContainerView
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/img_main_serach" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_title_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|top"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:text="검색"
+                android:textColor="@color/md_theme_primary"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_sub_title_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|bottom"
+                android:layout_marginStart="12dp"
+                android:layout_marginBottom="16dp"
+                android:text="산을\n찾으세요"
+                android:textColor="@color/md_theme_secondary"
+                android:textSize="18sp" />
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 네 번째 카드뷰 -->
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_club"
-        android:name="com.orm.ui.fragment.HomeCardFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="5dp"
+        android:layout_margin="6dp"
+        app:cardBackgroundColor="@color/md_theme_primary"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline_vertical_center"
-        app:layout_constraintTop_toBottomOf="@+id/guideline_horizontal_bottom" />
+        app:layout_constraintTop_toTopOf="@+id/guideline_horizontal_bottom"
+        app:strokeColor="@color/md_theme_onPrimary">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                android:src="@drawable/img_main_club" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_title_club"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|top"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:text="모임"
+                android:textColor="@color/md_theme_primary"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_sub_title_club"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|bottom"
+                android:layout_marginStart="12dp"
+                android:layout_marginBottom="16dp"
+                android:text="모임을\n찾으세요"
+                android:textColor="@color/md_theme_secondary"
+                android:textSize="18sp" />
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

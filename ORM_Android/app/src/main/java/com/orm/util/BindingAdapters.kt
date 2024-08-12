@@ -14,8 +14,8 @@ object BindingAdapters {
     fun loadImage(view: ImageView, imageUrl: String?) {
         Glide.with(view.context)
             .load(imageUrl)
-            .placeholder(R.drawable.ic_launcher_background)
-            .error(R.drawable.ic_launcher_background)
+            .placeholder(R.mipmap.ic_launcher_orm)
+            .error(R.mipmap.ic_launcher_orm)
             .centerCrop()
             .into(view)
     }
