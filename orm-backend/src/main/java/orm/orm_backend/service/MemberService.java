@@ -19,7 +19,9 @@ public class MemberService {
     public Set<Integer> getClubs(Integer userId) {
         List<Member> members = memberRepository.findByUserId(userId);
         Set<Integer> result = new HashSet<>();
-        members.stream().map(member -> member.getClub().getId()).forEach(result::add);
+        members.stream()
+                .filter(member -> member.getClub() != null)
+                .map(member -> member.getClub().getId()).forEach(result::add);
         return result;
     }
 
