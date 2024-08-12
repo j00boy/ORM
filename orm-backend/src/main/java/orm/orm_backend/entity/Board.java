@@ -65,4 +65,8 @@ public class Board extends BaseEntity{
         this.title = boardRequestDto.getTitle();
         this.content = boardRequestDto.getContent();
     }
+
+    public void removeClub() {
+        this.club = null;
+    }
 }

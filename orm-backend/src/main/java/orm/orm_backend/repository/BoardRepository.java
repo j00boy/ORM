@@ -23,4 +23,6 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     @Modifying
     @Query("update Board b set b.hit = b.hit + 1 where b.id = :boardId")
     void updateHits(Integer boardId);
+
+    void deleteByClubIsNull();
 }

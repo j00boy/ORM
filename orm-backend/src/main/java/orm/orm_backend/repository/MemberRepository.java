@@ -15,4 +15,6 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
     void deleteByUserIdAndClubId(Integer userId, Integer clubId);
 
     Boolean existsByUserIdAndClubId(Integer userId, Integer clubId);
+
+    void deleteByClubIsNull();
 }

@@ -38,6 +38,9 @@ public class Club extends BaseEntity {
     @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
     private List<Applicant> applicants;
 
+    @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
+    private List<Board> boards;
+
 
     @Builder
     public Club(User manager, Mountain mountain, String clubName, String description, String imageSrc) {
@@ -64,5 +67,6 @@ public class Club extends BaseEntity {
     private void preRemove() {
         members.forEach(Member::removeClub);
         applicants.forEach(Applicant::removeClub);
+        boards.forEach(Board::removeClub);
     }
 }

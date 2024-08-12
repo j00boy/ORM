@@ -9,7 +9,6 @@ import orm.orm_backend.repository.ApplicantRepository;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -52,6 +51,9 @@ public class ApplicantService {
         return applicantRepository.existsByUserIdAndClubId(userId, clubId);
     }
 
+    public void deleteOrphanApplicants() {
+        applicantRepository.deleteByClubIsNull();
+    }
     // Applicant 삭제
     public void deleteApplicant(Integer userId, Integer clubId) {
         applicantRepository.deleteByUserIdAndClubId(userId, clubId);
