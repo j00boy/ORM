@@ -53,4 +53,9 @@ public class ApplicantService {
     public Boolean isContained(Integer userId, Integer clubId) {
         return applicantRepository.existsByUserIdAndClubId(userId, clubId);
     }
+
+    // Applicant 삭제
+    public void deleteApplicant(Integer userId, Integer clubId) {
+        applicantRepository.deleteByUserIdAndClubId(userId, clubId);
+    }
 }

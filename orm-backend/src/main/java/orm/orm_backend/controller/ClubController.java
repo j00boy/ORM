@@ -125,5 +125,13 @@ public class ClubController {
          clubService.approveMember(memberRequestDto);
          return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @DeleteMapping("/applicants/cancel")
+    public ResponseEntity<Void> cancelApply(Integer clubId, HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        clubService.cancelApply(userId, clubId);
+        return ResponseEntity.noContent().build();
+    }
 }
 

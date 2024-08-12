@@ -242,4 +242,8 @@ public class ClubService {
 
         return clubs;
     }
+
+    public void cancelApply(Integer userId, Integer clubId) {
+        applicantService.deleteApplicant(userId, clubId);
+    }
 }
