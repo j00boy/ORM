@@ -12,4 +12,5 @@ public interface ClubRepository extends JpaRepository<Club, Integer> {
     List<Club> findAllByClubNameContaining(String keyword);
     List<Club> findAllByMountainId(Integer mountainId);
     Boolean existsByClubName(String clubName);
+    List<Club> findAllByIdIn(List<Integer> ids);
 }

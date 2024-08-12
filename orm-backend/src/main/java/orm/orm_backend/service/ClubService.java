@@ -90,10 +90,15 @@ public class ClubService {
         // 내 모임 검색이면
         if (isMyClub) {
             List<Member> members = memberService.getMemberList(userId);
-            for (Member m : members) {
-                clubRepository.findById(m.getClub().getId())
-                        .ifPresent(club -> clubs.add(new ClubResponseDto(club)));
-            }
+            // club Id 조회
+            List<Integer> clubIds = members.stream()
+                    .filter(member -> member.getClub() != null) // null 제외
+                    .map(member -> member.getClub().getId())
+                    .toList();
+            // 해당 id가 있는 클럽들만 반환
+            return clubRepository.findAllByIdIn(clubIds).stream()
+                    .map(ClubResponseDto::new)
+                    .toList();
         } else {
             List<Club> results = clubRepository.findAllByClubNameContaining(clubSearchRequestDto.getKeyword());
             Set<Integer> clubMap = memberService.getClubs(userId);
