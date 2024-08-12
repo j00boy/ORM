@@ -12,6 +12,9 @@ import orm.orm_backend.entity.Mountain;
 import orm.orm_backend.exception.CustomException;
 import orm.orm_backend.repository.MountainRepository;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static orm.orm_backend.exception.ErrorCode.MOUNTAIN_NOT_FOUND;
@@ -66,8 +69,17 @@ public class MountainService {
      * @return '100대 명산'에 속하는 Mountain을 변환한 MountainDto List
      */
     public List<MountainDto> get100Mountains() {
-        List<Mountain> mountains = mountainRepository.findByMountainCodeIn(Mountain100Config.CODE_100);
-        return mountains.stream().map(MountainDto::new).toList();
+        // 불변 리스트를 Copy
+        List<Mountain> mountains = new ArrayList<>(mountainRepository.findByMountainCodeIn(Mountain100Config.CODE_100));
+
+        // 무작위로 요소들의 순서를 섞음
+        Collections.shuffle(mountains);
+
+        // 20개까지만 이름 순서대로 List를 자름
+        return mountains.stream()
+                .limit(20)
+                .sorted(Comparator.comparing(Mountain::getMountainName))
+                .map(MountainDto::new).toList();
     }
 
     public List<MountainSimpleResponseDto> getAllMountains() {
