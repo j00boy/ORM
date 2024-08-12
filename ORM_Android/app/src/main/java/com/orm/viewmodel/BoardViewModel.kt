@@ -231,6 +231,8 @@ class BoardViewModel @Inject constructor(
 
     private suspend fun handleImageSelection(uri: Uri) {
         val resizedFile = resizeImageSuspend(context, uri)
+        Log.d("BoardEditActivity", "file987 uri: $uri")
+        Log.d("BoardEditActivity", "file987 resizedfile: $resizedFile")
         if (resizedFile != null) {
             addImageToUploadList(resizedFile)
         } else {
@@ -274,7 +276,8 @@ class BoardViewModel @Inject constructor(
         val body = MultipartBody.Part.createFormData("imgFile", file.name, requestFile)
         imageFileParts.add(body)
 
-        Log.d("BoardEditActivity", "Added image file part: ${file.length()}")
+        Log.d("BoardEditActivity", "file987 : ${file.name}")
+        Log.d("BoardEditActivity", "file987 size: ${file.length()}")
     }
 
 }
