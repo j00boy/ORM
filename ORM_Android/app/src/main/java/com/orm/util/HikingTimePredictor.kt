@@ -70,7 +70,7 @@ class HikingTimePredictor @Inject constructor(
         val output = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder())
         interpreter.run(inputBuffer, output)
         output.rewind()
-        return output.float
+        return output.float + 10f
     }
 
     suspend fun predictTrail(trail: Trail): Float = withContext(Dispatchers.IO) {
