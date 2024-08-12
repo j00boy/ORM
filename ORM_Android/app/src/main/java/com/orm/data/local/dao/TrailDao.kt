@@ -14,4 +14,7 @@ interface TrailDao {
 
     @Query("SELECT * FROM trail WHERE id = :id")
     suspend fun getTrail(id: Int): Trail
+
+    @Query("DELETE FROM trail")
+    suspend fun deleteAllTrails()
 }

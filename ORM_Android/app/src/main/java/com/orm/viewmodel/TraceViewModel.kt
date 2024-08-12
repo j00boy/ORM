@@ -53,4 +53,10 @@ class TraceViewModel @Inject constructor(
             getTraces()
         }
     }
+
+    fun deleteAllTraces() {
+        viewModelScope.launch {
+            traceRepository.deleteAllTraces()
+        }
+    }
 }

@@ -26,4 +26,10 @@ class RecordRepository @Inject constructor(
             recordDao.insertRecord(record)
         }
     }
+
+    suspend fun deleteAllRecords() {
+        withContext(Dispatchers.IO) {
+            recordDao.deleteAllRecords()
+        }
+    }
 }
