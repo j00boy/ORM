@@ -35,7 +35,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String kakaoRefreshToken;
 
-    @OneToMany(mappedBy = "manager", orphanRemoval = true)
+    @OneToMany(mappedBy = "manager", orphanRemoval = true, cascade = CascadeType.PERSIST)
     private List<Club> clubs;
 
     private Long kakaoId;
