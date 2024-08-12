@@ -61,6 +61,16 @@ public class UserService {
         user.registerFirebaseToken(firebaseToken);
     }
 
+    @Transactional
+    public void leaveUser(Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
+        if (!user.isActiveMember()) {
+            throw new CustomException(ErrorCode.WITHDRAWN_USER_ID);
+        }
+        user.leave();
+
+    }
+
     private boolean isJoined(Long kakaoId) {
         // 데이터베이스에 없는 사용자 -> 가입한적 없는 사용자
         Optional<User> user = userRepository.findByKakaoId(kakaoId);

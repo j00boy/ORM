@@ -66,4 +66,12 @@ public class UserController {
         userService.registerFirebaseToken(firebaseToken, userIdFromAccessToken);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/leave")
+    public ResponseEntity<Void> leaveUser(HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userIdFromAccessToken = jwtUtil.getUserIdFromAccessToken(accessToken);
+        userService.leaveUser(userIdFromAccessToken);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

@@ -9,6 +9,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import orm.orm_backend.dto.response.LoginResponseDto;
 import orm.orm_backend.vo.KakaoInfoVo;
 
+import java.util.List;
+
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -32,6 +34,9 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private String kakaoRefreshToken;
+
+    @OneToMany(mappedBy = "manager", orphanRemoval = true)
+    private List<Club> clubs;
 
     private Long kakaoId;
     private String firebaseToken;
@@ -70,5 +75,10 @@ public class User extends BaseEntity {
 
     public void registerFirebaseToken(String firebaseToken) {
         this.firebaseToken = firebaseToken;
+    }
+
+    public void leave() {
+        this.isActive = UserStatus.N;
+        this.clubs.clear();
     }
 }
