@@ -32,6 +32,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.net.URLDecoder
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -245,8 +246,9 @@ class BoardViewModel @Inject constructor(
             resizeImage(context, uri) { resizedFile ->
                 if (resizedFile != null) {
                     val uriString = uri.toString()
-                    val imageId = uriString.substringAfterLast("/")
-                    val newFile = File(resizedFile.parent, "$imageId.jpg")
+                    val decodedUriString = URLDecoder.decode(uriString, "UTF-8") // URI 디코딩
+                    val imageId = decodedUriString.substringAfterLast("/") // 디코딩된 파일 이름 추출
+                    val newFile = File(resizedFile.parent, "$imageId.jpg") // 디코딩된 파일 이름 사용
                     resizedFile.renameTo(newFile)
                     continuation.resume(newFile) {}
                 } else {
