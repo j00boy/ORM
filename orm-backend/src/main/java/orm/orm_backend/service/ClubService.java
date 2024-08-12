@@ -228,4 +228,15 @@ public class ClubService {
     public Club getByClubId(Integer clubId) {
         return clubRepository.findById(clubId).orElseThrow(() -> new CustomException(ErrorCode.INVALID_CLUB_ID));
     }
+
+    // 신청한 모임 불러오기
+    public List<ClubResponseDto> getAppliedClubs(Integer userId) {
+        // 신청한 클럽 List
+        return applicantService.getApplicantsById(userId).stream().filter(applicant -> applicant.getClub() != null)
+                .map(applicant -> new ClubResponseDto(applicant.getClub(), false, true)).toList();
+    }
+
+    public void cancelApply(Integer userId, Integer clubId) {
+        applicantService.deleteApplicant(userId, clubId);
+    }
 }
