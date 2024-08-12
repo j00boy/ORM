@@ -20,7 +20,9 @@ public class ApplicantService {
     public Set<Integer> getApplicants(Integer userId) {
         List<Applicant> applicants = applicantRepository.findByUserId(userId);
         Set<Integer> result = new HashSet<>();
-        applicants.stream().map(applicant -> applicant.getClub().getId()).forEach(result::add);
+        applicants.stream()
+                .filter(applicant -> applicant.getClub() != null)
+                .map(applicant -> applicant.getClub().getId()).forEach(result::add);
         return result;
     }
 
