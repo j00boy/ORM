@@ -60,6 +60,14 @@ public class ClubController {
         return ResponseEntity.ok().body(clubs);
     }
 
+    @GetMapping("/apply")
+    public ResponseEntity<List<ClubResponseDto>> findappliedClubs(HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        List<ClubResponseDto> clubs = clubService.getAppliedClubs(userId);
+        return ResponseEntity.ok().body(clubs);
+    }
+
     @GetMapping("/{clubId}")
     public ResponseEntity<ClubResponseDto> findClubById(@PathVariable Integer clubId) {
         ClubResponseDto result = clubService.getClubById(clubId);
@@ -116,6 +124,14 @@ public class ClubController {
     public ResponseEntity<Void> approveMember(@RequestBody MemberRequestDto memberRequestDto) {
          clubService.approveMember(memberRequestDto);
          return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping("/applicants/cancel")
+    public ResponseEntity<Void> cancelApply(Integer clubId, HttpServletRequest request) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        clubService.cancelApply(userId, clubId);
+        return ResponseEntity.noContent().build();
     }
 }
 
