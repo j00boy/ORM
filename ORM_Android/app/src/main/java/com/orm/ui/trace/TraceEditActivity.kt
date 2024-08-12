@@ -14,6 +14,8 @@ import android.widget.Spinner
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.data.model.Mountain
@@ -214,8 +216,15 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                 .show()
         }
 
+        val today = MaterialDatePicker.todayInUtcMilliseconds()
+
+        val constraintsBuilder = CalendarConstraints.Builder()
+            .setValidator(DateValidatorPointForward.now()) // 오늘 이후의 날짜만 선택 가능
+
         val picker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("등산 날짜 선택")
+            .setSelection(today) // 기본 선택 날짜를 오늘로 설정
+            .setCalendarConstraints(constraintsBuilder.build()) // 제약 조건 추가
             .setTextInputFormat(SimpleDateFormat("yyyy-MM-dd"))
             .build()
 
@@ -226,8 +235,25 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
             binding.tfDate.editText?.setText(dateString)
         }
 
-        binding.tfDate.setStartIconOnClickListener {
-            picker.show(supportFragmentManager, "trace_date")
+        picker.addOnPositiveButtonClickListener {
+            val selectedDateInMillis = it
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val dateString = sdf.format(Date(selectedDateInMillis))
+            binding.tfDate.editText?.setText(dateString)
+        }
+
+        binding.tfDate.setOnClickListener {
+            val existingPicker = supportFragmentManager.findFragmentByTag("trace_date")
+            if (existingPicker == null) {
+                picker.show(supportFragmentManager, "trace_date")
+            }
+        }
+
+        binding.tfDateField.setOnClickListener {
+            val existingPicker = supportFragmentManager.findFragmentByTag("trace_date")
+            if (existingPicker == null) {
+                picker.show(supportFragmentManager, "trace_date")
+            }
         }
     }
 

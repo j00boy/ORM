@@ -80,6 +80,7 @@
                     app:startIconDrawable="@drawable/ic_baseline_calendar_month_24">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tf_date_field"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:cursorVisible="false"
