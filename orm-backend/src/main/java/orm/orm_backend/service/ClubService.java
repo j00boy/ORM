@@ -232,15 +232,8 @@ public class ClubService {
     // 신청한 모임 불러오기
     public List<ClubResponseDto> getAppliedClubs(Integer userId) {
         // 신청한 클럽 List
-        List<Club> applicantsClub = applicantService.getApplicantsById(userId);
-
-        List<ClubResponseDto> clubs = new ArrayList<>();
-
-        for (Club c : applicantsClub) {
-            clubs.add(new ClubResponseDto(c, false, true));
-        }
-
-        return clubs;
+        return applicantService.getApplicantsById(userId).stream().filter(applicant -> applicant.getClub() != null)
+                .map(applicant -> new ClubResponseDto(applicant.getClub(), false, true)).toList();
     }
 
     public void cancelApply(Integer userId, Integer clubId) {

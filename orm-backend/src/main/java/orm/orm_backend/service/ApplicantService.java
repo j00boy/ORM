@@ -28,10 +28,8 @@ public class ApplicantService {
     }
 
     // UserId에 해당하는 클럽 반환
-    public List<Club> getApplicantsById(Integer userId) {
-        return applicantRepository.findByUserId(userId).stream()
-                .filter(applicant -> applicant.getClub() != null)
-                .map(Applicant::getClub).toList();
+    public List<Applicant> getApplicantsById(Integer userId) {
+        return applicantRepository.findByUserId(userId);
     }
 
     // Club에 가입 신청한 인원
