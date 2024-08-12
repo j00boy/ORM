@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import orm.orm_backend.dto.request.ClubRequestDto;
-import orm.orm_backend.dto.response.ClubResponseDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public class Club extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn
     private User manager;
 
