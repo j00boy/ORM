@@ -57,7 +57,7 @@ public class CommentService {
         // 게시판 작성자의 Firebase 토큰을 추가(단, 작성자가 회원탈퇴하지 않은 경우)
         User writer = board.getUser();
         if (writer.isActiveMember()) {
-            tokensRelatedWithBoard.add(board.getUser().getFirebaseToken());
+            tokensRelatedWithBoard.add(writer.getFirebaseToken());
         }
 
         tokensRelatedWithBoard.remove(user.getFirebaseToken());
