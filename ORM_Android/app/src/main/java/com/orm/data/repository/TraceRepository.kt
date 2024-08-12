@@ -83,4 +83,10 @@ class TraceRepository @Inject constructor(
             result
         }
     }
+
+    suspend fun deleteAllTraces() {
+        withContext(Dispatchers.IO) {
+            traceDao.deleteAllTraces()
+        }
+    }
 }

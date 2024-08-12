@@ -26,4 +26,10 @@ class NotificationRepository @Inject constructor(
             notificationDao.deleteNotification(notification)
         }
     }
+
+    suspend fun deleteAllNotifications() {
+        withContext(Dispatchers.IO) {
+            notificationDao.deleteAllNotifications()
+        }
+    }
 }

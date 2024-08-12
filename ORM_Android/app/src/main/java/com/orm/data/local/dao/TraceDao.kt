@@ -21,4 +21,6 @@ interface TraceDao {
     @Query("SELECT * FROM trace WHERE localId = :id")
     suspend fun getTrace(id: Int): Trace
 
+    @Query("DELETE FROM trace")
+    suspend fun deleteAllTraces()
 }

@@ -29,4 +29,10 @@ class TrailViewModel @Inject constructor(
             trailRepository.createTrail(trail)
         }
     }
+
+    fun deleteAllTrails() {
+        viewModelScope.launch {
+            trailRepository.deleteAllTrails()
+        }
+    }
 }

@@ -35,13 +35,11 @@ class NotificationViewModel @Inject constructor(
             _notifications.postValue(updateNotifications)
         }
     }
-//    fun insertNotification(notification: Notification) {
-//        viewModelScope.launch {
-//            notificationRepository.insertNotification(notification)
-//
-//            val updateNotifications = _notifications.value?.toMutableList() ?: mutableListOf()
-//            updateNotifications.add(notification)
-//            _notifications.postValue(updateNotifications)
-//        }
-//    }
+
+    fun deleteAllNotifications() {
+        viewModelScope.launch {
+            notificationRepository.deleteAllNotifications()
+            _notifications.postValue(emptyList())
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.orm.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,11 @@ import com.google.android.material.slider.Slider
 import com.orm.R
 import com.orm.data.model.User
 import com.orm.databinding.FragmentSettingsBinding
+import com.orm.ui.LauncherActivity
+import com.orm.viewmodel.NotificationViewModel
+import com.orm.viewmodel.RecordViewModel
+import com.orm.viewmodel.TraceViewModel
+import com.orm.viewmodel.TrailViewModel
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,6 +28,10 @@ class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
     private val userViewModel: UserViewModel by viewModels()
+    private val notificationViewModel: NotificationViewModel by viewModels()
+    private val recordViewModel: RecordViewModel by viewModels()
+    private val traceViewModel: TraceViewModel by viewModels()
+    private val trailViewModel: TrailViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -131,8 +141,18 @@ class SettingsFragment : Fragment() {
                 .setTitle("회원 탈퇴")
                 .setMessage("정말로 탈퇴하시겠습니까?")
                 .setPositiveButton("네") { _, _ ->
-                    // 회원 탈퇴 API 호출
-                    // userViewModel.deleteAccount()
+                    userViewModel.deleteUser()
+                    notificationViewModel.deleteAllNotifications()
+                    recordViewModel.deleteAllRecords()
+                    traceViewModel.deleteAllTraces()
+                    trailViewModel.deleteAllTrails()
+                    Toast.makeText(requireContext(), "회원 탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show()
+
+                    startActivity(
+                        Intent(requireContext(), LauncherActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                    )
                 }
                 .setNegativeButton("아니오", null)
                 .show()

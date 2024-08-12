@@ -17,4 +17,8 @@ interface RecordDao {
 
     @Query("SELECT * FROM record WHERE id = :id")
     suspend fun getRecord(id: Long): Record
+
+    @Query("DELETE FROM record")
+    suspend fun deleteAllRecords()
+
 }

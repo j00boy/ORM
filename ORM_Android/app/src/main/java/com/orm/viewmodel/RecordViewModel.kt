@@ -41,4 +41,10 @@ class RecordViewModel @Inject constructor(
             recordRepository.deleteRecord(record)
         }
     }
+
+    fun deleteAllRecords() {
+        viewModelScope.launch {
+            recordRepository.deleteAllRecords()
+        }
+    }
 }

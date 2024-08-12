@@ -20,4 +20,10 @@ class TrailRepository @Inject constructor(
             trailDao.createTrail(trail)
         }
     }
+
+    suspend fun deleteAllTrails() {
+        withContext(Dispatchers.IO) {
+            trailDao.deleteAllTrails()
+        }
+    }
 }
