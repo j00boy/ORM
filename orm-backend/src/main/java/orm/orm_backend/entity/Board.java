@@ -31,7 +31,7 @@ public class Board extends BaseEntity{
     @Column(length = 30)
     private String title;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", length = 1024)
     private String content;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
