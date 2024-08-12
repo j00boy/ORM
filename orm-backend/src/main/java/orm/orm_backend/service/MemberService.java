@@ -1,10 +1,7 @@
 package orm.orm_backend.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import orm.orm_backend.dto.request.MemberRequestDto;
 import orm.orm_backend.entity.Member;
 import orm.orm_backend.repository.MemberRepository;
 
@@ -48,5 +45,9 @@ public class MemberService {
     // club 내부에 해당 member가 존재하는지?
     public Boolean isContained(Integer userId, Integer clubId) {
         return memberRepository.existsByUserIdAndClubId(userId, clubId);
+    }
+
+    public void deleteOrphanMembers() {
+        memberRepository.deleteByClubIsNull();
     }
 }

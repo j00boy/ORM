@@ -213,6 +213,10 @@ public class BoardService {
                 board.getComments().stream().map(CommentResponseDto::new).toList());
     }
 
+    public void deleteOrphanBoards() {
+        boardRepository.deleteByClubIsNull();
+    }
+
     //    @Transactional
 //    public BoardResponseDto updateBoard(BoardRequestDto boardRequestDto, List<MultipartFile> imgFiles, Integer userId, Integer boardId) {
 //        // 해당 게시글 찾아오기

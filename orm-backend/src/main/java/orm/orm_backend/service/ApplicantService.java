@@ -8,7 +8,6 @@ import orm.orm_backend.repository.ApplicantRepository;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -44,5 +43,9 @@ public class ApplicantService {
     // Applicant 목록에 이미 존재하는가?
     public Boolean isContained(Integer userId, Integer clubId) {
         return applicantRepository.existsByUserIdAndClubId(userId, clubId);
+    }
+
+    public void deleteOrphanApplicants() {
+        applicantRepository.deleteByClubIsNull();
     }
 }
