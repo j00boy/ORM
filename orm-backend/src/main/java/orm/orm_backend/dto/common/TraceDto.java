@@ -22,10 +22,10 @@ public class TraceDto {
     public TraceDto(Trace trace) {
         this.id = trace.getId();
         this.title = trace.getTitle();
-        this.mountainName = trace.getMountain().getMountainName();
-        this.mountainId = trace.getMountain().getId();
+        this.mountainName = trace.getMountain() == null ? null : trace.getMountain().getMountainName();
+        this.mountainId = trace.getMountain() == null ? null : trace.getMountain().getId();
         this.hikingDate = trace.getHikingDate().toString();
-        this.trailId = trace.getTrail().getId();
+        this.trailId = trace.getTrail() == null ? null : trace.getTrail().getId();
         this.hikingStartedAt = trace.getStartTime() == null ? "" : trace.getStartTime().toString();
         this.hikingEndedAt = trace.getEndTime() == null ? "" : trace.getEndTime().toString();
         this.maxHeight= trace.getMaxAltitude();
