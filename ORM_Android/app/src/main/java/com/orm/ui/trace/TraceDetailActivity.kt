@@ -56,7 +56,7 @@ class TraceDetailActivity : AppCompatActivity() {
                             }
                             binding.cvMap.visibility = View.VISIBLE
                         }
-                        if(trace!!.mountainId == -1) {
+                        if (trace!!.mountainId == -1) {
                             binding.cvMap.visibility = View.GONE
                         }
                     }
@@ -105,7 +105,13 @@ class TraceDetailActivity : AppCompatActivity() {
 
                 recordViewModel.getRecord(trace!!.recordId!!)
                 recordViewModel.record.observe(this@TraceDetailActivity) {
-                    val firstTime = it.coordinate!!.first().time!!.toFloat()
+                    if (it.coordinate.isNullOrEmpty()) {
+                        binding.cvMapTrack.visibility = View.GONE
+                        binding.cvGraph.visibility = View.GONE
+                        return@observe
+                    }
+
+                    val firstTime = it.coordinate.first().time!!.toFloat()
                     val adjustedCoordinates = it.coordinate.map { pair ->
                         Pair(
                             (pair.time!!.toFloat() - firstTime) / 60000,
@@ -194,16 +200,16 @@ class TraceDetailActivity : AppCompatActivity() {
                     supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
                 fragment?.updatePoints(it.trailDetails)
             }
+        }
 
-            if (trace!!.recordId != null) {
-                recordViewModel.getRecord(trace!!.recordId!!)
-                recordViewModel.record.observe(this@TraceDetailActivity) {
-                    val fragment =
-                        supportFragmentManager.findFragmentById(binding.fcvMapTrack.id) as? BasicGoogleMapFragment
+        if (trace!!.recordId != null) {
+            recordViewModel.getRecord(trace!!.recordId!!)
+            recordViewModel.record.observe(this@TraceDetailActivity) {
+                val fragment =
+                    supportFragmentManager.findFragmentById(binding.fcvMapTrack.id) as? BasicGoogleMapFragment
 
-                    val points = it.coordinate ?: emptyList()
-                    fragment?.updatePoints(points.reversed())
-                }
+                val points = it.coordinate ?: emptyList()
+                fragment?.updatePoints(points.reversed())
             }
         }
     }

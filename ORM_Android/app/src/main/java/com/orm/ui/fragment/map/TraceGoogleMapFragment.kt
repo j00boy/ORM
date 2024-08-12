@@ -31,16 +31,23 @@ import kotlin.math.pow
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.gms.maps.model.Dash
+import com.google.android.gms.maps.model.Dot
+import com.google.android.gms.maps.model.Gap
+import com.google.android.gms.maps.model.JointType
+import com.google.android.gms.maps.model.RoundCap
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.viewmodel.RecordViewModel
 import com.orm.viewmodel.TrackViewModel
@@ -71,11 +78,13 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     private val recordViewModel: RecordViewModel by viewModels()
     private val traceViewModel: TraceViewModel by viewModels()
 
+
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var sensorManager: SensorManager
     private lateinit var pressureSensor: Sensor
     private lateinit var updateTimeRunnable: Runnable
 
+    private var saveRecordId: Int? = null
     private var googleMap: GoogleMap? = null
     private var points: List<Point> = emptyList()
     private var polyline: Polyline? = null
@@ -123,6 +132,11 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                 handler.postDelayed(this, 1000)
             }
         }
+
+        recordViewModel.getRecordCount()
+        recordViewModel.recordId.observe(this) {
+            saveRecordId = it.toInt() + 1
+        }
     }
 
     override fun onCreateView(
@@ -163,7 +177,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
             .setMessage("정말로 종료하시겠습니까?")
             .setPositiveButton("확인") { _, _ ->
                 trackViewModel.points.value?.let { points ->
-                    insertRecordAndHandleTrace(points)
+                    insertRecordAndHandleTrace(points, true)
                 }
                 stopLocationService()
 
@@ -182,29 +196,34 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
             .show()
     }
 
-    private fun insertRecordAndHandleTrace(points: List<Point>) {
-        recordViewModel.insertRecord(Record(coordinate = points))
-        recordViewModel.recordId.observe(requireActivity()) { createdId ->
-            if (traceId != null && traceId != -1) {
-                traceViewModel.getTrace(traceId!!)
-                traceViewModel.trace.observe(requireActivity()) { trace ->
-                    trace?.let {
-                        traceViewModel.createTrace(it.apply {
-                            recordId = createdId
-                            hikingStartedAt = startTime
-                            hikingEndedAt = System.currentTimeMillis()
-                            maxHeight = maxTrackHeight
-                            hikingDistance = trackViewModel.distance.value
-                        })
-                        traceViewModel.traceCreated.observe(requireActivity()) { isCreated ->
-                            if (isCreated) {
-                                Toast.makeText(
-                                    requireContext(),
-                                    "발자국 측정이 완료되었습니다.",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
-                            }
+    private fun insertRecordAndHandleTrace(points: List<Point>, isFinished: Boolean = false) {
+        recordViewModel.insertRecord(
+            Record(
+                id = saveRecordId!!,
+                coordinate = points
+            )
+        )
+
+        if (traceId != null && traceId != -1) {
+            traceViewModel.getTrace(traceId!!)
+            traceViewModel.trace.observe(requireActivity()) { trace ->
+                trace?.let {
+                    traceViewModel.createTrace(it.apply {
+                        recordId = saveRecordId!!.toLong()
+                        hikingStartedAt = startTime
+                        hikingEndedAt = System.currentTimeMillis()
+                        maxHeight = maxTrackHeight
+                        hikingDistance = trackViewModel.distance.value
+                    })
+
+                    traceViewModel.traceCreated.observe(requireActivity()) { isCreated ->
+                        if (isCreated && isFinished) {
+                            Toast.makeText(
+                                requireContext(),
+                                "발자국 측정이 완료되었습니다.",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
                         }
                     }
                 }
@@ -273,9 +292,28 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                 userPolyline?.remove()
                 userPolyline = map.addPolyline(
                     PolylineOptions()
-                        .color(Color.BLUE)
                         .addAll(positions)
+                        .color(Color.HSVToColor(floatArrayOf(152.82f, 0.613f, 0.608f)))
+                        .startCap(RoundCap())
+                        .endCap(RoundCap())
+                        .jointType(JointType.ROUND)
+                        .pattern(
+                            listOf(
+                                Dot(),
+                                Gap(10f),
+                                Dash(30f),
+                                Gap(10f)
+                            )
+                        )
+                        .clickable(true)
                 )
+            }
+
+            if (!trackViewModel.points.value.isNullOrEmpty()
+                && trackViewModel.points.value!!.size % 3 == 0
+                && trackViewModel.points.value!!.size >= 3
+            ) {
+                insertRecordAndHandleTrace(trackViewModel.points.value!!)
             }
         } ?: Log.e(TAG, "GoogleMap is not initialized")
     }
@@ -302,9 +340,32 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
             })
     }
 
+    private fun isLocationPermissionGranted(): Boolean {
+        val fineLocationPermission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        val coarseLocationPermission = ContextCompat.checkSelfPermission(
+            requireContext(),
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        return fineLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                coarseLocationPermission == PackageManager.PERMISSION_GRANTED
+    }
+
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        googleMap?.isMyLocationEnabled = true
+
+        if (isLocationPermissionGranted()) {
+            googleMap?.isMyLocationEnabled = true
+        } else {
+            startActivity(
+                Intent(requireContext(), TraceActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+            )
+        }
+
         googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
         googleMap?.moveCamera(CameraUpdateFactory.zoomTo(17f))
 
@@ -339,8 +400,8 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
 
     override fun onDestroyView() {
         super.onDestroyView()
+//        stopLocationService()
         localBroadcastManager.unregisterReceiver(locationReceiver)
-        trackViewModel.clearPoints()
         handler.removeCallbacks(updateTimeRunnable)
         googleMap = null
         _binding = null
@@ -366,16 +427,26 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     }
 
     private fun initializeMap(points: List<Point>) {
-        Log.d(TAG, "Updating map with points: $points")
-
         googleMap?.let { map ->
             val latLngPoints = points.map { LatLng(it.x, it.y) }
 
             polyline?.remove()
             polyline = map.addPolyline(
                 PolylineOptions()
-                    .color(Color.HSVToColor(floatArrayOf(16f, 1f, 1f)))
                     .addAll(latLngPoints)
+                    .color(Color.RED)
+                    .startCap(RoundCap())
+                    .endCap(RoundCap())
+                    .jointType(JointType.ROUND)
+                    .pattern(
+                        listOf(
+                            Dot(),
+                            Gap(10f),
+                            Dash(30f),
+                            Gap(10f)
+                        )
+                    )
+                    .clickable(true)
             )
         } ?: Log.e(TAG, "GoogleMap is not initialized")
     }

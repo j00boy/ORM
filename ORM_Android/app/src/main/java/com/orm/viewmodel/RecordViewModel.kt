@@ -1,6 +1,5 @@
 package com.orm.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +8,6 @@ import com.orm.data.model.Record
 import com.orm.data.repository.RecordRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,6 +16,9 @@ class RecordViewModel @Inject constructor(
 ) : ViewModel() {
     private val _record = MutableLiveData<Record>()
     val record: LiveData<Record> get() = _record
+
+    private val _records = MutableLiveData<List<Record>>()
+    val records: LiveData<List<Record>> get() = _records
 
     private val _recordId = MutableLiveData<Long>()
     val recordId: LiveData<Long> get() = _recordId
@@ -31,8 +32,7 @@ class RecordViewModel @Inject constructor(
 
     fun insertRecord(record: Record) {
         viewModelScope.launch {
-            val createId: Long = recordRepository.insertRecord(record)
-            _recordId.postValue(createId)
+            recordRepository.insertRecord(record)
         }
     }
 
@@ -45,6 +45,20 @@ class RecordViewModel @Inject constructor(
     fun deleteAllRecords() {
         viewModelScope.launch {
             recordRepository.deleteAllRecords()
+        }
+    }
+
+    fun getRecordCount() {
+        viewModelScope.launch {
+            val count = recordRepository.getRecordCount()
+            _recordId.postValue(count.toLong())
+        }
+    }
+
+    fun getAllRecords() {
+        viewModelScope.launch {
+            val records = recordRepository.getAllRecords()
+            _records.postValue(records)
         }
     }
 }

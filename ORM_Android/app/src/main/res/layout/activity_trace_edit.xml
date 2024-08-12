@@ -38,116 +38,111 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginHorizontal="12dp"
-            android:layout_marginTop="12dp"
-            android:scrollbars="none"
-            app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tf_trace_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:hint="발자국 이름을 입력하세요"
+                android:scrollbars="none"
+                app:counterEnabled="true"
+                app:counterMaxLength="16">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tf_trace_name"
+                <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="발자국 이름을 입력하세요"
-                    android:scrollbars="none"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="16">
+                    android:maxLength="16"
+                    android:singleLine="true"
+                    android:text="@{trace.title}" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLength="16"
-                        android:singleLine="true"
-                        android:text="@{trace.title}" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tf_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="날짜를 선택하세요."
+                android:scrollbars="none"
+                app:endIconMode="clear_text"
+                app:startIconDrawable="@drawable/ic_baseline_calendar_month_24">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tf_date"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tf_date_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="날짜를 선택하세요."
-                    android:scrollbars="none"
-                    app:endIconMode="clear_text"
-                    app:startIconDrawable="@drawable/ic_baseline_calendar_month_24">
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:paddingStart="48dp"
+                    android:text="@{trace.hikingDate}" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:cursorVisible="false"
-                        android:focusable="false"
-                        android:paddingStart="48dp"
-                        android:text="@{trace.hikingDate}" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tf_trace_mountain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="등반할 산을 지정하세요"
+                android:scrollbars="none"
+                app:counterEnabled="true"
+                app:counterMaxLength="8"
+                app:endIconContentDescription="산 검색"
+                app:endIconDrawable="@drawable/ic_search"
+                app:endIconMode="custom">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tf_trace_mountain"
+                <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:hint="등반할 산을 지정하세요"
-                    android:scrollbars="none"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="8"
-                    app:endIconContentDescription="산 검색"
-                    app:endIconDrawable="@drawable/ic_search"
-                    app:endIconMode="custom">
+                    android:maxLength="8"
+                    android:singleLine="true"
+                    android:text="@{mountainName}" />
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:maxLength="8"
-                        android:singleLine="true"
-                        android:text="@{mountainName}" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_map"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:cardCornerRadius="8dp">
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cv_map"
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/fcv_map"
+                    android:layout_width="match_parent"
+                    android:layout_height="270dp" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:background="?attr/selectableItemBackground"
+                app:cardCornerRadius="8dp">
+
+                <Spinner
+                    android:id="@+id/spinner_trails"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    app:cardCornerRadius="8dp">
+                    android:layout_margin="12dp" />
+            </com.google.android.material.card.MaterialCardView>
 
-                    <androidx.fragment.app.FragmentContainerView
-                        android:id="@+id/fcv_map"
-                        android:layout_width="match_parent"
-                        android:layout_height="270dp" />
-                </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_sign"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{trace == null ? `생성하기` : `수정하기`}" />
+        </LinearLayout>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="12dp"
-                    android:background="?attr/selectableItemBackground"
-                    app:cardCornerRadius="8dp">
-
-                    <Spinner
-                        android:id="@+id/spinner_trails"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="12dp" />
-                </com.google.android.material.card.MaterialCardView>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_sign"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="@{trace == null ? `생성하기` : `수정하기`}" />
-            </LinearLayout>
-
-        </ScrollView>
 
         <ProgressBar
             android:id="@+id/progressBar"

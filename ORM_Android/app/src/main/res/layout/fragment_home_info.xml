@@ -37,7 +37,8 @@
                     android:id="@+id/cv_thumbnail"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    app:cardCornerRadius="8dp">
+                    app:cardCornerRadius="8dp"
+                    app:strokeWidth="0dp">
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/iv_thumbnail"

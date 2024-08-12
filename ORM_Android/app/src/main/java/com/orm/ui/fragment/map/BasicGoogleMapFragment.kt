@@ -53,6 +53,7 @@ class BasicGoogleMapFragment : Fragment(), OnMapReadyCallback {
         return binding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         googleMap?.apply {
@@ -66,6 +67,16 @@ class BasicGoogleMapFragment : Fragment(), OnMapReadyCallback {
         )
         googleMap?.setOnCameraMoveListener {
             binding.root.parent.requestDisallowInterceptTouchEvent(true)
+        }
+        googleMap?.setOnMapClickListener {
+            binding.root.parent.requestDisallowInterceptTouchEvent(true)
+        }
+
+        binding.map.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_MOVE) {
+                binding.root.parent.requestDisallowInterceptTouchEvent(true)
+            }
+            false
         }
 
         updateMap(points)

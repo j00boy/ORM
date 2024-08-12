@@ -48,6 +48,22 @@ class ClubRepository @Inject constructor(
         }
     }
 
+    suspend fun getAppliedClubs(): List<Club> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response =
+                    clubService.getAppliedClubs().execute()
+                if (response.isSuccessful) {
+                    response.body() ?: emptyList()
+                } else {
+                    emptyList()
+                }
+            } catch (e: Exception) {
+                emptyList()
+            }
+        }
+    }
+
     suspend fun getMembers(clubId: Int): Map<String, List<ClubMember>> {
         return withContext(Dispatchers.IO) {
             val resultMap: MutableMap<String, List<ClubMember>> = mutableMapOf()
@@ -204,6 +220,17 @@ class ClubRepository @Inject constructor(
                 response.isSuccessful
             } catch (e: Exception) {
                 Log.e("ClubRepository", "Error drop member", e)
+                false
+            }
+        }
+    }
+
+    suspend fun cancelApply(clubId: Int): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = clubService.cancelApply(clubId).execute()
+                response.isSuccessful
+            } catch (e: Exception) {
                 false
             }
         }
