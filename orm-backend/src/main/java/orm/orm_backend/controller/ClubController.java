@@ -60,7 +60,7 @@ public class ClubController {
         return ResponseEntity.ok().body(clubs);
     }
 
-    @GetMapping
+    @GetMapping("/apply")
     public ResponseEntity<List<ClubResponseDto>> findappliedClubs(HttpServletRequest request) {
         String accessToken = request.getHeader(HEADER_AUTH);
         Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
