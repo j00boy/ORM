@@ -41,8 +41,8 @@ class LocationIntentService : Service() {
     }
     private val notificationId = 1
     private val channelId = "location_channel"
-    private val updateIntervalMillis = 10000L
-    private val range = 7.000f
+    private val updateIntervalMillis = 5000L
+    private val range = 6.000f
 
     @SuppressLint("ForegroundServiceType")
     override fun onCreate() {

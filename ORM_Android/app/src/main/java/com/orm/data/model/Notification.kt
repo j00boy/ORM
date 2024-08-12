@@ -32,7 +32,7 @@ data class Notification(
                 clubName = notificationData["clubName"]!!,
                 userName = notificationData["userName"],
                 alertType = notificationData["alertType"]!!,
-                clubImageSrc = notificationData["clubImageSrc"],
+                clubImageSrc = notificationData["clubImageSrc"] ?: "",
                 time = LocalDateTime.now(),
             )
         }
