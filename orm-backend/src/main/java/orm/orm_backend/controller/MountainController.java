@@ -45,14 +45,7 @@ public class MountainController {
 
     @GetMapping("/top")
     public ResponseEntity<List<MountainDto>> get100Mountains() {
-        String cacheKey = REDIS_PREFIX + "top100";
-
-        List<MountainDto> mountainDtos = redisService.getList(cacheKey);
-        if (mountainDtos == null) {
-            mountainDtos = mountainService.get100Mountains();
-
-            redisService.addAllList(cacheKey, mountainDtos);
-        }
+        List<MountainDto> mountainDtos = mountainService.get100Mountains();
         return ResponseEntity.ok().body(mountainDtos);
     }
 

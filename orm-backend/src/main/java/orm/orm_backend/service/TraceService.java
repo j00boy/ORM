@@ -38,8 +38,8 @@ public class TraceService {
 
     public TraceDto createTrace(TraceRequestDto creationRequestDto, Integer userId) {
 
-        Mountain mountain = creationRequestDto.getMountainId() == null ? null : mountainService.getMountainById(creationRequestDto.getMountainId());
-        Trail trail = creationRequestDto.getTrailId() == null ? null : trailService.getTrailEntityById(creationRequestDto.getTrailId());
+        Mountain mountain = creationRequestDto.getMountainId() == -1 ? null : mountainService.getMountainById(creationRequestDto.getMountainId());
+        Trail trail = creationRequestDto.getTrailId() == -1 ? null : trailService.getTrailEntityById(creationRequestDto.getTrailId());
 
         User user = userService.findUserById(userId);
 
