@@ -35,6 +35,10 @@ public class Club extends BaseEntity {
     @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
     private List<Member> members = new ArrayList<>();
 
+    @OneToMany(mappedBy = "club", fetch = FetchType.LAZY)
+    private List<Applicant> applicants;
+
+
     @Builder
     public Club(User manager, Mountain mountain, String clubName, String description, String imageSrc) {
         this.mountain = mountain;
@@ -54,5 +58,11 @@ public class Club extends BaseEntity {
         this.description = clubRequestDto.getDescription();
         this.mountain = mountain;
         this.imageSrc = imageSrc == null ? this.imageSrc : imageSrc;
+    }
+
+    @PreRemove
+    private void preRemove() {
+        members.forEach(Member::removeClub);
+        applicants.forEach(Applicant::removeClub);
     }
 }

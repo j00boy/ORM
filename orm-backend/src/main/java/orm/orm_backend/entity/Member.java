@@ -28,4 +28,7 @@ public class Member extends BaseEntity {
         this.club = club;
     }
 
+    public void removeClub() {
+        this.club = null;
+    }
 }

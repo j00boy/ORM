@@ -28,4 +28,8 @@ public class Applicant {
         this.club = club;
         this.introduction = introduction;
     }
+
+    public void removeClub() {
+        this.club = null;
+    }
 }
