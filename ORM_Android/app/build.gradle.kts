@@ -137,4 +137,7 @@ dependencies {
     //board
     implementation(libs.wasabeef.richeditor.android)
     implementation(libs.androidx.swiperefreshlayout)
+
+    // gesture view
+    implementation(libs.gesture.views)
 }

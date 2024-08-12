@@ -15,6 +15,7 @@ import com.orm.data.model.RequestMember
 import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubCreate
 import com.orm.databinding.ActivityClubDetailBinding
+import com.orm.ui.PhotoViewerActivity
 import com.orm.ui.mountain.MountainDetailActivity
 import com.orm.ui.board.BoardActivity
 import com.orm.ui.board.BoardEditActivity
@@ -80,6 +81,12 @@ class ClubDetailActivity : AppCompatActivity() {
 
         binding.topAppBar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
+        }
+
+        binding.cvThumbnail.setOnClickListener {
+            val intent = Intent(this, PhotoViewerActivity::class.java)
+            intent.putExtra("IMAGE_URL", club?.imgSrc)
+            startActivity(intent)
         }
 
         binding.btnMember.setOnClickListener {

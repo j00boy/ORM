@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.orm.R
 import com.orm.data.model.Trace
 import com.orm.databinding.ActivityTraceDetailBinding
+import com.orm.ui.PhotoViewerActivity
 import com.orm.ui.fragment.GraphFragment
 import com.orm.ui.fragment.map.BasicGoogleMapFragment
 import com.orm.ui.fragment.table.TextTableFragment
@@ -154,6 +155,12 @@ class TraceDetailActivity : AppCompatActivity() {
             binding.cvTraceResult.visibility = View.GONE
         } else {
             binding.btnStart.visibility = View.GONE
+        }
+
+        binding.cvImageUpload.setOnClickListener {
+            val intent = Intent(this, PhotoViewerActivity::class.java)
+            intent.putExtra("IMAGE_URL", trace?.imgPath)
+            startActivity(intent)
         }
 
         // 측정 시작 버튼
