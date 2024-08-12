@@ -83,7 +83,7 @@ public class MountainService {
     }
 
     public List<MountainSimpleResponseDto> getAllMountains() {
-        List<Mountain> all = mountainRepository.findAll();
+        List<Mountain> all = mountainRepository.findAllIfTrailPresent();
         return all.stream().map(MountainSimpleResponseDto::new).toList();
     }
 }
