@@ -31,6 +31,7 @@ class BoardActivity : AppCompatActivity() {
 
     private val boardViewModel: BoardViewModel by viewModels()
     private lateinit var editActivityResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var detailActivityResultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +41,16 @@ class BoardActivity : AppCompatActivity() {
         editActivityResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
+            Log.d("test123","test123 edit : ${result.resultCode}")
+            if (result.resultCode == RESULT_OK) {
+                refreshBoardList()
+            }
+        }
+
+        detailActivityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            Log.d("test123","test123 board : ${result.resultCode}")
             if (result.resultCode == RESULT_OK) {
                 refreshBoardList()
             }
@@ -80,12 +91,5 @@ class BoardActivity : AppCompatActivity() {
     private fun refreshBoardList() {
         val fragment = supportFragmentManager.findFragmentById(R.id.info) as? BoardAllFragment
         fragment?.refreshData()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK && data?.getBooleanExtra("refresh", false) == true) {
-            refreshBoardList()
-        }
     }
 }

@@ -8,6 +8,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,6 +42,8 @@ class BoardAllFragment : Fragment() {
         }
     }
 
+    private lateinit var detailActivityResultLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -47,6 +52,15 @@ class BoardAllFragment : Fragment() {
         val root: View = binding.root
 
         val clubId = club?.id ?: -1
+
+        // ActivityResultLauncher 초기화
+        detailActivityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == AppCompatActivity.RESULT_OK) {
+                refreshData()
+            }
+        }
 
         // Fetch board list using clubId
         boardViewModel.getBoardList(clubId)
@@ -85,7 +99,7 @@ class BoardAllFragment : Fragment() {
                     putExtra("club", club)
                 }
                 Log.e("boardAllFragment", "board: ${reversedList[position]}")
-                startActivity(intent)
+                detailActivityResultLauncher.launch(intent) // Here we launch with the detailActivityResultLauncher
             }
         })
 
