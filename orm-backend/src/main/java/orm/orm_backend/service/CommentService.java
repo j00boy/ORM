@@ -48,13 +48,18 @@ public class CommentService {
         Comment comment = commentRequestDto.toEntity(board, user, commentRequestDto);
         commentRepository.saveAndFlush(comment);
 
-        // 게시판에 댓글을 단 사람들의 Firebase 토큰을 조회
-        Set<String> tokensRelatedWithBoard = board.getComments().stream().map(com -> com.getUser().getFirebaseToken())
+        // 게시판에 댓글을 단 사람들의 Firebase 토큰을 조회(탈퇴한 회원 제외)
+        Set<String> tokensRelatedWithBoard = board.getComments().stream().filter(oneComment -> oneComment.getUser().isActiveMember())
+                .map(com -> com.getUser().getFirebaseToken())
                 .filter(firebaseToken -> firebaseToken != null && !firebaseToken.isBlank() && !firebaseToken.equals(user.getFirebaseToken()))
                 .collect(Collectors.toSet());
 
-        // 게시판 작성자의 Firebase 토큰을 추가
-        tokensRelatedWithBoard.add(comment.getBoard().getUser().getFirebaseToken());
+        // 게시판 작성자의 Firebase 토큰을 추가(단, 작성자가 회원탈퇴하지 않은 경우)
+        User writer = board.getUser();
+        if (writer.isActiveMember()) {
+            tokensRelatedWithBoard.add(comment.getBoard().getUser().getFirebaseToken());
+        }
+
 
         firebasePushAlertService.pushNewCommentAlert(tokensRelatedWithBoard, comment);
 
