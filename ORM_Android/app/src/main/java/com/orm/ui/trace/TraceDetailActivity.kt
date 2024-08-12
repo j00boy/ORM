@@ -45,6 +45,20 @@ class TraceDetailActivity : AppCompatActivity() {
                     traceViewModel.trace.observe(this@TraceDetailActivity) {
                         trace = it
                         binding.trace = trace
+                        if (trace!!.trailId == -1 || trace!!.trailId == null) {
+                            binding.cvMap.visibility = View.GONE
+                        } else {
+                            trailViewModel.getTrail(trace!!.trailId!!)
+                            trailViewModel.trail.observe(this@TraceDetailActivity) {
+                                val fragment =
+                                    supportFragmentManager.findFragmentById(binding.fcvMap.id) as? BasicGoogleMapFragment
+                                fragment?.updatePoints(it.trailDetails)
+                            }
+                            binding.cvMap.visibility = View.VISIBLE
+                        }
+                        if(trace!!.mountainId == -1) {
+                            binding.cvMap.visibility = View.GONE
+                        }
                     }
                 }
             }

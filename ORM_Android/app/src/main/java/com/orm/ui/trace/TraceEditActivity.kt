@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -133,6 +135,19 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
             val bottomSheetFragment = BottomSheetMountainList.newInstance(mountainName)
             bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
         }
+
+        binding.tfTraceMountain.editText?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                mountainId = -1
+                mountainName = "선택된 산 없음"
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                mountainId = -1
+                mountainName = "선택된 산 없음"
+            }
+        })
 
         binding.btnSign.setOnClickListener {
             if (binding.tfTraceName.editText!!.text.isEmpty()) {
@@ -279,14 +294,17 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         mountainId = mountain.id
         mountainName = mountain.name
 
-        binding.cvMap.visibility = View.VISIBLE
-        binding.spinnerTrails.visibility = View.VISIBLE
+
 
         mountainViewModel.fetchMountainById(mountainId)
         mountainViewModel.mountain.observe(this@TraceEditActivity) { it ->
             it?.trails?.let { trails ->
                 setupTrailSpinner(trails)
                 this.trails = trails
+            }
+            if(this.trails.isNotEmpty()) {
+                binding.cvMap.visibility = View.VISIBLE
+                binding.spinnerTrails.visibility = View.VISIBLE
             }
         }
     }
