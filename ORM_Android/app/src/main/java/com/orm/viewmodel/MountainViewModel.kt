@@ -72,7 +72,7 @@ class MountainViewModel @Inject constructor(
     }
 
     fun fetchMountainsAll() {
-        if (!isDataLoaded) {
+        if (!isDataLoaded || _mountains.value.isNullOrEmpty()) {
             _isLoading.postValue(true)
             viewModelScope.launch {
                 try {
