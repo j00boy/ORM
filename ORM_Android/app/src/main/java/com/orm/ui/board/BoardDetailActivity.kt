@@ -1,5 +1,6 @@
 package com.orm.ui.board
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
@@ -19,6 +20,7 @@ import com.orm.data.model.board.Board
 import com.orm.data.model.board.BoardList
 import com.orm.data.model.club.Club
 import com.orm.databinding.ActivityBoardDetailBinding
+import com.orm.ui.PhotoViewerActivity
 import com.orm.ui.fragment.board.CommentAllFragment
 import com.orm.viewmodel.BoardViewModel
 import com.orm.viewmodel.UserViewModel
@@ -164,8 +166,12 @@ class BoardDetailActivity : AppCompatActivity() {
 
     }
 
+    @SuppressLint("JavascriptInterface", "SetJavaScriptEnabled")
     private fun displayContent(content: String, board: Board) {
         val webView = findViewById<WebView>(R.id.webView)
+        webView.settings.javaScriptEnabled = true
+        webView.addJavascriptInterface(this, "imageListener")
+
         Log.d("detail", "detail22 :CONTENT $content")
         val pattern = Pattern.compile("<img src=\"(.*?)\"")
         val matcher = pattern.matcher(content)
@@ -183,10 +189,27 @@ class BoardDetailActivity : AppCompatActivity() {
                 Log.d("detail", "detail22 :imgSrc $imgSrc")
             }
         }
+
+        val js = """
+        <script type="text/javascript">
+            function registerImageClickListener() {
+                var imgs = document.getElementsByTagName('img');
+                for (var i = 0; i < imgs.length; i++) {
+                    imgs[i].onclick = function() {
+                        window.imageListener.onImageClick(this.src);
+                    }
+                }
+            }
+            document.addEventListener("DOMContentLoaded", registerImageClickListener);
+        </script>
+    """
+        result += js
+
         Log.d("detail", "detail22 :result $result")
         processedContent = result
         webView.loadData(result, "text/html", "UTF-8")
     }
+
 
     private fun checkPermissions(userId: String?) {
         val boardUserId = boardList?.userId
@@ -204,5 +227,14 @@ class BoardDetailActivity : AppCompatActivity() {
     private fun refreshData() {
         val boardId = boardList?.boardId ?: -1
         boardViewModel.getBoards(boardId)
+    }
+
+    @android.webkit.JavascriptInterface
+    fun onImageClick(imgSrc: String) {
+        Log.d("WebView", "Image clicked: $imgSrc")
+        val intent = Intent(this, PhotoViewerActivity::class.java).apply {
+            putExtra("IMAGE_URL", imgSrc)
+        }
+        startActivity(intent)
     }
 }
