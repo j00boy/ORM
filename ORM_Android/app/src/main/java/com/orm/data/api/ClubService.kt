@@ -96,7 +96,7 @@ interface ClubService {
         @Query("userId") userId: Int,
     ): Call<Unit>
 
-    @DELETE("clubs/applicant/cancel")
+    @DELETE("clubs/applicants/cancel")
     fun cancelApply(
         @Query("clubId") clubId: Int
     ): Call<Unit>
