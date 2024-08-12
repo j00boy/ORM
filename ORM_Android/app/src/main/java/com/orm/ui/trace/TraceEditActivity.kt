@@ -219,12 +219,12 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         val today = MaterialDatePicker.todayInUtcMilliseconds()
 
         val constraintsBuilder = CalendarConstraints.Builder()
-            .setValidator(DateValidatorPointForward.now()) // 오늘 이후의 날짜만 선택 가능
+            .setValidator(DateValidatorPointForward.now())
 
         val picker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("등산 날짜 선택")
             .setSelection(today) // 기본 선택 날짜를 오늘로 설정
-            .setCalendarConstraints(constraintsBuilder.build()) // 제약 조건 추가
+            .setCalendarConstraints(constraintsBuilder.build())
             .setTextInputFormat(SimpleDateFormat("yyyy-MM-dd"))
             .build()
 

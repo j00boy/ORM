@@ -32,6 +32,9 @@ interface ClubService {
         @Query("isMyClub") isMyClub: Boolean = false,
     ): Call<List<Club>>
 
+    @GET("clubs/apply")
+    fun getAppliedClubs(): Call<List<Club>>
+
     @GET("clubs/members")
     fun getMembers(
         @Query("clubId") clubId: Int
@@ -91,5 +94,10 @@ interface ClubService {
     fun dropMember(
         @Query("clubId") clubId: Int,
         @Query("userId") userId: Int,
+    ): Call<Unit>
+
+    @DELETE("clubs/applicant/cancel")
+    fun cancelApply(
+        @Query("clubId") clubId: Int
     ): Call<Unit>
 }

@@ -69,6 +69,15 @@ class ClubViewModel @Inject constructor(
         }
     }
 
+    fun getAppliedClubs() {
+        viewModelScope.launch {
+            _isReady.postValue(false)
+            val clubs = clubRepository.getAppliedClubs()
+            _clubs.postValue(clubs)
+            _isReady.postValue(true)
+        }
+    }
+
     fun getMembers(clubId: Int) {
         viewModelScope.launch {
             val members = clubRepository.getMembers(clubId)
@@ -212,6 +221,18 @@ class ClubViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val success = clubRepository.dropMember(clubId, userId)
+                _isOperationSuccessful.postValue(success)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _isOperationSuccessful.postValue(false)
+            }
+        }
+    }
+
+    fun cancelApply(clubId: Int) {
+        viewModelScope.launch {
+            try {
+                val success = clubRepository.cancelApply(clubId)
                 _isOperationSuccessful.postValue(success)
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -127,7 +127,7 @@ class ClubDetailActivity : AppCompatActivity() {
                 val intent = Intent(this, BoardActivity::class.java)
                 intent.putExtra("club", club)
                 startActivity(intent)
-            } else {
+            } else if(club?.isApplied == false) {
                 val input = EditText(this).apply {
                     hint = "자기소개를 입력해주세요."
                 }
@@ -135,7 +135,7 @@ class ClubDetailActivity : AppCompatActivity() {
                 MaterialAlertDialogBuilder(this)
                     .setView(input)
                     .setTitle("가입")
-                    .setMessage("모임을 가입하시겠습니까?")
+                    .setMessage("${club?.clubName} 모임에 가입하시겠습니까?")
                     .setNegativeButton("취소") { _, _ -> }
                     .setPositiveButton("확인") { dialog, which ->
                         clubViewModel.applyClubs(
@@ -145,6 +145,18 @@ class ClubDetailActivity : AppCompatActivity() {
                                 userId = userViewModel.user.value!!.userId.toInt()
                             )
                         )
+                        dialog.dismiss()
+                        finish()
+                    }
+                    .show()
+            }
+            else{
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("가입 신청 취소")
+                    .setMessage("${club?.clubName} 모임 가입을 취소하시겠습니까?")
+                    .setNegativeButton("취소") { _, _ -> }
+                    .setPositiveButton("확인") { dialog, which ->
+                        clubViewModel.cancelApply(clubId = club!!.id)
                         dialog.dismiss()
                         finish()
                     }
