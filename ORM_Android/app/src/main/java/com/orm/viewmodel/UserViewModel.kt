@@ -95,8 +95,8 @@ class UserViewModel @Inject constructor(
 
     fun deleteUser() {
         viewModelScope.launch {
-            userRepository.deleteAccessToken()
             userRepository.deleteUserInfo()
+            userRepository.deleteAccessToken()
         }
     }
 

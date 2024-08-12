@@ -141,16 +141,17 @@ class SettingsFragment : Fragment() {
                 .setTitle("회원 탈퇴")
                 .setMessage("정말로 탈퇴하시겠습니까?")
                 .setPositiveButton("네") { _, _ ->
-                    userViewModel.deleteUser()
                     notificationViewModel.deleteAllNotifications()
                     recordViewModel.deleteAllRecords()
                     traceViewModel.deleteAllTraces()
                     trailViewModel.deleteAllTrails()
+                    userViewModel.deleteUser()
                     Toast.makeText(requireContext(), "회원 탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show()
 
                     startActivity(
                         Intent(requireContext(), LauncherActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            flags =
+                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         }
                     )
                 }
