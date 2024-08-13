@@ -293,7 +293,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                 userPolyline = map.addPolyline(
                     PolylineOptions()
                         .addAll(positions)
-                        .color(Color.HSVToColor(floatArrayOf(152.82f, 0.613f, 0.608f)))
+                        .color(Color.HSVToColor(floatArrayOf(30f, 1f, 1f)))
                         .startCap(RoundCap())
                         .endCap(RoundCap())
                         .jointType(JointType.ROUND)
