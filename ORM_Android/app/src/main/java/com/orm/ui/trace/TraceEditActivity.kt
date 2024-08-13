@@ -23,6 +23,7 @@ import com.orm.data.model.Point
 import com.orm.data.model.Trace
 import com.orm.data.model.Trail
 import com.orm.databinding.ActivityTraceEditBinding
+import com.orm.ui.MainActivity
 import com.orm.ui.fragment.BottomSheetMountainList
 import com.orm.ui.fragment.map.BasicGoogleMapFragment
 import com.orm.util.NetworkUtils
@@ -209,7 +210,13 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                             setResult(Activity.RESULT_OK, Intent().apply {
                                 putExtra("traceCreated", true)
                             })
-                            finish()
+                            if(mountain == null) {
+                                finish()
+                            } else {
+                                startActivity(Intent(this@TraceEditActivity, TraceActivity::class.java).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                })
+                            }
                         }
                     }
                 }
