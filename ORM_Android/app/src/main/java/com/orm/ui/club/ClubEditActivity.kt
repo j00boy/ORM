@@ -97,10 +97,19 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
         })
         val content = if (club == null) "생성" else "수정"
         binding.btnSign.setOnClickListener {
-            if (binding.tfClubName.editText!!.text.isEmpty() || mountainId == 0) {
+            if (binding.tfClubName.editText!!.text.isEmpty()) {
                 MaterialAlertDialogBuilder(this)
                     .setTitle(content)
-                    .setMessage("필수 정보를 입력해주세요.")
+                    .setMessage("모임 이름을 입력해주세요.")
+                    .setPositiveButton("확인") { _, _ ->
+                    }
+                    .show()
+                return@setOnClickListener
+            }
+            if (mountainId == 0) {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(content)
+                    .setMessage("대표 산을 지정해주세요.")
                     .setPositiveButton("확인") { _, _ ->
                     }
                     .show()
@@ -109,7 +118,7 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
             if (isDuplicated && binding.tfClubName.editText?.text.toString() != club?.clubName) {
                 MaterialAlertDialogBuilder(this)
                     .setTitle(content)
-                    .setMessage("모임명을 확인해주세요")
+                    .setMessage("모임명 중복확인을 진행해주세요")
                     .setPositiveButton("확인") { _, _ ->
                     }
                     .show()
