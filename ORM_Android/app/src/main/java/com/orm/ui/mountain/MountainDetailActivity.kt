@@ -8,8 +8,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.ViewGroup.LayoutParams
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
+import android.view.ViewGroup.LayoutParams
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.PopupWindow
@@ -23,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import com.orm.util.HikingTimePredictor
 import com.orm.R
 import com.orm.data.model.Mountain
 import com.orm.data.model.Point
@@ -36,6 +37,7 @@ import com.orm.ui.club.ClubDetailActivity
 import com.orm.ui.fragment.WeatherFragment
 import com.orm.ui.fragment.map.BasicGoogleMapFragment
 import com.orm.ui.trace.TraceEditActivity
+import com.orm.util.HikingTimePredictor
 import com.orm.viewmodel.ClubViewModel
 import com.orm.viewmodel.MountainViewModel
 import com.orm.viewmodel.UserViewModel
@@ -43,6 +45,7 @@ import com.orm.viewmodel.WeatherViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MountainDetailActivity : AppCompatActivity() {
@@ -88,6 +91,28 @@ class MountainDetailActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
+        binding.transparentImage.setOnTouchListener { v, event ->
+            val action = event.action
+            when (action) {
+                MotionEvent.ACTION_DOWN -> {
+                    binding.scrollView.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    binding.scrollView.requestDisallowInterceptTouchEvent(false)
+                    true
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    binding.scrollView.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+
+                else -> true
+            }
+        }
+
         binding.mountain = mountain
         mountainViewModel.fetchMountainById(mountain!!.id)
         mountainViewModel.mountain.observe(this@MountainDetailActivity) {
@@ -127,7 +152,6 @@ class MountainDetailActivity : AppCompatActivity() {
 
                         override fun onLoadCleared(placeholder: Drawable?) {}
                     })
-
 
 
             } else {
@@ -240,6 +264,11 @@ class MountainDetailActivity : AppCompatActivity() {
         val xOffset = anchor.width / 2
         val yOffset = -(tooltipView.height + anchor.height / 2)
 
-        popupWindow.showAtLocation(anchor, Gravity.NO_GRAVITY, location[0] + xOffset, location[1] + yOffset)
+        popupWindow.showAtLocation(
+            anchor,
+            Gravity.NO_GRAVITY,
+            location[0] + xOffset,
+            location[1] + yOffset
+        )
     }
 }
