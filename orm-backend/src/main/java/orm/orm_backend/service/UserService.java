@@ -34,6 +34,8 @@ public class UserService {
 
         // 가입 절차를 밟았기 때문에 nullPointerException이 발생하지 않음이 보장됨
         User user = userRepository.findByKakaoId(kakaoInfo.getKakaoId()).orElseThrow();
+        // 재 가입하는 사람을 위해 refreshToken update
+        user.refreshKakaoTokens(kakaoInfo.getAccessToken(), kakaoInfo.getRefreshToken());
         user.join();
         return new LoginResponseDto(user);
     }
