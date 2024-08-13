@@ -6,10 +6,15 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.data.model.RequestMember
 import com.orm.data.model.club.Club
@@ -25,6 +30,7 @@ import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
+@OptIn(ExperimentalBadgeUtils::class)
 class ClubDetailActivity : AppCompatActivity() {
     private val binding: ActivityClubDetailBinding by lazy {
         ActivityClubDetailBinding.inflate(layoutInflater)
@@ -36,9 +42,10 @@ class ClubDetailActivity : AppCompatActivity() {
 
     private var club: Club? = null
 
+    private var badgeDrawable: BadgeDrawable? = null
+
     private val createClubLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            Log.d("clubTest", "launcher ${result}")
             if (result.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = result.data
                 val clubCreated = data?.getBooleanExtra("clubCreated", false) ?: false
@@ -67,11 +74,12 @@ class ClubDetailActivity : AppCompatActivity() {
                 }
             }
 
-            if(result.resultCode == 2) {
+            if (result.resultCode == 2) {
                 finish()
             }
         }
 
+    @OptIn(ExperimentalBadgeUtils::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -83,7 +91,7 @@ class ClubDetailActivity : AppCompatActivity() {
         }
 
         binding.club = club
-
+        Log.d("clubTest", "club ${binding.club}")
         binding.topAppBar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -94,12 +102,25 @@ class ClubDetailActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+
+
         binding.btnMember.setOnClickListener {
             if (club?.isMember == true) {
                 createClubLauncher.launch(Intent(this, ClubMemberActivity::class.java).apply {
                     putExtra("club", club)
                 })
             }
+        }
+        badgeDrawable = BadgeDrawable.create(this)
+        binding.btnMember.post {
+            if (club!!.applicantCount > 0) {
+                badgeDrawable?.number = club!!.applicantCount
+                badgeDrawable?.isVisible = true
+            } else {
+                badgeDrawable?.isVisible = false
+            }
+            BadgeUtils.attachBadgeDrawable(badgeDrawable!!, binding.btnMember)
+            binding.btnMember.invalidate()
         }
 
         userViewModel.user.observe(this) {
@@ -132,7 +153,7 @@ class ClubDetailActivity : AppCompatActivity() {
                 val intent = Intent(this, BoardActivity::class.java)
                 intent.putExtra("club", club)
                 startActivity(intent)
-            } else if(club?.isApplied == false) {
+            } else if (club?.isApplied == false) {
                 val input = EditText(this).apply {
                     hint = "자기소개를 입력해주세요."
                 }
@@ -150,20 +171,41 @@ class ClubDetailActivity : AppCompatActivity() {
                                 userId = userViewModel.user.value!!.userId.toInt()
                             )
                         )
+                        Log.d("clubTest", "가입")
+                        binding.progressBar.visibility = View.VISIBLE
                         dialog.dismiss()
-                        finish()
+                        window.setFlags(
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                        )
+                        clubViewModel.isLoading.observe(this) {
+                            if (!it) {
+                                binding.progressBar.visibility = View.GONE
+                                finish()
+                            }
+                        }
+
                     }
                     .show()
-            }
-            else{
+            } else {
                 MaterialAlertDialogBuilder(this)
                     .setTitle("가입 신청 취소")
                     .setMessage("${club?.clubName} 모임 가입을 취소하시겠습니까?")
                     .setNegativeButton("취소") { _, _ -> }
                     .setPositiveButton("확인") { dialog, which ->
                         clubViewModel.cancelApply(clubId = club!!.id)
+                        binding.progressBar.visibility = View.VISIBLE
                         dialog.dismiss()
-                        finish()
+                        window.setFlags(
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                        )
+                        clubViewModel.isLoading.observe(this) {
+                            if (!it) {
+                                binding.progressBar.visibility = View.GONE
+                                finish()
+                            }
+                        }
                     }
                     .show()
             }
@@ -175,9 +217,8 @@ class ClubDetailActivity : AppCompatActivity() {
     }
 
     private fun moveToMountainDetail() {
-        Log.d("clubTest", "click")
         mountainViewModel.fetchMountainById(club?.mountainId!!.toInt(), false)
-        mountainViewModel.mountain.observe(this){
+        mountainViewModel.mountain.observe(this) {
             val intent = Intent(
                 this@ClubDetailActivity,
                 MountainDetailActivity::class.java
@@ -187,6 +228,20 @@ class ClubDetailActivity : AppCompatActivity() {
             startActivity(intent)
 
             mountainViewModel.mountain.removeObservers(this)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        clubViewModel.club.observe(this) {
+            if (it?.applicantCount!! > 0) {
+                badgeDrawable?.isVisible = true
+                badgeDrawable?.number = it.applicantCount
+            } else {
+                badgeDrawable?.isVisible = false
+            }
+            BadgeUtils.attachBadgeDrawable(badgeDrawable!!, binding.btnMember)
+            binding.btnMember.invalidate()
         }
     }
 }

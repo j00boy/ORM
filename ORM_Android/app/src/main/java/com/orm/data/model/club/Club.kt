@@ -21,6 +21,7 @@ data class Club(
     val mountainName: String,
     val isApplied: Boolean,
     val isMember: Boolean,
+    val applicantCount: Int,
 ) : Parcelable {
     companion object {
         fun toRecyclerViewBasicItem(club: Club): RecyclerViewBasicItem {
