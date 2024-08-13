@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 data class Notification(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val clubId: Int,
-    val clubName: String,
+    val clubName: String? = null,
     val userId: Int? = null,
     val userName: String? = null,
     val clubImageSrc: String?,
@@ -20,6 +20,7 @@ data class Notification(
     val title: String,
     val message: String,
     val time: LocalDateTime,
+    val boardId: Int? = null,
 ) {
     companion object {
         fun toNotificationData(remoteMessage: RemoteMessage): Notification {
@@ -29,11 +30,12 @@ data class Notification(
                 userId = notificationData["userId"]?.toInt(),
                 title = remoteMessage.notification?.title.toString(),
                 message = remoteMessage.notification?.body.toString(),
-                clubName = notificationData["clubName"]!!,
+                clubName = notificationData["clubName"],
                 userName = notificationData["userName"],
                 alertType = notificationData["alertType"]!!,
                 clubImageSrc = notificationData["clubImageSrc"] ?: "",
                 time = LocalDateTime.now(),
+                boardId = notificationData["boardId"]?.toInt(),
             )
         }
         fun toRecyclerViewNotificationItem(notification: Notification): RecyclerViewNotificationItem{
