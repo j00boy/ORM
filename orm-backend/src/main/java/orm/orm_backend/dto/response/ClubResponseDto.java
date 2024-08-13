@@ -35,7 +35,7 @@ public class ClubResponseDto {
         this.isApplied = Boolean.FALSE;
     }
 
-    public ClubResponseDto(Club club, long applicantCount) {
+    public ClubResponseDto(Club club, Long applicantCount) {
         this(club);
         this.applicantCount = applicantCount;
     }
