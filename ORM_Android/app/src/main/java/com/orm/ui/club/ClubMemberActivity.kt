@@ -1,5 +1,7 @@
 package com.orm.ui.club
 
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -15,6 +17,7 @@ import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubApprove
 import com.orm.data.model.recycler.RecyclerViewButtonItem
 import com.orm.databinding.ActivityClubMemberBinding
+import com.orm.ui.MainActivity
 import com.orm.ui.adapter.ProfileButtonAdapter
 import com.orm.viewmodel.ClubViewModel
 import com.orm.viewmodel.UserViewModel
