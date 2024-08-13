@@ -41,4 +41,12 @@ public class Mountain {
         this.description = description;
     }
 
+    public void updateAddressCoordinates(String addressLatitude, String addressLongitude) {
+        this.addressLatitude = addressLatitude;
+        this.addressLongitude = addressLongitude;
+    }
+
+    public void updateAltitude(Float altitude) {
+        this.altitude = altitude;
+    }
 }
