@@ -11,8 +11,6 @@ import android.webkit.WebViewClient
 import android.widget.ImageButton
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
 import com.orm.BuildConfig
 import com.orm.databinding.ActivityLoginBinding
 import com.orm.viewmodel.UserViewModel
@@ -38,12 +36,9 @@ class LoginActivity : AppCompatActivity() {
         setupWebView()
         setupLoginButton()
 
-//        userViewModel.token.observe(this) { token ->
-//            Log.d("LoginActivity", "token: $token")
-//            if (!token.isNullOrEmpty()) {
-//                navigateToMainActivity()
-//            }
-//        }
+        clearWebViewCache()
+        clearWebViewCookies()
+
         userViewModel.getAccessToken()
         userViewModel.isTokenLoading.observe(this) { isLoading ->
             if (!isLoading) {
@@ -103,4 +98,15 @@ class LoginActivity : AppCompatActivity() {
         })
         finish()
     }
+
+    private fun clearWebViewCache() {
+        webView.clearCache(true)
+    }
+
+    private fun clearWebViewCookies() {
+        val cookieManager = android.webkit.CookieManager.getInstance()
+        cookieManager.removeAllCookies(null)
+        cookieManager.flush()
+    }
+
 }
