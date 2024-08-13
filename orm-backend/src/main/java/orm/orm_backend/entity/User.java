@@ -84,8 +84,8 @@ public class User extends BaseEntity {
     }
 
     public void leave() {
-        this.isActive = UserStatus.N;
-        this.clubs.clear();
+        isActive = UserStatus.N;
+        clubs.clear();
         members.clear();
         applicants.clear();
     }
