@@ -33,6 +33,7 @@ public class ClubResponseDto {
         this.mountainName = club.getMountain().getMountainName();
         this.isMember = Boolean.TRUE;
         this.isApplied = Boolean.FALSE;
+        this.applicantCount = 0L;
     }
 
     public ClubResponseDto(Club club, Long applicantCount) {
