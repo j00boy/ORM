@@ -85,6 +85,8 @@ public class User extends BaseEntity {
 
     public void leave() {
         isActive = UserStatus.N;
+        kakaoAccessToken = "";
+        kakaoRefreshToken = "";
         clubs.clear();
         members.clear();
         applicants.clear();
