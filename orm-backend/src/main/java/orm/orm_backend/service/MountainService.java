@@ -122,4 +122,15 @@ public class MountainService {
             mountain.updateAltitude(Float.valueOf(elevation));
         }
     }
+
+    public Integer getRecommendMountainIdOfToday() {
+        // 불변 리스트를 Copy
+        List<Mountain> mountains = new ArrayList<>(mountainRepository.findByMountainCodeIn(Mountain100Config.CODE_100));
+
+        // 무작위로 요소들의 순서를 섞음
+        Collections.shuffle(mountains);
+
+        // 1개의 id만 return
+        return mountains.get(0).getId();
+    }
 }

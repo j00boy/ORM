@@ -8,7 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -62,5 +66,27 @@ public class RedisService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void saveObjectWithExpirationAt3AM(String key, Object object) {
+        // 현재 시간과 새벽 3시까지 남은 시간을 계산
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime next3AM = now.toLocalDate().atTime(LocalTime.of(3, 0));
+
+        // 현재 시간이 새벽 3시 이후인 경우, 다음날 새벽 3시로 설정
+        if (now.isAfter(next3AM)) {
+            next3AM = next3AM.plusDays(1);
+        }
+
+        long secondsUntil3AM = Duration.between(now, next3AM).getSeconds();
+
+        // TTL을 새벽 3시까지 남은 시간으로 설정
+        try {
+            String serializedObject = objectMapper.writeValueAsString(object);
+            redisTemplate.opsForValue().set(key, serializedObject, secondsUntil3AM, TimeUnit.SECONDS);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

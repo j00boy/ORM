@@ -91,4 +91,16 @@ public class MountainController {
         mountainService.updateExcludedData();
         return ResponseEntity.ok().body("updated successfully");
     }
+
+    @GetMapping("/recommend")
+    public ResponseEntity<Integer> getRecommendMountainIdOfToday() {
+        String cacheKey = REDIS_PREFIX + "today";
+        Integer recommendMountainId = redisService.getObject(cacheKey, Integer.class);
+        if (recommendMountainId == null) {
+            recommendMountainId = mountainService.getRecommendMountainIdOfToday();
+
+            redisService.saveObjectWithExpirationAt3AM(cacheKey, recommendMountainId);
+        }
+        return ResponseEntity.ok().body(recommendMountainId);
+    }
 }
