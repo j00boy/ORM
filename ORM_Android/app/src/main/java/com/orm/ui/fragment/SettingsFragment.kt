@@ -18,6 +18,7 @@ import com.orm.data.model.User
 import com.orm.databinding.FragmentSettingsBinding
 import com.orm.ui.LauncherActivity
 import com.orm.ui.LoginActivity
+import com.orm.util.NetworkUtils
 import com.orm.viewmodel.NotificationViewModel
 import com.orm.viewmodel.RecordViewModel
 import com.orm.viewmodel.TraceViewModel
@@ -141,6 +142,15 @@ class SettingsFragment : Fragment() {
 
         // 회원 탈퇴
         binding.buttonDeleteAccount.setOnClickListener {
+            if (!NetworkUtils.isNetworkAvailable(requireContext())) {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("회원 탈퇴")
+                    .setMessage("인터넷 연결을 확인해주세요.")
+                    .setPositiveButton("확인", null)
+                    .show()
+                return@setOnClickListener
+            }
+
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("회원 탈퇴")
                 .setMessage("정말로 탈퇴하시겠습니까?")
