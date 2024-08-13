@@ -53,6 +53,9 @@ class ClubViewModel @Inject constructor(
     private val _isReady = MutableLiveData<Boolean>()
     val isReady: LiveData<Boolean> get() = _isReady
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> get() = _isLoading
+
     fun getClubById(clubId: Int) {
         viewModelScope.launch {
             val club = clubRepository.getClubById(clubId)
@@ -112,11 +115,11 @@ class ClubViewModel @Inject constructor(
     fun applyClubs(requestMember: RequestMember) {
         viewModelScope.launch {
             try {
+                _isLoading.postValue(true)
                 val success = clubRepository.applyClubs(requestMember)
-                _isOperationSuccessful.postValue(success)
+                _isLoading.postValue(false)
             } catch (e: Exception) {
                 e.printStackTrace()
-                _isOperationSuccessful.postValue(false)
             }
         }
     }
@@ -232,11 +235,11 @@ class ClubViewModel @Inject constructor(
     fun cancelApply(clubId: Int) {
         viewModelScope.launch {
             try {
+                _isLoading.postValue(true)
                 val success = clubRepository.cancelApply(clubId)
-                _isOperationSuccessful.postValue(success)
+                _isLoading.postValue(false)
             } catch (e: Exception) {
                 e.printStackTrace()
-                _isOperationSuccessful.postValue(false)
             }
         }
     }

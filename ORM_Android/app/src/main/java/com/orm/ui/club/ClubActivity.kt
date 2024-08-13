@@ -74,10 +74,12 @@ class ClubActivity : AppCompatActivity() {
             selectedTab = it.getInt("selectedTab")
             Log.d("clubTest", "in resume ${selectedTab}")
         }
+        Log.d("clubTest", "savedState ${savedState}")
         refreshTabLayoutFragment(selectedTab)
     }
 
     private fun refreshTabLayoutFragment(targetTabIndex: Int = 0) {
+        Log.d("clubTest", "refresh")
         val newFragment = TabLayoutFragment()
         supportFragmentManager.beginTransaction()
             .replace(binding.info.id, newFragment)
@@ -88,6 +90,6 @@ class ClubActivity : AppCompatActivity() {
     private fun getSelectedTabFromFragment(): Int {
         val fragment =
             supportFragmentManager.findFragmentById(binding.info.id) as? TabLayoutFragment
-        return fragment?.getSelectedTabIndex() ?: -1 // -1은 탭이 선택되지 않았음을 나타냄
+        return fragment?.getSelectedTabIndex() ?: -1
     }
 }
