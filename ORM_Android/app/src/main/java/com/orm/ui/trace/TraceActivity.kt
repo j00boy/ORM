@@ -43,6 +43,11 @@ class TraceActivity : AppCompatActivity() {
             if (result.resultCode == 1) {
                 traceViewModel.getTraces()
                 traceViewModel.traces.observe(this@TraceActivity) {
+                    if (it.isNullOrEmpty()) {
+                        binding.emptyView.visibility = View.VISIBLE
+                    } else {
+                        binding.emptyView.visibility = View.GONE
+                    }
                     setupAdapter(it!!)
                 }
             }
@@ -54,6 +59,11 @@ class TraceActivity : AppCompatActivity() {
 
         traceViewModel.getTraces()
         traceViewModel.traces.observe(this@TraceActivity) {
+            if (it.isNullOrEmpty()) {
+                binding.emptyView.visibility = View.VISIBLE
+            } else {
+                binding.emptyView.visibility = View.GONE
+            }
             setupAdapter(it!!)
         }
 

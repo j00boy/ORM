@@ -2,7 +2,6 @@ package com.orm.ui.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.data.model.Mountain
 import com.orm.databinding.FragmentBottomSheetMountainBinding
 import com.orm.ui.adapter.ProfileBasicAdapter
@@ -41,11 +41,21 @@ class BottomSheetMountainList : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val mountainName = arguments?.getString(ARG_MOUNTAIN_NAME) ?: ""
-        Log.d("BottomSheetMountainList", "mountainName: $mountainName")
 
         mountainViewModel.fetchMountainByName(mountainName)
-        mountainViewModel.mountains.observe(viewLifecycleOwner) {
-            setupAdapter(it!!)
+        mountainViewModel.mountains.observe(viewLifecycleOwner) { mountains ->
+            if (mountains.isNullOrEmpty()) {
+                // Show dialog and dismiss the fragment if the list is null or empty
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("산 검색")
+                    .setMessage("${mountainName}으로 검색된 결과가 없습니다.\n다시 검색해주세요. ")
+                    .setPositiveButton("OK") { _, _ ->
+                        dismiss()
+                    }
+                    .show()
+            } else {
+                setupAdapter(mountains)
+            }
         }
     }
 

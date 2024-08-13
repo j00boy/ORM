@@ -1,6 +1,5 @@
 package com.orm.ui.club
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color

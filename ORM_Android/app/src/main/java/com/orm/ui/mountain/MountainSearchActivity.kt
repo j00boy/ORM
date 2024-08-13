@@ -28,6 +28,8 @@ class MountainSearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        binding.emptyView.visibility = View.GONE
+
         mountainViewModel.fetchMountainsTop()
         mountainViewModel.mountains.observe(this@MountainSearchActivity) {
             setupAdapter(it!!)
@@ -52,6 +54,11 @@ class MountainSearchActivity : AppCompatActivity() {
 
                 mountainViewModel.fetchMountainByName(name.toString())
                 mountainViewModel.mountains.observe(this@MountainSearchActivity) {
+                    if (it.isNullOrEmpty()) {
+                        binding.emptyView.visibility = View.VISIBLE
+                    } else {
+                        binding.emptyView.visibility = View.GONE
+                    }
                     setupAdapter(it!!)
                 }
                 return false

@@ -36,6 +36,11 @@ class ClubMeFragment : Fragment() {
                 if (clubChanged) {
                     clubViewModel.getClubs(isMyClub = true)
                     clubViewModel.clubs.observe(viewLifecycleOwner) { clubs ->
+                        if (clubs.isNullOrEmpty()) {
+                            binding.emptyView.visibility = View.VISIBLE
+                        } else {
+                            binding.emptyView.visibility = View.GONE
+                        }
                         setupAdapter(clubs)
                     }
                 }
@@ -52,6 +57,11 @@ class ClubMeFragment : Fragment() {
 
         clubViewModel.getClubs(isMyClub = true)
         clubViewModel.clubs.observe(viewLifecycleOwner) { clubs ->
+            if (clubs.isNullOrEmpty()) {
+                binding.emptyView.visibility = View.VISIBLE
+            } else {
+                binding.emptyView.visibility = View.GONE
+            }
             setupAdapter(clubs)
         }
 

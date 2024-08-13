@@ -62,6 +62,8 @@ class ProfileNotificationAdapter(private val items: List<RecyclerViewNotificatio
     private fun String.getNetworkImage(context: Context, view: ImageView) {
         Glide.with(context)
             .load(this)
+            .error(R.mipmap.ic_launcher_orm)
+            .placeholder(R.mipmap.ic_launcher_orm)
             .centerCrop()
             .into(view)
     }

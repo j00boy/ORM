@@ -1,5 +1,6 @@
 package com.orm.ui.trace
 
+import com.orm.ui.fragment.BottomSheetMountainList
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
@@ -13,7 +14,6 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -23,17 +23,12 @@ import com.orm.data.model.Point
 import com.orm.data.model.Trace
 import com.orm.data.model.Trail
 import com.orm.databinding.ActivityTraceEditBinding
-import com.orm.ui.MainActivity
-import com.orm.ui.fragment.BottomSheetMountainList
 import com.orm.ui.fragment.map.BasicGoogleMapFragment
 import com.orm.util.NetworkUtils
 import com.orm.viewmodel.MountainViewModel
 import com.orm.viewmodel.TraceViewModel
 import com.orm.viewmodel.TrailViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -294,9 +289,7 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
     }
 
     private fun loadMountainTrails(mountainKey: Int) {
-//        mountainId = mountain.id
-//        mountainName = mountain.name
-//        binding.mountainName = mountainName
+
         mountainViewModel.fetchMountainById(mountainKey)
         mountainViewModel.mountain.observe(this@TraceEditActivity) { it ->
             mountainId = it!!.id

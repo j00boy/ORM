@@ -116,6 +116,7 @@ class ProfileButtonAdapter(private var items: List<RecyclerViewButtonItem>) :
         Glide.with(context)
             .load(this)
             .error(R.mipmap.ic_launcher_orm)
+            .placeholder(R.mipmap.ic_launcher_orm)
             .centerCrop()
             .into(view)
     }
