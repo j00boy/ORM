@@ -38,6 +38,7 @@ class ClubDetailActivity : AppCompatActivity() {
 
     private val createClubLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            Log.d("clubTest", "launcher ${result}")
             if (result.resultCode == Activity.RESULT_OK) {
                 val data: Intent? = result.data
                 val clubCreated = data?.getBooleanExtra("clubCreated", false) ?: false
@@ -64,6 +65,10 @@ class ClubDetailActivity : AppCompatActivity() {
                         binding.club = it
                     }
                 }
+            }
+
+            if(result.resultCode == 2) {
+                finish()
             }
         }
 

@@ -110,6 +110,7 @@ class ClubMemberActivity : AppCompatActivity() {
                     .setNegativeButton("취소") { _, _ -> }
                     .setPositiveButton("확인") { dialog, which ->
                         clubViewModel.leaveClubs(club!!.id, memberItem!![position].id!!.toInt())
+                        setResult(2)
                         finish()
                     }.show()
             }

@@ -17,6 +17,8 @@ class TabLayoutFragment : Fragment() {
     private var _binding: FragmentTabLayoutBinding? = null
     private val binding get() = _binding!!
 
+    private var selectedTabIndex: Int = 0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -34,6 +36,7 @@ class TabLayoutFragment : Fragment() {
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
+                selectedTabIndex = tab.position
                 Log.e("tab position", tab.position.toString())
                 when (tab.position) {
                     0 -> {
@@ -61,6 +64,14 @@ class TabLayoutFragment : Fragment() {
         val fragmentTransaction = childFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.main_view, fragment)
         fragmentTransaction.commitNow()
+    }
+
+    fun selectTab(index: Int) {
+        binding.tabLayout.getTabAt(index)?.select()
+    }
+
+    fun getSelectedTabIndex(): Int {
+        return selectedTabIndex
     }
 
     override fun onDestroyView() {

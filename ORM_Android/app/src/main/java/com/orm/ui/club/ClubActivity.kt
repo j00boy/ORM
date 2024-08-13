@@ -28,9 +28,14 @@ class ClubActivity : AppCompatActivity() {
             }
         }
 
+    private var selectedTab: Int = 0;
+    private var savedState: Bundle? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        savedState = savedInstanceState
 
         binding.topAppBar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
@@ -52,10 +57,37 @@ class ClubActivity : AppCompatActivity() {
         }
     }
 
-    private fun refreshTabLayoutFragment() {
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        selectedTab = getSelectedTabFromFragment()
+        outState.putInt("selectedTab", selectedTab)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        selectedTab = savedInstanceState.getInt("selectedTab")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        savedState?.let {
+            selectedTab = it.getInt("selectedTab")
+            Log.d("clubTest", "in resume ${selectedTab}")
+        }
+        refreshTabLayoutFragment(selectedTab)
+    }
+
+    private fun refreshTabLayoutFragment(targetTabIndex: Int = 0) {
         val newFragment = TabLayoutFragment()
         supportFragmentManager.beginTransaction()
             .replace(binding.info.id, newFragment)
             .commitNow()
+        newFragment.selectTab(targetTabIndex)
+    }
+
+    private fun getSelectedTabFromFragment(): Int {
+        val fragment =
+            supportFragmentManager.findFragmentById(binding.info.id) as? TabLayoutFragment
+        return fragment?.getSelectedTabIndex() ?: -1 // -1은 탭이 선택되지 않았음을 나타냄
     }
 }
