@@ -367,7 +367,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         }
 
         googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
-        googleMap?.moveCamera(CameraUpdateFactory.zoomTo(17f))
+        googleMap?.moveCamera(CameraUpdateFactory.zoomTo(18f))
 
         fetchLocation()
         initializeMap(points)
