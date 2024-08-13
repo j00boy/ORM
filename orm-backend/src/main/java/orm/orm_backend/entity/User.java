@@ -38,6 +38,12 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "manager", orphanRemoval = true, cascade = CascadeType.PERSIST)
     private List<Club> clubs;
 
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.PERSIST)
+    private List<Member> members;
+
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.PERSIST)
+    private List<Applicant> applicants;
+
     private Long kakaoId;
     private String firebaseToken;
 
@@ -78,8 +84,10 @@ public class User extends BaseEntity {
     }
 
     public void leave() {
-        this.isActive = UserStatus.N;
-        this.clubs.clear();
+        isActive = UserStatus.N;
+        clubs.clear();
+        members.clear();
+        applicants.clear();
     }
 
     public void join() {
