@@ -15,6 +15,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.orm.R
 import com.orm.data.model.board.Board
 import com.orm.data.model.board.BoardList
@@ -109,21 +110,8 @@ class BoardDetailActivity : AppCompatActivity() {
         })
 
         binding.topAppBar.setNavigationOnClickListener {
-            if (isContentModified) {
-                setResult(RESULT_OK, Intent().putExtra("refresh", true))
-            }
+            setResult(RESULT_OK, Intent().putExtra("refresh", true))
             finish()
-        }
-
-        binding.btnDelete.setOnClickListener {
-            val progressDialog = ProgressDialog(this)
-            progressDialog.setMessage("게시글을 삭제 중입니다...")
-            progressDialog.setCancelable(false)
-            progressDialog.show()
-            boardId.let {
-                boardViewModel.deleteBoards(it)
-                progressDialog.dismiss()
-            }
         }
 
         boardViewModel.isOperationSuccessful.observe(this, Observer { isSuccess ->
@@ -134,12 +122,32 @@ class BoardDetailActivity : AppCompatActivity() {
             }
         })
 
+        binding.tvDelete.setOnClickListener {
+
+            MaterialAlertDialogBuilder(this)
+                .setTitle("게시글 삭제")
+                .setMessage("정말로 이 게시글을 삭제하시겠습니까?")
+                .setNegativeButton("취소") { _, _ -> }
+                .setPositiveButton("확인") { dialog, which ->
+                    val progressDialog = ProgressDialog(this)
+                    progressDialog.setMessage("게시글을 삭제 중입니다...")
+                    progressDialog.setCancelable(false)
+                    progressDialog.show()
+                    boardViewModel.deleteBoards(boardList?.boardId ?: -1)
+                    progressDialog.dismiss()
+                }
+                .setNegativeButton("취소", null)
+                .show()
+
+        }
 
 
-        binding.btnEdit.setOnClickListener {
+
+        // 수정 버튼 클릭 리스너 설정
+        binding.tvUpdate.setOnClickListener {
             currentBoard?.let { board ->
                 val intent = Intent(this, BoardEditActivity::class.java).apply {
-                    putExtra("clubId", clubId)
+                    putExtra("clubId", club?.id)
                     putExtra("title", board.title)
                     putExtra("content", processedContent)
                     putExtra("boardId", board.boardId)
@@ -148,22 +156,7 @@ class BoardDetailActivity : AppCompatActivity() {
             }
         }
 
-        binding.btnSubmit.setOnClickListener {
-            if (binding.tfComment.text.toString().isNotEmpty()) {
-                currentBoard?.let { board ->
-                    boardViewModel.createComments(board.boardId, binding.tfComment.text.toString())
-                    binding.tfComment.text?.clear()
-                }
-            }
-        }
 
-        boardViewModel.comment.observe(this, Observer { newComment ->
-            newComment?.let {
-                // 새 댓글을 CommentAllFragment에 추가
-                val commentFragment = supportFragmentManager.findFragmentById(R.id.info) as? CommentAllFragment
-                commentFragment?.addNewComment(it)
-            }
-        })
 
     }
 
@@ -218,16 +211,16 @@ class BoardDetailActivity : AppCompatActivity() {
     }
 
 
-    private fun checkPermissions(userId: String?) {
+        private fun checkPermissions(userId: String?) {
         val boardUserId = boardList?.userId
         val clubManagerId = club?.managerId
 
         if (userId == boardUserId.toString() || userId == clubManagerId) {
-            binding.btnDelete.visibility = View.VISIBLE
-            binding.btnEdit.visibility = View.VISIBLE
+            binding.tvUpdate.visibility = View.VISIBLE
+            binding.tvDelete.visibility = View.VISIBLE
         } else {
-            binding.btnDelete.visibility = View.GONE
-            binding.btnEdit.visibility = View.GONE
+            binding.tvUpdate.visibility = View.GONE
+            binding.tvDelete.visibility = View.GONE
         }
     }
 
@@ -244,4 +237,11 @@ class BoardDetailActivity : AppCompatActivity() {
         }
         startActivity(intent)
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        setResult(RESULT_OK, Intent().putExtra("refresh", true))
+        finish()
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.orm.ui.fragment
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -47,8 +48,21 @@ class NotificationsFragment : Fragment() {
             }
 
             binding.btnDelete.setOnClickListener {
-                notificationViewModel.deleteAllNotifications()
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("알림 삭제")
+                        .setMessage("모든 알림을 삭제하시겠습니까?")
+                        .setNegativeButton("취소") { dialog, which ->
+                            dialog.dismiss() }
+                        .setPositiveButton("삭제") {dialog, which ->
+                            notificationViewModel.deleteAllNotifications()
+                            dialog.dismiss() // 다이얼로그 닫기
+                        }
+                        .setNegativeButton("취소", null)
+                        .show()
+
+
             }
+
         } catch (e: Exception) {
             Log.e("notification", "notification list", e)
         }

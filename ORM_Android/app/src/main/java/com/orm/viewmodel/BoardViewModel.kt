@@ -149,7 +149,7 @@ class BoardViewModel @Inject constructor(
                 val createComment = CreateComment(content)
                 val newComment = boardRepository.createComments(boardId, createComment)
                 _comment.postValue(newComment)
-//                _isOperationSuccessful.postValue(newComment != null)
+                _isOperationSuccessful.postValue(newComment != null)
                 Log.d("BoardViewModel1", "New comment created: $newComment")
             } catch (e: Exception) {
                 e.printStackTrace()

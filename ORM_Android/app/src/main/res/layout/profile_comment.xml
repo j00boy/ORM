@@ -4,10 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_margin="4dp"
     app:cardBackgroundColor="@color/md_theme_surface"
     app:cardCornerRadius="12dp"
-    app:cardElevation="6dp"
+    app:cardElevation="2dp"
     app:strokeColor="@android:color/transparent"
     app:strokeWidth="0dp">
 
@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"
-                    android:text="|"
+                    android:text="   |  "
                     android:textColor="@color/md_theme_onSurfaceVariant"
                     android:textSize="14sp" />
 
@@ -67,39 +67,20 @@
                     android:textColor="@color/md_theme_onSurfaceVariant"
                     android:textSize="14sp" />
 
-<!--                <com.google.android.material.textview.MaterialTextView-->
-<!--                    android:id="@+id/tv_stick1"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="4dp"-->
-<!--                    android:layout_marginEnd="4dp"-->
-<!--                    android:text="|"-->
-<!--                    android:textColor="@color/md_theme_onSurfaceVariant"-->
-<!--                    android:textSize="14sp" />-->
-
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_edit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="| 수정"
+                    android:text="|   수정   "
                     android:textColor="@color/md_theme_onSurfaceVariant"
                     android:textSize="14sp" />
 
-<!--                <com.google.android.material.textview.MaterialTextView-->
-<!--                    android:id="@+id/tv_stick2"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginStart="4dp"-->
-<!--                    android:layout_marginEnd="4dp"-->
-<!--                    android:text="|"-->
-<!--                    android:textColor="@color/md_theme_onSurfaceVariant"-->
-<!--                    android:textSize="14sp" />-->
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_delete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="| 삭제"
+                    android:text="|   삭제   "
                     android:textColor="@color/md_theme_onSurfaceVariant"
                     android:textSize="14sp" />
 
