@@ -58,4 +58,9 @@ public class ApplicantService {
     public void deleteApplicant(Integer userId, Integer clubId) {
         applicantRepository.deleteByUserIdAndClubId(userId, clubId);
     }
+
+    public long getApplicantCountOfClub(Integer clubId) {
+        return applicantRepository.countByClubId(clubId);
+    }
+
 }

@@ -17,4 +17,6 @@ public interface ApplicantRepository extends JpaRepository<Applicant, Integer> {
     Boolean existsByUserIdAndClubId(Integer userId, Integer clubId);
 
     void deleteByClubIsNull();
+
+    Long countByClubId(Integer clubId);
 }
