@@ -1,5 +1,6 @@
 package com.orm.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,8 @@ import androidx.fragment.app.viewModels
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.orm.databinding.FragmentHomeInfoBinding
+import com.orm.ui.mountain.MountainDetailActivity
+import com.orm.viewmodel.MountainViewModel
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,6 +21,7 @@ class HomeInfoFragment : Fragment() {
     private var _binding: FragmentHomeInfoBinding? = null
     private val binding get() = _binding!!
     private val userViewModel: UserViewModel by viewModels()
+    private val mountainViewModel: MountainViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,6 +33,26 @@ class HomeInfoFragment : Fragment() {
         userViewModel.user.observe(viewLifecycleOwner) {
             binding.user = it
         }
+
+        binding.cvRecommend.setOnClickListener {
+            mountainViewModel.getMountainsRecommend()
+
+            mountainViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+                if (!isLoading) {
+                    mountainViewModel.mountain.value?.let { mountain ->
+                        startActivity(
+                            Intent(requireContext(), MountainDetailActivity::class.java).apply {
+                                putExtra("mountain", mountain)
+                            }
+                        )
+                        mountainViewModel.isLoading.removeObservers(viewLifecycleOwner)
+                    }
+                }
+            }
+        }
+
+
+
 
         return root
     }

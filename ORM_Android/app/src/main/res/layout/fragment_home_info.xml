@@ -22,12 +22,15 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
-            android:padding="24dp">
+            android:background="@color/md_theme_primary"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="30dp">
 
             <LinearLayout
+                android:id="@+id/linear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="1dp"
                 android:gravity="center"
                 android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="parent"
@@ -54,13 +57,58 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
+                    android:ellipsize="end"
                     android:gravity="center"
+                    android:maxLines="1"
                     android:text="@{(user.nickname.isEmpty() ? `사용자` : user.nickname) + `님 안녕하세요.`}"
-                    android:textColor="@color/md_theme_primary"
-                    android:textSize="24sp"
+                    android:textColor="@color/white"
+                    android:textSize="26sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cv_recommend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="1dp"
+                app:cardBackgroundColor="@color/md_theme_primary"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linear"
+                app:strokeColor="@color/md_theme_onPrimary"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="20dp"
+                    android:paddingVertical="12dp">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/iv_search_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_orm"
+                        app:tint="@color/md_theme_primary" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/btn_club_search"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="오늘의 추천 명산 보러가기"
+                        android:textColor="@color/md_theme_primary"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>

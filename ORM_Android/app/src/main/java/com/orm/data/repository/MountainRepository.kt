@@ -90,4 +90,20 @@ class MountainRepository @Inject constructor(
             }
         }
     }
+
+    suspend fun getMountainsRecommend(): Int? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = mountainService.getMountainsRecommend().execute()
+                if (response.isSuccessful) {
+                    response.body()
+                } else {
+                    1
+                }
+            } catch (e: Exception) {
+                Log.e("MountainRepository", "Error getting recommend mountains", e)
+                1
+            }
+        }
+    }
 }

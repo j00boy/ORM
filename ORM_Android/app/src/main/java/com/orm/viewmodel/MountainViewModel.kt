@@ -35,6 +35,9 @@ class MountainViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
+    private val _recommndId = MutableLiveData<Int>()
+    val recommendId: LiveData<Int> get() = _recommndId
+
     private var isDataLoaded = false
 
     fun fetchMountainByName(name: String) {
@@ -101,5 +104,16 @@ class MountainViewModel @Inject constructor(
 
     fun clearMountainData() {
         _mountain.value = null
+    }
+
+    fun getMountainsRecommend() {
+        viewModelScope.launch {
+            _isLoading.postValue(true)
+            val recommendId = mountainRepository.getMountainsRecommend()
+            _recommndId.postValue(recommendId ?: 1)
+            val mountain = mountainRepository.getMountainById(recommendId ?: 1, false)
+            _mountain.postValue(mountain)
+            _isLoading.postValue(false)
+        }
     }
 }

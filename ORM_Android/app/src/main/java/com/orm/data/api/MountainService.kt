@@ -29,4 +29,8 @@ interface MountainService {
 
     @GET("mountains/all")
     fun getMountainsAll(): Call<List<Mountain>>
+
+    @GET("mountains/recommend")
+    fun getMountainsRecommend(): Call<Int>
+
 }
