@@ -86,7 +86,6 @@ public class ClubService {
     // Club 조회
     public List<ClubResponseDto> getAllClubs(ClubSearchRequestDto clubSearchRequestDto, Integer userId) {
         Boolean isMyClub = clubSearchRequestDto.getIsMyClub();
-        List<ClubResponseDto> clubs = new ArrayList<>();
 
         // 내 모임 검색이면
         if (isMyClub) {
@@ -97,26 +96,22 @@ public class ClubService {
                     .map(member -> member.getClub().getId())
                     .toList();
 
-            List<Club> clubs1 = clubRepository.findAllByIdIn(clubIds);
+            List<Club> clubs = clubRepository.findAllByIdIn(clubIds);
             Map<Integer, Long> applicantCounts = clubIds.stream()
                     .map(clubId -> Map.entry(clubId, applicantService.getApplicantCountOfClub(clubId)))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-            return clubs1.stream()
+            return clubs.stream()
                     .map(club -> new ClubResponseDto(club, club.isManager(userId) ? applicantCounts.get(club.getId()) : 0))
                     .toList();
-        } else {
-            List<Club> results = clubRepository.findAllByClubNameContaining(clubSearchRequestDto.getKeyword());
-            Set<Integer> clubMap = memberService.getClubs(userId);
-            Set<Integer> applicantMap = applicantService.getApplicants(userId);
-
-            for (Club c : results) {
-                Boolean isMember = clubMap.contains(c.getId());
-                Boolean isApplied = applicantMap.contains(c.getId());
-                clubs.add(new ClubResponseDto(c, isMember, isApplied));
-            }
         }
-        return clubs;
+        List<Club> clubs = clubRepository.findAllByClubNameContaining(clubSearchRequestDto.getKeyword());
+        Set<Integer> clubMap = memberService.getClubs(userId);
+        Set<Integer> applicantMap = applicantService.getApplicants(userId);
+
+        return clubs.stream()
+                .map(club -> new ClubResponseDto(club, clubMap.contains(club.getId()), applicantMap.contains(club.getId())))
+                .toList();
     }
 
     // 특정 산을 기반으로 하는 모임 찾기
