@@ -98,7 +98,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="false"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleTask" />
         <activity
             android:name=".ui.club.ClubDetailActivity"
             android:exported="false" /> <!-- kakao login -->

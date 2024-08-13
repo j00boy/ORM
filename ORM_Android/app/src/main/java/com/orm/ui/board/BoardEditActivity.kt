@@ -133,8 +133,7 @@ class BoardEditActivity : AppCompatActivity() {
     private fun savePost() {
         val title = titleEditText.text.toString()
         val content = editor.html
-
-        if (title.isBlank() || content.isBlank()) {
+        if (title.isBlank() || content.isNullOrBlank()) {
             Toast.makeText(this, "제목과 내용을 모두 입력해주세요.", Toast.LENGTH_SHORT).show()
             return
         }

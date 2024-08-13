@@ -25,6 +25,7 @@ import com.orm.ui.fragment.board.CommentAllFragment
 import com.orm.viewmodel.BoardViewModel
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.net.URLDecoder
 import java.util.regex.Pattern
 
 @AndroidEntryPoint
@@ -180,7 +181,13 @@ class BoardDetailActivity : AppCompatActivity() {
         while (matcher.find()) {
             val contentUrl = matcher.group(1) // content:// 경로
 
-            val fileName = contentUrl.substringAfterLast("/")
+            // URI 디코딩
+            val decodedContentUrl = URLDecoder.decode(contentUrl, "UTF-8")
+
+            // 디코딩된 파일 이름 추출
+            val fileName = decodedContentUrl.substringAfterLast("/")
+
+//            val fileName = contentUrl.substringAfterLast("/")
             val imgSrc = board.imgSrcs.find { it.imgSrc.contains(fileName) }?.imgSrc
 
             if (imgSrc != null) {
