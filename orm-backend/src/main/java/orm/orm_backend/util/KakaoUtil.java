@@ -106,6 +106,17 @@ public class KakaoUtil {
         user.refreshKakaoTokens(kakaoAccessToken, kakaoRefreshToken);
     }
 
+    public void disconnectMembership(String kakaoAccessToken) {
+        // Http Header 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + kakaoAccessToken);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange("https://kapi.kakao.com/v1/user/unlink", HttpMethod.GET, entity, String.class);
+    }
+
     private <T> ResponseEntity<T> getResponseFromExternalApi(HttpEntity<MultiValueMap<String, String>> requestHttpEntity,
                                                              HttpMethod httpMethod, String url, Class<T> responseType) {
         RestTemplate restTemplate = new RestTemplate();

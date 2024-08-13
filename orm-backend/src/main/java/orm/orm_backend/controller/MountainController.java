@@ -1,5 +1,6 @@
 package orm.orm_backend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -83,5 +84,11 @@ public class MountainController {
     public ResponseEntity<TrailResponseDto> getTrailDetails(@PathVariable("trailId") Integer trailId) {
         TrailResponseDto trailResponseDto = trailService.getTrailById(trailId);
         return ResponseEntity.ok().body(trailResponseDto);
+    }
+
+    @GetMapping("/update/excluded-data")
+    public ResponseEntity<String> updateExcludedData() throws JsonProcessingException {
+        mountainService.updateExcludedData();
+        return ResponseEntity.ok().body("updated successfully");
     }
 }
