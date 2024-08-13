@@ -115,7 +115,6 @@ public class KakaoUtil {
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange("https://kapi.kakao.com/v1/user/unlink", HttpMethod.GET, entity, String.class);
-        log.info("userId={}", response.getBody());
     }
 
     private <T> ResponseEntity<T> getResponseFromExternalApi(HttpEntity<MultiValueMap<String, String>> requestHttpEntity,
