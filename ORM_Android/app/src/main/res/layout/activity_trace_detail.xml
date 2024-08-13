@@ -62,8 +62,8 @@
                         imageUri="@{trace.imgPath}"
                         android:layout_width="match_parent"
                         android:layout_height="270dp"
-                        android:scaleType="centerCrop"
-                        android:layout_gravity="center" />
+                        android:layout_gravity="center"
+                        android:scaleType="centerCrop" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -125,6 +125,12 @@
                         android:id="@+id/fcv_map"
                         android:layout_width="match_parent"
                         android:layout_height="270dp" />
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/transparent_image_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@color/transparent" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <View
@@ -187,6 +193,12 @@
                         android:id="@+id/fcv_map_track"
                         android:layout_width="match_parent"
                         android:layout_height="270dp" />
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/transparent_image_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@color/transparent" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
