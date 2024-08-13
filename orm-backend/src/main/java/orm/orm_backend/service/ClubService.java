@@ -20,6 +20,7 @@ import orm.orm_backend.repository.ClubRepository;
 import orm.orm_backend.util.ImageUtil;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -95,9 +96,14 @@ public class ClubService {
                     .filter(member -> member.getClub() != null) // null 제외
                     .map(member -> member.getClub().getId())
                     .toList();
-            // 해당 id가 있는 클럽들만 반환
-            return clubRepository.findAllByIdIn(clubIds).stream()
-                    .map(ClubResponseDto::new)
+
+            List<Club> clubs1 = clubRepository.findAllByIdIn(clubIds);
+            Map<Integer, Long> applicantCounts = clubIds.stream()
+                    .map(clubId -> Map.entry(clubId, applicantService.getApplicantCountOfClub(clubId)))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            return clubs1.stream()
+                    .map(club -> new ClubResponseDto(club, club.isManager(userId) ? applicantCounts.get(club.getId()) : 0))
                     .toList();
         } else {
             List<Club> results = clubRepository.findAllByClubNameContaining(clubSearchRequestDto.getKeyword());

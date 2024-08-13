@@ -19,6 +19,7 @@ public class ClubResponseDto {
 
     private Boolean isMember;
     private Boolean isApplied;
+    private Long applicantCount;
 
     public ClubResponseDto(Club club) {
         this.id = club.getId();
@@ -32,6 +33,11 @@ public class ClubResponseDto {
         this.mountainName = club.getMountain().getMountainName();
         this.isMember = Boolean.TRUE;
         this.isApplied = Boolean.FALSE;
+    }
+
+    public ClubResponseDto(Club club, long applicantCount) {
+        this(club);
+        this.applicantCount = applicantCount;
     }
 
     public ClubResponseDto(Club club, Boolean isMember, Boolean isApplied) {
