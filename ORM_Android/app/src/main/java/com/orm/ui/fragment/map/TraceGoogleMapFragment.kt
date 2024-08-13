@@ -101,6 +101,8 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     private var elapsedTime: Long = 0
     private var running = false
 
+    private var tempFlag = false
+
     private val locationReceiver = object : LocalReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val latitude = intent?.getDoubleExtra("latitude", 0.0) ?: 0.0
@@ -108,6 +110,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
 
             Log.d("LocationReceiver", "Received location: $latitude, $longitude")
             if (latitude == 0.0 && longitude == 0.0) {
+                tempFlag = true
                 MaterialAlertDialogBuilder(requireContext())
                     .setTitle("위치 정보를 가져올 수 없습니다.")
                     .setMessage("GPS가 켜져있는지 확인해주세요.")
@@ -116,6 +119,11 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                     .show()
                 return
             } else {
+                if (tempFlag) {
+                    tempFlag = false
+                    Toast.makeText(requireContext(), "위치 정보를 다시 가져옵니다.", Toast.LENGTH_SHORT).show()
+                    return
+                }
                 updateMapWithLocation(LatLng(latitude, longitude))
             }
         }

@@ -1,5 +1,7 @@
 package com.orm.ui.fragment
 
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -155,6 +157,11 @@ class SettingsFragment : Fragment() {
                 .setTitle("회원 탈퇴")
                 .setMessage("정말로 탈퇴하시겠습니까?")
                 .setPositiveButton("네") { _, _ ->
+
+                    val notificationManager =
+                        requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                    notificationManager.cancelAll()
+
                     notificationViewModel.deleteAllNotifications()
                     recordViewModel.deleteAllRecords()
                     traceViewModel.deleteAllTraces()
