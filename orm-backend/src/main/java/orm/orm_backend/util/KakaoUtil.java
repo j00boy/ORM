@@ -107,6 +107,7 @@ public class KakaoUtil {
     }
 
     public void disconnectMembership(String kakaoAccessToken) {
+        log.info("kakaoAccess={}", kakaoAccessToken);
         // Http Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + kakaoAccessToken);
