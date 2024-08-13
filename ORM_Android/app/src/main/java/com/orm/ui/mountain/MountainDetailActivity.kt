@@ -32,6 +32,7 @@ import com.orm.data.model.Trail
 import com.orm.data.model.club.Club
 import com.orm.data.model.weather.Weather
 import com.orm.databinding.ActivityMountainDetailBinding
+import com.orm.ui.PhotoViewerActivity
 import com.orm.ui.adapter.ProfileBasicAdapter
 import com.orm.ui.club.ClubDetailActivity
 import com.orm.ui.fragment.WeatherFragment
@@ -140,7 +141,7 @@ class MountainDetailActivity : AppCompatActivity() {
                     .into(object : CustomTarget<Drawable>() {
                         override fun onResourceReady(
                             resource: Drawable,
-                            transition: Transition<in Drawable>?
+                            transition: Transition<in Drawable>?,
                         ) {
                             binding.tfPredictTime.endIconDrawable = resource
 
@@ -161,6 +162,11 @@ class MountainDetailActivity : AppCompatActivity() {
             }
         }
 
+        binding.ivThumbnail.setOnClickListener {
+            val intent = Intent(this, PhotoViewerActivity::class.java)
+            intent.putExtra("IMAGE_URL", mountain?.imageSrc)
+            startActivity(intent)
+        }
         weatherViewModel.getWeather(mountain!!.addressLatitude, mountain!!.addressLongitude)
         weatherViewModel.weather.observe(this) { weather ->
             weather?.let { updateWeather(weather) }
