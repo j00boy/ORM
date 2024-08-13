@@ -116,6 +116,7 @@ class CommentAllFragment : Fragment() {
 
     private fun setupAdapter(comments: List<Comment>, currentUserId: String?) {
         adapter = ProfileCommentAdapter(comments.map { Comment.toRecyclerViewCommentItem(it) },
+            currentUserId ?: "",
             onEditClick = { comment ->
                 if (comment.userId.toString() == currentUserId) {
                     showEditBottomSheet(comment)

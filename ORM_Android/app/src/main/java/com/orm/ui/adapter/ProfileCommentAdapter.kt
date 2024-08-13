@@ -10,6 +10,7 @@ import com.orm.data.model.recycler.RecyclerViewCommentItem
 
 class ProfileCommentAdapter(
     private var items: List<RecyclerViewCommentItem>,
+    private val currentUserId: String,
     private val onEditClick: (RecyclerViewCommentItem) -> Unit,
     private val onDeleteClick: (RecyclerViewCommentItem) -> Unit
 ) : RecyclerView.Adapter<ProfileCommentAdapter.ProfileCommentViewHolder>() {
@@ -33,12 +34,21 @@ class ProfileCommentAdapter(
         holder.tvUserNickname.text = item.userNickname
         holder.tvCreatedAt.text = item.createdAt
 
-        holder.tvEdit.setOnClickListener {
-            onEditClick(item)
-        }
+        // 현재 사용자의 ID와 댓글 작성자의 ID를 비교
+        if (currentUserId == item.userId.toString()) {
+            holder.tvEdit.visibility = View.VISIBLE
+            holder.tvDelete.visibility = View.VISIBLE
 
-        holder.tvDelete.setOnClickListener {
-            onDeleteClick(item)
+            holder.tvEdit.setOnClickListener {
+                onEditClick(item)
+            }
+
+            holder.tvDelete.setOnClickListener {
+                onDeleteClick(item)
+            }
+        } else {
+            holder.tvEdit.visibility = View.GONE
+            holder.tvDelete.visibility = View.GONE
         }
     }
 
