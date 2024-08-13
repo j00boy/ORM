@@ -32,7 +32,7 @@ class ProfileCommentAdapter(
         val item = items[position]
         holder.tvContent.text = item.content
         holder.tvUserNickname.text = item.userNickname
-        holder.tvCreatedAt.text = item.createdAt
+        holder.tvCreatedAt.text = "${item.createdAt}   "
 
         // 현재 사용자의 ID와 댓글 작성자의 ID를 비교
         if (currentUserId == item.userId.toString()) {

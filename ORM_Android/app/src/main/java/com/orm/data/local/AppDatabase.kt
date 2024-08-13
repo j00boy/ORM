@@ -19,7 +19,7 @@ import com.orm.data.model.Trace
 import com.orm.data.model.Trail
 
 @Database(
-    version = 2,
+    version = 1,
     exportSchema = false,
     entities =
     [

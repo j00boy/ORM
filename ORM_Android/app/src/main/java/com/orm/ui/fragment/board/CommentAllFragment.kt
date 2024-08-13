@@ -1,5 +1,7 @@
 package com.orm.ui.fragment.board
 
+import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -13,6 +15,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.orm.R
 import com.orm.data.model.board.Board
 import com.orm.data.model.board.BoardList
@@ -82,6 +88,7 @@ class CommentAllFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         board?.let {
+            updateCommentCount(it.comments.size)  // 초기 댓글 수 설정
             setupAdapter(it.comments, userId)
         }
 
@@ -96,15 +103,29 @@ class CommentAllFragment : Fragment() {
             }
         }
 
-        // 삭제나 수정이 성공했는지 확인하여 UI 갱신
+        boardViewModel.board.observe(viewLifecycleOwner) { updatedBoard ->
+            updatedBoard?.let {
+                updateCommentCount(it.commentCount)
+                setupAdapter(it.comments, userId)
+            }
+        }
+
         boardViewModel.isOperationSuccessful.observe(viewLifecycleOwner) { success ->
-            Log.d("success123" , "success123 : $success")
             if (success == true) {
                 boardId?.let { boardViewModel.getBoards(it) }
             }
         }
 
+        binding.tfSubmit.setEndIconOnClickListener {
+            val comment = binding.tfComment.text.toString().trim()
 
+            if (comment.isNotEmpty()) {
+                boardId?.let { boardId ->
+                    boardViewModel.createComments(boardId, comment)
+                    binding.tfComment.text?.clear()
+                }
+            }
+        }
 
         return root
     }
@@ -115,7 +136,8 @@ class CommentAllFragment : Fragment() {
     }
 
     private fun setupAdapter(comments: List<Comment>, currentUserId: String?) {
-        adapter = ProfileCommentAdapter(comments.map { Comment.toRecyclerViewCommentItem(it) },
+        adapter = ProfileCommentAdapter(
+            comments.map { Comment.toRecyclerViewCommentItem(it) },
             currentUserId ?: "",
             onEditClick = { comment ->
                 if (comment.userId.toString() == currentUserId) {
@@ -124,51 +146,61 @@ class CommentAllFragment : Fragment() {
             },
             onDeleteClick = { comment ->
                 if (comment.userId.toString() == currentUserId) {
-                    boardId?.let { boardId ->
-                        // 댓글 삭제 요청
-                        boardViewModel.deleteComments(boardId, comment.commentId)
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("댓글 삭제")
+                        .setMessage("정말로 이 댓글을 삭제하시겠습니까?")
+                        .setNegativeButton("취소") { _, _ -> }
+                        .setPositiveButton("확인") { dialog, which ->
+                            val progressDialog = ProgressDialog(requireContext())
+                            progressDialog.setMessage("게시글을 삭제 중입니다...")
+                            progressDialog.setCancelable(false)
+                            progressDialog.show()
+                            boardId?.let { boardId ->
+                                boardViewModel.deleteComments(boardId, comment.commentId)
+                            }
+                            progressDialog.dismiss()
+                        }
+                        .setNegativeButton("취소", null)
+                        .show()
 
-                        // 삭제된 댓글을 어댑터에서 제거
-                        val updatedList = adapter.getItems().toMutableList()
-                        updatedList.removeAll { it.commentId == comment.commentId }
-                        adapter.submitList(updatedList)
+
                     }
-                }
+
             }
         )
 
         binding.recyclerView.adapter = adapter
     }
 
+    @SuppressLint("MissingInflatedId")
     private fun showEditBottomSheet(comment: RecyclerViewCommentItem) {
         val bottomSheetDialog = BottomSheetDialog(requireContext())
         val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet_edit_comment, null)
         bottomSheetDialog.setContentView(bottomSheetView)
 
-        val editTextComment = bottomSheetView.findViewById<EditText>(R.id.tf_editComment)
-        val buttonUpdate = bottomSheetView.findViewById<Button>(R.id.btn_update)
+        // Get references to the views
+        val editTextComment = bottomSheetView.findViewById<TextInputEditText>(R.id.tf_edit_comment)
+        val editButton = bottomSheetView.findViewById<TextInputLayout>(R.id.tf_edit)
 
+        // Set the current comment content
         editTextComment.setText(comment.content)
 
-        buttonUpdate.setOnClickListener {
+        // Set up the click listener for the update button
+        editButton.setEndIconOnClickListener {
             val updatedContent = editTextComment.text.toString()
-            boardId?.let {
-                boardViewModel.updateComments(it, comment.commentId, updatedContent)
+            if (updatedContent.isNotEmpty()) {
+                boardId?.let {
+                    boardViewModel.updateComments(it, comment.commentId, updatedContent)
+                    bottomSheetDialog.dismiss()  // Dismiss the dialog after update
+                }
             }
-            Log.d("CommentAllFragment", "Edit clicked for comment: ${comment.commentId}")
-            bottomSheetDialog.dismiss()
         }
-
         bottomSheetDialog.show()
     }
 
-    fun addNewComment(newComment: Comment) {
-        val newItem = Comment.toRecyclerViewCommentItem(newComment)
-        val currentList = adapter.getItems().toMutableList()
-        currentList.add(newItem)
-        adapter.submitList(currentList)
-        binding.recyclerView.scrollToPosition(currentList.size - 1) // 새 댓글로 스크롤
-    }
 
+    private fun updateCommentCount(count: Int) {
+        binding.tvCommentCount.text = "댓글 수 $count"
+    }
 
 }
