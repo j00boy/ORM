@@ -131,7 +131,7 @@ public class BoardService {
             CookieUtil.setCookie(COOKIE_PREFIX, COOKIE_PATH, response, boardId);
         }
 
-        User user = userService.findUserById(userId);
+        User user = userService.findUserById(board.getUser().getId());
         List<BoardImageDto> boardImages = boardImageService.getBoardImages(boardId);
         return new BoardResponseDto(board, user, boardImages, board.getComments().stream().map(CommentResponseDto::new).toList());
     }
