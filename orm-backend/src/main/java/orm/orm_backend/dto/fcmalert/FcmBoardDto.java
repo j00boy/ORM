@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 public class FcmBoardDto implements FcmAlertData {
 
+    private String clubId;
     private String boardId;
     private String clubName;
     private String userName;

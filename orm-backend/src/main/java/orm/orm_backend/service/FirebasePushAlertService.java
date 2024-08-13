@@ -72,6 +72,7 @@ public class FirebasePushAlertService {
 
     public void pushNewBoardAlert(List<String> clubUserTokens, Board board) {
         FcmAlertData data = FcmBoardDto.builder()
+                .clubId(String.valueOf(board.getClub().getId()))
                 .boardId(String.valueOf(board.getId()))
                 .title(board.getTitle())
                 .clubName(board.getClub().getClubName())
@@ -89,6 +90,7 @@ public class FirebasePushAlertService {
 
     public void pushNewCommentAlert(Set<String> boardRelatedUsers, Comment comment) {
         FcmAlertData data = FcmCommentDto.builder()
+                .clubId(String.valueOf(comment.getBoard().getClub().getId()))
                 .commentId(String.valueOf(comment.getId()))
                 .boardId(String.valueOf(comment.getBoard().getId()))
                 .title(comment.getBoard().getTitle())

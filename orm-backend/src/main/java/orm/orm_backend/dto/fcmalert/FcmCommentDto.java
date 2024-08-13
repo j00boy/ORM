@@ -7,11 +7,12 @@ import lombok.Getter;
 @Builder
 public class FcmCommentDto implements FcmAlertData {
 
-    String commentId;
-    String boardId;
-    String title;
-    String userId;
-    String userName;
+    private String clubId;
+    private String commentId;
+    private String boardId;
+    private String title;
+    private String userId;
+    private String userName;
     private final AlertType alertType = AlertType.NEW_COMMENT;
 
     @Override
