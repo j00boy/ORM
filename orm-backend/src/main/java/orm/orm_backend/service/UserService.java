@@ -72,6 +72,7 @@ public class UserService {
             throw new CustomException(ErrorCode.WITHDRAWN_USER_ID);
         }
         user.leave();
+        kakaoUtil.disconnectMembership(user.getKakaoAccessToken());
     }
 
     private boolean isJoined(Long kakaoId) {
