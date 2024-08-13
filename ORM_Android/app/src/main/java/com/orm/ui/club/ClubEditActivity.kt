@@ -1,7 +1,10 @@
 package com.orm.ui.club
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -13,7 +16,10 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout
+import com.orm.R
 import com.orm.data.model.Mountain
 import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubCreate
@@ -45,6 +51,8 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
     private var isDuplicated: Boolean = true
     private var toDefaultImage: Boolean = false
 
+    private lateinit var textInputLayout: TextInputLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -54,20 +62,11 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
             onBackPressedDispatcher.onBackPressed()
         }
 
-        binding.tfClubName.setEndIconOnClickListener {
-            clubViewModel.isOperationSuccessful.removeObservers(this)
-            clubViewModel.resetOperationStatus()
-
-            clubViewModel.checkDuplicateClubs(binding.tfClubName.editText?.text.toString())
-            clubViewModel.isOperationSuccessful.observe(this) { isDuplicate ->
-                isDuplicate?.let {
-                    Log.d("ClubEditActivity", "isDuplicate: $isDuplicate")
-                    val message = if (isDuplicate) "생성 불가능한 이름입니다." else "생성 가능한 이름입니다."
-                    isDuplicated = isDuplicate
-                    showDuplicateCheckDialog(message)
-                }
-            }
-
+        textInputLayout = binding.tfClubName
+        if(club != null) {
+            textInputLayout.endIconDrawable?.setColorFilter(ContextCompat.getColor(this, R.color.md_theme_primary), PorterDuff.Mode.SRC_IN)
+        } else {
+            textInputLayout.endIconDrawable?.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN)
         }
 
         binding.tfClubMountain.setEndIconOnClickListener {
@@ -87,13 +86,14 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
         binding.tfClubName.editText?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                isDuplicated = true
+                if(binding.tfClubName.editText?.text.toString() != club?.clubName) {
+                    checkDuplicate()
+                } else {
+                    textInputLayout.endIconDrawable?.setColorFilter(ContextCompat.getColor(this@ClubEditActivity, R.color.md_theme_primary), PorterDuff.Mode.SRC_IN)
+                }
             }
 
-            override fun afterTextChanged(s: Editable?) {
-                isDuplicated = true
-                Log.d("clubTest", "changed")
-            }
+            override fun afterTextChanged(s: Editable?) {}
         })
         val content = if (club == null) "생성" else "수정"
         binding.btnSign.setOnClickListener {
@@ -229,5 +229,25 @@ class ClubEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountain
     override fun onMountainSelected(mountain: Mountain) {
         binding.tfClubMountain.editText?.setText(mountain.name)
         mountainId = mountain.id
+    }
+
+    private fun checkDuplicate(){
+        clubViewModel.isOperationSuccessful.removeObservers(this)
+        clubViewModel.resetOperationStatus()
+
+        clubViewModel.checkDuplicateClubs(binding.tfClubName.editText?.text.toString())
+        clubViewModel.isOperationSuccessful.observe(this) { isDuplicate ->
+            isDuplicate?.let {
+                Log.d("ClubEditActivity", "isDuplicate: $isDuplicate")
+                val message = if (isDuplicate) "생성 불가능한 이름입니다." else "생성 가능한 이름입니다."
+                isDuplicated = isDuplicate
+                if(isDuplicate) {
+                    textInputLayout.endIconDrawable?.setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN)
+                } else {
+                    textInputLayout.endIconDrawable?.setColorFilter(ContextCompat.getColor(this, R.color.md_theme_primary), PorterDuff.Mode.SRC_IN)
+                }
+//                showDuplicateCheckDialog(message)
+            }
+        }
     }
 }

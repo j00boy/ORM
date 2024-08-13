@@ -77,7 +77,7 @@
                     app:counterEnabled="true"
                     app:counterMaxLength="16"
                     app:endIconContentDescription="모임명 중복 검사"
-                    app:endIconDrawable="@drawable/ic_search"
+                    app:endIconDrawable="@drawable/baseline_check_24"
                     app:endIconMode="custom">
 
                     <com.google.android.material.textfield.TextInputEditText
