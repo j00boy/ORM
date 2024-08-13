@@ -53,5 +53,6 @@ public class ClubResponseDto {
         this.mountainName = club.getMountain().getMountainName();
         this.isMember = isMember;
         this.isApplied = isApplied;
+        this.applicantCount = 0L;
     }
 }
