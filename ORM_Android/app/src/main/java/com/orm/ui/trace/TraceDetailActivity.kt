@@ -212,5 +212,49 @@ class TraceDetailActivity : AppCompatActivity() {
                 fragment?.updatePoints(points.reversed())
             }
         }
+
+        binding.transparentImage1.setOnTouchListener { v, event ->
+            val action = event.action
+            when (action) {
+                MotionEvent.ACTION_DOWN -> {
+                    binding.scrollView.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    binding.scrollView.requestDisallowInterceptTouchEvent(false)
+                    true
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    binding.scrollView.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+
+                else -> true
+            }
+        }
+
+        binding.transparentImage2.setOnTouchListener { v, event ->
+            val action = event.action
+            when (action) {
+                MotionEvent.ACTION_DOWN -> {
+                    binding.scrollView.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+
+                MotionEvent.ACTION_UP -> {
+                    binding.scrollView.requestDisallowInterceptTouchEvent(false)
+                    true
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    binding.scrollView.requestDisallowInterceptTouchEvent(true)
+                    false
+                }
+
+                else -> true
+            }
+        }
     }
 }

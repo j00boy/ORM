@@ -16,10 +16,12 @@ import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationAvailability
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -84,6 +86,18 @@ class LocationIntentService : Service() {
                     updateLocation(it)
                 }
             }
+
+            override fun onLocationAvailability(locationAvailability: LocationAvailability) {
+                super.onLocationAvailability(locationAvailability)
+                if (!locationAvailability.isLocationAvailable) {
+                    updateLocation(Location("")
+                        .apply {
+                            latitude = 0.0
+                            longitude = 0.0
+                        }
+                    )
+                }
+            }
         }
 
         try {
@@ -116,7 +130,9 @@ class LocationIntentService : Service() {
     }
 
     private fun stopLocationUpdates() {
-        fusedLocationClient.removeLocationUpdates(locationCallback)
+        if (::fusedLocationClient.isInitialized) {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+        }
     }
 
     private fun isLocationPermissionGranted(): Boolean {
@@ -146,9 +162,9 @@ class LocationIntentService : Service() {
         )
 
         return NotificationCompat.Builder(this, channelId)
-            .setContentTitle("위치 추적 중")
+            .setContentTitle("발자국 추적 중")
             .setContentText("${updateIntervalMillis / 1000}초마다 위치를 기록합니다.\n")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.mipmap.ic_launcher_orm)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
@@ -163,6 +179,10 @@ class LocationIntentService : Service() {
         val notificationManager: NotificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder1? {

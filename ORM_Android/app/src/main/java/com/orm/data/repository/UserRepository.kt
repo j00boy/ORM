@@ -105,7 +105,9 @@ class UserRepository @Inject constructor(
         try {
             context.dataStore.edit { preferences ->
                 preferences.remove(PreferencesKeys.tokenString)
+                Log.d("UserRepository", preferences[PreferencesKeys.tokenString].toString())
             }
+            Log.d("UserRepository", "deleteAccessToken")
         } catch (e: Exception) {
             Log.e("UserRepository", "Error deleting access token", e)
         }
@@ -159,9 +161,10 @@ class UserRepository @Inject constructor(
                 preferences[PreferencesKeys.level] ?: 1
             }
 
-            val pushNotificationsEnabled: Flow<Boolean> = context.dataStore.data.map { preferences ->
-                preferences[PreferencesKeys.pushNotificationsEnabled] ?: true
-            }
+            val pushNotificationsEnabled: Flow<Boolean> =
+                context.dataStore.data.map { preferences ->
+                    preferences[PreferencesKeys.pushNotificationsEnabled] ?: true
+                }
 
             User(
                 userId.first(),

@@ -29,8 +29,10 @@ class LauncherActivity : AppCompatActivity() {
         val isNetworkAvailable = NetworkUtils.isNetworkAvailable(this)
 
         if (token.isNullOrEmpty()) {
+            Log.d("LauncherActivity", "token is null or empty")
             navigateToActivity(LoginActivity::class.java)
         } else {
+            Log.d("LauncherActivity", "token is not null or empty")
             if (isNetworkAvailable) {
                 userViewModel.loginAuto()
             }

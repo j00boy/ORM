@@ -29,6 +29,9 @@ class UserViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
+    private var _isDeleteUser = MutableLiveData<Boolean>()
+    val isDeleteUser: LiveData<Boolean> get() = _isDeleteUser
+
     private var isTokenSent = false
 
     init {
@@ -95,8 +98,10 @@ class UserViewModel @Inject constructor(
 
     fun deleteUser() {
         viewModelScope.launch {
+            _isDeleteUser.postValue(false)
             userRepository.deleteUserInfo()
             userRepository.deleteAccessToken()
+            _isDeleteUser.postValue(true)
         }
     }
 

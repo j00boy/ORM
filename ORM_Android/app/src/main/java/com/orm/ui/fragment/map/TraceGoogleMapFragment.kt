@@ -1,66 +1,67 @@
 package com.orm.ui.fragment.map
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
+import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
-import com.orm.R
-import com.orm.data.model.Point
-import com.orm.databinding.FragmentTraceGoogleMapBinding
-import com.orm.util.LocationIntentService
-import dagger.hilt.android.AndroidEntryPoint
-import kotlin.math.pow
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.pm.PackageManager
-import android.graphics.Color
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
-import androidx.activity.OnBackPressedCallback
-import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.setFragmentResult
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.maps.model.Dash
 import com.google.android.gms.maps.model.Dot
 import com.google.android.gms.maps.model.Gap
 import com.google.android.gms.maps.model.JointType
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.RoundCap
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.orm.viewmodel.RecordViewModel
-import com.orm.viewmodel.TrackViewModel
+import com.orm.R
+import com.orm.data.model.Point
 import com.orm.data.model.Record
-import com.orm.data.model.Trace
+import com.orm.databinding.FragmentTraceGoogleMapBinding
 import com.orm.ui.trace.TraceActivity
+import com.orm.util.LocationIntentService
 import com.orm.util.localDateTimeToLong
+import com.orm.viewmodel.RecordViewModel
 import com.orm.viewmodel.TraceViewModel
+import com.orm.viewmodel.TrackViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import kotlin.math.pow
 import android.content.BroadcastReceiver as LocalReceiver
 
 @AndroidEntryPoint
@@ -100,14 +101,23 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     private var elapsedTime: Long = 0
     private var running = false
 
-    private var polylineOptions: PolylineOptions = PolylineOptions().color(Color.BLUE)
-
     private val locationReceiver = object : LocalReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val latitude = intent?.getDoubleExtra("latitude", 0.0) ?: 0.0
             val longitude = intent?.getDoubleExtra("longitude", 0.0) ?: 0.0
+
             Log.d("LocationReceiver", "Received location: $latitude, $longitude")
-            updateMapWithLocation(LatLng(latitude, longitude))
+            if (latitude == 0.0 && longitude == 0.0) {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("위치 정보를 가져올 수 없습니다.")
+                    .setMessage("GPS가 켜져있는지 확인해주세요.")
+                    .setPositiveButton("확인") { _, _ ->
+                    }
+                    .show()
+                return
+            } else {
+                updateMapWithLocation(LatLng(latitude, longitude))
+            }
         }
     }
 
@@ -197,39 +207,52 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
     }
 
     private fun insertRecordAndHandleTrace(points: List<Point>, isFinished: Boolean = false) {
-        recordViewModel.insertRecord(
-            Record(
-                id = saveRecordId!!,
-                coordinate = points
+        // 비동기 작업을 위해 IO 스레드에서 실행
+        CoroutineScope(Dispatchers.IO).launch {
+            // 데이터베이스 작업 또는 다른 IO 작업 수행
+            recordViewModel.insertRecord(
+                Record(
+                    id = saveRecordId!!,
+                    coordinate = points
+                )
             )
-        )
 
-        if (traceId != null && traceId != -1) {
-            traceViewModel.getTrace(traceId!!)
-            traceViewModel.trace.observe(requireActivity()) { trace ->
-                trace?.let {
-                    traceViewModel.createTrace(it.apply {
-                        recordId = saveRecordId!!.toLong()
-                        hikingStartedAt = startTime
-                        hikingEndedAt = System.currentTimeMillis()
-                        maxHeight = maxTrackHeight
-                        hikingDistance = trackViewModel.distance.value
-                    })
+            if (traceId != null && traceId != -1) {
+                traceViewModel.getTrace(traceId!!)
+                // LiveData 관찰자를 설정하기 위해 Main 스레드로 전환
+                withContext(Dispatchers.Main) {
+                    traceViewModel.trace.observe(viewLifecycleOwner) { trace ->
+                        trace?.let {
+                            // 비동기 작업을 위해 IO 스레드에서 실행
+                            CoroutineScope(Dispatchers.IO).launch {
+                                traceViewModel.createTrace(it.apply {
+                                    recordId = saveRecordId!!.toLong()
+                                    hikingStartedAt = startTime
+                                    hikingEndedAt = System.currentTimeMillis()
+                                    maxHeight = maxTrackHeight
+                                    hikingDistance = trackViewModel.distance.value
+                                })
 
-                    traceViewModel.traceCreated.observe(requireActivity()) { isCreated ->
-                        if (isCreated && isFinished) {
-                            Toast.makeText(
-                                requireContext(),
-                                "발자국 측정이 완료되었습니다.",
-                                Toast.LENGTH_SHORT
-                            )
-                                .show()
+                                // LiveData 관찰자를 설정하기 위해 Main 스레드로 전환
+                                withContext(Dispatchers.Main) {
+                                    traceViewModel.traceCreated.observe(viewLifecycleOwner) { isCreated ->
+                                        if (isCreated && isFinished) {
+                                            Toast.makeText(
+                                                requireContext(),
+                                                "발자국 측정이 완료되었습니다.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     }
+
 
     private fun initializeServices() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -309,11 +332,15 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                 )
             }
 
+
             if (!trackViewModel.points.value.isNullOrEmpty()
                 && trackViewModel.points.value!!.size % 3 == 0
                 && trackViewModel.points.value!!.size >= 3
             ) {
-                insertRecordAndHandleTrace(trackViewModel.points.value!!)
+                CoroutineScope(Dispatchers.IO).launch {
+
+                    insertRecordAndHandleTrace(trackViewModel.points.value!!)
+                }
             }
         } ?: Log.e(TAG, "GoogleMap is not initialized")
     }
@@ -367,7 +394,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         }
 
         googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
-        googleMap?.moveCamera(CameraUpdateFactory.zoomTo(17f))
+        googleMap?.moveCamera(CameraUpdateFactory.zoomTo(18f))
 
         fetchLocation()
         initializeMap(points)
@@ -400,7 +427,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
 
     override fun onDestroyView() {
         super.onDestroyView()
-//        stopLocationService()
+        stopLocationService()
         localBroadcastManager.unregisterReceiver(locationReceiver)
         handler.removeCallbacks(updateTimeRunnable)
         googleMap = null

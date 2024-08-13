@@ -2,6 +2,7 @@ package com.orm.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +17,15 @@ import com.orm.R
 import com.orm.data.model.User
 import com.orm.databinding.FragmentSettingsBinding
 import com.orm.ui.LauncherActivity
+import com.orm.ui.LoginActivity
 import com.orm.viewmodel.NotificationViewModel
 import com.orm.viewmodel.RecordViewModel
 import com.orm.viewmodel.TraceViewModel
 import com.orm.viewmodel.TrailViewModel
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import kotlin.system.exitProcess
 
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
@@ -146,20 +150,64 @@ class SettingsFragment : Fragment() {
                     traceViewModel.deleteAllTraces()
                     trailViewModel.deleteAllTrails()
                     userViewModel.deleteUser()
-                    Toast.makeText(requireContext(), "회원 탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT).show()
 
-                    startActivity(
-                        Intent(requireContext(), LauncherActivity::class.java).apply {
-                            flags =
-                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    clearAppCache()
+                    clearAppData()
+
+                    userViewModel.isDeleteUser.observe(viewLifecycleOwner) { isDeleteUser ->
+                        if (isDeleteUser) {
+                            Toast.makeText(requireContext(), "회원 탈퇴가 완료되었습니다.", Toast.LENGTH_SHORT)
+                                .show()
+
+                            startActivity(
+                                Intent(requireContext(), LauncherActivity::class.java).apply {
+                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or
+                                            Intent.FLAG_ACTIVITY_CLEAR_TASK or
+                                            Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                }
+                            )
                         }
-                    )
+                    }
                 }
                 .setNegativeButton("아니오", null)
                 .show()
         }
 
         return root
+    }
+
+    private fun clearAppCache() {
+        try {
+            val cacheDir = requireContext().cacheDir
+            deleteDir(cacheDir)
+        } catch (e: Exception) {
+            Log.e("AppClearCache", "Failed to clear app cache", e)
+        }
+    }
+
+    private fun clearAppData() {
+        try {
+            val packageName = requireContext().packageName
+            val packageManager = requireContext().packageManager
+            val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
+            val dataDir = applicationInfo.dataDir
+            deleteDir(File(dataDir))
+        } catch (e: Exception) {
+            Log.e("AppClearData", "Failed to clear app data", e)
+        }
+    }
+
+    private fun deleteDir(dir: File): Boolean {
+        if (dir.isDirectory) {
+            val children = dir.list()
+            for (i in children!!.indices) {
+                val success = deleteDir(File(dir, children[i]))
+                if (!success) {
+                    return false
+                }
+            }
+        }
+        return dir.delete()
     }
 
     override fun onDestroyView() {

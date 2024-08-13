@@ -45,6 +45,10 @@ class NotificationsFragment : Fragment() {
             notificationViewModel.notifications.observe(viewLifecycleOwner) { notifications ->
                 setupAdapter(notifications)
             }
+
+            binding.btnDelete.setOnClickListener {
+                notificationViewModel.deleteAllNotifications()
+            }
         } catch (e: Exception) {
             Log.e("notification", "notification list", e)
         }
