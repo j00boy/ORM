@@ -105,8 +105,8 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
 
         if ((trace != null && trace!!.trailId == -1) || trace == null) {
             if (mountain == null) {
-                binding.cvMap.visibility = View.GONE
-                binding.spinnerTrails.visibility = View.GONE
+                binding.cvMap.visibility = View.INVISIBLE
+                binding.cvTrails.visibility = View.INVISIBLE
             } else if (mountain != null) {
                 binding.mountainName = mountain!!.name
                 loadMountainTrails(mountain!!.id)
@@ -116,11 +116,11 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                 if (NetworkUtils.isNetworkAvailable(this)) {
                     loadMountainTrails(trace!!.mountainId)
                 } else {
-                    binding.cvMap.visibility = View.GONE
+                    binding.cvMap.visibility = View.INVISIBLE
                 }
             } else {
-                binding.cvMap.visibility = View.GONE
-                binding.spinnerTrails.visibility = View.GONE
+                binding.cvMap.visibility = View.INVISIBLE
+                binding.cvTrails.visibility = View.INVISIBLE
             }
         }
 
@@ -305,8 +305,8 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                     binding.spinnerTrails.setSelection(trailIndex)
                 }
             } else {
-                binding.cvMap.visibility = View.GONE
-                binding.spinnerTrails.visibility = View.GONE
+                binding.cvMap.visibility = View.INVISIBLE
+                binding.cvTrails.visibility = View.INVISIBLE
             }
         }
     }
@@ -330,7 +330,7 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
             }
             if(this.trails.isNotEmpty()) {
                 binding.cvMap.visibility = View.VISIBLE
-                binding.spinnerTrails.visibility = View.VISIBLE
+                binding.cvTrails.visibility = View.VISIBLE
             }
         }
     }
