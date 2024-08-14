@@ -69,8 +69,10 @@ public class ClubController {
     }
 
     @GetMapping("/{clubId}")
-    public ResponseEntity<ClubResponseDto> findClubById(@PathVariable Integer clubId) {
-        ClubResponseDto result = clubService.getClubById(clubId);
+    public ResponseEntity<ClubResponseDto> findClubById(HttpServletRequest request, @PathVariable Integer clubId) {
+        String accessToken = request.getHeader(HEADER_AUTH);
+        Integer userId = jwtUtil.getUserIdFromAccessToken(accessToken);
+        ClubResponseDto result = clubService.getClubById(clubId, userId);
         return ResponseEntity.ok(result);
     }
 
