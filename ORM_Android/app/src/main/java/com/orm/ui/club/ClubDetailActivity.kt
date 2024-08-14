@@ -16,6 +16,7 @@ import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.android.material.badge.ExperimentalBadgeUtils
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.orm.R
 import com.orm.data.model.RequestMember
 import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubCreate
@@ -123,6 +124,9 @@ class ClubDetailActivity : AppCompatActivity() {
         binding.btnMember.post {
             if (club!!.applicantCount > 0) {
                 badgeDrawable?.number = club!!.applicantCount
+                badgeDrawable?.verticalOffset = 50
+                badgeDrawable?.horizontalOffset = 44
+                badgeDrawable?.backgroundColor = getColor(R.color.md_theme_error)
                 badgeDrawable?.isVisible = true
             } else {
                 badgeDrawable?.isVisible = false

@@ -216,7 +216,6 @@ class ClubMemberActivity : AppCompatActivity() {
                             removeAt(position)
                         }
                         dialog.dismiss()
-                        finish()
                     }
                     .show()
             }
