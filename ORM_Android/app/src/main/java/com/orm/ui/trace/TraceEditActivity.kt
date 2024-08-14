@@ -149,6 +149,12 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         })
 
         binding.btnSign.setOnClickListener {
+            mountainViewModel.isLoading.value?.let {
+                if (it) {
+                    return@setOnClickListener
+                }
+            }
+
             if (binding.tfTraceName.editText!!.text.isEmpty()) {
                 MaterialAlertDialogBuilder(this)
                     .setTitle("경고")
@@ -211,12 +217,17 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                             setResult(Activity.RESULT_OK, Intent().apply {
                                 putExtra("traceCreated", true)
                             })
-                            if(mountain == null) {
+                            if (mountain == null) {
                                 finish()
                             } else {
-                                startActivity(Intent(this@TraceEditActivity, TraceActivity::class.java).apply {
-                                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                })
+                                startActivity(
+                                    Intent(
+                                        this@TraceEditActivity,
+                                        TraceActivity::class.java
+                                    ).apply {
+                                        flags =
+                                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                    })
                             }
                         }
                     }
@@ -332,7 +343,7 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                 setupTrailSpinner(trails)
                 this.trails = trails
             }
-            if(this.trails.isNotEmpty()) {
+            if (this.trails.isNotEmpty()) {
                 binding.cvMap.visibility = View.VISIBLE
                 binding.cvTrails.visibility = View.VISIBLE
             }
