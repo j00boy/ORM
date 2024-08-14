@@ -22,9 +22,13 @@ class ProfileNotificationAdapter(private val items: List<RecyclerViewNotificatio
         val tvDate = itemView.findViewById<TextView>(R.id.tv_date)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileNotificationViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): ProfileNotificationViewHolder {
         val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.profile_notification, parent, false)
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.profile_notification, parent, false)
         return ProfileNotificationViewHolder(view)
     }
 
@@ -62,8 +66,8 @@ class ProfileNotificationAdapter(private val items: List<RecyclerViewNotificatio
     private fun String.getNetworkImage(context: Context, view: ImageView) {
         Glide.with(context)
             .load(this)
-            .error(R.mipmap.ic_launcher_orm)
-            .placeholder(R.mipmap.ic_launcher_orm)
+            .error(R.drawable.img_orm_1000)
+            .placeholder(R.drawable.img_orm_1000)
             .centerCrop()
             .into(view)
     }

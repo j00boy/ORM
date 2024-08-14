@@ -15,10 +15,14 @@ class PhotoViewerActivity : AppCompatActivity() {
         val photoView = findViewById<GestureImageView>(R.id.photoView)
         val imageUrl = intent.getStringExtra("IMAGE_URL")
 
-        imageUrl?.let {
-            Glide.with(this)
-                .load(it)
-                .into(photoView)
+        val imageResource = if (imageUrl.isNullOrEmpty()) {
+            R.drawable.img_orm_1000
+        } else {
+            imageUrl
         }
+
+        Glide.with(this)
+            .load(imageResource)
+            .into(photoView)
     }
 }

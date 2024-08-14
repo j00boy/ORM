@@ -69,6 +69,9 @@ class ClubAllFragment : Fragment() {
 
         clubViewModel.isReady.observe(viewLifecycleOwner) {
             binding.progressBar.visibility = if (it) View.GONE else View.VISIBLE
+            if (!it) {
+                binding.emptyView.visibility = View.GONE
+            }
         }
         return root
     }

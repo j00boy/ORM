@@ -45,11 +45,13 @@ class BottomSheetMountainList : BottomSheetDialogFragment() {
         mountainViewModel.fetchMountainByName(mountainName)
         mountainViewModel.mountains.observe(viewLifecycleOwner) { mountains ->
             if (mountains.isNullOrEmpty()) {
-                // Show dialog and dismiss the fragment if the list is null or empty
                 MaterialAlertDialogBuilder(requireContext())
                     .setTitle("산 검색")
                     .setMessage("${mountainName}으로 검색된 결과가 없습니다.\n다시 검색해주세요. ")
-                    .setPositiveButton("OK") { _, _ ->
+                    .setPositiveButton("확인") { _, _ ->
+                        dismiss()
+                    }
+                    .setOnCancelListener {
                         dismiss()
                     }
                     .show()

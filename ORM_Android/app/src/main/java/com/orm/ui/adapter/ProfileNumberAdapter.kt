@@ -70,8 +70,8 @@ class ProfileNumberAdapter(private val items: List<RecyclerViewNumberItem>) :
     private fun String.getNetworkImage(context: Context, view: ImageView) {
         Glide.with(context)
             .load(this)
-            .error(R.mipmap.ic_launcher_orm)
-            .placeholder(R.mipmap.ic_launcher_orm)
+            .error(R.drawable.img_orm_1000)
+            .placeholder(R.drawable.img_orm_1000)
             .centerCrop()
             .into(view)
     }
