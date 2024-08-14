@@ -102,7 +102,15 @@ class ClubDetailActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
+        binding.tvDescription.setOnClickListener {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("설명")
+                .setMessage(club?.description)
+                .setPositiveButton("확인") { dialog, which ->
+                    dialog.dismiss()
+                }
+                .show()
+        }
 
         binding.btnMember.setOnClickListener {
             if (club?.isMember == true) {
