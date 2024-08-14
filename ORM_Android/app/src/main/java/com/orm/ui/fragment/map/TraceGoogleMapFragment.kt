@@ -199,6 +199,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                 }
                 stopLocationService()
 
+                traceViewModel.traceCreated.removeObservers(viewLifecycleOwner)
                 traceViewModel.traceCreated.observe(viewLifecycleOwner) { isCreated ->
                     if (isCreated) {
                         val intent = Intent(requireContext(), TraceActivity::class.java).apply {
@@ -227,7 +228,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
 
             if (traceId != null && traceId != -1) {
                 traceViewModel.getTrace(traceId!!)
-                // LiveData 관찰자를 설정하기 위해 Main 스레드로 전환
+
                 withContext(Dispatchers.Main) {
                     traceViewModel.trace.observe(viewLifecycleOwner) { trace ->
                         trace?.let {
@@ -241,8 +242,8 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                                     hikingDistance = trackViewModel.distance.value
                                 })
 
-                                // LiveData 관찰자를 설정하기 위해 Main 스레드로 전환
                                 withContext(Dispatchers.Main) {
+                                    traceViewModel.traceCreated.removeObservers(viewLifecycleOwner)
                                     traceViewModel.traceCreated.observe(viewLifecycleOwner) { isCreated ->
                                         if (isCreated && isFinished) {
                                             Toast.makeText(
@@ -438,6 +439,7 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
         stopLocationService()
         localBroadcastManager.unregisterReceiver(locationReceiver)
         handler.removeCallbacks(updateTimeRunnable)
+        traceViewModel.traceCreated.removeObservers(viewLifecycleOwner)
         googleMap = null
         _binding = null
     }
