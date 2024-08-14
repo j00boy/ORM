@@ -40,6 +40,9 @@ public class ImageUtil {
     @Value("${orm.sftp.remote-access-dir}")
     private String REMOTE_ACCESS_DIR;
 
+    @Value("${orm.default-image-src}")
+    private String DEFAULT_IMAGE_SRC;
+
     // 이미지 파일을 저장하는 메서드
     public String saveImage(MultipartFile image, String directoryPath) {
         // 파일 이름 생성

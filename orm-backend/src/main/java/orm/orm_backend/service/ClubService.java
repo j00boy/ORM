@@ -44,7 +44,7 @@ public class ClubService {
         Mountain mountain = mountainService.getMountainById(clubRequestDTO.getMountainId());
 
         // 사진 업로드
-        String imageSrc = null;
+        String imageSrc = imageUtil.getDEFAULT_IMAGE_SRC();
 
         if (imgFile != null) {
             imageSrc = imageUtil.saveImage(imgFile, IMAGE_PATH);
