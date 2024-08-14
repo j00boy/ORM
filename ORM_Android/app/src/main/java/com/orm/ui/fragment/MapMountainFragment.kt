@@ -28,6 +28,7 @@ import com.orm.R
 import com.orm.data.model.Mountain
 import com.orm.databinding.FragmentMapMountainBinding
 import com.orm.ui.mountain.MountainDetailActivity
+import com.orm.util.NetworkUtils
 import com.orm.viewmodel.MountainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -217,7 +218,11 @@ class MapMountainFragment : Fragment(), OnMapReadyCallback {
                 val intent =
                     Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                         data =
-                            android.net.Uri.fromParts("package", requireContext().packageName, null)
+                            android.net.Uri.fromParts(
+                                "package",
+                                requireContext().packageName,
+                                null
+                            )
                     }
                 startActivity(intent)
             }
