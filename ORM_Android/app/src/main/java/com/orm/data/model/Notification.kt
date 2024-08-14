@@ -23,13 +23,13 @@ data class Notification(
     val boardId: Int? = null,
 ) {
     companion object {
-        fun toNotificationData(remoteMessage: RemoteMessage): Notification {
+        fun toNotificationData(remoteMessage: RemoteMessage, title: String, message: String): Notification {
             val notificationData = remoteMessage.data
             return Notification(
                 clubId = notificationData["clubId"]!!.toInt(),
                 userId = notificationData["userId"]?.toInt(),
-                title = remoteMessage.notification?.title.toString(),
-                message = remoteMessage.notification?.body.toString(),
+                title = title,
+                message = message,
                 clubName = notificationData["clubName"],
                 userName = notificationData["userName"],
                 alertType = notificationData["alertType"]!!,
