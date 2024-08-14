@@ -101,6 +101,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                         intent.putExtra("club", club)
                     }
 
+                    "REJECT" -> {
+                        intent = Intent(this@MyFirebaseMessagingService, ClubActivity::class.java)
+                    }
+
                     "EXPEL" -> {
                         intent = Intent(this@MyFirebaseMessagingService, ClubActivity::class.java)
                     }
