@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.orm.R
 import com.orm.databinding.ActivityClubBinding
+import com.orm.ui.MainActivity
 import com.orm.ui.fragment.TabLayoutFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -15,6 +16,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class ClubActivity : AppCompatActivity() {
     private val binding: ActivityClubBinding by lazy {
         ActivityClubBinding.inflate(layoutInflater)
+    }
+
+    private val goToMain: Boolean by lazy {
+        intent.getBooleanExtra("back", false)
     }
 
     private val createClubLauncher =
@@ -91,5 +96,15 @@ class ClubActivity : AppCompatActivity() {
         val fragment =
             supportFragmentManager.findFragmentById(binding.info.id) as? TabLayoutFragment
         return fragment?.getSelectedTabIndex() ?: -1
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (isFinishing && goToMain) {
+            val intent = Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            startActivity(intent)
+        }
     }
 }

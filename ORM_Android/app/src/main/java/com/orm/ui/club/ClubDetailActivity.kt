@@ -21,6 +21,7 @@ import com.orm.data.model.RequestMember
 import com.orm.data.model.club.Club
 import com.orm.data.model.club.ClubCreate
 import com.orm.databinding.ActivityClubDetailBinding
+import com.orm.ui.MainActivity
 import com.orm.ui.PhotoViewerActivity
 import com.orm.ui.mountain.MountainDetailActivity
 import com.orm.ui.board.BoardActivity
@@ -44,6 +45,10 @@ class ClubDetailActivity : AppCompatActivity() {
     private var club: Club? = null
 
     private var badgeDrawable: BadgeDrawable? = null
+
+    private val goToMain: Boolean by lazy {
+        intent.getBooleanExtra("back", false)
+    }
 
     private val createClubLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -254,6 +259,17 @@ class ClubDetailActivity : AppCompatActivity() {
             }
             BadgeUtils.attachBadgeDrawable(badgeDrawable!!, binding.btnMember)
             binding.btnMember.invalidate()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (isFinishing && goToMain) {
+            val intent = Intent(this, ClubActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra("back", true)
+            }
+            startActivity(intent)
         }
     }
 }
