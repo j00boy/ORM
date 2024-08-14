@@ -150,11 +150,18 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
 
         binding.btnSign.setOnClickListener {
 
+            binding.btnSign.isEnabled = false
+
             if (binding.tfTraceName.editText!!.text.isEmpty()) {
                 MaterialAlertDialogBuilder(this)
                     .setTitle("경고")
                     .setMessage("발자국 이름을 입력하세요.")
-                    .setPositiveButton("확인") { _, _ -> }
+                    .setPositiveButton("확인") { _, _ ->
+                        binding.btnSign.isEnabled = true
+                    }
+                    .setOnDismissListener {
+                        binding.btnSign.isEnabled = true
+                    }
                     .show()
                 return@setOnClickListener
             }
