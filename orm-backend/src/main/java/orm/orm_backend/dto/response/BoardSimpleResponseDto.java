@@ -18,6 +18,7 @@ public class BoardSimpleResponseDto {
     private Integer commentCount;
     private Integer hit;
     private LocalDateTime createdAt;
+    private LocalDateTime lastModifiedAt;
 
     @Builder
     public BoardSimpleResponseDto(Board board) {
@@ -28,5 +29,6 @@ public class BoardSimpleResponseDto {
         this.commentCount = board.getComments().size();
         this.hit = board.getHit();
         this.createdAt = board.getCreatedAt();
+        this.lastModifiedAt = board.getLastModifiedAt();
     }
 }

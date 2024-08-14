@@ -23,6 +23,7 @@ public class BoardResponseDto {
     private List<CommentResponseDto> comments;
     private Integer hit;
     private LocalDateTime createdAt;
+    private LocalDateTime lastModifiedAt;
     private List<BoardImageDto> imgSrcs;
 
     @Builder
@@ -36,6 +37,7 @@ public class BoardResponseDto {
         this.comments = comments;
         this.hit = board.getHit();
         this.createdAt = board.getCreatedAt();
+        this.lastModifiedAt = board.getLastModifiedAt();
         this.imgSrcs = imgSrcs;
     }
 }

@@ -14,6 +14,7 @@ public class CommentResponseDto {
     private String userNickname;
     private String content;
     private LocalDateTime createdAt;
+    private LocalDateTime lastModifiedAt;
 
     @Builder
     public CommentResponseDto(Comment comment) {
@@ -23,5 +24,6 @@ public class CommentResponseDto {
         this.userNickname = user.getNickname();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
+        this.lastModifiedAt = comment.getLastModifiedAt();
     }
 }
