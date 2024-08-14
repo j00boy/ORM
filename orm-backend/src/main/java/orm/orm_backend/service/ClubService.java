@@ -45,8 +45,7 @@ public class ClubService {
 
         // 사진 업로드
         String imageSrc = imageUtil.getDEFAULT_IMAGE_SRC();
-
-        if (imgFile != null) {
+        if (imgFile != null && !imgFile.getOriginalFilename().equals("empty_image.jpg")) {
             imageSrc = imageUtil.saveImage(imgFile, IMAGE_PATH);
         }
 
