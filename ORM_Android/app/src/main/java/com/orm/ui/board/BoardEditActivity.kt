@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.WindowManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
@@ -154,6 +155,11 @@ class BoardEditActivity : AppCompatActivity() {
         progressDialog.setMessage("게시글을 저장 중입니다...")
         progressDialog.setCancelable(false)
         progressDialog.show()
+
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        )
 
         if (boardId != null) {
             boardViewModel.updateBoards(

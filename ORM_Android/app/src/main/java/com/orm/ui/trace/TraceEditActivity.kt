@@ -9,6 +9,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
@@ -163,6 +164,11 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                 .setMessage("발자국을 $content 하시겠습니까?")
                 .setNegativeButton("취소") { _, _ -> }
                 .setPositiveButton("확인") { dialog, which ->
+
+                    window.setFlags(
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                    )
 
                     val selectedTrailIndex = binding.spinnerTrails.selectedItemPosition
                     var selectedTrail = if (selectedTrailIndex != AdapterView.INVALID_POSITION) {
@@ -319,8 +325,6 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         binding.tfTraceMountain.editText?.setText(mountain.name)
         mountainId = mountain.id
         mountainName = mountain.name
-
-
 
         mountainViewModel.fetchMountainById(mountainId)
         mountainViewModel.mountain.observe(this@TraceEditActivity) { it ->
