@@ -149,11 +149,6 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
         })
 
         binding.btnSign.setOnClickListener {
-            mountainViewModel.isLoading.value?.let {
-                if (it) {
-                    return@setOnClickListener
-                }
-            }
 
             if (binding.tfTraceName.editText!!.text.isEmpty()) {
                 MaterialAlertDialogBuilder(this)
@@ -233,6 +228,17 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
                     }
                 }
                 .show()
+        }
+
+        mountainViewModel.isLoading.observe(this) {
+            if (it) {
+                window.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+            } else {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            }
         }
 
         val today = MaterialDatePicker.todayInUtcMilliseconds()
