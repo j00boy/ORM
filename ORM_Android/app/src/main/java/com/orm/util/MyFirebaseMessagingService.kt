@@ -114,8 +114,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     intent.putExtra("club", club)
                     intent.putExtra("boardList", boardList)
                 }
-            }
 
+            }
             val pIntent = PendingIntent.getActivity(this@MyFirebaseMessagingService, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
             val channelId = "orm"
@@ -171,6 +171,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 createdAt = board.createdAt,
                 commentCount = board.commentCount,
                 userNickname = board.userNickname,
+                lastModifiedAt = board.lastModifiedAt,
             )
         }
     }
