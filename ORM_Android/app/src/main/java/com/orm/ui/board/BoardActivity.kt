@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.orm.R
 import com.orm.data.model.club.Club
 import com.orm.databinding.ActivityBoardBinding
+import com.orm.ui.MainActivity
+import com.orm.ui.club.ClubDetailActivity
 import com.orm.ui.fragment.board.BoardAllFragment
 import com.orm.viewmodel.BoardViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,6 +29,10 @@ class BoardActivity : AppCompatActivity() {
         } else {
             intent.getParcelableExtra<Club>("club")
         }
+    }
+
+    private val goToMain: Boolean by lazy {
+        intent.getBooleanExtra("back", false)
     }
 
     private val boardViewModel: BoardViewModel by viewModels()
@@ -91,5 +97,17 @@ class BoardActivity : AppCompatActivity() {
     private fun refreshBoardList() {
         val fragment = supportFragmentManager.findFragmentById(R.id.info) as? BoardAllFragment
         fragment?.refreshData()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (isFinishing && goToMain) {
+            val intent = Intent(this, ClubDetailActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra("club", club)
+                putExtra("back", true)
+            }
+            startActivity(intent)
+        }
     }
 }

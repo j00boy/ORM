@@ -37,6 +37,10 @@ class ClubMemberActivity : AppCompatActivity() {
         }
     }
 
+    private val goToMain: Boolean by lazy {
+        intent.getBooleanExtra("back", false)
+    }
+
     private val clubViewModel: ClubViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
 
@@ -119,7 +123,7 @@ class ClubMemberActivity : AppCompatActivity() {
             }
 
             override fun onClickBtnDown(v: View, position: Int) {
-                if(memberItem!![position].id == club!!.managerId.toInt()){
+                if (memberItem!![position].id == club!!.managerId.toInt()) {
                     return
                 }
                 MaterialAlertDialogBuilder(this@ClubMemberActivity)
@@ -223,5 +227,17 @@ class ClubMemberActivity : AppCompatActivity() {
 
         rvApplicant.adapter = adapterApplicant
         rvApplicant.layoutManager = LinearLayoutManager(this@ClubMemberActivity)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (isFinishing && goToMain) {
+            val intent = Intent(this, ClubDetailActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra("club", club)
+                putExtra("back", true)
+            }
+            startActivity(intent)
+        }
     }
 }
