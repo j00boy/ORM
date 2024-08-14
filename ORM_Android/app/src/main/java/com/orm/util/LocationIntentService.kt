@@ -35,6 +35,10 @@ import android.os.IBinder as IBinder1
 @SuppressLint("MissingPermission")
 class LocationIntentService : Service() {
 
+    companion object {
+        var isServiceRunning = false
+    }
+
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
@@ -182,6 +186,7 @@ class LocationIntentService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        isServiceRunning = true
         return START_STICKY
     }
 
@@ -191,6 +196,7 @@ class LocationIntentService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        isServiceRunning = false
         try {
             stopLocationUpdates()
         } catch (e: SecurityException) {

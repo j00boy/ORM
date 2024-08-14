@@ -21,6 +21,7 @@ import com.orm.data.model.board.Board
 import com.orm.data.model.board.BoardList
 import com.orm.data.model.club.Club
 import com.orm.databinding.ActivityBoardDetailBinding
+import com.orm.ui.MainActivity
 import com.orm.ui.PhotoViewerActivity
 import com.orm.ui.fragment.board.CommentAllFragment
 import com.orm.viewmodel.BoardViewModel
@@ -56,6 +57,10 @@ class BoardDetailActivity : AppCompatActivity() {
         } else {
             intent.getParcelableExtra<BoardList>("boardList")
         }
+    }
+
+    private val goToMain: Boolean by lazy {
+        intent.getBooleanExtra("back", false)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -244,4 +249,15 @@ class BoardDetailActivity : AppCompatActivity() {
         finish()
     }
 
+    override fun onPause() {
+        super.onPause()
+        if (isFinishing && goToMain) {
+            val intent = Intent(this, BoardActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra("club", club)
+                putExtra("back",true)
+            }
+            startActivity(intent)
+        }
+    }
 }

@@ -115,6 +115,11 @@ class MountainDetailActivity : AppCompatActivity() {
         }
 
         binding.mountain = mountain
+
+        mountainViewModel.isLoading.observe(this) {
+            binding.progressBar.visibility = if (it) View.VISIBLE else View.GONE
+        }
+
         mountainViewModel.fetchMountainById(mountain!!.id)
         mountainViewModel.mountain.observe(this@MountainDetailActivity) {
             if (it != null && !it.trails.isNullOrEmpty()) {
@@ -138,6 +143,7 @@ class MountainDetailActivity : AppCompatActivity() {
                 Glide.with(this)
                     .asDrawable()
                     .load("file:///android_asset/robot_icon.gif")
+                    .error(R.mipmap.ic_launcher_orm)
                     .into(object : CustomTarget<Drawable>() {
                         override fun onResourceReady(
                             resource: Drawable,
@@ -145,7 +151,6 @@ class MountainDetailActivity : AppCompatActivity() {
                         ) {
                             binding.tfPredictTime.endIconDrawable = resource
 
-                            // Set click listener on the end icon
                             binding.tfPredictTime.setEndIconOnClickListener {
                                 showTooltip(it, "AI를 통해 예측한 결과입니다.")
                             }

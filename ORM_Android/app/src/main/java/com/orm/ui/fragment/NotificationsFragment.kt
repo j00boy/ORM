@@ -44,21 +44,28 @@ class NotificationsFragment : Fragment() {
         try {
             notificationViewModel.getAllNotifications()
             notificationViewModel.notifications.observe(viewLifecycleOwner) { notifications ->
+//                if (notifications.isNullOrEmpty()) {
+//                    binding.emptyView.visibility = View.VISIBLE
+//                    binding.recyclerView.visibility = View.GONE
+//                    return@observe
+//                }
                 setupAdapter(notifications)
             }
 
             binding.btnDelete.setOnClickListener {
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("알림 삭제")
-                        .setMessage("모든 알림을 삭제하시겠습니까?")
-                        .setNegativeButton("취소") { dialog, which ->
-                            dialog.dismiss() }
-                        .setPositiveButton("삭제") {dialog, which ->
-                            notificationViewModel.deleteAllNotifications()
-                            dialog.dismiss() // 다이얼로그 닫기
-                        }
-                        .setNegativeButton("취소", null)
-                        .show()
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("알림 삭제")
+                    .setMessage("모든 알림을 삭제하시겠습니까?")
+                    .setNegativeButton("취소") { dialog, which ->
+                        dialog.dismiss()
+                    }
+                    .setPositiveButton("삭제") { dialog, which ->
+                        notificationViewModel.deleteAllNotifications()
+                        binding.count = 0
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("취소", null)
+                    .show()
 
 
             }
@@ -75,7 +82,10 @@ class NotificationsFragment : Fragment() {
 
     private fun setupAdapter(notifications: List<Notification>) {
         if (_binding == null) return
-
+//
+//        binding.emptyView.visibility = View.GONE
+//        binding.recyclerView.visibility = View.VISIBLE
+//
         val reversedNotifications = notifications.reversed()
 
         adapter = ProfileNotificationAdapter(reversedNotifications.map {

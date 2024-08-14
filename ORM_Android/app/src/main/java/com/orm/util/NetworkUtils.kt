@@ -20,10 +20,10 @@ object NetworkUtils {
     }
 
     fun isNetworkError(context: Context): Boolean {
-        if (!NetworkUtils.isNetworkAvailable(context)) {
+        if (!isNetworkAvailable(context)) {
             MaterialAlertDialogBuilder(context)
-                .setTitle("네트워크 확인 불가")
-                .setMessage("네트워크를 확인해주세요.")
+                .setTitle("네트워크 연결 오류")
+                .setMessage("인터넷 연결을 확인해주세요.")
                 .setPositiveButton("확인") { dialog, _ ->
                     dialog.dismiss()
                 }.show()

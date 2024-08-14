@@ -9,9 +9,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.messaging.FirebaseMessaging
 import com.orm.databinding.FragmentHomeInfoBinding
 import com.orm.ui.mountain.MountainDetailActivity
+import com.orm.util.NetworkUtils
 import com.orm.viewmodel.MountainViewModel
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +37,17 @@ class HomeInfoFragment : Fragment() {
         }
 
         binding.cvRecommend.setOnClickListener {
+            if (!NetworkUtils.isNetworkAvailable(requireContext())) {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("네트워크 연결 오류")
+                    .setMessage("인터넷 연결을 확인해주세요.")
+                    .setPositiveButton("확인") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
+                return@setOnClickListener
+            }
+
             mountainViewModel.getMountainsRecommend()
 
             mountainViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->

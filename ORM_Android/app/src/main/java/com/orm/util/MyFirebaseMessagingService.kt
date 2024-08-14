@@ -23,6 +23,7 @@ import com.orm.ui.board.BoardDetailActivity
 import com.orm.ui.club.ClubActivity
 import com.orm.ui.club.ClubDetailActivity
 import com.orm.ui.club.ClubMemberActivity
+import com.orm.ui.trace.TraceMeasureActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -80,56 +81,75 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun showNotification(notification: RemoteMessage) {
         CoroutineScope(Dispatchers.Main).launch {
-            var intent: Intent? = null
+            var intent: Intent? = Intent()
             val noti = Notification.toNotificationData(notification, title, message)
             Log.d("notiTest", noti.alertType)
 
-            when(noti.alertType){
-                "APPLICATION" -> {
-                    Log.d("notiTest", "in appli")
-                    intent = Intent(this@MyFirebaseMessagingService, ClubMemberActivity::class.java)
-                    val club = getClub(noti.clubId)
-                    Log.d("notiTest", club.toString())
-                    intent.putExtra("club", club)
-                }
-                "ACCEPTANCE" -> {
-                    intent = Intent(this@MyFirebaseMessagingService, ClubDetailActivity::class.java)
-                    val club = getClub(noti.clubId)
-                    intent.putExtra("club", club)
-                }
-                "EXPEL" -> {
-                    intent = Intent(this@MyFirebaseMessagingService, ClubActivity::class.java)
-                }
-                "NEW_BOARD" -> {
-                    intent = Intent(this@MyFirebaseMessagingService, BoardActivity::class.java)
-                    val club = getClub(noti.clubId)
-                    intent.putExtra("club", club)
-                }
-                "NEW_COMMENT" -> {
-                    intent = Intent(this@MyFirebaseMessagingService, BoardDetailActivity::class.java)
-                    val boardList = getBoardList(noti.boardId!!)
-                    val club = getClub(noti.clubId)
-                    Log.d("notiTest", boardList.toString())
-                    Log.d("notiTest", club.toString())
-                    intent.putExtra("club", club)
-                    intent.putExtra("boardList", boardList)
-                }
+            if (!LocationIntentService.isServiceRunning) {
+                when (noti.alertType) {
+                    "APPLICATION" -> {
+                        intent =
+                            Intent(this@MyFirebaseMessagingService, ClubMemberActivity::class.java)
+                        val club = getClub(noti.clubId)
+                        intent.putExtra("club", club)
+                    }
 
+                    "ACCEPTANCE" -> {
+                        intent =
+                            Intent(this@MyFirebaseMessagingService, ClubDetailActivity::class.java)
+                        val club = getClub(noti.clubId)
+                        intent.putExtra("club", club)
+                    }
+
+                    "REJECT" -> {
+                        intent = Intent(this@MyFirebaseMessagingService, ClubActivity::class.java)
+                    }
+
+                    "EXPEL" -> {
+                        intent = Intent(this@MyFirebaseMessagingService, ClubActivity::class.java)
+                    }
+
+                    "NEW_BOARD" -> {
+                        intent = Intent(this@MyFirebaseMessagingService, BoardActivity::class.java)
+                        val club = getClub(noti.clubId)
+                        intent.putExtra("club", club)
+                    }
+
+                    "NEW_COMMENT" -> {
+                        intent =
+                            Intent(this@MyFirebaseMessagingService, BoardDetailActivity::class.java)
+                        val boardList = getBoardList(noti.boardId!!)
+                        val club = getClub(noti.clubId)
+                        intent.putExtra("club", club)
+                        intent.putExtra("boardList", boardList)
+                    }
+                }
+            } else {
+                intent = Intent(this@MyFirebaseMessagingService, TraceMeasureActivity::class.java)
             }
-            val pIntent = PendingIntent.getActivity(this@MyFirebaseMessagingService, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+            intent!!.putExtra("back", true)
+            val pIntent = PendingIntent.getActivity(
+                this@MyFirebaseMessagingService,
+                0,  // Request code
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
 
             val channelId = "orm"
 
-            val notificationBuilder = NotificationCompat.Builder(this@MyFirebaseMessagingService, channelId)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setSmallIcon(R.mipmap.ic_launcher_orm)
-                .setContentTitle(notification.notification?.title)
-                .setContentText(notification.notification?.body)
-                .setContentIntent(pIntent)
-                .setAutoCancel(true)
+            val notificationBuilder =
+                NotificationCompat.Builder(this@MyFirebaseMessagingService, channelId)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setSmallIcon(R.mipmap.ic_launcher_orm)
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setContentIntent(pIntent)
+                    .setAutoCancel(true)
 
             getSystemService(NotificationManager::class.java).run {
-                val channel = NotificationChannel(channelId, "알림", NotificationManager.IMPORTANCE_HIGH)
+                val channel =
+                    NotificationChannel(channelId, "알림", NotificationManager.IMPORTANCE_HIGH)
                 createNotificationChannel(channel)
                 notify(Date().time.toInt(), notificationBuilder.build())
             }
@@ -162,19 +182,21 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     suspend fun getBoardList(boardId: Int): BoardList {
         return withContext(Dispatchers.IO) {
+            Log.d("notiTest", "!!!!! ${boardId}")
             val board = boardRepository.getBoards(boardId)
             BoardList(
                 boardId = board!!.boardId,
                 userId = board.userId,
                 title = board.title,
                 hit = board.hit,
-                createdAt = board.createdAt,
                 commentCount = board.commentCount,
                 userNickname = board.userNickname,
+                createdAt = board.createdAt,
                 lastModifiedAt = board.lastModifiedAt,
             )
         }
     }
+
     suspend fun getClub(clubId: Int): Club {
         return withContext(Dispatchers.IO) {
             clubRepository.getClubById(clubId)!!
