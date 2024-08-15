@@ -1,5 +1,6 @@
 package com.orm.ui.fragment.board
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -44,6 +45,7 @@ class BoardAllFragment : Fragment() {
 
     private lateinit var detailActivityResultLauncher: ActivityResultLauncher<Intent>
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -87,26 +89,34 @@ class BoardAllFragment : Fragment() {
 
         val reversedList = boardList.reversed()
 
-        adapter = ProfileBoardAdapter(reversedList.map { BoardList.toRecyclerViewBoardItem(it) })
+        // Check if boardList is empty
+        if (reversedList.isEmpty()) {
+            binding.emptyView.visibility = View.VISIBLE
+            binding.recyclerView.visibility = View.GONE
+        } else {
+            binding.emptyView.visibility = View.GONE
+            binding.recyclerView.visibility = View.VISIBLE
 
-        adapter.setItemClickListener(object : ProfileBoardAdapter.OnItemClickListener {
-            override fun onClick(v: View, position: Int) {
-                val intent = Intent(
-                    requireContext(),
-                    BoardDetailActivity::class.java
-                ).apply {
-                    putExtra("boardList", reversedList[position])
-                    putExtra("club", club)
+            adapter = ProfileBoardAdapter(reversedList.map { BoardList.toRecyclerViewBoardItem(it) })
+
+            adapter.setItemClickListener(object : ProfileBoardAdapter.OnItemClickListener {
+                override fun onClick(v: View, position: Int) {
+                    val intent = Intent(
+                        requireContext(),
+                        BoardDetailActivity::class.java
+                    ).apply {
+                        putExtra("boardList", reversedList[position])
+                        putExtra("club", club)
+                    }
+                    Log.e("boardAllFragment", "board: ${reversedList[position]}")
+                    detailActivityResultLauncher.launch(intent)
                 }
-                Log.e("boardAllFragment", "board: ${reversedList[position]}")
-                detailActivityResultLauncher.launch(intent) // Here we launch with the detailActivityResultLauncher
-            }
-        })
+            })
 
-        rvBoard.adapter = adapter
-        rvBoard.layoutManager = LinearLayoutManager(requireContext())
+            rvBoard.adapter = adapter
+            rvBoard.layoutManager = LinearLayoutManager(requireContext())
+        }
     }
-
     fun refreshData() {
         Log.d("refresh", "refresh123 frag")
         val clubId = club?.id ?: -1

@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.webkit.WebView
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -161,6 +162,13 @@ class BoardDetailActivity : AppCompatActivity() {
             }
         }
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                setResult(RESULT_OK, Intent().putExtra("refresh", true))
+                finish()
+            }
+        })
+
 
 
     }
@@ -243,11 +251,11 @@ class BoardDetailActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        setResult(RESULT_OK, Intent().putExtra("refresh", true))
-        finish()
-    }
+//    override fun onBackPressed() {
+//        super.onBackPressed()
+//        setResult(RESULT_OK, Intent().putExtra("refresh", true))
+//        finish()
+//    }
 
     override fun onPause() {
         super.onPause()
