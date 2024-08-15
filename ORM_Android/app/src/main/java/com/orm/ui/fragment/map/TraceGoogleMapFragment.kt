@@ -199,8 +199,8 @@ class TraceGoogleMapFragment : Fragment(), OnMapReadyCallback, SensorEventListen
                 }
                 stopLocationService()
 
-                traceViewModel.traceCreated.removeObservers(viewLifecycleOwner)
-                traceViewModel.traceCreated.observe(viewLifecycleOwner) { isCreated ->
+                traceViewModel.traceCreatedNormal.removeObservers(viewLifecycleOwner)
+                traceViewModel.traceCreatedNormal.observe(viewLifecycleOwner) { isCreated ->
                     if (isCreated) {
                         val intent = Intent(requireContext(), TraceActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

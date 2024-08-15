@@ -26,6 +26,7 @@ import com.orm.ui.MainActivity
 import com.orm.ui.PhotoViewerActivity
 import com.orm.ui.fragment.board.CommentAllFragment
 import com.orm.viewmodel.BoardViewModel
+import com.orm.viewmodel.ClubViewModel
 import com.orm.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.net.URLDecoder
@@ -38,6 +39,7 @@ class BoardDetailActivity : AppCompatActivity() {
     }
     private val boardViewModel: BoardViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
+    private val clubViewModel: ClubViewModel by viewModels()
 
     private var isContentModified = false
     private var currentBoard: Board? = null
@@ -258,14 +260,17 @@ class BoardDetailActivity : AppCompatActivity() {
 //    }
 
     override fun onPause() {
-        super.onPause()
         if (isFinishing && goToMain) {
-            val intent = Intent(this, BoardActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                putExtra("club", club)
-                putExtra("back",true)
+            clubViewModel.getClubById(club!!.id)
+            clubViewModel.club.observe(this@BoardDetailActivity) {
+                val intent = Intent(this, BoardActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    putExtra("club", it)
+                    putExtra("back", true)
+                }
+                startActivity(intent)
             }
-            startActivity(intent)
         }
+        super.onPause()
     }
 }

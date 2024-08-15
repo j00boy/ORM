@@ -230,14 +230,17 @@ class ClubMemberActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        super.onPause()
         if (isFinishing && goToMain) {
-            val intent = Intent(this, ClubDetailActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                putExtra("club", club)
-                putExtra("back", true)
+            clubViewModel.getClubById(club!!.id)
+            clubViewModel.club.observe(this@ClubMemberActivity){
+                val intent = Intent(this, ClubDetailActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    putExtra("club", it)
+                    putExtra("back", true)
+                }
+                startActivity(intent)
             }
-            startActivity(intent)
         }
+        super.onPause()
     }
 }
