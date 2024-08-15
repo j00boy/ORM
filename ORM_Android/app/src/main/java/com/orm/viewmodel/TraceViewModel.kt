@@ -25,6 +25,13 @@ class TraceViewModel @Inject constructor(
     private val _traceCreated = MutableLiveData<Boolean>()
     val traceCreated: LiveData<Boolean> get() = _traceCreated
 
+    private val _traceCreatedNormal = MutableLiveData<Boolean>()
+    val traceCreatedNormal: LiveData<Boolean> get() = _traceCreatedNormal
+
+    private val _traceCreatedAbnormal = MutableLiveData<Boolean>()
+    val traceCreatedAbnormal: LiveData<Boolean> get() = _traceCreatedAbnormal
+
+
     fun getTraces() {
         viewModelScope.launch {
             val traces = traceRepository.getAllTraces()
@@ -42,8 +49,13 @@ class TraceViewModel @Inject constructor(
     fun createTrace(trace: Trace) {
         viewModelScope.launch {
             _traceCreated.postValue(false)
+            _traceCreatedNormal.postValue(false)
+            _traceCreatedAbnormal.postValue(false)
+
             traceRepository.createTrace(trace)
             _traceCreated.postValue(true)
+            _traceCreatedNormal.postValue(true)
+            _traceCreatedAbnormal.postValue(false)
         }
     }
 
