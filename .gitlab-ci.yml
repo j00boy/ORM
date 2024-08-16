@@ -1,0 +1,86 @@
+stages:
+  - build
+  - package
+  - deploy
+
+build-job:
+  tags: 
+    - ci
+  image : gradle:8.8.0-jdk17
+  stage: build
+  script:
+    - echo "✨ application-dev.yml 파일을 orm-backend/src/main/resources 경로에 저장"
+    - |
+      cat <<EOF > orm-backend/src/main/resources/application-dev.yml
+      $APPLICATION_YAML
+      EOF
+    
+    - echo "✨ pem 파일을 orm-backend/src/main/resources 경로 저장"
+    - |
+      cat <<EOF > orm-backend/src/main/resources/I11A709T.pem
+      $PEM
+      EOF
+    
+    - echo "✨ json 파일을 orm-backend/src/main/resources 경로에 저장"
+    - |
+      cat <<EOF > orm-backend/src/main/resources/orm-ssafy-firebase-adminsdk-r5bcu-b5d1ad1ab6.json
+      $FIREBASE
+      EOF
+    
+    - cd orm-backend
+    - echo "Compiling 진행"
+    - chmod +x ./gradlew  # gradlew에 실행 권한 부여
+    - ./gradlew clean
+    - ./gradlew build --warning-mode all
+
+    - echo "Compile 완료"
+
+  artifacts:
+    paths:
+      - orm-backend/build/libs/*.jar
+    expire_in: 1days
+  only:
+    - backend
+
+package:
+  tags:
+    - ci
+  image: docker:latest
+  stage: package
+  before_script:
+  # Docker Hub 로그인
+  - unset DOCKER_HOST
+  - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_NAME --password-stdin
+  script:
+    - docker build --platform linux/amd64/v3 -t $DOCKER_HUB_NAME/$IMAGE_NAME orm-backend/.   # Dockerfile로 build
+    - echo "build complete"
+    - docker push $DOCKER_HUB_NAME/$IMAGE_NAME
+
+  # JOB이 수행될 branch 설정 (설정된 branch에 push가 발생될 시 JOB 수행)
+  only:
+    - backend
+
+deploy:
+  tags:
+    - ci
+  image: docker:latest
+  stage: deploy
+  before_script:
+    # Docker Hub 로그인
+    - unset DOCKER_HOST
+    - echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_NAME --password-stdin
+  script:
+    - echo "✨ 컨테이너 구동 중단 및 삭제 (해당 컨테이너가 이미 존재한다면)"
+    - docker stop $CONTAINER_NAME || true
+    - docker rm $CONTAINER_NAME || true
+    - echo "✨ 도커 이미지를 도커 허브에서 pull"
+    - docker pull $DOCKER_HUB_NAME/$IMAGE_NAME
+    - echo "✨ 컨테이너 구동 진행 "
+    - docker run -d --name $CONTAINER_NAME -p 8080:8080 -e SPRING_PROFILE=dev $DOCKER_HUB_NAME/$IMAGE_NAME
+  needs:
+    - ["build-job", "package"]
+  # script가 실행된 후 수행 될 script
+  after_script:
+    - docker logout
+  only:
+    - backend
