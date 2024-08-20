@@ -170,7 +170,12 @@ class TraceEditActivity : AppCompatActivity(), BottomSheetMountainList.OnMountai
             MaterialAlertDialogBuilder(this)
                 .setTitle("${content}하기")
                 .setMessage("발자국을 $content 하시겠습니까?")
-                .setNegativeButton("취소") { _, _ -> }
+                .setNegativeButton("취소") { _, _ ->
+                    binding.btnSign.isEnabled = true
+                }
+                .setOnDismissListener {
+                    binding.btnSign.isEnabled = true
+                }
                 .setPositiveButton("확인") { dialog, which ->
 
                     window.setFlags(
