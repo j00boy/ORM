@@ -15,13 +15,13 @@
 
 산림청에서 제공하는 빅데이터를 파싱하여 등산로 데이터를 수집하고, 이를 기반으로 A* 알고리즘을 활용한 등산로 추천 서비스를 구현했습니다.
 
-#### 주요 역할
+## 주요 역할
 
 - 산림청 빅데이터 파싱 및 A* 알고리즘을 통한 등산로 추천 서비스 구현
 - 다양한 클라이언트 애플리케이션에서 접근 가능한 RESTful API를 설계 및 구현
 - OAuth 및 JWT 토큰을 활용하여 로그인 보안성을 강화한 인증 시스템 구현
 
-#### 프로젝트 성과
+## 프로젝트 성과
 
 - **등산로 추천 서비스 구현**: 사용자 맞춤형 등산로 추천을 통해 사용자 만족도 향상
 - **보안성 강화**: OAuth 및 JWT 토큰을 활용한 인증 시스템 구현
@@ -36,7 +36,8 @@ https://www.notion.so/yuihirasawa/6bd74947c58e49268ed8740cc8b2a5ef?pvs=4
 
 
 ## Stacks 🐈
-![project architecture](https://github.com/user-attachments/assets/17b52673-193f-4e57-ae4c-ce8ee5247d90)
+![image](https://github.com/user-attachments/assets/3e8928ea-974d-4d53-ba42-52f2e272d499)
+
 
 ---
 ## 주요 기능 📦
