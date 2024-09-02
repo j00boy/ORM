@@ -1,12 +1,6 @@
 # 오름(ORM)
 ![ic_launcher_orm](https://github.com/user-attachments/assets/1e34a06d-1996-45a1-b1a4-a0c20376b5ab)
 
-
-
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FVoluntain-SKKU%2FVoluntain-2nd&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
-
-</div>
-
 # ORM
 > **삼성 청년 SW 아카데미 팀 프로젝트** <br/> **개발기간: 2024.07.08 ~ 2024.08.16**
 
