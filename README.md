@@ -5,7 +5,7 @@
 > **삼성 청년 SW 아카데미 팀 프로젝트** <br/> **개발기간: 2024.07.08 ~ 2024.08.16**
 
 ## 개발팀 소개
--- ![image](https://github.com/user-attachments/assets/b5cc1e3c-0432-4c84-8877-52b54b49ed3e)
+<!-- ![image](https://github.com/user-attachments/assets/b5cc1e3c-0432-4c84-8877-52b54b49ed3e) -->
 
 
 ## 프로젝트 소개
