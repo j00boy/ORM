@@ -1,6 +1,7 @@
 # 오름(ORM)
 ## 😊삼성청년SW아카데미 11기 공통프로젝트 1등 (모바일, 우수상)😊
-![아이콘](./images/img_orm_1000.png)
+![ic_launcher_orm_round](https://github.com/user-attachments/assets/c6bcd66f-c309-48f5-ae76-2c7e5d66f7a3)
+
 
 # ORM
 > **삼성 청년 SW 아카데미 팀 프로젝트** <br/> **개발기간: 2024.07.08 ~ 2024.08.16**
